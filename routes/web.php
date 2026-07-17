@@ -19,16 +19,24 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 
 Route::middleware('login')->group(function () {
 
-    Route::view('/branch-dashboard', 'branch.dashboard')->name('branch.dashboard');
+
+    Route::get('/branch-dashboard', [BranchManagerController::class, 'branchDashboard'])
+        ->name('branch.dashboard');
 
     Route::get('/branch-manager-dashboard', [BranchManagerController::class, 'branchManagerDashboard'])
         ->name('branch.manager.dashboard');
-    Route::get('/walking-details/{smobile}', [BranchManagerController::class, 'walking_details'])->name('walking-details');
+    Route::post('/branch-summary', [BranchManagerController::class, 'branchSummary'])
+        ->name('branch.summary');
+
 
 
     Route::view('/counselor-dashboard', 'counselor.dashboard')->name('counselor.dashboard');
 
-    Route::view('/admin-branch-report', 'admin.admin_branch_report')->name('admin.branch.report');
+    // Route::view('/admin-branch-report', 'admin.admin_branch_report')->name('admin.branch.report');
+    Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
+        ->name('admin.branch.report');
+    Route::post('/fetch-city', [BranchManagerController::class, 'fetchCity']);
+    Route::post('/fetch-all-city', [BranchManagerController::class, 'fetchAllCity']);
 
     Route::view('/cc-agent-report', 'callcenter.cc_agent_report')->name('callcenter.admin.dashboard');
 
@@ -67,37 +75,62 @@ Route::middleware('login')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-//   Route::get('/walking-details/{smobile}',
-// [WalkinController::class,'show'])
-// ->name('walking-details');
+    //   Route::get('/walking-details/{smobile}',
+    // [WalkinController::class,'show'])
+    // ->name('walking-details');
 
-/*
+    /*
 |--------------------------------------------------------------------------
 | Walk-in
 |--------------------------------------------------------------------------
 */
 
-Route::get('/walking-details/{smobile}', [WalkinController::class, 'show'])
-    ->name('walking-details');
+    Route::get('/walking-details/{smobile}', [WalkinController::class, 'show'])
+        ->name('walking-details');
 
-Route::post('/walkin/personal', [WalkinController::class, 'updatePersonal'])
-    ->name('walkin.personal');
+    Route::post('/walkin/personal', [WalkinController::class, 'updatePersonal'])
+        ->name('walkin.personal');
 
-Route::post('/spouse-update', [WalkinController::class, 'updateSpouse'])
-    ->name('spouse.update');
+    Route::post('/student/spouse/save', [WalkinController::class, 'updateSpouse'])
+        ->name('student.spouse.save');
 
-Route::post('/update-operation-status', [WalkinController::class, 'updateOperationStatus'])
-    ->name('update-operation-status');
+    Route::post('/dependant/update', [WalkinController::class, 'updateDependant'])
+        ->name('dependant.update');
 
-Route::post('/add-notes', [WalkinController::class, 'addNotes'])
-    ->name('add-notes');
+    Route::post('/emergency/update', [WalkinController::class, 'updateEmergency'])
+        ->name('emergency.update');
 
-Route::post('/operation-logs', [WalkinController::class, 'operationLogs'])
-    ->name('operation-logs');
+    Route::post('/documents/update', [WalkinController::class, 'updateDocuments'])
+        ->name('documents.update');
 
-Route::post('/fund-status-logs', [WalkinController::class, 'fundStatusLogs'])
-    ->name('fund-status-logs');
+    Route::post(
+        '/status/update',
+        [WalkinController::class, 'updateStatus']
+    )
+        ->name('status.update');
 
+    Route::post('/message/send', [WalkinController::class, 'sendMessage'])
+        ->name('message.send');
+
+    Route::post('/notes/update', [WalkinController::class, 'updateNotes'])
+        ->name('notes.update');
+
+    Route::post('/update-operation-status', [WalkinController::class, 'updateOperationStatus'])
+        ->name('update-operation-status');
+
+    Route::post('/add-notes', [WalkinController::class, 'addNotes'])
+        ->name('add-notes');
+
+    Route::post('/operation-logs', [WalkinController::class, 'operationLogs'])
+        ->name('operation-logs');
+
+    Route::post('/fund-status-logs', [WalkinController::class, 'fundStatusLogs'])
+        ->name('fund-status-logs');
+
+    // Route::post('/message/send', [WalkinController::class, 'sendMessage'])
+    // ->name('message.send');
+    Route::post('/message/send', [WalkinController::class, 'sendMessage'])
+        ->name('message.send');
 
 
 

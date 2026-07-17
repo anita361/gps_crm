@@ -12,7 +12,7 @@
             <div class="card-header bg-primary text-white text-center">
                 <h5 class="mb-0">
                     <i class="fa fa-search"></i>
-                    Branch Manager Dashboard
+                    Branch Dashboard
                 </h5>
             </div>
 
@@ -145,7 +145,19 @@
             <div class="card-header bg-primary text-white text-center">
                 <h5 class="mb-0">
                     <i class="fa fa-desktop"></i>
-                    Today Appointed And Walk-in Result
+
+                    @if (request()->filled('file_number'))
+                        Result for {{ request()->file_number }} File Number
+                    @elseif(request()->filled('mobile'))
+                        Result for {{ request()->mobile }} Mobile Number
+                    @elseif(request()->filled('email'))
+                        Result for {{ request()->email }} Email
+                    @elseif(request()->filled('student_name'))
+                        Result for {{ request()->student_name }} Student Name
+                    @else
+                        Today Appointed And Walk-in Result
+                    @endif
+
                 </h5>
             </div>
 
@@ -178,7 +190,7 @@
 
                 <div class="table-responsive">
 
-                    <table class="table table-bordered table-striped table-hover">
+                    <table id="appointment_data" class="table table-striped table-bordered">
 
                         <thead class="table-dark">
 
@@ -186,19 +198,14 @@
 
                                 <th>Notes</th>
                                 <th>Client Name</th>
+                                <th>Client Email</th>
                                 <th>Client Number</th>
-                                <th>Lead From</th>
-                                <th>Agent/Branch</th>
-                                <th>Visa Type</th>
-                                <th>Source</th>
-                                <th>Country</th>
-                                <th>Appointed Date</th>
+                                <th>Rep Name</th>
+                                <th>No Accompanying</th>
                                 <th>Walk-in Date</th>
                                 <th>Walk-in Status</th>
-                                <th>Assign</th>
-                                <th>Counselor</th>
+                                <th>Assign Counsellor</th>
                                 <th>View</th>
-                                <th>File Status</th>
                                 <th>File Number</th>
                                 <th>Logs</th>
 
@@ -206,73 +213,428 @@
 
                         </thead>
 
+
                         <tbody>
 
-                            @forelse($appointments ?? [] as $row)
+
+                            @forelse($appointments as $row)
                                 <tr>
 
-                                    <td>{{ $row->notes }}</td>
-                                    <td>{{ $row->client_name }}</td>
-                                    <td>{{ $row->client_number }}</td>
-                                    <td>{{ $row->lead_from }}</td>
-                                    <td>{{ $row->agent_branch }}</td>
-                                    <td>{{ $row->visa_type }}</td>
-                                    <td>{{ $row->source }}</td>
-                                    <td>{{ $row->country }}</td>
-                                    <td>{{ $row->appointed_date }}</td>
-                                    <td>{{ $row->walkin_date }}</td>
-                                    <td>{{ $row->walkin_status }}</td>
-                                    <td>{{ $row->assign }}</td>
-                                    <td>{{ $row->counselor }}</td>
+
+                                    <!-- Notes -->
+
                                     <td>
-                                        <a href="#" class="btn btn-sm btn-primary">
+                                        <button type="button" class="btn btn-success btn-sm open-notes-modal"
+                                            data-file-no="{{ $row->semi_id ?? '' }}"
+                                            data-name="{{ $row->sname ?? $row->applicant_name }}">
+
+                                            Notes
+
+                                        </button>
+                                    </td>
+
+
+
+                                    <!-- Client Name -->
+
+                                    <td>
+
+                                        {{ $row->applicant_name }}
+
+                                    </td>
+
+
+
+                                    <!-- Client Email -->
+
+                                    <td>
+
+                                        {{ $row->email }}
+
+                                    </td>
+
+
+
+                                    <!-- Client Number -->
+
+                                    <td>
+
+                                        {{ $row->callerno }}
+
+                                    </td>
+
+
+
+                                    <!-- Rep Name -->
+
+                                    <td>
+
+                                        {{ $row->assign_name ?? 'Branch Manager' }}
+
+                                    </td>
+
+
+
+                                    <!-- No Accompanying -->
+
+                                    <td>
+
+                                        {{ $row->no_accompanying }}
+
+                                    </td>
+
+
+
+
+                                    <!-- Walkin Date -->
+
+                                    <td>
+
+                                        {{ $row->walkedin_date }}
+
+                                    </td>
+
+
+
+
+
+                                    <!-- Walkin Status -->
+
+                                    <td>
+
+
+                                        @if ($row->walkin_status == 0)
+                                            <span class="btn btn-success btn-sm">
+
+                                                Walkin
+
+                                            </span>
+                                        @elseif($row->walkin_status == 1)
+                                            <span class="btn btn-warning btn-sm">
+
+                                                Appointed
+
+                                            </span>
+                                        @elseif($row->walkin_status == 2)
+                                            <span class="btn btn-success btn-sm">
+
+                                                Enrolled Walk-in
+
+                                            </span>
+                                        @elseif($row->walkin_status == 3)
+                                            <button class="btn btn-success btn-sm"
+                                                onclick="WallkinStatus(
+'{{ $row->callerno }}',
+'1',
+'{{ $row->id }}'
+)">
+
+                                                Lead
+
+                                            </button>
+                                        @endif
+
+
+                                    </td>
+
+
+
+
+
+                                    <!-- Assign Counselor -->
+
+                                    <td>
+
+
+                                        @if (empty($row->assign_id))
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#assignModal{{ $row->id }}">
+
+                                                Assign
+
+                                            </button>
+                                        @else
+                                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#assignModal{{ $row->id }}">
+
+                                                Check Assign
+
+                                            </button>
+                                        @endif
+
+
+                                    </td>
+
+
+
+
+
+                                    <!-- View -->
+
+
+                                    <td>
+
+
+                                        <a href="{{ route('walking-details', ['smobile' => $row->callerno]) }}"
+                                            class="btn btn-primary btn-sm">
                                             View
                                         </a>
+
+
                                     </td>
-                                    <td>{{ $row->file_status }}</td>
-                                    <td>{{ $row->file_number }}</td>
-                                    <td>{{ $row->logs }}</td>
+
+
+
+
+
+                                    <!-- File Number -->
+
+
+                                    <td>
+
+
+                                        @if ($row->student_status == 'enrolled')
+                                            {{ $row->file_no }}
+                                        @endif
+
+
+                                    </td>
+
+
+
+
+
+                                    <!-- Logs -->
+
+
+                                    <td>
+
+
+                                        <button class="btn btn-info btn-sm view-logs-btn"
+                                            data-file-no="{{ $row->id }}" data-name="{{ $row->applicant_name }}">
+
+                                            View Logs
+
+                                        </button>
+
+
+                                    </td>
+
+
 
                                 </tr>
+
+
 
                             @empty
 
+
                                 <tr>
-                                    <td colspan="17" class="text-center">
+
+                                    <td colspan="12" class="text-center">
+
                                         No data available in table
+
                                     </td>
+
                                 </tr>
                             @endforelse
 
+
+
                         </tbody>
 
+
                     </table>
+                    <div class="modal fade" id="logsModal" tabindex="-1">
 
-                </div>
+                        <div class="modal-dialog modal-xl">
 
-                <div class="d-flex justify-content-between mt-3">
+                            <div class="modal-content">
 
-                    <small>
-                        Showing 0 to 0 of 0 entries
-                    </small>
+                                <div class="modal-header">
 
-                    <div>
+                                    <h5 class="modal-title" id="logsModalLabel">
+                                        Status Update Logs
+                                    </h5>
 
-                        <button class="btn btn-outline-secondary btn-sm">
-                            Previous
-                        </button>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                    </button>
 
-                        <button class="btn btn-outline-secondary btn-sm">
-                            Next
-                        </button>
+                                </div>
+
+                                <div class="modal-body">
+
+                                    <h5 class="text-center bg-dark text-white p-2">
+                                        Logs
+                                    </h5>
+
+                                    <table class="table table-bordered">
+
+                                        <thead>
+
+                                            <tr>
+
+                                                <th>Date</th>
+                                                <th>Status</th>
+                                                <th>Remarks</th>
+                                                <th>Updated By</th>
+                                                <th>Action Datetime</th>
+
+                                            </tr>
+
+                                        </thead>
+
+                                        <tbody id="logsTableBody">
+
+                                        </tbody>
+
+                                    </table>
+
+                                    <h5 class="text-center bg-dark text-white p-2 mt-4">
+
+                                        Notes
+
+                                    </h5>
+
+                                    <table class="table table-bordered">
+
+                                        <thead>
+
+                                            <tr>
+
+                                                <th>Sno</th>
+                                                <th>Remarks</th>
+                                                <th>Updated By</th>
+                                                <th>Action Datetime</th>
+
+                                            </tr>
+
+                                        </thead>
+
+                                        <tbody id="logsNotesTableBody">
+
+                                        </tbody>
+
+                                    </table>
+
+
+
+                                </div>
+
+                            </div>
+
+                        </div>
 
                     </div>
+
+                </div>
+                <!-- NOTES MODAL START -->
+                <div class="modal fade" id="notesModal" tabindex="-1">
+
+                    <div class="modal-dialog modal-lg">
+
+                        <div class="modal-content">
+
+                            <div class="modal-header bg-success text-white">
+
+                                <h5 class="modal-title">
+
+                                    Notes For :
+                                    <span id="NotesModalName"></span>
+
+                                </h5>
+
+                                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                                </button>
+
+                            </div>
+
+                            <div class="modal-body">
+
+                                <form id="addNotesForm">
+
+                                    @csrf
+
+                                    <input type="hidden" id="note_id" name="note_id">
+
+                                    <div class="mb-3">
+
+                                        <label>Add Note</label>
+
+                                        <textarea class="form-control" id="newNote" name="newNote" rows="4"></textarea>
+
+                                    </div>
+
+                                    <button type="submit" class="btn btn-success">
+
+                                        Save Note
+
+                                    </button>
+
+                                </form>
+
+                                <hr>
+
+                                <table class="table table-bordered">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>Sno</th>
+
+                                            <th>Remarks</th>
+
+                                            <th>Updated By</th>
+
+                                            <th>Action Datetime</th>
+
+                                        </tr>
+
+                                    </thead>
+
+                                    <tbody id="NotesTableBody">
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <!-- NOTES MODAL END -->
+
+
+            </div>
+
+            <div class="d-flex justify-content-between mt-3">
+
+                <small>
+                    Showing 0 to 0 of 0 entries
+                </small>
+
+                <div>
+
+                    <button class="btn btn-outline-secondary btn-sm">
+                        Previous
+                    </button>
+
+                    <button class="btn btn-outline-secondary btn-sm">
+                        Next
+                    </button>
 
                 </div>
 
             </div>
 
         </div>
+
+    </div>
 
     </div>
 
@@ -315,6 +677,277 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             showSearchField();
+        });
+    </script>
+    <script>
+        function showSearchField() {
+
+            $('#student_name_div,#mobile_div,#email_div,#file_div').hide();
+
+            let searchType = $('#search_type').val();
+
+            switch (searchType) {
+
+                case 'student_name':
+                    $('#student_name_div').show();
+                    break;
+
+                case 'mobile':
+                    $('#mobile_div').show();
+                    break;
+
+                case 'email':
+                    $('#email_div').show();
+                    break;
+
+                case 'file':
+                    $('#file_div').show();
+                    break;
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            showSearchField();
+        });
+
+        $(document).ready(function() {
+
+            /*
+            |--------------------------------------------------------------------------
+            | VIEW LOGS
+            |--------------------------------------------------------------------------
+            */
+
+            $(document).on('click', '.view-logs-btn', function() {
+
+                let fileNo = $(this).data('file-no');
+                let name = $(this).data('name');
+
+                $('#logsModalLabel').text('Status Update Logs - ' + name);
+
+                $.ajax({
+
+                    url: "{{ route('branch.manager.logs') }}",
+                    type: "POST",
+
+                    data: {
+                        semi_id: fileNo,
+                        _token: "{{ csrf_token() }}"
+                    },
+
+                    success: function(response) {
+
+                        let logsHtml = '';
+
+                        if (response.logs.length > 0) {
+
+                            response.logs.forEach(function(log) {
+
+                                logsHtml += `
+                                <tr>
+                                    <td>${log.stage_date ?? ''}</td>
+                                    <td>${log.stage ?? ''} ${log.oprStsSend ?? ''}</td>
+                                    <td>${log.stage_remarks ?? ''}</td>
+                                    <td>${log.updated_by ?? ''}</td>
+                                    <td>${log.created_date ?? ''}</td>
+                                </tr>
+                            `;
+                            });
+
+                        } else {
+
+                            logsHtml = `
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    No Logs Found
+                                </td>
+                            </tr>
+                        `;
+                        }
+
+                        $('#logsTableBody').html(logsHtml);
+
+                        let notesHtml = '';
+
+                        if (response.notes.length > 0) {
+
+                            response.notes.forEach(function(note, index) {
+
+                                notesHtml += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${note.remarks ?? ''}</td>
+                                    <td>${note.updated_by ?? ''}</td>
+                                    <td>${note.datetime ?? note.created_datetime ?? ''}</td>
+                                </tr>
+                            `;
+                            });
+
+                        } else {
+
+                            notesHtml = `
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    No Notes Found
+                                </td>
+                            </tr>
+                        `;
+                        }
+
+                        $('#logsNotesTableBody').html(notesHtml);
+
+                        $('#logsModal').modal('show');
+                    },
+
+                    error: function() {
+
+                        alert('Unable to load logs.');
+
+                    }
+
+                });
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | OPEN NOTES MODAL
+            |--------------------------------------------------------------------------
+            */
+
+            $(document).on('click', '.open-notes-modal', function() {
+
+                let fileNo = $(this).data('file-no');
+                let name = $(this).data('name');
+
+                $('#note_id').val(fileNo);
+                $('#NotesModalName').text(name);
+                $('#newNote').val('');
+
+                loadNotes(fileNo);
+
+                $('#notesModal').modal('show');
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | LOAD NOTES
+            |--------------------------------------------------------------------------
+            */
+
+            function loadNotes(noteId) {
+
+                $('#NotesTableBody').html(`
+        <tr>
+            <td colspan="4" class="text-center">
+                Loading...
+            </td>
+        </tr>
+    `);
+
+                $.ajax({
+
+                    url: "{{ route('notes.get') }}",
+                    type: "POST",
+
+                    data: {
+                        note_id: noteId,
+                        _token: "{{ csrf_token() }}"
+                    },
+
+                    success: function(response) {
+
+                        let notesHtml = '';
+
+                        if (response.status && response.notes.length > 0) {
+
+                            response.notes.forEach(function(note, index) {
+
+                                notesHtml += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td><p>${note.remarks ?? ''}</p></td>
+                            <td>${note.updated_by ?? ''}</td>
+                            <td>${note.datetime ?? ''}</td>
+                        </tr>
+                    `;
+
+                            });
+
+                        } else {
+
+                            notesHtml = `
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No Notes Found
+                        </td>
+                    </tr>
+                `;
+
+                        }
+
+                        $('#NotesTableBody').html(notesHtml);
+
+                    },
+
+                    error: function() {
+
+                        $('#NotesTableBody').html(`
+                <tr>
+                    <td colspan="4" class="text-danger text-center">
+                        Failed to load notes
+                    </td>
+                </tr>
+            `);
+
+                    }
+
+                });
+
+            }
+            /*
+            |--------------------------------------------------------------------------
+            | SAVE NOTE
+            |--------------------------------------------------------------------------
+            */
+
+            $('#addNotesForm').submit(function(e) {
+
+                e.preventDefault();
+
+                $.ajax({
+
+                    url: "{{ route('notes.add') }}",
+                    type: "POST",
+                    data: $(this).serialize(),
+
+                    success: function(res) {
+
+                        alert(res.message);
+
+                        // Clear textbox
+                        $('#newNote').val('');
+
+                        // Reload notes list after adding note
+                        loadNotes($('#note_id').val());
+
+                    },
+
+                    error: function(xhr) {
+
+                        alert('Unable to save note.');
+
+                        console.log(xhr.responseText);
+
+                    }
+
+                });
+
+            });
+
         });
     </script>
 @endpush
