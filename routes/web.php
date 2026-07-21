@@ -9,6 +9,8 @@ use App\Http\Controllers\NotesController;
 use App\Http\Controllers\AssignController;
 use App\Http\Controllers\WalkinController;
 use App\Http\Controllers\StatusController;
+use App\Http\Controllers\OperationController;
+use App\Http\Controllers\FinanceAppointmentController;
 
 
 Route::get('/', [LoginController::class, 'index']);
@@ -32,7 +34,7 @@ Route::middleware('login')->group(function () {
 
     Route::view('/counselor-dashboard', 'counselor.dashboard')->name('counselor.dashboard');
 
-    // Route::view('/admin-branch-report', 'admin.admin_branch_report')->name('admin.branch.report');
+
     Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
         ->name('admin.branch.report');
     Route::post('/fetch-city', [BranchManagerController::class, 'fetchCity']);
@@ -48,18 +50,67 @@ Route::middleware('login')->group(function () {
 
     Route::view('/cmsn', 'cmsn.index')->name('cmsn.dashboard');
 
-    Route::view('/aol-enrolled-status', 'operation.aol_enrolled_status')->name('operation.dashboard');
 
-    Route::view('/finance-apnt-done', 'finance.finance_apnt_done')->name('finance.dashboard');
+    // Route::get('/aol-enrolled-status', [OperationController::class, 'aolEnrolledStatus'])
+    //     ->name('operation.dashboard');
+    // Route::get(
+    //     '/operation/export',
+    //     [OperationController::class, 'exportExcel']
+    // )
+    //     ->name('operation.export');
+
+    Route::get('/aol-enrolled-status', [OperationController::class, 'aolEnrolledStatus'])
+        ->name('operation.dashboard');
+
+    Route::get('/export', [OperationController::class, 'exportExcel'])
+        ->name('operation.export');
+
+    Route::post('/update-status', [OperationController::class, 'updateOperationStatus'])
+        ->name('operation.update.status');
+
+    Route::post('/update-fund-status', [OperationController::class, 'updateFundStatus'])
+        ->name('operation.update.fund.status');
+
+    Route::post('/notes', [OperationController::class, 'getNotes'])
+        ->name('operation.notes');
+
+    Route::post('/notes/add', [OperationController::class, 'addNote'])
+        ->name('operation.notes.add');
+
+    Route::post('/logs', [OperationController::class, 'operationLogs'])
+        ->name('operation.logs');
+
+    Route::post('/fund-logs', [OperationController::class, 'fundStatusLogs'])
+        ->name('operation.fund.logs');
+
+    Route::get('/campuses/{college}', [OperationController::class, 'getCampuses'])
+        ->name('operation.campuses');
+
+    Route::get('/programs/{college}/{campus}', [OperationController::class, 'getPrograms'])
+        ->name('operation.programs');
+
+
+
+
+    // Route::view('/finance-apnt-done', 'finance.finance_apnt_done')->name('finance.dashboard');
+    Route::get('/finance-apnt-done', [FinanceAppointmentController::class, 'index'])->name('finance.dashboard');
+
+    Route::post('/finance/foa-status', [FinanceAppointmentController::class, 'updateFoaStatus'])->name('finance.foa.status');
+
+    Route::post('/finance/send-email', [FinanceAppointmentController::class, 'sendEmail'])->name('finance.send.email');
+
+    Route::post('/finance/osap-status', [FinanceAppointmentController::class, 'saveOsapStatus'])->name('finance.osap.status');
+
+    Route::post('/finance/osap-logs', [FinanceAppointmentController::class, 'osapLogs'])->name('finance.osap.logs');
+
+    Route::get('/finance/export', [FinanceAppointmentController::class, 'export'])->name('finance.export');
+
+
 
     Route::view('/commission-enrolled-list', 'commission.list')->name('commission.dashboard');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Lead Routes walking_details
-    |--------------------------------------------------------------------------
-    */
+
 
     Route::get('/lead/create', [LeadController::class, 'create'])->name('lead.create');
 
@@ -69,21 +120,6 @@ Route::middleware('login')->group(function () {
 
     Route::get('/lead/{mobile}', [LeadController::class, 'show'])->name('lead.show');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Walk-in
-    |--------------------------------------------------------------------------
-    */
-
-    //   Route::get('/walking-details/{smobile}',
-    // [WalkinController::class,'show'])
-    // ->name('walking-details');
-
-    /*
-|--------------------------------------------------------------------------
-| Walk-in
-|--------------------------------------------------------------------------
-*/
 
     Route::get('/walking-details/{smobile}', [WalkinController::class, 'show'])
         ->name('walking-details');
@@ -127,8 +163,7 @@ Route::middleware('login')->group(function () {
     Route::post('/fund-status-logs', [WalkinController::class, 'fundStatusLogs'])
         ->name('fund-status-logs');
 
-    // Route::post('/message/send', [WalkinController::class, 'sendMessage'])
-    // ->name('message.send');
+
     Route::post('/message/send', [WalkinController::class, 'sendMessage'])
         ->name('message.send');
 
@@ -159,11 +194,7 @@ Route::middleware('login')->group(function () {
     Route::post('/status/fund-logs', [StatusController::class, 'fundStatus'])
         ->name('status.fund.logs');
 
-    /*
-    |--------------------------------------------------------------------------
-    | Branch Manager Logs
-    |--------------------------------------------------------------------------
-    */
+
 
     Route::post('/branch-manager/logs', [BranchManagerController::class, 'getLogs'])
         ->name('branch.manager.logs');
