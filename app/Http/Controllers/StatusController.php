@@ -7,40 +7,79 @@ use Illuminate\Support\Facades\DB;
 
 class StatusController extends Controller
 {
-    public function update(Request $request)
+    public function updateStatus(Request $request)
     {
-        DB::table('opr_sts_logs')->insert([
-            'main_id'          => $request->semi_id,
-            'stage'            => $request->status,
-            'stage_date'       => $request->date,
-            'created_name'     => session('name'),
-            'created_id'       => session('login'),
-            'created_datetime' => now(),
-            'created_date'     => now()->format('Y-m-d'),
-            'stage_remarks'    => $request->remarks,
-            'oprStsSend'       => $request->oprStsSend
+        $request->validate([
+            'reg_sno' => 'required',
+            'status'  => 'required',
         ]);
+
+        // DB::table('opr_sts_logs')->insert([
+        //     'main_id'          => $request->reg_sno,
+        //     'stage'            => $request->status,
+        //     'stage_date'       => $request->followup_date,
+        //     'created_name'     => session('name'),
+        //     'created_id'       => session('login'),
+        //     'created_datetime' => now()->format('Y-m-d H:i:s'),
+        //     'created_date'     => now()->format('Y-m-d'),
+        //     'stage_remarks'    => $request->remarks,
+        //     'oprStsSend'       => 1,
+        // ]);
 
         DB::table('seminarpre')
-            ->where('sno', $request->semi_id)
+            ->where('sno', $request->reg_sno)
             ->update([
-                'opr_stage'         => $request->status,
-                'opr_stage_date'    => $request->date,
-                'stage_update_id'   => session('login'),
-                'stage_update_name' => session('name'),
-                'opr_stage_remarks' => $request->remarks,
-                'oprStsSend'        => $request->oprStsSend
+                'status'         => $request->status,
+                'follow_date'    => $request->followup_date,
+                'remark_type'    => $request->remarks_type,
+                'student_remark' => $request->remarks,
             ]);
 
-        return response()->json([
-            'status' => 1
-        ]);
+        return back()->with('success', 'Status Updated Successfully.');
     }
+    // public function update(Request $request)
+    // {
+    //     $request->validate([
+    //         'reg_sno' => 'required',
+    //         'status'  => 'required',
+    //     ]);
+
+    //     DB::table('opr_sts_logs')->insert([
+    //         'main_id'          => $request->reg_sno,
+    //         'stage'            => $request->status,
+    //         'stage_date'       => $request->followup_date,
+    //         'created_name'     => session('name'),
+    //         'created_id'       => session('login'),
+    //         'created_datetime' => now()->format('Y-m-d H:i:s'),
+    //         'created_date'     => now()->format('Y-m-d'),
+    //         'stage_remarks'    => $request->remarks,
+    //         'oprStsSend'       => $request->oprStsSend ?? 1,
+    //     ]);
+
+    //     DB::table('seminarpre')
+    //         ->where('sno', $request->reg_sno)
+    //         ->update([
+    //             'status'          => $request->status,
+    //             'follow_date'     => $request->followup_date,
+    //             'remark_type'     => $request->remarks_type,
+    //             'student_remark'  => $request->remarks,
+    //             'oprStsSend'      => $request->oprStsSend ?? 1,
+    //         ]);
+
+    //     return response()->json([
+    //         'status'  => 1,
+    //         'message' => 'Status Updated Successfully.'
+    //     ]);
+    // }
 
     public function logs(Request $request)
     {
+        $request->validate([
+            'reg_sno' => 'required',
+        ]);
+
         $logs = DB::table('opr_sts_logs')
-            ->where('main_id', $request->semi_id)
+            ->where('main_id', $request->reg_sno)
             ->orderByDesc('id')
             ->get();
 
@@ -49,8 +88,12 @@ class StatusController extends Controller
 
     public function fundStatus(Request $request)
     {
+        $request->validate([
+            'reg_sno' => 'required',
+        ]);
+
         $logs = DB::table('fund_status_logs')
-            ->where('semi_id', $request->semi_id)
+            ->where('semi_id', $request->reg_sno)
             ->orderByDesc('id')
             ->get();
 

@@ -192,7 +192,7 @@
 
                                     </div>
 
-                                    <div class="col-md-3 mb-3">
+                                    {{-- <div class="col-md-3 mb-3">
                                         <label>
                                             First Name
                                             <span class="text-danger">*</span>
@@ -200,13 +200,25 @@
 
                                         <input type="text" class="form-control" name="sname"
                                             value="{{ old('sname', $student->sname) }}">
+                                    </div> --}}
+                                    <div class="col-md-3 mb-3">
+                                        <label>First Name</label>
+
+                                        <input type="text" class="form-control" name="fname"
+                                            value="{{ old('fname', $student->fname) }}">
                                     </div>
 
-                                    <div class="col-md-3 mb-3">
+                                    {{-- <div class="col-md-3 mb-3">
                                         <label>Last Name</label>
 
                                         <input type="text" class="form-control" name="sname"
                                             value="{{ old('sname', $student->sname) }}">
+                                    </div> --}}
+                                    <div class="col-md-3 mb-3">
+                                        <label>Last Name</label>
+
+                                        <input type="text" class="form-control" name="lname"
+                                            value="{{ old('lname', $student->lname) }}">
                                     </div>
 
                                 </div>
@@ -266,7 +278,7 @@
 
                                         <label>Marital Status</label>
 
-                                        <select name="marital_status" class="form-select">
+                                        {{-- <select name="marital_status" class="form-select">
 
                                             <option value="">Select</option>
 
@@ -277,6 +289,31 @@
                                             <option value="Separated">Separated</option>
 
                                             <option value="Divorced">Divorced</option>
+
+                                        </select> --}}
+                                        <select name="marital_status" class="form-select">
+
+                                            <option value="">Select</option>
+
+                                            <option value="single"
+                                                {{ old('marital_status', $student->marital_status) == 'single' ? 'selected' : '' }}>
+                                                Single
+                                            </option>
+
+                                            <option value="married"
+                                                {{ old('marital_status', $student->marital_status) == 'married' ? 'selected' : '' }}>
+                                                Married
+                                            </option>
+
+                                            <option value="separate"
+                                                {{ old('marital_status', $student->marital_status) == 'separate' ? 'selected' : '' }}>
+                                                Separated
+                                            </option>
+
+                                            <option value="divorced"
+                                                {{ old('marital_status', $student->marital_status) == 'divorced' ? 'selected' : '' }}>
+                                                Divorced
+                                            </option>
 
                                         </select>
 
@@ -598,49 +635,27 @@
 
                                 <div class="row">
 
-                                    {{-- <div class="col-md-4 mb-3">
-
-                                        <label>Contact Name</label>
-
-                                        <input type="text" class="form-control" name="emergency_name"
-                                            value="{{ old('emergency_name', $student->emergency_name) }}">
-
-                                    </div> --}}
                                     <div class="col-md-4 mb-3">
                                         <label>Emergency Contact Name</label>
 
                                         <input type="text" name="emergency_name" class="form-control"
-                                            value="{{ old('emergency_name', $student->emergency_name ?? '') }}">
+                                            value="{{ old('emergency_name', $student->emr_name ?? '') }}">
                                     </div>
 
-                                    {{-- <div class="col-md-4 mb-3">
 
-                                        <label>Relationship</label>
-
-                                        <input type="text" class="form-control" name="relationship"
-                                            value="{{ old('relationship', $student->relationship) }}">
-
-                                    </div> --}}
                                     <div class="col-md-4 mb-3">
                                         <label>Relationship</label>
 
                                         <input type="text" name="emergency_relation" class="form-control"
-                                            value="{{ old('emergency_relation', $student->emergency_relation ?? '') }}">
+                                            value="{{ old('emergency_relation', $student->emg_realtionship ?? '') }}">
                                     </div>
 
-                                    {{-- <div class="col-md-4 mb-3">
 
-                                        <label>Mobile Number</label>
-
-                                        <input type="text" class="form-control" name="emergency_mobile"
-                                            value="{{ old('emergency_mobile', $student->emergency_mobile) }}">
-
-                                    </div> --}}
                                     <div class="col-md-4 mb-3">
                                         <label>Mobile Number</label>
 
                                         <input type="text" name="emergency_mobile" class="form-control"
-                                            value="{{ old('emergency_mobile', $student->emergency_mobile ?? '') }}">
+                                            value="{{ old('emergency_mobile', $student->emr_number ?? '') }}">
                                     </div>
 
                                 </div>
@@ -648,13 +663,9 @@
                                 <hr>
 
                                 <div class="text-end">
-
                                     <button class="btn btn-secondary">
-
                                         Update
-
                                     </button>
-
                                 </div>
 
                             </form>
@@ -743,19 +754,22 @@
 
                                     <!-- Other Documents -->
 
+                                    <!-- Other Documents -->
+
                                     <div class="col-md-4 mb-4">
 
                                         <label class="fw-bold">
                                             Other Documents (PDF)
                                         </label>
 
-                                        <input type="file" name="othere_docs" class="form-control"
+                                        <input type="file" name="other_docs" class="form-control"
                                             accept=".pdf,image/*">
 
-                                        @if (!empty($student->othere_docs))
+
+                                        @if (!empty($student->other_docs))
                                             <div class="mt-2">
 
-                                                <a href="{{ asset($student->othere_docs) }}" target="_blank"
+                                                <a href="{{ asset($student->other_docs) }}" target="_blank"
                                                     class="btn btn-secondary btn-sm">
 
                                                     <i class="fa fa-eye"></i>
@@ -768,7 +782,6 @@
                                         @endif
 
                                     </div>
-
                                 </div>
 
                                 <hr>

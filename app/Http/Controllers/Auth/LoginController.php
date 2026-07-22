@@ -31,6 +31,7 @@ class LoginController extends Controller
         $user = CrmLogin::where('username', $request->username)
             ->where('password', md5($request->password))
             ->first();
+            
 
         if (!$user) {
             return back()

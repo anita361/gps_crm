@@ -6,16 +6,23 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 use App\Models\CrmLogin;
+use App\Models\SeminarPre;
+use App\Models\LeadAppointed;
+use App\Models\AssignStatus;
 
 class LeadController extends Controller
 {
-   
+    /**
+     * Show New Lead Form
+     */
     public function create()
     {
-        return view('lead.create');
+        return view('branch_manager.new_lead');
     }
 
-    
+    /**
+     * Store New Lead
+     */
     public function store(Request $request)
     {
         $request->validate([
@@ -26,11 +33,13 @@ class LeadController extends Controller
             'country'          => 'required',
             'address'          => 'required',
             'city'             => 'required',
-            'postal_code'      => 'nullable',
+            'postal_code'      => 'nullable|max:20',
             'marital_status'   => 'required',
             'gender'           => 'required',
+            'husband_name'     => 'nullable|string|max:150',
+            'wife_name'        => 'nullable|string|max:150',
             'ssource'          => 'required',
-            'source_remarks'   => 'nullable',
+            'source_remarks'   => 'nullable|string',
         ]);
 
         $userId = session('login');
@@ -41,31 +50,38 @@ class LeadController extends Controller
             return redirect()->route('login');
         }
 
+        $userRole = $user->role;
+        $userName = $user->name;
+
         $today = Carbon::now();
 
         $phone = str_replace(' ', '', $request->phone);
 
-        $seminar = DB::table('seminarpre')
-            ->where('smobile', $phone)
-            ->first();
+        DB::beginTransaction();
 
-        if ($seminar) {
+        try {
 
-            DB::table('seminarpre')
-                ->where('smobile', $phone)
-                ->update([
+            /*
+            |--------------------------------------------------------------------------
+            | Check Existing Seminar Record
+            |--------------------------------------------------------------------------
+            */
 
-                    'assign_name'      => $user->name,
-                    'assign_id'        => $user->id,
-                    'assign_date'      => $today->toDateString(),
+            $seminar = SeminarPre::where('smobile', $phone)->first();
+
+            if ($seminar) {
+
+                $seminarData = [
 
                     'fname'            => $request->fname,
                     'lname'            => $request->lname,
-                    'sname'            => $request->fname.' '.$request->lname,
+                    'sname'            => trim($request->fname . ' ' . $request->lname),
 
                     'semail'           => $request->email,
+
                     'scountry'         => $request->country,
                     'scity'            => $request->city,
+
                     'address'          => $request->address,
                     'postal_code'      => $request->postal_code,
 
@@ -78,132 +94,307 @@ class LeadController extends Controller
                     'ssource'          => $request->ssource,
                     'source_remarks'   => $request->source_remarks,
 
-                ]);
+                ];
 
-            $seminarId = $seminar->sno;
+                /*
+                 * Original PHP:
+                 * Only Branch Manager and Counselor update assignment.
+                 */
+                if (in_array($userRole, ['branch_manager', 'counselor'])) {
+
+                    $seminarData['assign_name'] = $userName;
+                    $seminarData['assign_id']   = $user->id;
+                    $seminarData['assign_date'] = $today->toDateString();
+                }
+
+                $seminar->update($seminarData);
+
+                $seminarId = $seminar->sno;
+            } else {
+                $seminarData = [
+
+                    // Required legacy fields
+                    'lead_sno'            => '',
+                    'user_id'             => $user->id,
+                    'category'            => '',
+                    'fathers_name'        => '',
+                    'alt_mobile'          => '',
+                    'branch'              => '',
+                    'svisa'               => '',
+                    'emr_name'            => '',
+                    'emr_number'          => '',
+                    'squalification'      => '',
+                    'spassing'            => '',
+                    'stest'               => '',
+                    'query'               => '',
+                    'dom'                 => '',
+                    'children'            => '',
+                    'age_of_kids'         => '',
+                    'program_name'        => '',
+                    'officer_upd_remarks' => '',
+                    'opr_stage_remarks'   => '',
+                    'osap_sts_remarks'    => '',
+                    'finance_id'          => 0,
+                    'comm_amount'         => 0,
+
+                   
+                    'fname'               => $request->fname,
+                    'lname'               => $request->lname,
+                    'sname'               => trim($request->fname . ' ' . $request->lname),
+
+                    'smobile'             => $phone,
+                    'semail'              => $request->email,
+
+                    'gender'              => $request->gender,
+                    'marital_status'      => $request->marital_status,
+
+                    'husband_name'        => $request->husband_name ?? '',
+                    'wife_name'           => $request->wife_name ?? '',
+
+                    'address'             => $request->address,
+                    'postal_code'         => $request->postal_code,
+
+                    'scity'               => $request->city,
+                    'scountry'            => $request->country,
+
+                    'ssource'             => $request->ssource,
+                    'source_remarks'      => $request->source_remarks ?? '',
+
+                    'type_of_client'      => 'callcenter',
+                    'status_type'         => 0,
+
+                    'reg_date'            => $today->toDateString(),
+                    'reg_time'            => $today->format('H:i:s'),
+
+                    'created_by'          => 'callcenter',
+                    'created_by_name'     => $user->name,
+
+                    'assign_name'         => $userName,
+                    'assign_id'           => $user->id,
+                    'assign_date'         => $today->toDateString(),
+
+                    'update_date'         => '',
+                    'update_time'         => '',
+                ];
+
+                /*
+                |--------------------------------------------------------------------------
+                | Original PHP Logic
+                |--------------------------------------------------------------------------
+                | Branch Manager & Counselor:
+                |   Save assignment fields.
+                |
+                | Other users except Branch:
+                |   Insert without assignment.
+                |
+                | Branch:
+                |   Do not insert.
+                |--------------------------------------------------------------------------
+                */
+
+                if (in_array($userRole, ['branch_manager', 'counselor'])) {
+
+                    $seminarData['assign_name'] = $userName;
+                    $seminarData['assign_id']   = $user->id;
+                    $seminarData['assign_date'] = $today->toDateString();
+
+                    $seminar = SeminarPre::create($seminarData);
+
+                    $seminarId = $seminar->sno;
+                } elseif ($userRole != 'branch') {
+
+                    $seminar = SeminarPre::create($seminarData);
+
+                    $seminarId = $seminar->sno;
+                } else {
+
+                    $seminarId = null;
+                }
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Lead Appointed
+            |--------------------------------------------------------------------------
+            */
+
+            $lead = LeadAppointed::where('seminar_id', $seminarId)->first();
+
+            if ($lead) {
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Update Existing Lead
+                |--------------------------------------------------------------------------
+                */
+
+                $leadData = [
+
+                    'userid'          => $user->id,
+                    'callerno'        => $phone,
+
+                    'walkin_status'   => 3,
+
+                    'applicant_name'  => trim($request->fname . ' ' . $request->lname),
+
+                    'marital_status'  => $request->marital_status,
+                    'gender'          => $request->gender,
+
+                    'husband_name'    => $request->husband_name,
+                    'wife_name'       => $request->wife_name,
+
+                    'created_date'    => $today->toDateString(),
+                    'created_time'    => $today->format('H:i:s'),
+                    'created_by'      => 'callcenter',
+
+                ];
+
+                /*
+                |--------------------------------------------------------------------------
+                | Original PHP
+                | Only Branch Manager & Counselor update assignment fields
+                |--------------------------------------------------------------------------
+                */
+
+                if (in_array($userRole, ['branch_manager', 'counselor'])) {
+
+                    $leadData['assign_name'] = $userName;
+                    $leadData['assign_id']   = $user->id;
+                    $leadData['assign_date'] = $today->toDateString();
+                }
+
+                $lead->update($leadData);
+            } else {
+
+                /*
+                |--------------------------------------------------------------------------
+                | Insert New Lead
+                |--------------------------------------------------------------------------
+                */
+
+                $leadData = [
+
+                    'seminar_id'      => $seminarId,
+
+                    'userid'          => $user->id,
+                    'callerno'        => $phone,
+
+                    'walkin_status'   => 3,
+
+                    'applicant_name'  => trim($request->fname . ' ' . $request->lname),
+
+                    'marital_status'  => $request->marital_status,
+                    'gender'          => $request->gender,
+
+                    'husband_name'    => $request->husband_name,
+                    'wife_name'       => $request->wife_name,
+
+                    'created_date'    => $today->toDateString(),
+                    'created_time'    => $today->format('H:i:s'),
+                    'created_by'      => 'callcenter',
+
+                ];
+
+                /*
+                |--------------------------------------------------------------------------
+                | Original PHP
+                | Only Branch Manager & Counselor insert assignment fields
+                |--------------------------------------------------------------------------
+                */
+
+                if (in_array($userRole, ['branch_manager', 'counselor'])) {
+
+                    $leadData['assign_name'] = $userName;
+                    $leadData['assign_id']   = $user->id;
+                    $leadData['assign_date'] = $today->toDateString();
+                }
+
+                LeadAppointed::create($leadData);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | Assign Status
+            |--------------------------------------------------------------------------
+            */
+
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Assign Status
+            |--------------------------------------------------------------------------
+            | Original PHP:
+            | Only Branch Manager & Counselor insert/update assign_status
+            |--------------------------------------------------------------------------
+            */
+
+            if (in_array($userRole, ['branch_manager', 'counselor'])) {
+
+                AssignStatus::updateOrCreate(
+
+                    [
+                        'seminar_id' => $seminarId,
+                    ],
+
+                    [
+                        'counelor_id' => $user->id,
+                        'status'      => 1,
+                        'created_date' => $today->toDateString(),
+                        'created_time' => $today->format('H:i:s'),
+                    ]
+
+                );
+            }
+
+            DB::commit();
+
+            return redirect()
+                ->back()
+                ->with('success', 'Lead Added Successfully.');
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('error', $e->getMessage());
         }
-        else
-        {
+    }
 
-            $seminarId = DB::table('seminarpre')->insertGetId([
+    /*
+    |--------------------------------------------------------------------------
+    | Ajax Phone Check
+    |--------------------------------------------------------------------------
+    */
 
-                'assign_name'      => $user->name,
-                'assign_id'        => $user->id,
-                'assign_date'      => $today->toDateString(),
+    public function checkPhone(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required'
+        ]);
 
-                'fname'            => $request->fname,
-                'lname'            => $request->lname,
-                'sname'            => $request->fname.' '.$request->lname,
+        $phone = str_replace(' ', '', $request->phone);
 
-                'semail'           => $request->email,
-                'smobile'          => $phone,
+        $exists = SeminarPre::where('smobile', $phone)->exists();
 
-                'scountry'         => $request->country,
-                'scity'            => $request->city,
+        return response()->json([
+            'exists' => $exists
+        ]);
+    }
 
-                'address'          => $request->address,
-                'postal_code'      => $request->postal_code,
+    /*
+    |--------------------------------------------------------------------------
+    | Show Walk-in Details
+    |--------------------------------------------------------------------------
+    */
 
-                'marital_status'   => $request->marital_status,
-                'gender'           => $request->gender,
+    public function show($mobile)
+    {
+        $student = SeminarPre::where('smobile', $mobile)->firstOrFail();
 
-                'husband_name'     => $request->husband_name,
-                'wife_name'        => $request->wife_name,
-
-                'ssource'          => $request->ssource,
-                'source_remarks'   => $request->source_remarks,
-
-                'type_of_client'   => 'callcenter',
-                'status_type'      => 0,
-
-                'reg_date'         => $today->toDateString(),
-                'reg_time'         => $today->format('H:i:s'),
-
-            ]);
-
-        }
-
-        $lead = DB::table('lead_appointed')
-            ->where('seminar_id', $seminarId)
-            ->first();
-
-        if ($lead) {
-
-            DB::table('lead_appointed')
-                ->where('seminar_id', $seminarId)
-                ->update([
-
-                    'assign_name'      => $user->name,
-                    'assign_id'        => $user->id,
-                    'assign_date'      => $today->toDateString(),
-
-                    'userid'           => $user->id,
-                    'callerno'         => $phone,
-
-                    'walkin_status'    => 3,
-
-                    'applicant_name'   => $request->fname.' '.$request->lname,
-
-                    'marital_status'   => $request->marital_status,
-                    'gender'           => $request->gender,
-
-                    'husband_name'     => $request->husband_name,
-                    'wife_name'        => $request->wife_name,
-
-                    'created_date'     => $today->toDateString(),
-                    'created_time'     => $today->format('H:i:s'),
-                    'created_by'       => 'callcenter',
-
-                ]);
-
-        } else {
-
-            DB::table('lead_appointed')->insert([
-
-                'assign_name'      => $user->name,
-                'assign_id'        => $user->id,
-                'assign_date'      => $today->toDateString(),
-
-                'seminar_id'       => $seminarId,
-
-                'userid'           => $user->id,
-                'callerno'         => $phone,
-
-                'walkin_status'    => 3,
-
-                'applicant_name'   => $request->fname.' '.$request->lname,
-
-                'marital_status'   => $request->marital_status,
-                'gender'           => $request->gender,
-
-                'husband_name'     => $request->husband_name,
-                'wife_name'        => $request->wife_name,
-
-                'created_date'     => $today->toDateString(),
-                'created_time'     => $today->format('H:i:s'),
-                'created_by'       => 'callcenter',
-
-            ]);
-
-        }
-
-        DB::table('assign_status')->updateOrInsert(
-
-            [
-                'seminar_id' => $seminarId
-            ],
-
-            [
-                'counelor_id' => $user->id,
-                'status'      => 1,
-                'created_date'=> $today->toDateString(),
-                'created_time'=> $today->format('H:i:s'),
-            ]
-
-        );
-
-        return redirect()
-            ->back()
-            ->with('success','Lead Added Successfully.');
+        return redirect()->route('walking-details', $student->smobile);
     }
 }

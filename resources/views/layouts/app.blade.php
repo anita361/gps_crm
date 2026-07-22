@@ -170,7 +170,8 @@
                     </li>
 
                     <li class="nav-item">
-                        <a class="nav-link" href="#">
+                        <a class="nav-link {{ request()->routeIs('lead.create') ? 'active' : '' }}"
+                            href="{{ route('lead.create') }}">
                             <i class="fa fa-edit"></i>
                             New Lead
                         </a>

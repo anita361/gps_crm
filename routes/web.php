@@ -112,13 +112,17 @@ Route::middleware('login')->group(function () {
 
 
 
-    Route::get('/lead/create', [LeadController::class, 'create'])->name('lead.create');
+   Route::get('/lead/create', [LeadController::class, 'create'])
+    ->name('lead.create');
 
-    Route::post('/lead/store', [LeadController::class, 'store'])->name('lead.store');
+    Route::post('/lead/store', [LeadController::class, 'store'])
+        ->name('lead.store');
 
-    Route::post('/lead/check-phone', [LeadController::class, 'checkPhone'])->name('lead.check.phone');
+    Route::post('/lead/check-phone', [LeadController::class, 'checkPhone'])
+        ->name('lead.check.phone');
 
-    Route::get('/lead/{mobile}', [LeadController::class, 'show'])->name('lead.show');
+    Route::get('/lead/{mobile}', [LeadController::class, 'show'])
+        ->name('lead.show');
 
 
     Route::get('/walking-details/{smobile}', [WalkinController::class, 'show'])
@@ -144,9 +148,11 @@ Route::middleware('login')->group(function () {
         [WalkinController::class, 'updateStatus']
     )
         ->name('status.update');
+    // Route::post('/status/update', [StatusController::class, 'update'])
+    // ->name('status.update');
 
-    Route::post('/message/send', [WalkinController::class, 'sendMessage'])
-        ->name('message.send');
+    // Route::post('/message/send', [WalkinController::class, 'sendMessage'])
+    //     ->name('message.send');
 
     Route::post('/notes/update', [WalkinController::class, 'updateNotes'])
         ->name('notes.update');
@@ -185,8 +191,8 @@ Route::middleware('login')->group(function () {
 
 
 
-    Route::post('/status/update', [StatusController::class, 'update'])
-        ->name('status.update');
+    // Route::post('/status/update', [StatusController::class, 'update'])
+    //     ->name('status.update');
 
     Route::post('/status/logs', [StatusController::class, 'logs'])
         ->name('status.logs');
