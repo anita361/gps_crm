@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('title') | GPS Education CRM</title>
+    <title>@yield('title', 'GPS CRM') | GPS Education CRM</title>
 
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -17,6 +17,8 @@
     <!-- DataTables -->
     <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
+    @stack('styles')
+
     <style>
         body {
             background: #eef1f7;
@@ -24,14 +26,12 @@
             font-size: 14px;
         }
 
-        /*=========================
-            Navbar
-        =========================*/
+        /* Navbar */
 
         .navbar {
-            background: #ffffff;
+            background: #fff;
             box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
-            padding: 10px 25px;
+            padding: 10px 20px;
         }
 
         .navbar-brand img {
@@ -41,104 +41,81 @@
         .navbar-nav .nav-link {
             color: #222;
             font-weight: 500;
-            margin-left: 12px;
+            margin-left: 10px;
         }
 
         .navbar-nav .nav-link:hover {
             color: #0d6efd;
         }
 
-        /*=========================
-            Cards
-        =========================*/
+        .navbar-nav .nav-link.active {
+            color: #0d6efd;
+            font-weight: bold;
+        }
+
+        /* Card */
 
         .card {
             border: none;
-            border-radius: 0;
-            box-shadow: 0 3px 12px rgba(0, 0, 0, .18);
-            margin-bottom: 30px;
+            border-radius: 6px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, .15);
         }
 
         .card-header {
             background: #2f64e7 !important;
             color: #fff;
-            text-align: center;
-            font-weight: bold;
             font-size: 28px;
+            font-weight: bold;
+            text-align: center;
             padding: 12px;
         }
 
-        .card-body {
-            background: #fff;
-            min-height: 120px;
-        }
+        /* Table */
 
-        /*=========================
-            Table
-        =========================*/
-
-        .table thead {
-            background: #555;
+        .table-dark th {
+            background: #555 !important;
             color: #fff;
-        }
-
-        .table thead th {
-            font-size: 13px;
-            white-space: nowrap;
-        }
-
-        /*=========================
-            Search
-        =========================*/
-
-        label {
-            font-weight: 600;
-        }
-
-        .form-control,
-        .form-select {
-            border-radius: 3px;
-        }
-
-        /*=========================
-            Counter
-        =========================*/
-
-        .counter {
             text-align: center;
-            margin: 35px 0;
-            font-size: 20px;
+            vertical-align: middle;
         }
 
-        .counter p {
-            margin: 5px;
+        .table td {
+            vertical-align: middle;
+        }
+
+        /* Buttons */
+
+        .btn-success,
+        .btn-danger {
+            min-width: 95px;
         }
 
         footer {
-            margin-top: 40px;
+            margin-top: 50px;
             padding: 20px;
             text-align: center;
             color: #666;
         }
-    </style>
 
-    @stack('styles')
+        .dropdown-menu {
+            border-radius: 0;
+        }
+    </style>
 
 </head>
 
 <body>
 
-    <!-- ================= NAVBAR ================= -->
-
     <nav class="navbar navbar-expand-lg">
 
         <div class="container-fluid">
 
-            <a class="navbar-brand" href="#">
-                <img src="{{ asset('images/GPS-Logo.jpg.jpeg') }}">
+            <a class="navbar-brand" href="{{ route('branch.dashboard') }}">
+                <img src="{{ asset('images/GPS-Logo.jpg.jpeg') }}" alt="GPS">
             </a>
 
-            <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMenu">
 
                 <span class="navbar-toggler-icon"></span>
 
@@ -149,39 +126,129 @@
                 <ul class="navbar-nav ms-auto align-items-center">
 
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('branch.dashboard') }}">
+
+                        <a class="nav-link {{ request()->routeIs('branch.dashboard') ? 'active' : '' }}"
+                            href="{{ route('branch.dashboard') }}">
+
                             <i class="fa fa-desktop"></i>
+
                             Dashboard
+
                         </a>
+
                     </li>
 
                     <li class="nav-item">
+
                         <a class="nav-link" href="#">
-                            <i class="fa fa-file"></i>
+
+                            <i class="fa fa-chart-line"></i>
+
                             Reports
+
                         </a>
+
                     </li>
 
                     <li class="nav-item">
+
                         <a class="nav-link" href="#">
+
                             <i class="fa fa-table"></i>
-                            Reception Dashboard Reports
+
+                            Reception Dashboard
+
                         </a>
+
                     </li>
 
                     <li class="nav-item">
+
                         <a class="nav-link {{ request()->routeIs('lead.create') ? 'active' : '' }}"
                             href="{{ route('lead.create') }}">
-                            <i class="fa fa-edit"></i>
+
+                            <i class="fa fa-user-plus"></i>
+
                             New Lead
+
                         </a>
+
+                    </li>
+
+                    <li class="nav-item dropdown">
+
+                        <a class="nav-link dropdown-toggle {{ request()->routeIs('lead.followup*') ? 'active' : '' }}"
+                            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                            <i class="fa fa-phone"></i>
+
+                            Followup
+
+                        </a>
+
+                        <ul class="dropdown-menu">
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('lead.followup') }}">
+                                    Call Followup
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('lead.followup.today') }}">
+                                    Today Lead Followup
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+                    <!-- User Management -->
+
+                    <li class="nav-item dropdown">
+
+                        <a class="nav-link dropdown-toggle
+                    {{ request()->routeIs('users.*') ? 'active' : '' }}"
+                            href="#" role="button" data-bs-toggle="dropdown">
+
+                            <i class="fa fa-users"></i>
+
+                            User Management
+
+                        </a>
+
+                        <ul class="dropdown-menu">
+
+                            <li>
+
+                                <a class="dropdown-item" href="{{ route('users.index') }}">
+
+                                    User Details
+
+                                </a>
+
+                            </li>
+
+                            <li>
+
+                                <a class="dropdown-item" href="{{ route('users.create') }}">
+
+                                    Add New User
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
                     </li>
 
                     <li class="nav-item">
 
                         <span class="nav-link">
 
-                            <i class="fa fa-user"></i>
+                            <i class="fa fa-user-circle"></i>
 
                             {{ session('role') }}
 
@@ -189,7 +256,7 @@
 
                     </li>
 
-                    <li class="nav-item">
+                    <li class="nav-item ms-2">
 
                         <form method="POST" action="{{ route('logout') }}">
 
@@ -215,8 +282,6 @@
 
     </nav>
 
-    <!-- ================= CONTENT ================= -->
-
     <div class="container-fluid mt-3">
 
         @if (session('success'))
@@ -235,6 +300,22 @@
             </div>
         @endif
 
+        @if ($errors->any())
+
+            <div class="alert alert-danger">
+
+                <ul class="mb-0">
+
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+
+                </ul>
+
+            </div>
+
+        @endif
+
         @yield('content')
 
     </div>
@@ -245,8 +326,6 @@
 
     </footer>
 
-    <!-- ================= JS ================= -->
-
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -254,26 +333,75 @@
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
 
     <script>
+        $.ajaxSetup({
+
+            headers: {
+
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+
+            }
+
+        });
+
         $(document).ready(function() {
 
             $('.datatable').DataTable({
 
-                pageLength: 10,
+                pageLength: 50,
 
-                ordering: false,
+                responsive: true,
 
-                responsive: true
+                ordering: true,
+
+                autoWidth: false
+
+            });
+
+        });
+        $(document).on('click', '.show-notes', function(e) {
+
+            e.preventDefault();
+
+            $('#notesBody').html('Loading...');
+
+            var modal = new bootstrap.Modal(document.getElementById('notesModal'));
+
+            modal.show();
+
+            $.get($(this).attr('href'), function(response) {
+
+                $('#notesBody').html(response);
+
+            });
+
+        });
+
+
+        $(document).on('click', '.show-logs', function(e) {
+
+            e.preventDefault();
+
+            $('#callLogsBody').html('Loading...');
+
+            var modal = new bootstrap.Modal(document.getElementById('callLogsModal'));
+
+            modal.show();
+
+            $.get($(this).attr('href'), function(response) {
+
+                $('#callLogsBody').html(response);
 
             });
 
         });
     </script>
+  
+
 
     @stack('scripts')
+
 
 </body>
 

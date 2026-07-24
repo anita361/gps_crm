@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 class WalkinController extends Controller
 {
@@ -86,182 +89,7 @@ class WalkinController extends Controller
         );
     }
 
-    // public function updateDependant(Request $request)
-    // {
-    //     $request->validate([
 
-    //         'reg_sno' => 'required',
-
-    //         'dependant_name' => 'nullable|string|max:100',
-
-    //         'dependant_dob' => 'nullable|date',
-
-    //         'dependant_relation' => 'nullable|string|max:50',
-
-    //         'dependant_mobile' => 'nullable|string|max:20',
-
-    //     ]);
-
-
-    //     DB::table('seminarpre')
-    //         ->where('sno', $request->reg_sno)
-    //         ->update([
-
-    //             'dependant_name'      => $request->dependant_name,
-
-    //             'dependant_dob'       => $request->dependant_dob,
-
-    //             'dependant_relation'  => $request->dependant_relation,
-
-    //             'dependant_mobile'    => $request->dependant_mobile,
-
-    //             'updated_at'          => now(),
-
-    //         ]);
-
-
-    //     return back()->with(
-    //         'success',
-    //         'Dependant details updated successfully.'
-    //     );
-    // }
-
-    // public function updateEmergency(Request $request)
-    // {
-    //     $request->validate([
-
-    //         'reg_sno'            => 'required',
-
-    //         'emergency_name'     => 'nullable|string|max:100',
-
-    //         'emergency_relation' => 'nullable|string|max:50',
-
-    //         'emergency_mobile'   => 'nullable|string|max:20',
-
-    //         'emergency_email'    => 'nullable|email|max:150',
-
-    //         'emergency_address'  => 'nullable|string',
-
-    //     ]);
-
-
-    //     DB::table('seminarpre')
-    //         ->where('sno', $request->reg_sno)
-    //         ->update([
-
-    //             'emergency_name'     => $request->emergency_name,
-
-    //             'emergency_relation' => $request->emergency_relation,
-
-    //             'emergency_mobile'   => $request->emergency_mobile,
-
-    //             'emergency_email'    => $request->emergency_email,
-
-    //             'emergency_address'  => $request->emergency_address,
-
-    //             'updated_at'         => now(),
-
-    //         ]);
-
-
-    //     return back()->with(
-    //         'success',
-    //         'Emergency details updated successfully.'
-    //     );
-    // }
-
-    // public function updateDocuments(Request $request)
-    // {
-    //     $request->validate([
-    //         'reg_sno' => 'required',
-
-    //         'ontario_res_proof_docs'   => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',
-    //         'permanent_res_proof_docs' => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',
-    //         'other_docs'              => 'nullable|mimes:pdf,jpg,jpeg,png|max:5120',
-    //     ]);
-
-    //     $student = DB::table('seminarpre')
-    //         ->where('sno', $request->reg_sno)
-    //         ->first();
-
-    //     if (!$student) {
-    //         return back()->with('error', 'Student not found.');
-    //     }
-
-    //     $data = [];
-
-
-
-    //     if ($request->hasFile('ontario_res_proof_docs')) {
-
-    //         $file = $request->file('ontario_res_proof_docs');
-
-    //         $filename = time() . '_ontario_' . $file->getClientOriginalName();
-
-    //         $file->move(public_path('uploads/documents'), $filename);
-
-    //         $data['ontario_res_docs'] = 'uploads/documents/' . $filename;
-    //     }
-
-
-
-    //     if ($request->hasFile('permanent_res_proof_docs')) {
-
-    //         $file = $request->file('permanent_res_proof_docs');
-
-    //         $filename = time() . '_permanent_' . $file->getClientOriginalName();
-
-    //         $file->move(public_path('uploads/documents'), $filename);
-
-    //         $data['permanent_res_docs'] = 'uploads/documents/' . $filename;
-    //     }
-
-
-
-    //     if ($request->hasFile('other_docs')) {
-
-    //         $file = $request->file('other_docs');
-
-    //         $filename = time() . '_other_' . $file->getClientOriginalName();
-
-    //         $file->move(public_path('uploads/documents'), $filename);
-
-    //         $data['other_docs'] = 'uploads/documents/' . $filename;
-    //     }
-
-    //     if (!empty($data)) {
-
-    //         $data['updated_at'] = now();
-
-    //         DB::table('seminarpre')
-    //             ->where('sno', $request->reg_sno)
-    //             ->update($data);
-    //     }
-
-    //     return back()->with('success', 'Mandatory Documents Updated Successfully.');
-    // }
-
-    // public function updateStatus(Request $request)
-    // {
-    //     $request->validate([
-    //         'reg_sno' => 'required',
-    //     ]);
-
-    //     DB::table('students')
-    //         ->where('sno', $request->reg_sno)
-    //         ->update([
-
-    //             'status'          => $request->status,
-    //             'followup_date'   => $request->followup_date,
-    //             'remarks_type'    => $request->remarks,
-    //             'remarks'         => $request->remarks,
-
-    //             'updated_at'      => now(),
-
-    //         ]);
-
-    //     return back()->with('success', 'Status Updated Successfully.');
-    // }
 
     public function updateDependant(Request $request)
     {
@@ -408,85 +236,97 @@ class WalkinController extends Controller
     }
 
 
-    //   public function updateStatus(Request $request)
-    //     {
-    //           dd($request->all());
-    //         $request->validate([
-    //             'reg_sno' => 'required',
-    //             'status'  => 'required',
-    //         ]);
 
-    //         // DB::table('opr_sts_logs')->insert([
-    //         //     'main_id'          => $request->reg_sno,
-    //         //     'stage'            => $request->status,
-    //         //     'stage_date'       => $request->followup_date,
-    //         //     'created_name'     => session('name'),
-    //         //     'created_id'       => session('login'),
-    //         //     'created_datetime' => now()->format('Y-m-d H:i:s'),
-    //         //     'created_date'     => now()->format('Y-m-d'),
-    //         //     'stage_remarks'    => $request->remarks,
-    //         //     'oprStsSend'       => 1,
-    //         // ]);
-
-    //         DB::table('seminarpre')
-    //             ->where('sno', $request->reg_sno)
-    //             ->update([
-    //                 'status'         => $request->status,
-    //                 'follow_date'    => $request->followup_date,
-    //                 'remark_type'    => $request->remarks_type,
-    //                 'student_remark' => $request->remarks,
-    //             ]);
-
-    //         return back()->with('success', 'Status Updated Successfully.');
-    //     }
-
-  public function updateStatus(Request $request)
-{
-    $request->validate([
-        'reg_sno' => 'required',
-        'status'  => 'required',
-    ]);
-
-    $user = DB::table('crm_login')
-        ->where('id', session('login'))
-        ->first();
-
-    DB::table('opr_sts_logs')->insert([
-        'main_id'          => $request->reg_sno,
-        'stage'            => $request->status,
-        'stage_date'       => $request->followup_date,
-        'created_name'     => $user->name,     
-        'created_id'       => $user->id,
-        'created_datetime' => now(),
-        'created_date'     => now()->toDateString(),
-        'stage_remarks'    => $request->remarks,
-        'oprStsSend'       => 1,
-    ]);
-
-    DB::table('seminarpre')
-        ->where('sno', $request->reg_sno)
-        ->update([
-            'status'         => $request->status,
-            'follow_date'    => $request->followup_date,
-            'remark_type'    => $request->remarks_type,
-            'student_remark' => $request->remarks,
+    public function updateStatus(Request $request)
+    {
+        $request->validate([
+            'reg_sno'        => 'required',
+            'status'         => 'required',
+            'followup_date'  => 'nullable',
+            'remarks_type'   => 'nullable',
+            'remarks'        => 'nullable',
         ]);
 
-    return back()->with('success', 'Status Updated Successfully.');
-}
+        $user = DB::table('crm_login')
+            ->where('id', session('login'))
+            ->first();
+
+
+        DB::table('opr_sts_logs')->insert([
+            'main_id'          => $request->reg_sno,
+            'stage'            => $request->status,
+            'stage_date'       => $request->followup_date,
+            'created_name'     => $user ? $user->name : '',
+            'created_id'       => $user ? $user->id : '',
+            'created_datetime' => now(),
+            'created_date'     => now()->toDateString(),
+            'stage_remarks'    => $request->remarks,
+            'oprStsSend'       => 1,
+        ]);
+
+
+        DB::table('seminarpre')
+            ->where('sno', $request->reg_sno)
+            ->update([
+                'status'            => $request->status,
+                'follow_date'       => $request->followup_date,
+                'remark_type'       => $request->remarks_type,
+                'student_remark'    => $request->remarks,
+                'opr_stage'         => $request->status,
+                'opr_stage_date'    => $request->followup_date,
+                'opr_stage_remarks' => $request->remarks,
+                'stage_update_id'   => $user ? $user->id : '',
+                'stage_update_name' => $user ? $user->name : '',
+                'update_date'       => now()->toDateString(),
+                'update_time'       => now()->format('H:i:s'),
+            ]);
+
+        return redirect()->back()->with('success', 'Status Updated Successfully.');
+    }
+
+
+
+
+    public function getTemplate(Request $request)
+    {
+        $request->validate([
+            'template_id' => 'required'
+        ]);
+
+        $template = DB::table('email_temp')
+            ->where('id', $request->template_id)
+            ->first();
+
+        if (!$template) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Template not found.',
+                'template' => ''
+            ]);
+        }
+
+        $body = html_entity_decode($template->templates, ENT_QUOTES, 'UTF-8');
+        $body = html_entity_decode($body, ENT_QUOTES, 'UTF-8');
+
+        return response()->json([
+            'status' => true,
+            'subject' => $template->temp_name,
+            'template' => $body
+        ]);
+    }
+
 
 
     public function sendMessage(Request $request)
     {
         $request->validate([
-            'reg_sno'      => 'required',
-            'mobile'       => 'required',
-            'email'        => 'nullable|email',
-            'message_type' => 'required',
-            'subject'      => 'nullable|string|max:255',
-            'message'      => 'required',
-            'template'     => 'nullable|string',
-            'attachment'   => 'nullable|file|max:5120',
+            'reg_sno'    => 'required',
+            'mobile'     => 'required',
+            'email'      => 'required|email',
+            'subject'    => 'required',
+            'message'    => 'required',
+            'template'   => 'nullable',
+            'attachment' => 'nullable|file|max:5120',
         ]);
 
         $attachment = '';
@@ -501,22 +341,71 @@ class WalkinController extends Controller
             );
         }
 
-        DB::table('semail_logs')->insert([
+        $mail = new PHPMailer(true);
 
-            'semi_id'      => $request->reg_sno,
-            'mobile'       => $request->mobile,
-            'email'        => $request->email,
-            'message_type' => $request->message_type,
-            'subject'      => $request->subject,
-            'message'      => $request->message,
-            'template'     => $request->template,
-            'attachment'   => $attachment,
-            'created_by'   => session('login'),
-            'created_date' => now()->format('Y-m-d'),
-            'created_time' => now()->format('H:i:s'),
-        ]);
+        try {
 
-        return back()->with('success', 'Message saved successfully.');
+            $mail->isSMTP();
+            $mail->Host       = env('MAIL_HOST');
+            $mail->SMTPAuth   = true;
+            $mail->Username   = env('MAIL_USERNAME');
+            $mail->Password   = env('MAIL_PASSWORD');
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port       = env('MAIL_PORT');
+
+            $mail->CharSet = 'UTF-8';
+            $mail->Encoding = 'base64';
+
+            $mail->setFrom(
+                env('MAIL_FROM_ADDRESS'),
+                env('MAIL_FROM_NAME')
+            );
+
+            $mail->addAddress($request->email);
+            $mail->addCC('ajaypal@opulencedigitech.com');
+            $mail->addBCC('anita@opulencedigitech.com');
+            $mail->addBCC('anita@imperialdigitech.com');
+
+            $mail->Subject = $request->subject;
+
+            $mail->isHTML(true);
+
+            $mail->Body = $request->message;
+
+            if ($attachment != '') {
+
+                $mail->addAttachment(
+                    public_path('uploads/messages/' . $attachment)
+                );
+            }
+
+            $mail->send();
+
+            // DB::table('semail_logs')->insert([
+
+            //     'semi_id'      => $request->reg_sno,
+            //     'mobile'       => $request->mobile,
+            //     'email'        => $request->email,
+            //     'message_type' => $request->template,
+            //     'subject'      => $request->subject,
+            //     'message'      => $request->message,
+            //     'template'     => $request->template,
+            //     'attachment'   => $attachment,
+            //     'created_by'   => session('login'),
+            //     'created_date' => now()->format('Y-m-d'),
+            //     'created_time' => now()->format('H:i:s'),
+
+            // ]);
+            DB::table('semail_logs')->insert([
+                'email'      => $request->email,
+                'created_by' => session('login'),
+            ]);
+
+            return back()->with('success', 'Email sent successfully.');
+        } catch (Exception $e) {
+
+            return back()->with('error', $mail->ErrorInfo);
+        }
     }
 
 
@@ -693,5 +582,90 @@ class WalkinController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Notes updated successfully.');
+    }
+
+    public function userDetails()
+    {
+        $users = DB::table('crm_login')->get();
+
+        return view('branch_manager.user_details', compact('users'));
+    }
+
+    public function createUser()
+    {
+        return view('branch_manager.add_new_user');
+    }
+
+
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'fname'          => 'required|string|max:100',
+            'lname'          => 'required|string|max:100',
+            'new_user_name'  => 'required|unique:crm_login,username',
+            'user_password'  => 'required|min:4',
+            'role'           => 'required',
+        ]);
+
+        DB::table('crm_login')->insert([
+
+            'name'          => $request->fname . ' ' . $request->lname,
+
+            'username'      => $request->new_user_name,
+
+            'password'      => bcrypt($request->user_password),
+
+            'org_password'  => $request->user_password,
+
+            'role'          => $request->role,
+
+            'branch'        => 'chandigarh',
+
+            'offical_email' => '',
+
+            'superadmin'    => '0',
+
+            'CanadaTeam'    => '0',
+
+            'status_age_report' => '0',
+
+            'gb_per'        => '0',
+
+            'Alberta'       => '0',
+
+            'British Columbia' => '0',
+
+            'Manitoba'      => '0',
+
+            'Ontario'       => '0',
+
+            'act_status'    => 1
+
+        ]);
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'User added successfully.');
+    }
+
+    public function updateUserStatus(Request $request)
+    {
+        DB::table('crm_login')
+            ->where('id', $request->id)
+            ->update([
+                'act_status' => $request->status
+            ]);
+
+        return response()->json([
+            'status' => 'success'
+        ]);
+    }
+    public function checkUsername(Request $request)
+    {
+        $exists = DB::table('crm_login')
+            ->where('username', $request->username)
+            ->exists();
+
+        return response($exists ? 'exists' : 'available');
     }
 }

@@ -6,21 +6,21 @@ use Illuminate\Database\Eloquent\Model;
 
 class SeminarPre extends Model
 {
-  
     protected $table = 'seminarpre';
 
-    
     protected $primaryKey = 'sno';
 
-    
     public $timestamps = false;
 
-    
     protected $keyType = 'int';
 
-    
     public $incrementing = true;
 
-   
     protected $guarded = [];
+
+   
+    public function logs()
+    {
+        return $this->hasMany(CounselorStatus::class, 'seminar_id', 'sno');
+    }
 }

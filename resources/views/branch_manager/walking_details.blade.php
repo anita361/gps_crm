@@ -878,7 +878,7 @@
                                         </label>
 
                                         <input type="date" name="followup_date" class="form-control"
-                                            value="{{ old('followup_date', $student->followup_date ?? '') }}">
+                                            value="{{ old('followup_date', $student->follow_date ?? '') }}">
 
                                     </div>
 
@@ -894,27 +894,27 @@
                                             <option value="">Select Remark Type</option>
 
                                             <option value="Call"
-                                                {{ old('remarks_type', $student->remarks_type ?? '') == 'Call' ? 'selected' : '' }}>
+                                                {{ old('remarks_type', $student->remark_type ?? '') == 'Call' ? 'selected' : '' }}>
                                                 Call
                                             </option>
 
                                             <option value="WhatsApp"
-                                                {{ old('remarks_type', $student->remarks_type ?? '') == 'WhatsApp' ? 'selected' : '' }}>
+                                                {{ old('remarks_type', $student->remark_type ?? '') == 'WhatsApp' ? 'selected' : '' }}>
                                                 WhatsApp
                                             </option>
 
                                             <option value="Email"
-                                                {{ old('remarks_type', $student->remarks_type ?? '') == 'Email' ? 'selected' : '' }}>
+                                                {{ old('remarks_type', $student->remark_type ?? '') == 'Email' ? 'selected' : '' }}>
                                                 Email
                                             </option>
 
                                             <option value="Visit"
-                                                {{ old('remarks_type', $student->remarks_type ?? '') == 'Visit' ? 'selected' : '' }}>
+                                                {{ old('remarks_type', $student->remark_type ?? '') == 'Visit' ? 'selected' : '' }}>
                                                 Visit
                                             </option>
 
                                             <option value="Meeting"
-                                                {{ old('remarks_type', $student->remarks_type ?? '') == 'Meeting' ? 'selected' : '' }}>
+                                                {{ old('remarks_type', $student->remark_type ?? '') == 'Meeting' ? 'selected' : '' }}>
                                                 Meeting
                                             </option>
 
@@ -929,7 +929,7 @@
                                             Remarks
                                         </label>
 
-                                        <textarea name="remarks" rows="1" class="form-control">{{ old('remarks', $student->remarks ?? '') }}</textarea>
+                                        <textarea name="remarks" rows="1" class="form-control">{{ old('remarks', $student->student_remark ?? '') }}</textarea>
 
                                     </div>
 
@@ -1002,30 +1002,13 @@
                                             value="{{ old('subject') }}">
                                     </div>
 
-                                    {{-- Message Type --}}
-                                    <div class="col-md-6 mb-3">
-                                        <label>Message Type</label>
 
-                                        <select name="template" class="form-select">
-
-                                            <option value="">--Select Template--</option>
-
-                                            @foreach ($templates as $template)
-                                                <option value="{{ $template->id }}">
-                                                    {{ $template->temp_name }}
-                                                </option>
-                                            @endforeach
-
-                                        </select>
-                                    </div>
 
                                     {{-- Template --}}
-                                    <div class="col-md-12 mb-3">
-
+                                    <div class="form-group col-md-12 mb-3">
                                         <label>Select Template</label>
 
-                                        <select name="template" id="gettemplates" class="form-select">
-
+                                        <select id="gettemplates" name="template" class="form-control">
                                             <option value="">--Select--</option>
 
                                             @foreach ($templates as $template)
@@ -1033,23 +1016,20 @@
                                                     {{ $template->temp_name }}
                                                 </option>
                                             @endforeach
-
                                         </select>
-
                                     </div>
+
 
                                     {{-- Message --}}
                                     <div class="col-md-12 mb-3">
-
                                         <label>
                                             Enter Text Here
                                             <span class="text-danger">
-                                                *(To add hyperlink select text and press Ctrl+K)
+                                                *(To add hyperlink select text & press Ctrl + K)
                                             </span>
                                         </label>
 
-                                        <textarea name="message" id="summernote2" class="form-control" rows="10" required>{{ old('message') }}</textarea>
-
+                                        <textarea name="message" id="summernote2" class="form-control" required></textarea>
                                     </div>
 
                                     {{-- Attachment --}}
@@ -1256,6 +1236,11 @@
         </div> {{-- End col-md-9 --}}
 
     </div> {{-- End row --}}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
@@ -1285,160 +1270,265 @@
         });
     </script>
 
-    <script>
-        $(document).on('click', '.open-notes-modal', function() {
+   <script>
+    $(document).on('click', '.open-notes-modal', function() {
 
-            let fileNo = $(this).data('file-no');
-            let name = $(this).data('name');
+        let fileNo = $(this).data('file-no');
+        let name = $(this).data('name');
 
-            $('#note_id').val(fileNo);
-            $('#NotesModalName').text(name);
-            $('#newNote').val('');
+        $('#note_id').val(fileNo);
+        $('#NotesModalName').text(name);
+        $('#newNote').val('');
 
-            loadNotes(fileNo);
+        loadNotes(fileNo);
 
-            $('#notesModal').modal('show');
+        $('#notesModal').modal('show');
 
-        });
+    });
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | LOAD NOTES
-        |--------------------------------------------------------------------------
-        */
+    /*
+    |--------------------------------------------------------------------------
+    | LOAD NOTES
+    |--------------------------------------------------------------------------
+    */
 
-        function loadNotes(noteId) {
+    function loadNotes(noteId) {
 
-            $('#NotesTableBody').html(`
-        <tr>
-            <td colspan="4" class="text-center">
-                Loading...
-            </td>
-        </tr>
-    `);
+        $('#NotesTableBody').html(`
+            <tr>
+                <td colspan="4" class="text-center">
+                    Loading...
+                </td>
+            </tr>
+        `);
 
-            $.ajax({
+        $.ajax({
 
-                url: "{{ route('notes.get') }}",
-                type: "POST",
+            url: "{{ route('notes.get') }}",
+            type: "POST",
 
-                data: {
-                    note_id: noteId,
-                    _token: "{{ csrf_token() }}"
-                },
+            data: {
+                note_id: noteId,
+                _token: "{{ csrf_token() }}"
+            },
 
-                success: function(response) {
+            success: function(response) {
 
-                    let notesHtml = '';
+                let notesHtml = '';
 
-                    if (response.status && response.notes.length > 0) {
+                if (response.status && response.notes.length > 0) {
 
-                        response.notes.forEach(function(note, index) {
+                    response.notes.forEach(function(note, index) {
 
-                            notesHtml += `
+                        notesHtml += `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td><p>${note.remarks ?? ''}</p></td>
+                                <td>${note.updated_by ?? ''}</td>
+                                <td>${note.datetime ?? ''}</td>
+                            </tr>
+                        `;
+
+                    });
+
+                } else {
+
+                    notesHtml = `
                         <tr>
-                            <td>${index + 1}</td>
-                            <td><p>${note.remarks ?? ''}</p></td>
-                            <td>${note.updated_by ?? ''}</td>
-                            <td>${note.datetime ?? ''}</td>
+                            <td colspan="4" class="text-center">
+                                No Notes Found
+                            </td>
                         </tr>
                     `;
 
-                        });
+                }
 
-                    } else {
+                $('#NotesTableBody').html(notesHtml);
 
-                        notesHtml = `
+            },
+
+            error: function() {
+
+                $('#NotesTableBody').html(`
                     <tr>
-                        <td colspan="4" class="text-center">
-                            No Notes Found
+                        <td colspan="4" class="text-danger text-center">
+                            Failed to load notes
                         </td>
                     </tr>
-                `;
+                `);
 
-                    }
-
-                    $('#NotesTableBody').html(notesHtml);
-
-                },
-
-                error: function() {
-
-                    $('#NotesTableBody').html(`
-                <tr>
-                    <td colspan="4" class="text-danger text-center">
-                        Failed to load notes
-                    </td>
-                </tr>
-            `);
-
-                }
-
-            });
-
-        }
-        /*
-        |--------------------------------------------------------------------------
-        | SAVE NOTE
-        |--------------------------------------------------------------------------
-        */
-
-        $('#addNotesForm').submit(function(e) {
-
-            e.preventDefault();
-
-            $.ajax({
-
-                url: "{{ route('notes.add') }}",
-                type: "POST",
-                data: $(this).serialize(),
-
-                success: function(res) {
-
-                    alert(res.message);
-
-                    // Clear textbox
-                    $('#newNote').val('');
-
-                    // Reload notes list after adding note
-                    loadNotes($('#note_id').val());
-
-                },
-
-                error: function(xhr) {
-
-                    alert('Unable to save note.');
-
-                    console.log(xhr.responseText);
-
-                }
-
-            });
-
-        });
-
-
-        $(document).ready(function() {
-
-            function toggleSourceRemarks() {
-                let source = $('#ssource').val();
-
-                if (source == 'Referral' || source == 'Agent') {
-                    $('#sou_rem_yess').show();
-                } else {
-                    $('#sou_rem_yess').hide();
-                    $('#source_remarks').val('');
-                }
             }
 
-            toggleSourceRemarks();
+        });
 
-            $('#ssource').change(function() {
-                toggleSourceRemarks();
-            });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | SAVE NOTE
+    |--------------------------------------------------------------------------
+    */
+
+    $('#addNotesForm').submit(function(e) {
+
+        e.preventDefault();
+
+        $.ajax({
+
+            url: "{{ route('notes.add') }}",
+            type: "POST",
+            data: $(this).serialize(),
+
+            success: function(res) {
+
+                alert(res.message);
+
+                // Clear textbox
+                $('#newNote').val('');
+
+                // Reload notes list after adding note
+                loadNotes($('#note_id').val());
+
+            },
+
+            error: function(xhr) {
+
+                alert('Unable to save note.');
+
+                console.log(xhr.responseText);
+
+            }
 
         });
-    </script>
+
+    });
+
+
+    $(document).ready(function() {
+
+        
+        let noteId = $('#note_id').val();
+
+        if (noteId && noteId !== '') {
+            loadNotes(noteId);
+        }
+
+        function toggleSourceRemarks() {
+
+            let source = $('#ssource').val();
+
+            if (source == 'Referral' || source == 'Agent') {
+                $('#sou_rem_yess').show();
+            } else {
+                $('#sou_rem_yess').hide();
+                $('#source_remarks').val('');
+            }
+
+        }
+
+        toggleSourceRemarks();
+
+        $('#ssource').change(function() {
+            toggleSourceRemarks();
+        });
+
+    });
+</script>
+
+   <script>
+$(document).ready(function () {
+
+    // Initialize Summernote
+    $('#summernote2').summernote({
+        height: 300,
+        placeholder: 'Enter email message...',
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'italic', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['fontsize', ['fontsize']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture']],
+            ['view', ['fullscreen', 'codeview']]
+        ]
+    });
+
+    // Load Template
+    $('#gettemplates').on('change', function () {
+
+        var template_id = $(this).val();
+
+        if (template_id == '') {
+
+            $('input[name="subject"]').val('');
+            $('#summernote2').summernote('code', '');
+
+            return;
+        }
+
+        $.ajax({
+
+            url: "{{ route('get.template') }}",
+
+            type: "POST",
+
+            dataType: "json",
+
+            data: {
+                _token: "{{ csrf_token() }}",
+                template_id: template_id
+            },
+
+            beforeSend: function () {
+
+                $('#summernote2').summernote('code',
+                    '<p style="text-align:center">Loading...</p>');
+
+            },
+
+            success: function (response) {
+
+                console.log(response);
+
+                if (response.status == true) {
+
+                    // Subject
+                    $('input[name="subject"]').val(response.subject);
+
+                    // Template Body
+                    $('#summernote2').summernote('code', response.template);
+
+                } else {
+
+                    alert(response.message);
+
+                    $('input[name="subject"]').val('');
+                    $('#summernote2').summernote('code', '');
+
+                }
+
+            },
+
+            error: function (xhr) {
+
+                console.log(xhr.responseText);
+
+                alert('Unable to load template.');
+
+                $('#summernote2').summernote('code', '');
+
+            }
+
+        });
+
+    });
+
+});
+</script>
+   
+
 
 @endsection

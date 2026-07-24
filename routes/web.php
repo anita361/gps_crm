@@ -11,6 +11,8 @@ use App\Http\Controllers\WalkinController;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\FinanceAppointmentController;
+use App\Http\Controllers\LeadFollowupController;
+
 
 
 Route::get('/', [LoginController::class, 'index']);
@@ -112,8 +114,8 @@ Route::middleware('login')->group(function () {
 
 
 
-   Route::get('/lead/create', [LeadController::class, 'create'])
-    ->name('lead.create');
+    Route::get('/lead/create', [LeadController::class, 'create'])
+        ->name('lead.create');
 
     Route::post('/lead/store', [LeadController::class, 'store'])
         ->name('lead.store');
@@ -173,6 +175,10 @@ Route::middleware('login')->group(function () {
     Route::post('/message/send', [WalkinController::class, 'sendMessage'])
         ->name('message.send');
 
+    Route::post('/get-template', [WalkinController::class, 'getTemplate'])
+        ->name('get.template');
+
+
 
 
     Route::post('/get-notes', [NotesController::class, 'getNotes'])
@@ -204,4 +210,43 @@ Route::middleware('login')->group(function () {
 
     Route::post('/branch-manager/logs', [BranchManagerController::class, 'getLogs'])
         ->name('branch.manager.logs');
+
+    Route::get('/user-details', [WalkinController::class, 'userDetails'])
+        ->name('users.index');
+
+    Route::get('/add-new-user', [WalkinController::class, 'createUser'])
+        ->name('users.create');
+
+    Route::post('/add-new-user', [WalkinController::class, 'storeUser'])
+        ->name('users.store');
+
+    Route::post('/update-user-status', [WalkinController::class, 'updateUserStatus'])
+        ->name('users.status');
+
+    Route::post('/check-username', [WalkinController::class, 'checkUsername'])
+        ->name('users.checkUsername');
+          /*
+    |--------------------------------------------------------------------------
+    | Lead Followup
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/lead-followup', [LeadFollowupController::class, 'index'])
+        ->name('lead.followup');
+
+    Route::post('/lead-followup/filter', [LeadFollowupController::class, 'filter'])
+        ->name('lead.followup.filter');
+
+    Route::get('/lead-followup/today', [LeadFollowupController::class, 'today'])
+        ->name('lead.followup.today');
+
+    Route::get('/lead-followup/notes/{id}', [LeadFollowupController::class, 'notes'])
+        ->name('lead.followup.notes');
+
+    Route::get('/lead-followup/logs/{id}', [LeadFollowupController::class, 'logs'])
+        ->name('lead.followup.logs');
+
+
+
+   
 });
