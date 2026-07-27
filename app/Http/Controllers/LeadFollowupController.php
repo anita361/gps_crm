@@ -6,6 +6,7 @@ use App\Models\CounselorStatus;
 use App\Models\SeminarPre;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Models\NotesLog;
 
 class LeadFollowupController extends Controller
 {
@@ -71,33 +72,46 @@ class LeadFollowupController extends Controller
             'todayFollowups'
         ));
     }
-
-    /**
-     * Notes
-     */
     public function notes($id)
     {
         $lead = SeminarPre::findOrFail($id);
 
+        $notes = NotesLog::where('main_id', $id)
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        return view('partials.notes_list', compact('lead', 'notes'));
+    }
+    public function saveNote(Request $request)
+    {
+        $request->validate([
+            'main_id' => 'required',
+            'notes_remarks' => 'required'
+        ]);
+
+        NotesLog::create([
+            'main_id'          => $request->main_id,
+            'notes_remarks'    => $request->notes_remarks,
+            'created_id'       => session('login') ?? 0,
+            'created_name'     => session('name') ?? 'Admin',
+            'created_date'     => date('Y-m-d'),
+            'created_datetime' => now()->format('Y-m-d H:i:s'),
+        ]);
+
         return response()->json([
-            'notes' => $lead->notes ?? ''
+            'status' => true,
+            'message' => 'Note Added Successfully'
         ]);
     }
 
-    /**
-     * Call Logs
-     */
-   public function logs($id)
-{
-    $lead = SeminarPre::findOrFail($id);
+    public function logs($id)
+    {
+        $lead = SeminarPre::findOrFail($id);
 
-    $logs = CounselorStatus::where('seminar_id', $id)
-        ->orderBy('id','desc')
-        ->get();
+        $logs = CounselorStatus::where('seminar_id', $id)
+            ->orderBy('id', 'DESC')
+            ->get();
 
-    return view('partials.calllogs', compact(
-        'lead',
-        'logs'
-    ));
-}
+        return view('partials.calllogs', compact('lead', 'logs'));
+    }
 }

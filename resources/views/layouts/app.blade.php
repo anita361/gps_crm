@@ -149,6 +149,18 @@
                         </a>
 
                     </li>
+                    <li class="nav-item">
+
+                        <a class="nav-link {{ request()->routeIs('finance.dashboard.report') ? 'active' : '' }}"
+                            href="{{ route('finance.dashboard.report') }}">
+
+                            <i class="fa fa-chart-line"></i>
+
+                            Finance Dashboard Report
+
+                        </a>
+
+                    </li>
 
                     <li class="nav-item">
 
@@ -360,47 +372,48 @@
             });
 
         });
-        $(document).on('click', '.show-notes', function(e) {
+        // $(document).on('click', '.show-notes', function(e) {
 
-            e.preventDefault();
+        //     e.preventDefault();
 
-            $('#notesBody').html('Loading...');
+        //     $('#notesBody').html('Loading...');
 
-            var modal = new bootstrap.Modal(document.getElementById('notesModal'));
+        //     var modal = new bootstrap.Modal(document.getElementById('notesModal'));
 
-            modal.show();
+        //     modal.show();
 
-            $.get($(this).attr('href'), function(response) {
+        //     $.get($(this).attr('href'), function(response) {
 
-                $('#notesBody').html(response);
+        //         $('#notesBody').html(response);
 
-            });
+        //     });
 
-        });
+        // });
 
 
-        $(document).on('click', '.show-logs', function(e) {
+        // $(document).on('click', '.show-logs', function(e) {
 
-            e.preventDefault();
+        //     e.preventDefault();
 
-            $('#callLogsBody').html('Loading...');
+        //     $('#callLogsBody').html('Loading...');
 
-            var modal = new bootstrap.Modal(document.getElementById('callLogsModal'));
+        //     var modal = new bootstrap.Modal(document.getElementById('callLogsModal'));
 
-            modal.show();
+        //     modal.show();
 
-            $.get($(this).attr('href'), function(response) {
+        //     $.get($(this).attr('href'), function(response) {
 
-                $('#callLogsBody').html(response);
+        //         $('#callLogsBody').html(response);
 
-            });
+        //     });
 
-        });
+        // });
     </script>
-  
+
 
 
     @stack('scripts')
+    @yield('scripts')
 
 
 </body>

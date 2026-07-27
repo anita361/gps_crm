@@ -12,6 +12,8 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\OperationController;
 use App\Http\Controllers\FinanceAppointmentController;
 use App\Http\Controllers\LeadFollowupController;
+use App\Http\Controllers\FinanceDashboardController;
+use App\Http\Controllers\FinanceExportController;
 
 
 
@@ -94,7 +96,7 @@ Route::middleware('login')->group(function () {
 
 
 
-    // Route::view('/finance-apnt-done', 'finance.finance_apnt_done')->name('finance.dashboard');
+   
     Route::get('/finance-apnt-done', [FinanceAppointmentController::class, 'index'])->name('finance.dashboard');
 
     Route::post('/finance/foa-status', [FinanceAppointmentController::class, 'updateFoaStatus'])->name('finance.foa.status');
@@ -106,6 +108,19 @@ Route::middleware('login')->group(function () {
     Route::post('/finance/osap-logs', [FinanceAppointmentController::class, 'osapLogs'])->name('finance.osap.logs');
 
     Route::get('/finance/export', [FinanceAppointmentController::class, 'export'])->name('finance.export');
+
+    /*
+|--------------------------------------------------------------------------
+| Finance Dashboard Report
+|--------------------------------------------------------------------------
+*/
+
+
+Route::get('/finance-dashboard-report', [FinanceDashboardController::class, 'index'])
+    ->name('finance.dashboard.report');
+
+Route::get('/finance-dashboard-report/export', [FinanceExportController::class, 'export'])
+    ->name('finance.dashboard.report.export');
 
 
 
@@ -150,12 +165,7 @@ Route::middleware('login')->group(function () {
         [WalkinController::class, 'updateStatus']
     )
         ->name('status.update');
-    // Route::post('/status/update', [StatusController::class, 'update'])
-    // ->name('status.update');
-
-    // Route::post('/message/send', [WalkinController::class, 'sendMessage'])
-    //     ->name('message.send');
-
+   
     Route::post('/notes/update', [WalkinController::class, 'updateNotes'])
         ->name('notes.update');
 
@@ -225,7 +235,7 @@ Route::middleware('login')->group(function () {
 
     Route::post('/check-username', [WalkinController::class, 'checkUsername'])
         ->name('users.checkUsername');
-          /*
+    /*
     |--------------------------------------------------------------------------
     | Lead Followup
     |--------------------------------------------------------------------------
@@ -245,8 +255,10 @@ Route::middleware('login')->group(function () {
 
     Route::get('/lead-followup/logs/{id}', [LeadFollowupController::class, 'logs'])
         ->name('lead.followup.logs');
-
-
-
-   
+    Route::post(
+        '/lead-followup/notes/save',
+        [LeadFollowupController::class, 'saveNote']
+    )
+        ->name('lead.followup.notes.save');
+        
 });
