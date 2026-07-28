@@ -186,6 +186,40 @@
                         </a>
 
                     </li>
+                    <li class="nav-item dropdown">
+
+                        <a class="nav-link dropdown-toggle 
+        {{ request()->routeIs('lead.list*') ? 'active' : '' }}"
+                            href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+
+                            <i class="fa fa-list"></i>
+                            Lead List
+
+                        </a>
+
+                        <ul class="dropdown-menu">
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('csv.form') }}">
+                                    <i class="fa fa-upload"></i> Upload CSV
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('lead.list') }}">
+                                    <i class="fa fa-users"></i> Lead List
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('seminar.list') }}">
+                                    <i class="fa fa-user-graduate"></i> Seminar Lead List
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </li>
 
                     <li class="nav-item dropdown">
 

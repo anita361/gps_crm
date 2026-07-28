@@ -14,6 +14,7 @@ use App\Http\Controllers\FinanceAppointmentController;
 use App\Http\Controllers\LeadFollowupController;
 use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\FinanceExportController;
+use App\Http\Controllers\CsvUploadController;
 
 
 
@@ -96,7 +97,7 @@ Route::middleware('login')->group(function () {
 
 
 
-   
+
     Route::get('/finance-apnt-done', [FinanceAppointmentController::class, 'index'])->name('finance.dashboard');
 
     Route::post('/finance/foa-status', [FinanceAppointmentController::class, 'updateFoaStatus'])->name('finance.foa.status');
@@ -116,11 +117,11 @@ Route::middleware('login')->group(function () {
 */
 
 
-Route::get('/finance-dashboard-report', [FinanceDashboardController::class, 'index'])
-    ->name('finance.dashboard.report');
+    Route::get('/finance-dashboard-report', [FinanceDashboardController::class, 'index'])
+        ->name('finance.dashboard.report');
 
-Route::get('/finance-dashboard-report/export', [FinanceExportController::class, 'export'])
-    ->name('finance.dashboard.report.export');
+    Route::get('/finance-dashboard-report/export', [FinanceExportController::class, 'export'])
+        ->name('finance.dashboard.report.export');
 
 
 
@@ -165,7 +166,7 @@ Route::get('/finance-dashboard-report/export', [FinanceExportController::class, 
         [WalkinController::class, 'updateStatus']
     )
         ->name('status.update');
-   
+
     Route::post('/notes/update', [WalkinController::class, 'updateNotes'])
         ->name('notes.update');
 
@@ -260,5 +261,12 @@ Route::get('/finance-dashboard-report/export', [FinanceExportController::class, 
         [LeadFollowupController::class, 'saveNote']
     )
         ->name('lead.followup.notes.save');
-        
+
+    Route::get('/upload-csv', [CsvUploadController::class, 'showForm'])->name('csv.form');
+    Route::post('/upload-csv', [CsvUploadController::class, 'upload'])->name('csv.upload');
+
+    Route::get('/lead-list', [CsvUploadController::class, 'leadList'])->name('lead.list');
+    Route::get('/seminar-lead-list', [CsvUploadController::class, 'seminarList'])->name('seminar.list');
+    Route::post('/lead-assign', [CsvUploadController::class, 'assignLead'])
+        ->name('lead.assign');
 });
