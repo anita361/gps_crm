@@ -137,8 +137,70 @@
                         </a>
 
                     </li>
+                    <li class="nav-item dropdown">
 
-                    <li class="nav-item">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+
+                            <i class="fa fa-user-graduate"></i> Enrolled
+
+                        </a>
+
+                        <ul class="dropdown-menu">
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    Operation Status
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    Fund Release Status
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    Commission Enrollment List
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    Commission List
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    Enrolled List
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    Drop List
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    Appointment Complete
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    OSAP Done Enrolled
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+                    {{-- <li class="nav-item">
 
                         <a class="nav-link" href="#">
 
@@ -148,6 +210,43 @@
 
                         </a>
 
+                    </li> --}}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-chart-line"></i> Reports
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="{{ route('reports.branch') }}">
+                                    <i class="fa fa-building"></i> Full Branch Report
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('reports.lead') }}">
+                                    <i class="fa fa-user"></i> Lead Report
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('reports.source') }}">
+                                    <i class="fa fa-filter"></i> Source Report
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('reports.daily-sales') }}">
+                                    <i class="fa fa-chart-line"></i> Daily Sales Report
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="{{ route('reports.feedback') }}">
+                                    <i class="fa fa-comment"></i> Feedback Details
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                     <li class="nav-item">
 
@@ -156,22 +255,60 @@
 
                             <i class="fa fa-chart-line"></i>
 
-                            Finance Dashboard Report
+                            Finance Dashboard
 
                         </a>
 
                     </li>
 
-                    <li class="nav-item">
+                    {{-- <li class="nav-item">
 
                         <a class="nav-link" href="#">
 
                             <i class="fa fa-table"></i>
 
-                            Reception Dashboard
+                            Dashboard Report
 
                         </a>
 
+                    </li> --}}
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fa fa-table"></i> Dashboard Report
+                        </a>
+
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fa fa-table"></i> Dashboard Reports
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fa fa-calendar"></i> Lead Date Dashboard
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fa fa-calendar-day"></i> Daily Activity Reports
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fa fa-link"></i> Stitching Reports
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item" href="#">
+                                    <i class="fa fa-users"></i> All Lead List
+                                </a>
+                            </li>
+                        </ul>
                     </li>
 
                     <li class="nav-item">

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
+use Illuminate\Support\Facades\Schema;
 
 class WalkinController extends Controller
 {
@@ -667,5 +668,473 @@ class WalkinController extends Controller
             ->exists();
 
         return response($exists ? 'exists' : 'available');
+    }
+
+
+
+    //   public function fullBranchReport()
+    // {
+    //      return view('branch_manager.full_branch_report');
+    // }
+
+    public function fullBranchReport(Request $request)
+    {
+        $fromDate = $request->from_date;
+        $toDate   = $request->to_date;
+        $branch   = $request->branch;
+
+        /*
+    |--------------------------------------------------------------------------
+    | Branch List
+    |--------------------------------------------------------------------------
+    */
+
+        $branches = DB::table('seminarpre')
+            ->whereNotNull('branch')
+            ->where('branch', '!=', '')
+            ->distinct()
+            ->orderBy('branch')
+            ->pluck('branch');
+
+        /*
+    |--------------------------------------------------------------------------
+    | Counselors
+    |--------------------------------------------------------------------------
+    */
+
+        $counselors = DB::table('crm_login')
+            ->select('id', 'name')
+            ->whereIn('role', ['counselor', 'branch_manager'])
+            ->orderBy('name')
+            ->get()
+            ->keyBy('id');
+
+        $countQuery = DB::table('seminarpre')
+            ->select(
+                'assign_id',
+                DB::raw("SUM(status_type='1') as walkin"),
+                DB::raw("SUM(student_status='follow-up') as followup"),
+                DB::raw("SUM(student_status IN ('do not follow-up','Not Eligible','Not Interested')) as dropped"),
+                DB::raw("SUM(student_status='enrolled') as enrolled")
+            );
+
+        if (!empty($branch)) {
+            $countQuery->where('branch', $branch);
+        }
+
+        if (!empty($fromDate) && !empty($toDate)) {
+            $countQuery->whereBetween('walkin_date', [$fromDate, $toDate]);
+        }
+
+        $counts = $countQuery
+            ->groupBy('assign_id')
+            ->get()
+            ->keyBy('assign_id');
+
+        $summary = [];
+
+        $totalWalkin = 0;
+        $totalFollowup = 0;
+        $totalDrop = 0;
+        $totalEnrolled = 0;
+
+        foreach ($counselors as $id => $counselor) {
+
+            $row = $counts->get($id);
+
+            $walkin = $row->walkin ?? 0;
+            $followup = $row->followup ?? 0;
+            $drop = $row->dropped ?? 0;
+            $enrolled = $row->enrolled ?? 0;
+
+            $summary[] = [
+                'id' => $id,
+                'name' => $counselor->name,
+                'walkin' => $walkin,
+                'followup' => $followup,
+                'drop' => $drop,
+                'enrolled' => $enrolled,
+            ];
+
+            $totalWalkin += $walkin;
+            $totalFollowup += $followup;
+            $totalDrop += $drop;
+            $totalEnrolled += $enrolled;
+        }
+        /*
+    |--------------------------------------------------------------------------
+    | User Details
+    |--------------------------------------------------------------------------
+    */
+
+        $users = DB::table('seminarpre')
+            ->leftJoin('lead_appointed', 'seminarpre.smobile', '=', 'lead_appointed.callerno')
+            ->select(
+                'seminarpre.sno',
+                'seminarpre.sname',
+                'seminarpre.smobile',
+                'seminarpre.branch',
+                'seminarpre.category',
+                'seminarpre.scountry',
+                'seminarpre.ssource',
+                'seminarpre.student_status',
+                'seminarpre.file_no',
+                'lead_appointed.assign_name',
+                'lead_appointed.walkedin_date'
+            )
+            ->where('seminarpre.assign_id', '!=', '')
+            ->where('seminarpre.status_type', '1');
+
+        if (!empty($branch)) {
+            $users->where('seminarpre.branch', $branch);
+        }
+
+        if (!empty($fromDate) && !empty($toDate)) {
+            $users->whereBetween('seminarpre.walkin_date', [$fromDate, $toDate]);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Remove Duplicate Mobile Numbers
+    |--------------------------------------------------------------------------
+    */
+
+        $users = $users
+            ->orderByDesc('seminarpre.sno')
+            ->get()
+            ->unique('smobile')
+            ->values();
+
+        /*
+    |--------------------------------------------------------------------------
+    | Return View
+    |--------------------------------------------------------------------------
+    */
+
+        return view(
+            'branch_manager.full_branch_report',
+            compact(
+                'branches',
+                'summary',
+                'users',
+                'totalWalkin',
+                'totalFollowup',
+                'totalDrop',
+                'totalEnrolled'
+            )
+        );
+    }
+
+
+    public function leadReport()
+    {
+        return view('branch_manager.lead_report');
+    }
+    public function leadReportCount(Request $request)
+    {
+        $from = $request->from_date;
+        $to   = $request->to_date;
+
+        $users = DB::table('crm_login')
+            ->whereIn('role', ['branch_manager', 'counselor'])
+            ->get();
+
+        $rows = '';
+        $totals = [
+            'calling' => 0,
+            'website' => 0,
+            'facebook' => 0,
+            'total' => 0,
+            'unique' => 0,
+            'walkin' => 0,
+            'followup' => 0,
+            'drop' => 0,
+            'action' => 0
+        ];
+
+        foreach ($users as $u) {
+
+            $calling = DB::table('lead_appointed')
+                ->where('assign_id', $u->id)
+                ->whereRaw('DATE(created_date) BETWEEN ? AND ?', [$from, $to])
+                ->where('created_by', 'callcenter')
+                ->count();
+
+            $website = DB::table('lead_appointed')
+                ->where('assign_id', $u->id)
+                ->whereRaw('DATE(created_date) BETWEEN ? AND ?', [$from, $to])
+                ->where('created_by', 'website')
+                ->count();
+
+            $facebook = DB::table('lead_appointed')
+                ->where('assign_id', $u->id)
+                ->whereRaw('DATE(created_date) BETWEEN ? AND ?', [$from, $to])
+                ->whereRaw('LOWER(created_by) = ?', ['facebook'])
+                ->count();
+
+            $total = DB::table('lead_appointed')
+                ->where('assign_id', $u->id)
+                ->whereRaw('DATE(created_date) BETWEEN ? AND ?', [$from, $to])
+                ->count();
+
+            $unique = DB::table('lead_appointed')
+                ->where('assign_id', $u->id)
+                ->whereRaw('DATE(created_date) BETWEEN ? AND ?', [$from, $to])
+                ->distinct()
+                ->count('callerno');
+
+            $walkin = DB::table('lead_appointed')
+                ->where('assign_id', $u->id)
+                ->whereRaw('DATE(created_date) BETWEEN ? AND ?', [$from, $to])
+                ->where('walkin_status', 1) // check this
+                ->count();
+
+            $followup = DB::table('seminarpre')
+                ->where('assign_id', $u->id)
+                ->whereRaw('DATE(reg_date) BETWEEN ? AND ?', [$from, $to])
+                ->where('student_status', 'Call Follow-Up')
+                ->count();
+
+            $drop = DB::table('seminarpre')
+                ->where('assign_id', $u->id)
+                ->whereRaw('DATE(reg_date) BETWEEN ? AND ?', [$from, $to])
+                ->whereIn('student_status', [
+                    'Call Not Eligible',
+                    'Call Not Interested',
+                    'Call Do Not Follow-Up'
+                ])->count();
+
+            $action = DB::table('lead_appointed')
+                ->where('assign_id', $u->id)
+                ->whereRaw('DATE(created_date) BETWEEN ? AND ?', [$from, $to])
+                ->where('action_taken', 'yes')
+                ->count();
+
+            $rows .= "
+        <tr>
+            <td>{$u->username}</td>
+            <td>{$calling}</td>
+            <td>{$website}</td>
+            <td>{$facebook}</td>
+            <td>{$total}</td>
+            <td>{$unique}</td>
+            <td>{$walkin}</td>
+            <td>{$followup}</td>
+            <td>{$drop}</td>
+            <td>{$action}</td>
+        </tr>";
+
+            $totals['calling'] += $calling;
+            $totals['website'] += $website;
+            $totals['facebook'] += $facebook;
+            $totals['total'] += $total;
+            $totals['unique'] += $unique;
+            $totals['walkin'] += $walkin;
+            $totals['followup'] += $followup;
+            $totals['drop'] += $drop;
+            $totals['action'] += $action;
+        }
+
+        $totalRow = "
+    <tr class='total-row'>
+        <td><b>Total</b></td>
+        <td>{$totals['calling']}</td>
+        <td>{$totals['website']}</td>
+        <td>{$totals['facebook']}</td>
+        <td>{$totals['total']}</td>
+        <td>{$totals['unique']}</td>
+        <td>{$totals['walkin']}</td>
+        <td>{$totals['followup']}</td>
+        <td>{$totals['drop']}</td>
+        <td>{$totals['action']}</td>
+    </tr>";
+
+        return response()->json([
+            'rows' => $rows,
+            'total' => $totalRow
+        ]);
+    }
+
+    // public function sourceReport()
+    // {
+    //     return view('branch_manager.source_report');
+    // }
+
+    public function sourceReport(Request $request)
+    {
+        $provinces = DB::table('college_list')
+            ->select('province')
+            ->groupBy('province')
+            ->orderBy('province')
+            ->get();
+
+
+        $sources = [
+            "Company Lead",
+            "Agent",
+            "Referral",
+            "Other"
+        ];
+
+
+        $report = [];
+
+
+        foreach ($sources as $source) {
+
+            foreach ($provinces as $province) {
+
+                $query = DB::table('seminarpre');
+
+
+                if ($source == "Other") {
+                    $query->where(function ($q) {
+
+                        $q->whereNotIn(
+                            'ssource',
+                            [
+                                'Company Lead',
+                                'Agent',
+                                'Referral'
+                            ]
+                        )
+                            ->orWhere('ssource', '');
+                    });
+                } else {
+                    $query->where('ssource', $source);
+                }
+
+
+                $query->where('province_name', $province->province)
+                    ->whereIn(
+                        'student_status',
+                        [
+                            'enrolled',
+                            'Re-enrolled'
+                        ]
+                    )
+                    ->where('opr_stage', '!=', 'Drop');
+
+
+                if ($request->from_date) {
+                    $query->whereDate(
+                        'start_date',
+                        '>=',
+                        $request->from_date
+                    );
+                }
+
+
+                if ($request->to_date) {
+                    $query->whereDate(
+                        'start_date',
+                        '<=',
+                        $request->to_date
+                    );
+                }
+
+
+                $report[$source][$province->province] = $query->count();
+            }
+        }
+
+
+        return view(
+            'branch_manager.source_report',
+            compact(
+                'provinces',
+                'sources',
+                'report'
+            )
+        );
+    }
+
+    // public function dailySalesReport()
+    // {
+    //     return view('branch_manager.daily_sales_report');
+    // }
+    public function dailySalesReport(Request $request)
+    {
+        $students = DB::table('seminarpre')
+            ->whereIn('student_status', [
+                'enrolled',
+                'Re-enrolled'
+            ])
+            ->where('opr_stage', '!=', 'Drop')
+
+            ->when($request->from_date, function ($query) use ($request) {
+
+                return $query->whereDate(
+                    'enrolled_date',
+                    '>=',
+                    $request->from_date
+                );
+            })
+
+            ->when($request->to_date, function ($query) use ($request) {
+
+                return $query->whereDate(
+                    'enrolled_date',
+                    '<=',
+                    $request->to_date
+                );
+            })
+
+            ->orderBy('enrolled_date', 'DESC')
+            ->paginate(10);
+
+
+        // Fixed college query
+        $colleges = DB::table('college_list')
+            ->select('clg_name')
+            ->distinct()
+            ->orderBy('clg_name', 'ASC')
+            ->get();
+
+
+        $counselors = DB::table('crm_login')
+            ->where('role', 'counselor')
+            ->orderBy('name', 'ASC')
+            ->get();
+
+
+        return view(
+            'branch_manager.daily_sales_report',
+            compact(
+                'students',
+                'colleges',
+                'counselors'
+            )
+        );
+    }
+
+    public function feedbackDetails()
+    {
+        return view('branch_manager.feedback_details');
+    }
+
+    public function dashboardReports()
+    {
+        return view('dashboard.dashboard_reports');
+    }
+
+    public function leadDateDashboard()
+    {
+        return view('dashboard.lead_date_dashboard');
+    }
+
+    public function dailyActivityReports()
+    {
+        return view('dashboard.daily_activity_reports');
+    }
+
+    public function stitchingReports()
+    {
+        return view('dashboard.stitching_reports');
+    }
+
+    public function allLeadList()
+    {
+        return view('dashboard.all_lead_list');
     }
 }

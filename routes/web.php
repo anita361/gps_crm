@@ -267,6 +267,31 @@ Route::middleware('login')->group(function () {
 
     Route::get('/lead-list', [CsvUploadController::class, 'leadList'])->name('lead.list');
     Route::get('/seminar-lead-list', [CsvUploadController::class, 'seminarList'])->name('seminar.list');
+    Route::get('/seminar-lead-download', [CsvUploadController::class, 'seminarDownload'])
+        ->name('seminar.download');
     Route::post('/lead-assign', [CsvUploadController::class, 'assignLead'])
         ->name('lead.assign');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Reports
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('/full-branch-report', [WalkinController::class, 'fullBranchReport'])
+        ->name('reports.branch');
+
+    Route::get('/lead-report', [WalkinController::class, 'leadReport'])
+        ->name('reports.lead');
+    Route::post('/lead-report-count', [WalkinController::class, 'leadReportCount'])
+        ->name('reports.lead.count');
+
+    Route::get('/source-report', [WalkinController::class, 'sourceReport'])
+        ->name('reports.source');
+
+    Route::get('/daily-sales-report', [WalkinController::class, 'dailySalesReport'])
+        ->name('reports.daily-sales');
+
+    Route::get('/feedback-details', [WalkinController::class, 'feedbackDetails'])
+        ->name('reports.feedback');
 });
