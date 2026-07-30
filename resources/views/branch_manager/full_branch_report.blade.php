@@ -299,12 +299,9 @@
 
                                             <td>
 
-                                                <button class="btn btn-info btn-sm calllogsdata"
-                                                    data-id="{{ $user->sno }}" data-bs-toggle="modal"
-                                                    data-bs-target="#Calllogs">
-
-                                                    <i class="fa fa-phone"></i> Logs
-
+                                                <button type="button" class="btn btn-info btn-sm view-logs-btn"
+                                                    data-file-no="{{ $user->sno }}" data-name="{{ $user->sname }}">
+                                                    <i class="fa fa-list"></i> Logs
                                                 </button>
 
                                             </td>
@@ -375,8 +372,10 @@
 
         });
     </script>
-    <!-- Call Logs Modal -->
-    <div class="modal fade" id="Calllogs" tabindex="-1">
+
+
+    <!-- Status Logs Modal -->
+    <div class="modal fade" id="logsModal" tabindex="-1">
 
         <div class="modal-dialog modal-xl">
 
@@ -384,80 +383,109 @@
 
                 <div class="modal-header bg-primary text-white">
 
-                    <h5 class="modal-title">
-                        Call Logs
+                    <h5 class="modal-title" id="logsModalLabel">
+
+                        Status Update Logs
+
                     </h5>
 
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+
+                    <!-- Status Logs -->
+                    <h5 class="text-center bg-dark text-white p-2">
+                        Status Logs
+                    </h5>
+
+
+                    <table class="table table-bordered table-striped">
+
+                        <thead class="table-dark">
+
+                            <tr>
+
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                                <th>Updated By</th>
+                                <th>Action Datetime</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="logsTableBody">
+
+                        </tbody>
+
+
+                    </table>
+
+
+
+                    <br>
+
+
+                    <!-- Notes -->
+                    <h5 class="text-center bg-dark text-white p-2">
+                        Notes
+                    </h5>
+
+
+                    <table class="table table-bordered table-striped">
+
+
+                        <thead class="table-dark">
+
+                            <tr>
+
+                                <th>Sno</th>
+                                <th>Remarks</th>
+                                <th>Updated By</th>
+                                <th>Action Datetime</th>
+
+                            </tr>
+
+
+                        </thead>
+
+
+                        <tbody id="logsNotesTableBody">
+
+                        </tbody>
+
+
+                    </table>
+
+
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                        Close
+
                     </button>
 
                 </div>
 
-                <div class="modal-body">
-
-                    <table class="table table-bordered">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Call Time</th>
-
-                                <th>Status</th>
-
-                                <th>Follow-up Date</th>
-
-                                <th>Remarks</th>
-
-                                <th>Counselor</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody id="ldld"></tbody>
-
-                    </table>
-
-                    <hr>
-
-                    <h5>Notes</h5>
-
-                    <table class="table table-bordered">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>#</th>
-
-                                <th>Remarks</th>
-
-                                <th>Updated By</th>
-
-                                <th>Date</th>
-
-                                <th>Commission Status</th>
-
-                                <th>Comm One</th>
-
-                                <th>Comm Two</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody id="logsnotsremarks"></tbody>
-
-                    </table>
-
-                </div>
 
             </div>
 
         </div>
 
     </div>
+
+
     <div class="modal fade" id="NotesModal" tabindex="-1">
 
         <div class="modal-dialog modal-lg">
@@ -533,6 +561,8 @@
         </div>
 
     </div>
+
+
     <div class="modal fade" id="notThreeModel" tabindex="-1">
 
         <div class="modal-dialog">
@@ -584,75 +614,293 @@
     <script>
         $(document).ready(function() {
 
-            // Call Logs
 
-            $(document).on('click', '.calllogsdata', function() {
 
-                let id = $(this).data('id');
+            $(document).on('click', '.view-logs-btn', function() {
 
-                $.get('/call-logs/' + id, function(res) {
+                let fileNo = $(this).data('file-no');
+                let name = $(this).data('name');
 
-                    $('#ldld').html(res.call_logs);
+                $('#logsModalLabel').text('Status Update Logs - ' + name);
 
-                    $('#logsnotsremarks').html(res.notes);
+                $.ajax({
+                    url: "{{ route('branch.manager.logs') }}",
+                    type: "POST",
+                    data: {
+                        semi_id: fileNo,
+                        _token: "{{ csrf_token() }}"
+                    },
+                    dataType: "json",
+
+                    success: function(response) {
+
+                        let logsHtml = '';
+
+                        if (response.logs && response.logs.length > 0) {
+
+                            $.each(response.logs, function(index, log) {
+
+                                logsHtml += `
+                        <tr>
+                            <td>${log.stage_date ?? ''}</td>
+                            <td>${log.stage ?? ''} ${log.oprStsSend ?? ''}</td>
+                            <td>${log.stage_remarks ?? ''}</td>
+                            <td>${log.updated_by ?? ''}</td>
+                            <td>${log.created_date ?? ''}</td>
+                        </tr>
+                    `;
+
+                            });
+
+                        } else {
+
+                            logsHtml = `
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            No Logs Found
+                        </td>
+                    </tr>
+                `;
+
+                        }
+
+                        $('#logsTableBody').html(logsHtml);
+
+                        let notesHtml = '';
+
+                        if (response.notes && response.notes.length > 0) {
+
+                            $.each(response.notes, function(index, note) {
+
+                                notesHtml += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${note.remarks ?? ''}</td>
+                            <td>${note.updated_by ?? ''}</td>
+                            <td>${note.datetime ?? ''}</td>
+                        </tr>
+                    `;
+
+                            });
+
+                        } else {
+
+                            notesHtml = `
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No Notes Found
+                        </td>
+                    </tr>
+                `;
+
+                        }
+
+                        $('#logsNotesTableBody').html(notesHtml);
+
+                        let modal = new bootstrap.Modal(document.getElementById('logsModal'));
+                        modal.show();
+
+                    },
+
+                    error: function(xhr) {
+
+                        console.log("Status :", xhr.status);
+                        console.log("Response :", xhr.responseText);
+
+                        alert("Unable to load logs.");
+
+                    }
 
                 });
 
             });
 
 
-            // Open Notes
+
 
             $(document).on('click', '.open-notes-modal', function() {
+
 
                 let id = $(this).data('file-no');
 
                 let name = $(this).data('name');
 
+
                 $('#note_id').val(id);
 
                 $('#NotesModalName').text(name);
 
-                $('#NotesModal').modal('show');
+
+                $('#newNote').val('');
+
+
+
+                let modal = new bootstrap.Modal(document.getElementById('NotesModal'));
+
+                modal.show();
+
 
                 loadNotes(id);
+
 
             });
 
 
+
+
+
             function loadNotes(id) {
 
-                $.get('/notes/' + id, function(res) {
 
-                    $('#NotesTableBody').html(res);
+                $.ajax({
+
+                    url: "{{ route('notes.get') }}",
+
+                    type: "POST",
+
+                    data: {
+
+                        _token: "{{ csrf_token() }}",
+
+                        note_id: id
+
+                    },
+
+                    success: function(res) {
+
+
+                        let html = '';
+
+                        if (res.notes.length > 0) {
+
+
+                            $.each(res.notes, function(index, note) {
+
+
+                                html += `
+
+                        <tr>
+
+                            <td>${index+1}</td>
+
+                            <td>${note.remarks ?? ''}</td>
+
+                            <td>${note.updated_by ?? ''}</td>
+
+                            <td>${note.datetime ?? ''}</td>
+
+                            <td>${note.commission_status ?? ''}</td>
+
+                            <td>${note.comm_one_amt ?? 0}</td>
+
+                            <td>${note.comm_two_amt ?? 0}</td>
+
+
+                        </tr>
+
+                        `;
+
+
+                            });
+
+
+                        } else {
+
+
+                            html = `
+
+                    <tr>
+
+                        <td colspan="7" class="text-center">
+
+                            No Notes Found
+
+                        </td>
+
+                    </tr>
+
+                    `;
+
+
+                        }
+
+
+                        $('#NotesTableBody').html(html);
+
+
+                    }
+
 
                 });
 
+
             }
+
+
+
 
 
             // Add Note
 
             $('#addNoteBtn').click(function() {
 
-                $.post('/notes/add', {
 
-                    _token: '{{ csrf_token() }}',
+                let note = $('#newNote').val();
 
-                    note_id: $('#note_id').val(),
 
-                    remarks: $('#newNote').val()
+                if (note.trim() == '') {
 
-                }, function() {
+                    alert('Please enter note');
 
-                    $('#newNote').val('');
+                    return;
 
-                    loadNotes($('#note_id').val());
+                }
+
+
+
+                $.ajax({
+
+
+                    url: "{{ route('notes.add') }}",
+
+                    type: "POST",
+
+                    data: {
+
+
+                        _token: "{{ csrf_token() }}",
+
+                        note_id: $('#note_id').val(),
+
+                        newNote: note
+
+
+                    },
+
+
+                    success: function(res) {
+
+
+                        if (res.status) {
+
+
+                            $('#newNote').val('');
+
+
+                            loadNotes($('#note_id').val());
+
+
+                        }
+
+
+                    }
+
 
                 });
 
-            });
 
+
+            });
 
             // Drop Details
 

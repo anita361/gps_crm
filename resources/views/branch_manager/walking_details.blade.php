@@ -192,6 +192,75 @@
 
                                     </div>
 
+                                    {{-- Agent Name --}}
+                                    <div class="col-md-3 mb-3" id="agent_name_yess"
+                                        style="{{ old('ssource', $student->ssource ?? '') == 'Agent' ? '' : 'display:none;' }}">
+
+                                        <label>Agent Name</label>
+
+                                        <input type="text" class="form-control" name="agent_name" id="agent_name"
+                                            value="{{ old('agent_name', $student->agent_name ?? '') }}">
+
+                                    </div>
+
+
+                                    {{-- Commission Type --}}
+                                    <div class="col-md-3 mb-3" id="comminsion_type_of"
+                                        style="{{ old('ssource', $student->ssource ?? '') == 'Agent' ? '' : 'display:none;' }}">
+
+                                        <label>Type Of Comm.</label>
+
+                                        <select class="form-select" id="comm_type" name="comm_type">
+
+                                            <option value="">-- Select --</option>
+
+                                            <option value="percentage"
+                                                {{ old('comm_type', $student->comm_type ?? '') == 'percentage' ? 'selected' : '' }}>
+                                                Percentage Amount (%)
+                                            </option>
+
+                                            <option value="amount"
+                                                {{ old('comm_type', $student->comm_type ?? '') == 'amount' ? 'selected' : '' }}>
+                                                Amount
+                                            </option>
+
+                                        </select>
+
+
+                                        <div id="percentage_input"
+                                            style="margin-top:10px; {{ old('comm_type', $student->comm_type ?? '') == 'percentage' ? '' : 'display:none;' }}">
+
+                                            <input type="number" class="form-control" name="comm_amount_per"
+                                                id="comm_amount_per"
+                                                value="{{ old('comm_amount_per', $student->comm_amount ?? '') }}">
+
+                                        </div>
+
+
+                                        <div id="amount_input"
+                                            style="margin-top:10px; {{ old('comm_type', $student->comm_type ?? '') == 'amount' ? '' : 'display:none;' }}">
+
+                                            <input type="number" class="form-control" name="comm_amount"
+                                                id="comm_amount"
+                                                value="{{ old('comm_amount', $student->comm_amount ?? '') }}">
+
+                                        </div>
+
+                                    </div>
+
+
+                                    {{-- Conditional Hidden Fields --}}
+                                    @if (($student->student_status ?? '') == 'enrolled')
+
+                                        @if (($role_sess ?? '') != 'branch_manager')
+                                            <input type="hidden" name="ssource" value="{{ $student->ssource ?? '' }}">
+
+                                            <input type="hidden" name="comm_type"
+                                                value="{{ $student->comm_type ?? '' }}">
+                                        @endif
+
+                                    @endif
+
                                     {{-- <div class="col-md-3 mb-3">
                                         <label>
                                             First Name
@@ -1270,32 +1339,32 @@
         });
     </script>
 
-   <script>
-    $(document).on('click', '.open-notes-modal', function() {
+    <script>
+        $(document).on('click', '.open-notes-modal', function() {
 
-        let fileNo = $(this).data('file-no');
-        let name = $(this).data('name');
+            let fileNo = $(this).data('file-no');
+            let name = $(this).data('name');
 
-        $('#note_id').val(fileNo);
-        $('#NotesModalName').text(name);
-        $('#newNote').val('');
+            $('#note_id').val(fileNo);
+            $('#NotesModalName').text(name);
+            $('#newNote').val('');
 
-        loadNotes(fileNo);
+            loadNotes(fileNo);
 
-        $('#notesModal').modal('show');
+            $('#notesModal').modal('show');
 
-    });
+        });
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | LOAD NOTES
-    |--------------------------------------------------------------------------
-    */
+        /*
+        |--------------------------------------------------------------------------
+        | LOAD NOTES
+        |--------------------------------------------------------------------------
+        */
 
-    function loadNotes(noteId) {
+        function loadNotes(noteId) {
 
-        $('#NotesTableBody').html(`
+            $('#NotesTableBody').html(`
             <tr>
                 <td colspan="4" class="text-center">
                     Loading...
@@ -1303,25 +1372,25 @@
             </tr>
         `);
 
-        $.ajax({
+            $.ajax({
 
-            url: "{{ route('notes.get') }}",
-            type: "POST",
+                url: "{{ route('notes.get') }}",
+                type: "POST",
 
-            data: {
-                note_id: noteId,
-                _token: "{{ csrf_token() }}"
-            },
+                data: {
+                    note_id: noteId,
+                    _token: "{{ csrf_token() }}"
+                },
 
-            success: function(response) {
+                success: function(response) {
 
-                let notesHtml = '';
+                    let notesHtml = '';
 
-                if (response.status && response.notes.length > 0) {
+                    if (response.status && response.notes.length > 0) {
 
-                    response.notes.forEach(function(note, index) {
+                        response.notes.forEach(function(note, index) {
 
-                        notesHtml += `
+                            notesHtml += `
                             <tr>
                                 <td>${index + 1}</td>
                                 <td><p>${note.remarks ?? ''}</p></td>
@@ -1330,11 +1399,11 @@
                             </tr>
                         `;
 
-                    });
+                        });
 
-                } else {
+                    } else {
 
-                    notesHtml = `
+                        notesHtml = `
                         <tr>
                             <td colspan="4" class="text-center">
                                 No Notes Found
@@ -1342,15 +1411,15 @@
                         </tr>
                     `;
 
-                }
+                    }
 
-                $('#NotesTableBody').html(notesHtml);
+                    $('#NotesTableBody').html(notesHtml);
 
-            },
+                },
 
-            error: function() {
+                error: function() {
 
-                $('#NotesTableBody').html(`
+                    $('#NotesTableBody').html(`
                     <tr>
                         <td colspan="4" class="text-danger text-center">
                             Failed to load notes
@@ -1358,177 +1427,323 @@
                     </tr>
                 `);
 
-            }
+                }
 
-        });
-
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | SAVE NOTE
-    |--------------------------------------------------------------------------
-    */
-
-    $('#addNotesForm').submit(function(e) {
-
-        e.preventDefault();
-
-        $.ajax({
-
-            url: "{{ route('notes.add') }}",
-            type: "POST",
-            data: $(this).serialize(),
-
-            success: function(res) {
-
-                alert(res.message);
-
-                // Clear textbox
-                $('#newNote').val('');
-
-                // Reload notes list after adding note
-                loadNotes($('#note_id').val());
-
-            },
-
-            error: function(xhr) {
-
-                alert('Unable to save note.');
-
-                console.log(xhr.responseText);
-
-            }
-
-        });
-
-    });
-
-
-    $(document).ready(function() {
-
-        
-        let noteId = $('#note_id').val();
-
-        if (noteId && noteId !== '') {
-            loadNotes(noteId);
-        }
-
-        function toggleSourceRemarks() {
-
-            let source = $('#ssource').val();
-
-            if (source == 'Referral' || source == 'Agent') {
-                $('#sou_rem_yess').show();
-            } else {
-                $('#sou_rem_yess').hide();
-                $('#source_remarks').val('');
-            }
+            });
 
         }
 
-        toggleSourceRemarks();
+        /*
+        |--------------------------------------------------------------------------
+        | SAVE NOTE
+        |--------------------------------------------------------------------------
+        */
 
-        $('#ssource').change(function() {
-            toggleSourceRemarks();
+        $('#addNotesForm').submit(function(e) {
+
+            e.preventDefault();
+
+            $.ajax({
+
+                url: "{{ route('notes.add') }}",
+                type: "POST",
+                data: $(this).serialize(),
+
+                success: function(res) {
+
+                    alert(res.message);
+
+                    // Clear textbox
+                    $('#newNote').val('');
+
+                    // Reload notes list after adding note
+                    loadNotes($('#note_id').val());
+
+                },
+
+                error: function(xhr) {
+
+                    alert('Unable to save note.');
+
+                    console.log(xhr.responseText);
+
+                }
+
+            });
+
         });
 
-    });
-</script>
 
-   <script>
-$(document).ready(function () {
+        // $(document).ready(function() {
 
-    // Initialize Summernote
-    $('#summernote2').summernote({
-        height: 300,
-        placeholder: 'Enter email message...',
-        toolbar: [
-            ['style', ['style']],
-            ['font', ['bold', 'italic', 'underline', 'clear']],
-            ['fontname', ['fontname']],
-            ['fontsize', ['fontsize']],
-            ['color', ['color']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['table', ['table']],
-            ['insert', ['link', 'picture']],
-            ['view', ['fullscreen', 'codeview']]
-        ]
-    });
 
-    // Load Template
-    $('#gettemplates').on('change', function () {
+        //     let noteId = $('#note_id').val();
 
-        var template_id = $(this).val();
+        //     if (noteId && noteId !== '') {
+        //         loadNotes(noteId);
+        //     }
 
-        if (template_id == '') {
+        //     function toggleSourceRemarks() {
 
-            $('input[name="subject"]').val('');
-            $('#summernote2').summernote('code', '');
+        //         let source = $('#ssource').val();
 
-            return;
-        }
+        //         if (source == 'Referral' || source == 'Agent') {
+        //             $('#sou_rem_yess').show();
+        //         } else {
+        //             $('#sou_rem_yess').hide();
+        //             $('#source_remarks').val('');
+        //         }
 
-        $.ajax({
+        //     }
 
-            url: "{{ route('get.template') }}",
+        //     toggleSourceRemarks();
 
-            type: "POST",
+        //     $('#ssource').change(function() {
+        //         toggleSourceRemarks();
+        //     });
 
-            dataType: "json",
+        //     function agentCommissionToggle() {
 
-            data: {
-                _token: "{{ csrf_token() }}",
-                template_id: template_id
-            },
+        //         let source = $('#ssource').val();
 
-            beforeSend: function () {
+        //         if (source == 'Agent') {
 
-                $('#summernote2').summernote('code',
-                    '<p style="text-align:center">Loading...</p>');
+        //             $('#agent_name_yess').show();
+        //             $('#comminsion_type_of').show();
 
-            },
+        //         } else {
 
-            success: function (response) {
+        //             $('#agent_name_yess').hide();
+        //             $('#comminsion_type_of').hide();
 
-                console.log(response);
+        //         }
 
-                if (response.status == true) {
+        //     }
 
-                    // Subject
-                    $('input[name="subject"]').val(response.subject);
 
-                    // Template Body
-                    $('#summernote2').summernote('code', response.template);
+        //     agentCommissionToggle();
+
+
+        //     $('#ssource').change(function() {
+
+        //         agentCommissionToggle();
+
+        //     });
+
+
+
+        //     // =====================================
+        //     // Commission Type Percentage / Amount
+        //     // =====================================
+
+        //     $('#comm_type').change(function() {
+
+        //         let type = $(this).val();
+
+        //         $('#percentage_input').hide();
+        //         $('#amount_input').hide();
+
+
+        //         if (type == 'percentage') {
+
+        //             $('#percentage_input').show();
+
+        //         }
+
+
+        //         if (type == 'amount') {
+
+        //             $('#amount_input').show();
+
+        //         }
+
+        //     });
+
+
+
+
+
+        // });
+
+        $(document).ready(function() {
+
+
+            let noteId = $('#note_id').val();
+
+            if (noteId && noteId !== '') {
+                loadNotes(noteId);
+            }
+
+
+            function toggleSourceRemarks() {
+
+                let source = $('#ssource').val();
+
+                if (source == 'Referral' || source == 'Agent') {
+                    $('#sou_rem_yess').show();
+                } else {
+                    $('#sou_rem_yess').hide();
+                    $('#source_remarks').val('');
+                }
+
+            }
+
+
+            function agentCommissionToggle() {
+
+                let source = $('#ssource').val();
+
+                if (source == 'Agent') {
+
+                    $('#agent_name_yess').show();
+                    $('#comminsion_type_of').show();
 
                 } else {
 
-                    alert(response.message);
+                    $('#agent_name_yess').hide();
+                    $('#comminsion_type_of').hide();
+
+                }
+
+            }
+
+
+            // Load existing value
+            toggleSourceRemarks();
+            agentCommissionToggle();
+
+
+            // Source change
+            $('#ssource').change(function() {
+
+                toggleSourceRemarks();
+
+                agentCommissionToggle();
+
+            });
+
+
+            // Commission Type
+            $('#comm_type').change(function() {
+
+                let type = $(this).val();
+
+                $('#percentage_input').hide();
+                $('#amount_input').hide();
+
+
+                if (type == 'percentage') {
+
+                    $('#percentage_input').show();
+
+                }
+
+
+                if (type == 'amount') {
+
+                    $('#amount_input').show();
+
+                }
+
+            });
+
+
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+
+            // Initialize Summernote
+            $('#summernote2').summernote({
+                height: 300,
+                placeholder: 'Enter email message...',
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture']],
+                    ['view', ['fullscreen', 'codeview']]
+                ]
+            });
+
+            // Load Template
+            $('#gettemplates').on('change', function() {
+
+                var template_id = $(this).val();
+
+                if (template_id == '') {
 
                     $('input[name="subject"]').val('');
                     $('#summernote2').summernote('code', '');
 
+                    return;
                 }
 
-            },
+                $.ajax({
 
-            error: function (xhr) {
+                    url: "{{ route('get.template') }}",
 
-                console.log(xhr.responseText);
+                    type: "POST",
 
-                alert('Unable to load template.');
+                    dataType: "json",
 
-                $('#summernote2').summernote('code', '');
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        template_id: template_id
+                    },
 
-            }
+                    beforeSend: function() {
+
+                        $('#summernote2').summernote('code',
+                            '<p style="text-align:center">Loading...</p>');
+
+                    },
+
+                    success: function(response) {
+
+                        console.log(response);
+
+                        if (response.status == true) {
+
+                            // Subject
+                            $('input[name="subject"]').val(response.subject);
+
+                            // Template Body
+                            $('#summernote2').summernote('code', response.template);
+
+                        } else {
+
+                            alert(response.message);
+
+                            $('input[name="subject"]').val('');
+                            $('#summernote2').summernote('code', '');
+
+                        }
+
+                    },
+
+                    error: function(xhr) {
+
+                        console.log(xhr.responseText);
+
+                        alert('Unable to load template.');
+
+                        $('#summernote2').summernote('code', '');
+
+                    }
+
+                });
+
+            });
 
         });
+    </script>
 
-    });
-
-});
-</script>
-   
 
 
 @endsection

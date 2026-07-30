@@ -292,6 +292,9 @@ Route::middleware('login')->group(function () {
     Route::get('/daily-sales-report', [WalkinController::class, 'dailySalesReport'])
         ->name('reports.daily-sales');
 
+
     Route::get('/feedback-details', [WalkinController::class, 'feedbackDetails'])
         ->name('reports.feedback');
+    Route::post('/feedback-details/view', [WalkinController::class, 'viewFeedback'])
+        ->name('feedback.view');
 });

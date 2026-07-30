@@ -58,7 +58,7 @@ class NotesController extends Controller
             'created_date'     => now()->format('Y-m-d'),
             'created_datetime' => now()->format('Y-m-d H:i:s'),
 
-            'commission_status' => '',
+            'commission_status' => 'pending',
             'comm_one_amt'      => 0,
             'comm_two_amt'      => 0,
         ]);

@@ -948,6 +948,7 @@ class WalkinController extends Controller
         <td>{$totals['drop']}</td>
         <td>{$totals['action']}</td>
     </tr>";
+    
 
         return response()->json([
             'rows' => $rows,
@@ -955,10 +956,7 @@ class WalkinController extends Controller
         ]);
     }
 
-    // public function sourceReport()
-    // {
-    //     return view('branch_manager.source_report');
-    // }
+    
 
     public function sourceReport(Request $request)
     {
@@ -1053,48 +1051,121 @@ class WalkinController extends Controller
     // {
     //     return view('branch_manager.daily_sales_report');
     // }
+
     public function dailySalesReport(Request $request)
     {
-        $students = DB::table('seminarpre')
-            ->whereIn('student_status', [
-                'enrolled',
-                'Re-enrolled'
-            ])
-            ->where('opr_stage', '!=', 'Drop')
 
-            ->when($request->from_date, function ($query) use ($request) {
+        $query = DB::table('seminarpre')
 
-                return $query->whereDate(
-                    'enrolled_date',
-                    '>=',
-                    $request->from_date
-                );
-            })
+            ->select('*')
 
-            ->when($request->to_date, function ($query) use ($request) {
+            ->whereIn('student_status', ['enrolled', 'Re-enrolled'])
 
-                return $query->whereDate(
-                    'enrolled_date',
-                    '<=',
-                    $request->to_date
-                );
-            })
+            ->where('opr_stage', '!=', 'Drop');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Date Filter
+        |--------------------------------------------------------------------------
+        */
+
+        if ($request->filled('from_date')) {
+
+            $query->whereDate('enrolled_date', '>=', $request->from_date);
+        }
+
+        if ($request->filled('to_date')) {
+
+            $query->whereDate('enrolled_date', '<=', $request->to_date);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Province
+        |--------------------------------------------------------------------------
+        */
+
+        if ($request->filled('province')) {
+
+            $query->where('province_name', $request->province);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | College
+        |--------------------------------------------------------------------------
+        */
+
+        if ($request->filled('college')) {
+
+            $query->where('collage_name', $request->college);
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Counselor
+        |--------------------------------------------------------------------------
+        */
+
+        if ($request->filled('counselor')) {
+
+            $counselors = $request->counselor;
+
+            if (!in_array('All', $counselors)) {
+
+                $query->whereIn('assign_id', $counselors);
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Students
+        |--------------------------------------------------------------------------
+        */
+
+        $students = $query
 
             ->orderBy('enrolled_date', 'DESC')
-            ->paginate(10);
 
-
-        // Fixed college query
-        $colleges = DB::table('college_list')
-            ->select('clg_name')
-            ->distinct()
-            ->orderBy('clg_name', 'ASC')
             ->get();
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | Colleges
+        |--------------------------------------------------------------------------
+        */
+
+        $colleges = DB::table('college_list')
+
+            ->select('clg_name')
+
+            ->groupBy('clg_name')
+
+            ->orderBy('clg_name')
+
+            ->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Counselors
+        |--------------------------------------------------------------------------
+        */
+
         $counselors = DB::table('crm_login')
+
+            ->select('id', 'name')
+
             ->where('role', 'counselor')
-            ->orderBy('name', 'ASC')
+
+            ->orderBy('name')
+
             ->get();
 
 
@@ -1110,8 +1181,152 @@ class WalkinController extends Controller
 
     public function feedbackDetails()
     {
-        return view('branch_manager.feedback_details');
+        // Main table data
+        $feedbacks = DB::table('remarks')
+            ->join('seminarpre', 'remarks.mobile_no', '=', 'seminarpre.smobile')
+            ->select(
+                'remarks.*',
+                'seminarpre.sname',
+                'seminarpre.file_no',
+                'seminarpre.scountry',
+                'seminarpre.assign_name',
+                'seminarpre.follow_date',
+                'seminarpre.smobile'
+            )
+            ->where('seminarpre.student_status', 'enrolled')
+            ->orderByDesc('remarks.id')
+            ->get()
+            ->map(function ($row) {
+
+                $days = 0;
+
+                if (!empty($row->follow_date)) {
+                    $days = now()->diffInDays($row->follow_date);
+                }
+
+                // Calculate Review Rate
+                $ratings = DB::table('user_feedback')
+                    ->join(
+                        'question_option',
+                        'user_feedback.question_option',
+                        '=',
+                        'question_option.id'
+                    )
+                    ->where('user_feedback.mobile', $row->smobile)
+                    ->where('user_feedback.question_type', $row->question_type)
+                    ->whereNotIn('user_feedback.question', [13, 14])
+                    ->pluck('question_option.options');
+
+                $avg = $ratings->count()
+                    ? round($ratings->avg(), 2)
+                    : 'NA';
+
+                return (object)[
+                    'sname'          => $row->sname,
+                    'smobile'        => $row->smobile,
+                    'file_no'        => $row->file_no,
+                    'scountry'       => $row->scountry,
+                    'assign_name'    => $row->assign_name,
+                    'review_date'    => $row->created_date,
+                    'review_rate'    => $avg,
+                    'enrolled_days'  => $days,
+                    'question_type'  => $row->question_type,
+                ];
+            });
+
+        return view(
+            'branch_manager.feedback_details',
+            compact('feedbacks')
+        );
     }
+
+    public function viewFeedback(Request $request)
+    {
+        $mobile = $request->mobileno;
+
+        $type = $request->type;
+
+        $feedback = DB::table('user_feedback')
+            ->where('mobile', $mobile)
+            ->where('question_type', $type)
+            ->orderBy('id')
+            ->get();
+
+        $questions = [];
+
+        foreach ($feedback as $item) {
+
+            $question = DB::table('question')
+                ->where('id', $item->question)
+                ->first();
+
+            $answer = DB::table('question_option')
+                ->where('id', $item->question_option)
+                ->first();
+
+            $questions[] = [
+
+                'question' => $question->question_name ?? '',
+
+                'answer' => $answer->options ?? ''
+
+            ];
+        }
+
+        $remarks = DB::table('remarks')
+            ->where('mobile_no', $mobile)
+            ->where('question_type', $type)
+            ->value('remarks');
+
+        return response()->json([
+
+            'questions' => $questions,
+
+            'remarks' => $remarks
+
+        ]);
+    }
+
+    //     public function viewFeedback(Request $request)
+    // {
+    //     $mobile = $request->mobileno;
+    //     $type   = $request->type;
+
+    //     $feedbacks = DB::table('user_feedback')
+    //         ->where('mobile', $mobile)
+    //         ->where('question_type', $type)
+    //         ->orderBy('id')
+    //         ->get();
+
+    //     $data = [];
+
+    //     foreach ($feedbacks as $feedback) {
+
+    //         $question = DB::table('question')
+    //             ->where('id', $feedback->question)
+    //             ->value('question_name');
+
+    //         $answer = DB::table('question_option')
+    //             ->where('id', $feedback->question_option)
+    //             ->value('options');
+
+    //         $data[] = [
+    //             'question' => $question,
+    //             'answer'   => $answer,
+    //         ];
+    //     }
+
+    //     $remarks = DB::table('remarks')
+    //         ->where('mobile_no', $mobile)
+    //         ->where('question_type', $type)
+    //         ->value('remarks');
+
+    //     return response()->json([
+    //         'status'    => true,
+    //         'questions' => $data,
+    //         'remarks'   => $remarks
+    //     ]);
+    // }
 
     public function dashboardReports()
     {
