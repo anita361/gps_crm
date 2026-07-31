@@ -149,49 +149,57 @@
                         <ul class="dropdown-menu">
 
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('operation.status') }}">
+                                    <i class="fa fa-tasks me-2"></i>
                                     Operation Status
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('fund.release.status') }}">
+                                    <i class="fa fa-money-bill-wave me-2"></i>
                                     Fund Release Status
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('commission.enrollment.list') }}">
+                                    <i class="fa fa-list me-2"></i>
                                     Commission Enrollment List
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('commission.list') }}">
+                                    <i class="fa fa-file-invoice-dollar me-2"></i>
                                     Commission List
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('enrolled.list') }}">
+                                    <i class="fa fa-user-check me-2"></i>
                                     Enrolled List
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('drop.list') }}">
+                                    <i class="fa fa-user-times me-2"></i>
                                     Drop List
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('appointment.complete') }}">
+                                    <i class="fa fa-calendar-check me-2"></i>
                                     Appointment Complete
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('osap.done.enrolled') }}">
+                                    <i class="fa fa-check-circle me-2"></i>
                                     OSAP Done Enrolled
                                 </a>
                             </li>
@@ -199,7 +207,6 @@
                         </ul>
 
                     </li>
-
                     {{-- <li class="nav-item">
 
                         <a class="nav-link" href="#">

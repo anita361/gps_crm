@@ -80,36 +80,7 @@
         </div>
 
 
-        <!-- REPORT TITLE -->
         <div id="report-title"></div>
-
-        <!-- TABLE -->
-        {{-- <div class="table-responsive">
-        <table class="table table-bordered report-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Leads From Calling</th>
-                    <th>Leads From Website</th>
-                    <th>Leads From Facebook</th>
-                    <th>Total Leads</th>
-                    <th>Unique Leads</th>
-                    <th>Walkin</th>
-                    <th>Followup</th>
-                    <th>Drop</th>
-                    <th>Action Taken</th>
-                </tr>
-            </thead>
-
-            <tbody id="report-data">
-                <tr>
-                    <td colspan="10">No Data</td>
-                </tr>
-            </tbody>
-
-            <tfoot id="report-total"></tfoot>
-        </table>
-    </div> --}}
         <div class="table-responsive">
             <table class="table table-bordered report-table">
                 <thead>
@@ -204,6 +175,8 @@
 
             $('#search').click(function() {
 
+                
+
                 let from = $('#from_date').val();
                 let to = $('#to_date').val();
 
@@ -213,11 +186,7 @@
                 }
 
 
-                //     $('#report-title').html(
-                //         `<div class="title-bar">
-            //     Lead Report (From Date: ${from} To Date: ${to})
-            // </div>`
-                //     );
+
                 $('#report-title').html(
 
                     '<div class="title-bar">' +
@@ -228,39 +197,7 @@
 
                 );
 
-                // $.ajax({
-                //     url: "{{ route('reports.lead.count') }}",
-                //     method: "POST",
-                //     data: {
-                //         from_date: from,
-                //         to_date: to,
-                //         _token: "{{ csrf_token() }}"
-                //     },
-                //     beforeSend: function() {
-                //         $('#report-data').html(
-                //             `<tr><td colspan="10">Loading...</td></tr>`
-                //         );
-                //     },
-                //     // success: function(res) {
-                //     //     $('#report-data').html(res.rows);
-                //     //     $('#report-total').html(res.total);
-                //     // },
-                //     success: function(res) {
 
-                //         $('#report-data').html(res.rows);
-
-                //         $('#report-total').html(res.total);
-
-                //         if (res.details) {
-                //             $('#lead-details-body').html(res.details);
-                //         }
-
-                //     },
-
-                //     error: function() {
-                //         alert('Something went wrong');
-                //     }
-                // });
                 $.ajax({
 
                     url: "{{ route('reports.lead.count') }}",
@@ -293,32 +230,27 @@
 
                         $("#imgloader").hide();
 
-                        $('#report-data').html(res.rows);
+                        console.log(res);
 
+                        $('#report-data').html(res.rows);
                         $('#report-total').html(res.total);
 
                         if (res.details) {
-
+                            console.log("Details Found");
                             $('#lead-details-body').html(res.details);
-
+                        } else {
+                            console.log("No details received");
                         }
 
                         if ($.fn.DataTable.isDataTable('#leadTable')) {
-
                             $('#leadTable').DataTable().destroy();
-
                         }
 
                         $('#leadTable').DataTable({
-
                             pageLength: 10,
-
                             ordering: false,
-
                             searching: true,
-
                             info: true
-
                         });
 
                     },

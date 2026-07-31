@@ -297,4 +297,57 @@ Route::middleware('login')->group(function () {
         ->name('reports.feedback');
     Route::post('/feedback-details/view', [WalkinController::class, 'viewFeedback'])
         ->name('feedback.view');
+
+
+
+    /*
+|--------------------------------------------------------------------------
+| Enrolled Menu Routes
+|--------------------------------------------------------------------------
+*/
+
+    Route::get('/operation-status', [WalkinController::class, 'operationStatus'])
+        ->name('operation.status');
+
+
+    Route::post(
+        '/operation/update-status',
+        [WalkinController::class, 'updateStatus']
+    )->name('operation.updateStatus');
+    Route::post(
+        '/operation/logs',
+        [WalkinController::class, 'operationLogs']
+    )->name('operation.logs');
+
+    Route::post(
+        '/operation/notes/save',
+        [WalkinController::class, 'addNotes']
+    )->name('operation.notes.save');
+    Route::post(
+        '/student/id/save',
+        [WalkinController::class, 'updateStudentId']
+    )->name('student.id.save');
+    Route::get('/student/pdf/{id}', [WalkinController::class, 'studentPdf'])
+        ->name('student.pdf');
+
+    Route::get('/fund-release-status', [WalkinController::class, 'fundReleaseStatus'])
+        ->name('fund.release.status');
+
+    Route::get('/commission-enrollment-list', [WalkinController::class, 'commissionEnrollmentList'])
+        ->name('commission.enrollment.list');
+
+    Route::get('/commission-list', [WalkinController::class, 'commissionList'])
+        ->name('commission.list');
+
+    Route::get('/enrolled-list', [WalkinController::class, 'enrolledList'])
+        ->name('enrolled.list');
+
+    Route::get('/drop-list', [WalkinController::class, 'dropList'])
+        ->name('drop.list');
+
+    Route::get('/appointment-complete', [WalkinController::class, 'appointmentComplete'])
+        ->name('appointment.complete');
+
+    Route::get('/osap-done-enrolled', [WalkinController::class, 'osapDoneEnrolled'])
+        ->name('osap.done.enrolled');
 });
