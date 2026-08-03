@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Mail;
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Illuminate\Support\Facades\Schema;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class WalkinController extends Controller
 {
@@ -284,6 +286,36 @@ class WalkinController extends Controller
 
         return redirect()->back()->with('success', 'Status Updated Successfully.');
     }
+
+    public function getCampus(Request $request)
+    {
+        $campuses = DB::table('college_list')
+            ->where('province', $request->province_name)
+            ->where('clg_name', $request->collage_name)
+            ->select('campus_name')
+            ->distinct()
+            ->orderBy('campus_name')
+            ->get();
+
+        return response()->json($campuses);
+    }
+
+
+    public function getProgram(Request $request)
+    {
+        $programs = DB::table('college_list')
+            ->where('province', $request->province_name)
+            ->where('clg_name', $request->collage_name)
+            ->where('campus_name', $request->campus_name)
+            ->select('prg_name')
+            ->distinct()
+            ->orderBy('prg_name')
+            ->get();
+
+        return response()->json($programs);
+    }
+
+
 
 
 
@@ -1568,25 +1600,210 @@ class WalkinController extends Controller
         ));
     }
 
-    public function studentPdf($id)
-{
-    $student = DB::table('seminarpre')
-        ->where('sno', $id)
-        ->first();
+    //     public function studentPdf($id)
+    // {
+    //     $student = DB::table('seminarpre')
+    //         ->where('sno', $id)
+    //         ->first();
 
-    if (!$student) {
-        abort(404);
+    //     if (!$student) {
+    //         abort(404);
+    //     }
+
+
+    // }
+
+    public function studentPdf($id)
+    {
+        $student = DB::table('seminarpre')
+            ->where('sno', $id)
+            ->first();
+
+        if (!$student) {
+            abort(404, 'Student not found.');
+        }
+
+        $pdf = Pdf::loadView('operation.student-consent', [
+            'student' => $student,
+        ]);
+
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('Student-Consent.pdf');
     }
 
-  
-}
 
 
+    // public function fundReleaseStatus()
+    // {
+    //     return view('operation.fund-release-status');
+    // }
 
-
-    public function fundReleaseStatus()
+    public function fundReleaseStatus(Request $request)
     {
-        return view('operation.fund-release-status');
+        $sess_role = session('role');
+
+        $query = DB::table('seminarpre as s')
+            ->leftJoin('crm_login as c', 'c.id', '=', 's.finance_id')
+            ->select(
+                's.sno',
+                's.sname',
+                's.smobile',
+                's.scountry',
+                's.assign_name',
+                's.file_no',
+                's.student_status',
+                's.semail',
+                's.province_name',
+                's.collage_name',
+                's.campus_name',
+                's.program_name',
+                's.tution_fee',
+                's.start_date',
+                's.end_date',
+                's.enrolled_date',
+                's.fin_apnt_date',
+                's.fin_apnt_time',
+                's.opr_stage_date',
+                's.opr_stage',
+                's.oprStsSend',
+                's.osap_status',
+                's.student_id',
+                's.ssource',
+                's.source_remarks',
+                DB::raw("COALESCE(s.fund_aol_status,'Pending') as main_status"),
+                'c.name as finance_manager'
+            );
+
+        $data = $query->paginate(10);
+
+     
+        $student = $data->first();
+
+        return view('operation.fund-release-status', compact('data', 'sess_role', 'student'));
+    }
+
+    public function fundReleaseExport(Request $request)
+    {
+        $filename = "funding_release_" . now()->format('Y-m-d_H-i-s') . ".csv";
+
+        $response = new StreamedResponse(function () use ($request) {
+
+            $handle = fopen('php://output', 'w');
+
+            // UTF-8 BOM
+            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // HEADER
+            fputcsv($handle, [
+                'Client Name',
+                'Client Number',
+                'Country Name',
+                'Counselor Name',
+                'File Number',
+                'Student Status',
+                'Email',
+                'Province',
+                'College',
+                'Campus',
+                'Program Name',
+                'Tuition Fee',
+                'Start Date',
+                'End Date',
+                'Enrolled Date',
+                'Finance Manager',
+                'Finance Apnt Date',
+                'Finance Apnt Time',
+                'Opr Last Status Date',
+                'Operation Status',
+                'Opr Last Status',
+                'Finance Status',
+                'Student Id',
+                'Lead Source',
+                'Source Remarks',
+                'Main Status'
+            ]);
+
+            // ✅ SAME QUERY + FILTERS
+            $query = DB::table('seminarpre as s')
+                ->leftJoin('crm_login as c', 'c.id', '=', 's.finance_id')
+                ->select(
+                    DB::raw('ROW_NUMBER() OVER (ORDER BY s.id DESC) as sno'), // ✅ ADD THIS
+                    's.*',
+                    DB::raw("COALESCE(s.fund_aol_status,'Pending') as main_status"),
+                    'c.name as finance_manager'
+                );
+
+            // ✅ APPLY SAME FILTERS
+            if ($request->from_date) {
+                $query->whereDate('s.start_date', '>=', $request->from_date);
+            }
+
+            if ($request->to_date) {
+                $query->whereDate('s.start_date', '<=', $request->to_date);
+            }
+
+            if ($request->student_status) {
+                $query->where('s.student_status', $request->student_status);
+            }
+
+            if ($request->operation_status) {
+                $query->where('s.opr_stage', $request->operation_status);
+            }
+
+            if ($request->main_status) {
+                $query->where('s.fund_aol_status', $request->main_status);
+            }
+
+            if ($request->search) {
+                $query->where(function ($q) use ($request) {
+                    $q->where('s.sname', 'like', "%{$request->search}%")
+                        ->orWhere('s.smobile', 'like', "%{$request->search}%")
+                        ->orWhere('s.file_no', 'like', "%{$request->search}%");
+                });
+            }
+
+            // ✅ USE CHUNK (BEST PRACTICE)
+            $query->orderBy('s.id')->chunk(500, function ($rows) use ($handle) {
+                foreach ($rows as $row) {
+                    fputcsv($handle, [
+                        str_replace('-', '', $row->sname),
+                        $row->smobile,
+                        $row->scountry,
+                        $row->assign_name,
+                        $row->file_no,
+                        $row->student_status,
+                        $row->semail,
+                        $row->province_name,
+                        $row->collage_name,
+                        $row->campus_name,
+                        $row->program_name,
+                        $row->tution_fee ? '$' . $row->tution_fee : '',
+                        $row->start_date,
+                        $row->end_date,
+                        $row->enrolled_date,
+                        $row->finance_manager,
+                        $row->fin_apnt_date,
+                        $row->fin_apnt_time,
+                        $row->opr_stage_date,
+                        $row->opr_stage,
+                        $row->oprStsSend,
+                        $row->osap_status,
+                        $row->student_id,
+                        $row->ssource,
+                        $row->source_remarks,
+                        $row->main_status
+                    ]);
+                }
+            });
+
+            fclose($handle);
+        });
+
+        $response->headers->set('Content-Type', 'text/csv');
+        $response->headers->set('Content-Disposition', "attachment; filename=$filename");
+
+        return $response;
     }
 
     public function commissionEnrollmentList()

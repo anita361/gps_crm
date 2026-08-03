@@ -5,234 +5,227 @@
 @section('styles')
     <style>
         .main-crm {
-            margin-top: 40px !important;
-            padding: 5px !important;
+            margin-top: 35px;
+            padding: 15px;
+            background: #f4f6fb;
+            min-height: 100vh;
         }
 
+        /* Main Card */
 
         .manage_file {
-
             background: #fff;
-            box-shadow: 0 0 8px #ccc;
-            padding: 0;
-
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
         }
-
-
-        /* Title Bar */
 
         .manage_file h2 {
-
-            background: #2864df;
-            color: white;
-            font-size: 13px;
-            text-align: center;
-            padding: 8px;
             margin: 0;
-
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(90deg, #0d6efd, #315efb);
         }
 
-
-        /* Alerts */
-
-        .alert {
-
-            font-size: 12px;
-            margin: 5px;
-
-        }
-
-
-        /* Filter Section */
+        /* Filter Card */
 
         .card {
-
-            border: 0;
-            margin: 5px;
-
+            border: none;
+            border-radius: 10px;
+            box-shadow: none;
+            background: #fafafa;
         }
-
 
         .card-body {
-
-            padding: 5px;
-
+            padding: 20px;
         }
-
 
         label {
-
-            font-size: 10px;
-            margin-bottom: 2px;
-
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
         }
-
 
         .form-control,
         .form-select {
-
-            height: 23px;
-            font-size: 11px;
-            padding: 2px 5px;
-
+            height: 38px;
+            font-size: 13px;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
         }
 
-
-        /* Search Button */
-
-        .btn {
-
-            font-size: 10px;
-            padding: 3px 8px;
-
+        .form-control:focus,
+        .form-select:focus {
+            box-shadow: none;
+            border-color: #0d6efd;
         }
-
-
-
-
-
-        .table-responsive {
-
-            padding: 5px;
-            overflow-x: auto;
-
-        }
-
-
-        .table {
-
-            margin-bottom: 5px;
-            font-size: 10px;
-
-        }
-
-
-        .table thead th {
-
-            background: #454545 !important;
-            color: #fff;
-            font-size: 10px;
-            padding: 4px;
-            white-space: nowrap;
-            text-align: center;
-
-        }
-
-
-        .table tbody td {
-
-            padding: 3px !important;
-            white-space: nowrap;
-            vertical-align: middle;
-
-        }
-
-
-        .table tbody tr:nth-child(even) {
-
-            background: #eeeeee;
-
-        }
-
-
-        .table tbody tr:hover {
-
-            background: #d8ecff;
-
-        }
-
-
-        /* Operation dropdown */
-
-        .status-select {
-
-            height: 22px !important;
-            min-width: 130px;
-            font-size: 10px;
-
-        }
-
 
         /* Buttons */
 
-        .btn-sm {
-
-            padding: 2px 6px;
-            font-size: 10px;
-
+        .btn-success {
+            background: #198754;
+            border: none;
         }
 
+        .btn-success:hover {
+            background: #157347;
+        }
+
+        .btn-primary {
+            background: #0d6efd;
+            border: none;
+        }
+
+        .btn-sm {
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        /* Table */
+
+        .table-responsive {
+            border-radius: 10px;
+            overflow: auto;
+        }
+
+        .table {
+            font-size: 13px;
+            margin-bottom: 0;
+        }
+
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: #1f2937 !important;
+            color: #fff;
+            text-align: center;
+            vertical-align: middle;
+            white-space: nowrap;
+            padding: 10px;
+        }
+
+        .table tbody td {
+            vertical-align: middle;
+            white-space: nowrap;
+            padding: 8px;
+        }
+
+        .table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .table tbody tr:hover {
+            background: #e8f1ff;
+        }
+
+        /* Dropdown */
+
+        .status-select {
+            min-width: 160px;
+            height: 34px;
+            font-size: 13px;
+        }
 
         /* Badge */
 
         .badge {
-
-            font-size: 9px;
-
-        }
-
-
-
-
-        .pagination {
-
-            justify-content: flex-end;
-            margin: 5px 10px;
-
-        }
-
-
-        .pagination .page-link {
-
-            padding: 3px 8px;
+            padding: 6px 10px;
+            border-radius: 20px;
             font-size: 11px;
-
+            font-weight: 500;
         }
 
-
-        .pagination .active .page-link {
-
-            background: #2864df;
-            border-color: #2864df;
-
-        }
-
-
-        /* Bottom entry text */
+        /* Pagination */
 
         .pagination-wrapper {
-
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 5px 10px;
-
+            padding: 15px;
+            border-top: 1px solid #eee;
         }
 
-
-        .pagination-wrapper small {
-
-            font-size: 11px;
-
+        .pagination .page-link {
+            border-radius: 5px;
+            margin: 0 2px;
         }
 
+        .pagination .active .page-link {
+            background: #0d6efd;
+            border-color: #0d6efd;
+        }
 
-        /* Mobile */
+        /* Modal */
+
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .table-area {
+            max-height: 70vh;
+        }
+
+        /* Scrollbar */
+
+        .table-area::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-area::-webkit-scrollbar-thumb {
+            background: #b8b8b8;
+            border-radius: 10px;
+        }
+
+        .table-area::-webkit-scrollbar-track {
+            background: #eee;
+        }
+
+        /* Responsive */
 
         @media(max-width:768px) {
 
+            .main-crm {
+                padding: 5px;
+            }
+
+            .card-body {
+                padding: 10px;
+            }
+
             .pagination-wrapper {
-
-                display: block;
-
+                flex-direction: column;
+                gap: 10px;
             }
 
-            .pagination {
-
-                justify-content: center;
-
+            .manage_file h2 {
+                font-size: 18px;
             }
 
+            .table {
+                font-size: 12px;
+            }
+
+            .form-control,
+            .form-select {
+                margin-bottom: 10px;
+            }
         }
     </style>
 @endsection
@@ -353,7 +346,7 @@
 
                                     <label>Province</label>
 
-                                    <select class="form-control" name="province_name">
+                                    <select class="form-control" name="province_name" id="province_name">
 
                                         <option value="">Select Province</option>
 
@@ -385,7 +378,7 @@
 
                                     <label>College</label>
 
-                                    <select class="form-control" name="collage_name">
+                                    <select class="form-control" name="collage_name" id="collage_name">
 
                                         <option value="">Select College</option>
 
@@ -409,20 +402,26 @@
                             <div class="row">
 
                                 <div class="col-md-2">
-
                                     <label>Campus</label>
-
-                                    <input type="text" class="form-control" name="campus_name"
-                                        value="{{ request('campus_name') }}">
-
+                                    <select class="form-control form-select campus-select" name="campus_name"
+                                        id="campus">
+                                        <option value="">--Select Campus--</option>
+                                    </select>
                                 </div>
 
                                 <div class="col-md-2">
 
                                     <label>Program</label>
 
-                                    <input type="text" class="form-control" name="program_name"
-                                        value="{{ request('program_name') }}">
+                                    <select class="form-control" name="program_name" id="program_name">
+                                        <option value="">Select Program</option>
+
+                                        @if (request('program_name'))
+                                            <option value="{{ request('program_name') }}" selected>
+                                                {{ request('program_name') }}
+                                            </option>
+                                        @endif
+                                    </select>
 
                                 </div>
 
@@ -456,7 +455,7 @@
 
                                 </div>
 
-                                <div class="col-md-2">
+                                {{-- <div class="col-md-2">
 
                                     <label>Sub Category</label>
 
@@ -483,7 +482,7 @@
 
                                     </select>
 
-                                </div>
+                                </div> --}}
 
                                 <div class="col-md-1">
 
@@ -508,30 +507,28 @@
                 {{-- ===========================
                 Student Listing
             ============================ --}}
-            <div class="row mb-2">
-    <div class="col-md-1">
+                <div class="row mb-2">
+                    <div class="col-md-1">
 
-        <form method="GET">
+                        <form method="GET">
 
-            @foreach(request()->except('limit') as $key => $value)
-                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-            @endforeach
+                            @foreach (request()->except('limit') as $key => $value)
+                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                            @endforeach
 
-            <select name="limit"
-                    class="form-control"
-                    onchange="this.form.submit()">
+                            <select name="limit" class="form-control" onchange="this.form.submit()">
 
-                <option value="10" {{ request('limit',10)==10?'selected':'' }}>10</option>
-                <option value="25" {{ request('limit')==25?'selected':'' }}>25</option>
-                <option value="50" {{ request('limit')==50?'selected':'' }}>50</option>
-                <option value="100" {{ request('limit')==100?'selected':'' }}>100</option>
+                                <option value="10" {{ request('limit', 10) == 10 ? 'selected' : '' }}>10</option>
+                                <option value="25" {{ request('limit') == 25 ? 'selected' : '' }}>25</option>
+                                <option value="50" {{ request('limit') == 50 ? 'selected' : '' }}>50</option>
+                                <option value="100" {{ request('limit') == 100 ? 'selected' : '' }}>100</option>
 
-            </select>
+                            </select>
 
-        </form>
+                        </form>
 
-    </div>
-</div>
+                    </div>
+                </div>
 
                 <div class="table-responsive table-area">
 
@@ -563,9 +560,9 @@
                                 <th width="220">Operation Status</th>
                                 <th>Logs</th>
                                 <th>View</th>
-                                <th>Consent</th>
+                                <th>Email</th>
                                 <th>Signature</th>
-                                <th>Student ID</th>
+                                {{-- <th>Student ID</th> --}}
                                 <th>PDF</th>
 
                             </tr>
@@ -580,14 +577,10 @@
 
                                     {{-- Notes --}}
                                     <td>
-
                                         <button type="button" class="btn btn-success btn-sm open-notes-modal"
                                             data-file-no="{{ $student->sno }}" data-name="{{ $student->sname }}">
-
                                             Notes
-
                                         </button>
-
                                     </td>
 
                                     <td>{{ $student->sname }}</td>
@@ -711,7 +704,7 @@
                                     </td>
 
                                     {{-- Student ID --}}
-                                    <td>
+                                    {{-- <td>
 
                                         <button class="btn btn-secondary btn-sm student-id-btn"
                                             data-id="{{ $student->sno }}" data-bs-toggle="modal"
@@ -721,7 +714,7 @@
 
                                         </button>
 
-                                    </td>
+                                    </td> --}}
 
                                     {{-- PDF --}}
                                     <td>
@@ -795,79 +788,79 @@
     </section>
 
 
-    <div class="modal fade" id="notesModal" tabindex="-1" aria-hidden="true">
+    <div class="modal fade" id="notesModal" tabindex="-1">
 
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
 
             <div class="modal-content">
 
-                <div class="modal-header">
+                <div class="modal-header bg-success text-white">
 
                     <h5 class="modal-title">
-                        Add Student Notes
+                        Notes For :
+                        <span id="NotesModalName"></span>
                     </h5>
 
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    </button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
                 </div>
 
-                <form id="notesForm">
+                <div class="modal-body">
 
-                    @csrf
+                    <form id="addNotesForm">
 
-                    <div class="modal-body">
+                        @csrf
 
-                        <input type="hidden" name="semi_id" id="notes_student_id">
-
-                        <div class="mb-3">
-
-                            <label>
-                                Student Name
-                            </label>
-
-                            <h5 id="notes_student_name"></h5>
-
-                        </div>
+                        <input type="hidden" id="note_id" name="note_id">
 
                         <div class="mb-3">
 
-                            <label>
-                                Notes
-                            </label>
+                            <label>Add Note</label>
 
-                            <textarea class="form-control" rows="5" name="remarks" id="notes_remarks" required></textarea>
+                            <textarea class="form-control" id="newNote" name="newNote" rows="4" required></textarea>
 
                         </div>
 
-                    </div>
-
-                    <div class="modal-footer">
-
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-
-                            Close
-
+                        <button type="submit" class="btn btn-success">
+                            Save Note
                         </button>
 
-                        <button type="submit" class="btn btn-success" id="saveNotesBtn">
+                    </form>
 
-                            Save Notes
+                    <hr>
 
-                        </button>
+                    <table class="table table-bordered">
 
-                    </div>
+                        <thead>
 
-                </form>
+                            <tr>
+                                <th width="60">Sno</th>
+                                <th>Remarks</th>
+                                <th>Updated By</th>
+                                <th>Date Time</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="NotesTableBody">
+
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    No Notes Found
+                                </td>
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
 
             </div>
 
         </div>
 
     </div>
-
-
-
 
     <div class="modal fade" id="logsModal" tabindex="-1">
 
@@ -877,10 +870,8 @@
 
                 <div class="modal-header">
 
-                    <h5 class="modal-title">
-
-                        Operation Status Logs
-
+                    <h5 class="modal-title" id="logsModalLabel">
+                        Status Update Logs
                     </h5>
 
                     <button type="button" class="btn-close" data-bs-dismiss="modal">
@@ -890,78 +881,60 @@
 
                 <div class="modal-body">
 
-                    <h5 id="logStudentName" class="text-primary mb-3">
+                    <h5 class="text-center bg-dark text-white p-2">
+                        Logs
                     </h5>
 
-                    <h5>
-                        Operation Logs
-                    </h5>
+                    <table class="table table-bordered">
 
-                    <div class="table-responsive">
+                        <thead>
 
-                        <table class="table table-bordered" id="logsTable">
+                            <tr>
 
-                            <thead>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Remarks</th>
+                                <th>Updated By</th>
+                                <th>Action Datetime</th>
 
-                                <tr>
+                            </tr>
 
-                                    <th>Stage</th>
+                        </thead>
 
-                                    <th>Stage Date</th>
+                        <tbody id="logsTableBody">
 
-                                    <th>Remarks</th>
+                        </tbody>
 
-                                    <th>Updated By</th>
+                    </table>
 
-                                    <th>Created Date</th>
+                    <h5 class="text-center bg-dark text-white p-2 mt-4">
 
-                                    <th>Email Sent</th>
-
-                                </tr>
-
-                            </thead>
-
-                            <tbody>
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                    <hr>
-
-                    <h5>
-
-                        Notes History
+                        Notes
 
                     </h5>
 
-                    <div class="table-responsive">
+                    <table class="table table-bordered">
 
-                        <table class="table table-bordered" id="notesTable">
+                        <thead>
 
-                            <thead>
+                            <tr>
 
-                                <tr>
+                                <th>Sno</th>
+                                <th>Remarks</th>
+                                <th>Updated By</th>
+                                <th>Action Datetime</th>
 
-                                    <th>Remarks</th>
+                            </tr>
 
-                                    <th>Updated By</th>
+                        </thead>
 
-                                    <th>Date Time</th>
+                        <tbody id="logsNotesTableBody">
 
-                                </tr>
+                        </tbody>
 
-                            </thead>
+                    </table>
 
-                            <tbody>
 
-                            </tbody>
-
-                        </table>
-
-                    </div>
 
                 </div>
 
@@ -973,8 +946,7 @@
 
 
 
-
-    <div class="modal fade" id="studentIdModal" tabindex="-1">
+    {{-- <div class="modal fade" id="studentIdModal" tabindex="-1">
 
         <div class="modal-dialog">
 
@@ -1037,93 +1009,54 @@
 
         </div>
 
-    </div>
+    </div> --}}
 
 
 
 
-    <div class="modal fade" id="statusModal" tabindex="-1">
-
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-labelledby="statusModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-
             <div class="modal-content">
 
                 <div class="modal-header">
-
-                    <h5 class="modal-title">
-
-                        Update Operation Status
-
-                    </h5>
-
-                    <button type="button" class="btn-close" data-bs-dismiss="modal">
-                    </button>
-
+                    <h5 class="modal-title" id="statusModalLabel">Update Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
 
-                <form id="operationStatusForm">
-
+                <form id="statusForm" autocomplete="off">
                     @csrf
+
+                    <!-- Hidden Fields -->
+                    <input type="hidden" id="file_no" name="reg_sno">
+                    <input type="hidden" id="status" name="status">
+                    <input type="hidden" id="file_name" name="file_name">
+                    <input type="hidden" id="file_email" name="file_email">
+                    <input type="hidden" id="assign_name_id" name="assign_name">
+                    <input type="hidden" id="smobile_number" name="smobile_number">
+
+                    <!-- Controller expects this -->
+                    <input type="hidden" name="remarks_type" value="Operation Status">
 
                     <div class="modal-body">
 
-                        <input type="hidden" id="semi_id" name="semi_id">
+                        <div class="mb-3" id="oprStsSendDiv" style="display:none;">
+                            <label class="form-label" id="SendLabel"></label>
 
-                        <input type="hidden" id="file_name" name="file_name">
-
-                        <input type="hidden" id="file_email" name="file_email">
-
-                        <input type="hidden" id="assign_name" name="assign_name">
-
-                        <input type="hidden" id="smobile_number" name="smobile_number">
-
-                        <div class="mb-3">
-
-                            <label>
-
-                                Selected Status
-
-                            </label>
-
-                            <input type="text" id="status" name="status" class="form-control" readonly>
-
+                            <select class="form-control" id="oprStsSend" name="oprStsSend">
+                            </select>
                         </div>
 
                         <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
 
-                            <label>
-
-                                Stage Date
-
-                            </label>
-
-                            <input type="date" class="form-control" id="stage_date" name="stage_date">
-
+                            <!-- Controller expects followup_date -->
+                            <input type="date" class="form-control" id="date" name="followup_date">
                         </div>
 
                         <div class="mb-3">
+                            <label for="remarks" class="form-label">Remarks</label>
 
-                            <label>
-
-                                Remarks
-
-                            </label>
-
-                            <textarea class="form-control" rows="4" id="remarks" name="remarks"></textarea>
-
-                        </div>
-
-                        <div class="form-check">
-
-                            <input class="form-check-input" type="checkbox" id="oprStsSend" name="oprStsSend"
-                                value="1">
-
-                            <label class="form-check-label">
-
-                                Send Email To Student
-
-                            </label>
-
+                            <textarea class="form-control" id="remarks" name="remarks" rows="3" required></textarea>
                         </div>
 
                     </div>
@@ -1131,15 +1064,11 @@
                     <div class="modal-footer">
 
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-
                             Cancel
-
                         </button>
 
-                        <button type="button" class="btn btn-success save-operation-status">
-
-                            Update Status
-
+                        <button type="submit" class="btn btn-primary">
+                            Submit
                         </button>
 
                     </div>
@@ -1147,11 +1076,8 @@
                 </form>
 
             </div>
-
         </div>
-
     </div>
-
 @endsection
 
 
@@ -1174,36 +1100,85 @@
         $(document).ready(function() {
 
             //=======================================
-            // OPEN STATUS MODAL
+            // OPEN UPDATE STATUS MODAL
             //=======================================
 
             $(document).on('change', '.status-select', function() {
 
+                let fileNo = $(this).data('file-no');
+                let fileName = $(this).data('file-name');
+                let fileEmail = $(this).data('file-email');
+                let assign = $(this).data('file-assign-name');
+                let smobile = $(this).data('file-smobile');
                 let status = $(this).val();
 
                 if (status == '') {
                     return;
                 }
 
-                $('#semi_id').val($(this).data('file-no'));
+                // Show/Hide Send Dropdown
+                $("#oprStsSend").html('');
 
-                $('#file_name').val($(this).data('file-name'));
+                if (
+                    status == 'VeriFast & Wonderlic' ||
+                    status == 'Contract' ||
+                    status == 'Orientation' ||
+                    status == 'FAO Appointment' ||
+                    status == 'Campus Login'
+                ) {
 
-                $('#file_email').val($(this).data('file-email'));
+                    $("#oprStsSendDiv").show();
+                    $("#SendLabel").html(status + " Send:");
 
-                $('#assign_name').val($(this).data('file-assign-name'));
+                    if (status == 'Orientation') {
 
-                $('#smobile_number').val($(this).data('file-smobile'));
+                        $("#oprStsSend").append(
+                            '<option value="Sent">Sent</option>' +
+                            '<option value="Done">Done</option>'
+                        );
 
-                $('#status').val(status);
+                    } else if (status == 'Campus Login') {
 
-                $('#remarks').val('');
+                        $("#oprStsSend").append(
+                            '<option value="Done">Done</option>'
+                        );
 
-                $('#stage_date').val('');
+                    } else if (status == 'FAO Appointment') {
 
-                $('#oprStsSend').prop('checked', false);
+                        $("#oprStsSend").append(
+                            '<option value="Given">Given</option>' +
+                            '<option value="Completed">Completed</option>'
+                        );
 
-                $('#statusModal').modal('show');
+                    } else {
+
+                        $("#oprStsSend").append(
+                            '<option value="Sent">Sent</option>' +
+                            '<option value="Done">Done</option>'
+                        );
+
+                    }
+
+                } else {
+
+                    $("#oprStsSendDiv").hide();
+                    $("#SendLabel").html('');
+
+                }
+
+                $("#file_no").val(fileNo);
+                $("#file_name").val(fileName);
+                $("#file_email").val(fileEmail);
+                $("#assign_name_id").val(assign);
+                $("#smobile_number").val(smobile);
+                $("#status").val(status);
+
+                $("#remarks").val('');
+                $("#date").val('');
+
+                if (status != 'Not Process') {
+                    $("#statusModal").modal('show');
+                }
 
             });
 
@@ -1212,252 +1187,15 @@
             // SAVE OPERATION STATUS
             //=======================================
 
-            $(document).on('click', '.save-operation-status', function(e) {
+            $(document).on('submit', '#statusForm', function(e) {
 
                 e.preventDefault();
 
-                let btn = $(this);
+                let btn = $(this).find('button[type="submit"]');
 
                 $.ajax({
 
                     url: "{{ route('operation.updateStatus') }}",
-
-                    type: "POST",
-
-                    data: $("#operationStatusForm").serialize(),
-
-                    beforeSend: function() {
-
-                        btn.prop('disabled', true);
-
-                        btn.html('Saving...');
-
-                    },
-
-                    success: function(response) {
-
-                        btn.prop('disabled', false);
-
-                        btn.html('Update Status');
-
-                        if (response.success) {
-
-                            $('#statusModal').modal('hide');
-
-                            Swal.fire({
-
-                                icon: 'success',
-
-                                title: 'Success',
-
-                                text: response.message
-
-                            }).then(function() {
-
-                                location.reload();
-
-                            });
-
-                        } else {
-
-                            Swal.fire({
-
-                                icon: 'error',
-
-                                title: 'Error',
-
-                                text: response.message
-
-                            });
-
-                        }
-
-                    },
-
-                    error: function() {
-
-                        btn.prop('disabled', false);
-
-                        btn.html('Update Status');
-
-                        Swal.fire({
-
-                            icon: 'error',
-
-                            title: 'Error',
-
-                            text: 'Something went wrong.'
-
-                        });
-
-                    }
-
-                });
-
-            });
-            //=======================================
-            // VIEW OPERATION LOGS
-            //=======================================
-
-            $(document).on('click', '.view-logs-btn', function() {
-
-                let semi_id = $(this).data('file-no');
-                let student = $(this).data('name');
-
-                $('#logStudentName').html(student);
-
-                $('#logsTable tbody').html(
-                    '<tr><td colspan="6" class="text-center">Loading...</td></tr>'
-                );
-
-                $('#notesTable tbody').html(
-                    '<tr><td colspan="3" class="text-center">Loading...</td></tr>'
-                );
-
-                $('#logsModal').modal('show');
-
-                $.ajax({
-
-                    url: "{{ route('operation.logs') }}",
-
-                    type: "POST",
-
-                    data: {
-                        semi_id: semi_id
-                    },
-
-                    success: function(response) {
-
-                        let logHtml = '';
-                        let noteHtml = '';
-
-                        // Operation Logs
-
-                        if (response.logs.length > 0) {
-
-                            $.each(response.logs, function(i, row) {
-
-                                logHtml += `
-
-                    <tr>
-
-                        <td>${row.stage}</td>
-
-                        <td>${row.stage_date}</td>
-
-                        <td>${row.stage_remarks ?? ''}</td>
-
-                        <td>${row.updated_by}</td>
-
-                        <td>${row.created_date}</td>
-
-                        <td>${row.oprStsSend=='Yes' ? 'Yes' : 'No'}</td>
-
-                    </tr>
-
-                    `;
-
-                            });
-
-                        } else {
-
-                            logHtml = `
-                <tr>
-                    <td colspan="6" class="text-center">
-                        No Logs Found
-                    </td>
-                </tr>`;
-
-                        }
-
-                        $('#logsTable tbody').html(logHtml);
-
-                        // Notes History
-
-                        if (response.notes.length > 0) {
-
-                            $.each(response.notes, function(i, row) {
-
-                                noteHtml += `
-
-                    <tr>
-
-                        <td>${row.remarks}</td>
-
-                        <td>${row.updated_by}</td>
-
-                        <td>${row.datetime}</td>
-
-                    </tr>
-
-                    `;
-
-                            });
-
-                        } else {
-
-                            noteHtml = `
-                <tr>
-                    <td colspan="3" class="text-center">
-                        No Notes Found
-                    </td>
-                </tr>`;
-
-                        }
-
-                        $('#notesTable tbody').html(noteHtml);
-
-                    },
-
-                    error: function() {
-
-                        Swal.fire({
-
-                            icon: 'error',
-
-                            title: 'Error',
-
-                            text: 'Unable to load logs.'
-
-                        });
-
-                    }
-
-                });
-
-            });
-
-
-            //=======================================
-            // OPEN NOTES MODAL
-            //=======================================
-
-            $(document).on('click', '.open-notes-modal', function() {
-
-                $('#notes_student_id').val($(this).data('file-no'));
-
-                $('#notes_student_name').text($(this).data('name'));
-
-                $('#notes_remarks').val('');
-
-                $('#notesModal').modal('show');
-
-            });
-
-
-            //=======================================
-            // SAVE NOTES
-            //=======================================
-
-            $('#notesForm').submit(function(e) {
-
-                e.preventDefault();
-
-                let btn = $("#saveNotesBtn");
-
-                $.ajax({
-
-                    url: "{{ route('operation.notes.save') }}",
 
                     type: "POST",
 
@@ -1471,51 +1209,134 @@
 
                     success: function(response) {
 
-                        btn.prop('disabled', false).text('Save Notes');
+                        btn.prop('disabled', false).text('Submit');
 
-                        if (response.success) {
+                        if (response.success !== false) {
 
-                            $('#notesModal').modal('hide');
+                            $('#statusModal').modal('hide');
 
                             Swal.fire({
-
                                 icon: 'success',
-
                                 title: 'Success',
-
-                                text: response.message
-
+                                text: response.message || 'Status Updated Successfully'
+                            }).then(function() {
+                                location.reload();
                             });
 
                         } else {
 
                             Swal.fire({
-
                                 icon: 'error',
-
                                 title: 'Error',
-
-                                text: response.message
-
+                                text: response.message || 'Something went wrong.'
                             });
 
                         }
 
                     },
+                    error: function() {
+
+                        btn.prop('disabled', false).text('Submit');
+
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Something went wrong.'
+                        });
+
+                    }
+
+                });
+
+            });
+            //=======================================
+            // VIEW OPERATION LOGS
+            //=======================================
+
+            $(document).on('click', '.view-logs-btn', function() {
+
+                let fileNo = $(this).data('file-no');
+                let name = $(this).data('name');
+
+                $('#logsModalLabel').text('Status Update Logs - ' + name);
+
+                $.ajax({
+
+                    url: "{{ route('branch.manager.logs') }}",
+                    type: "POST",
+
+                    data: {
+                        semi_id: fileNo,
+                        _token: "{{ csrf_token() }}"
+                    },
+
+                    success: function(response) {
+
+                        let logsHtml = '';
+
+                        if (response.logs.length > 0) {
+
+                            response.logs.forEach(function(log) {
+
+                                logsHtml += `
+                                <tr>
+                                    <td>${log.stage_date ?? ''}</td>
+                                    <td>${log.stage ?? ''} ${log.oprStsSend ?? ''}</td>
+                                    <td>${log.stage_remarks ?? ''}</td>
+                                    <td>${log.updated_by ?? ''}</td>
+                                    <td>${log.created_date ?? ''}</td>
+                                </tr>
+                            `;
+                            });
+
+                        } else {
+
+                            logsHtml = `
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    No Logs Found
+                                </td>
+                            </tr>
+                        `;
+                        }
+
+                        $('#logsTableBody').html(logsHtml);
+
+                        let notesHtml = '';
+
+                        if (response.notes.length > 0) {
+
+                            response.notes.forEach(function(note, index) {
+
+                                notesHtml += `
+                                <tr>
+                                    <td>${index + 1}</td>
+                                    <td>${note.remarks ?? ''}</td>
+                                    <td>${note.updated_by ?? ''}</td>
+                                    <td>${note.datetime ?? note.created_datetime ?? ''}</td>
+                                </tr>
+                            `;
+                            });
+
+                        } else {
+
+                            notesHtml = `
+                            <tr>
+                                <td colspan="4" class="text-center">
+                                    No Notes Found
+                                </td>
+                            </tr>
+                        `;
+                        }
+
+                        $('#logsNotesTableBody').html(notesHtml);
+
+                        $('#logsModal').modal('show');
+                    },
 
                     error: function() {
 
-                        btn.prop('disabled', false).text('Save Notes');
-
-                        Swal.fire({
-
-                            icon: 'error',
-
-                            title: 'Error',
-
-                            text: 'Something went wrong.'
-
-                        });
+                        alert('Unable to load logs.');
 
                     }
 
@@ -1524,77 +1345,159 @@
             });
 
 
+
+
+
             //=======================================
-            // OPEN STUDENT ID MODAL
+            // OPEN NOTES MODAL
             //=======================================
 
-            $(document).on('click', '.student-id-btn', function() {
+            $(document).on('click', '.open-notes-modal', function() {
 
-                $('#student_sno').val($(this).data('id'));
+                let fileNo = $(this).data('file-no');
+                let name = $(this).data('name');
 
-                $('#student_id').val('');
+                $('#note_id').val(fileNo);
+                $('#NotesModalName').text(name);
+                $('#newNote').val('');
+
+                loadNotes(fileNo);
+
+                $('#notesModal').modal('show');
 
             });
 
 
+
+
             //=======================================
-            // SAVE STUDENT ID
+            // LOAD NOTES
             //=======================================
 
-            $('#studentIdForm').submit(function(e) {
+            function loadNotes(noteId) {
+
+                $('#NotesTableBody').html(`
+        <tr>
+            <td colspan="4" class="text-center">
+                Loading...
+            </td>
+        </tr>
+    `);
+
+                $.ajax({
+
+                    url: "{{ route('notes.get') }}",
+                    type: "POST",
+
+                    data: {
+                        note_id: noteId,
+                        _token: "{{ csrf_token() }}"
+                    },
+
+                    success: function(response) {
+
+                        let notesHtml = '';
+
+                        if (response.status && response.notes.length > 0) {
+
+                            response.notes.forEach(function(note, index) {
+
+                                notesHtml += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${note.remarks ?? ''}</td>
+                            <td>${note.updated_by ?? ''}</td>
+                            <td>${note.datetime ?? ''}</td>
+                        </tr>
+                    `;
+
+                            });
+
+                        } else {
+
+                            notesHtml = `
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No Notes Found
+                        </td>
+                    </tr>
+                `;
+
+                        }
+
+                        $('#NotesTableBody').html(notesHtml);
+
+                    },
+
+                    error: function(xhr) {
+
+                        console.log(xhr.responseText);
+
+                        $('#NotesTableBody').html(`
+                <tr>
+                    <td colspan="4" class="text-danger text-center">
+                        Failed to load notes
+                    </td>
+                </tr>
+            `);
+
+                    }
+
+                });
+
+            }
+
+
+            //=======================================
+            // SAVE NOTES
+            //=======================================
+
+
+            $('#addNotesForm').submit(function(e) {
 
                 e.preventDefault();
 
                 $.ajax({
 
-                    url: "{{ route('student.id.save') }}",
-
+                    url: "{{ route('notes.add') }}",
                     type: "POST",
 
                     data: $(this).serialize(),
 
                     success: function(response) {
 
-                        if (response.success) {
+                        if (response.status) {
 
-                            $('#studentIdModal').modal('hide');
+                            $('#newNote').val('');
+
+                            loadNotes($('#note_id').val());
 
                             Swal.fire({
-
                                 icon: 'success',
-
                                 title: 'Success',
-
                                 text: response.message
-
                             });
 
                         } else {
 
                             Swal.fire({
-
                                 icon: 'error',
-
                                 title: 'Error',
-
-                                text: response.message
-
+                                text: 'Unable to save note.'
                             });
 
                         }
 
                     },
 
-                    error: function() {
+                    error: function(xhr) {
+
+                        console.log(xhr.responseText);
 
                         Swal.fire({
-
                             icon: 'error',
-
                             title: 'Error',
-
-                            text: 'Server Error'
-
+                            text: 'Something went wrong.'
                         });
 
                     }
@@ -1603,6 +1506,101 @@
 
             });
 
+
+
+            // Province + College => Campus
+
+            $('#province_name, #collage_name').change(function() {
+
+                let province_name = $('#province_name').val();
+                let collage_name = $('#collage_name').val();
+
+                if (province_name && collage_name) {
+
+                    $.ajax({
+
+                        url: "{{ route('get.campus') }}",
+                        type: "GET",
+
+                        data: {
+                            province_name: province_name,
+                            collage_name: collage_name
+                        },
+
+                        success: function(response) {
+
+                            $('#campus').html(
+                                '<option value="">--Select Campus--</option>'
+                            );
+
+                            $.each(response, function(index, value) {
+
+                                $('#campus').append(
+                                    '<option value="' + value.campus_name + '">' +
+                                    value.campus_name +
+                                    '</option>'
+                                );
+
+                            });
+
+                        }
+
+                    });
+
+                }
+
+            });
+
+
+
+            // Campus => Program
+
+            $('#campus').change(function() {
+
+                let province_name = $('#province_name').val();
+                let collage_name = $('#collage_name').val();
+                let campus_name = $('#campus').val();
+
+
+                if (campus_name) {
+
+                    $.ajax({
+
+                        url: "{{ route('get.program') }}",
+                        type: "GET",
+
+                        data: {
+                            province_name: province_name,
+                            collage_name: collage_name,
+                            campus_name: campus_name
+                        },
+
+                        success: function(response) {
+
+                            $('#program_name').html(
+                                '<option value="">Select Program</option>'
+                            );
+
+
+                            $.each(response, function(index, value) {
+
+                                $('#program_name').append(
+
+                                    '<option value="' + value.prg_name + '">' +
+                                    value.prg_name +
+                                    '</option>'
+
+                                );
+
+                            });
+
+                        }
+
+                    });
+
+                }
+
+            });
         });
     </script>
 

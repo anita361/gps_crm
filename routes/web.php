@@ -328,10 +328,17 @@ Route::middleware('login')->group(function () {
         [WalkinController::class, 'updateStudentId']
     )->name('student.id.save');
     Route::get('/student/pdf/{id}', [WalkinController::class, 'studentPdf'])
+        ->whereNumber('id')
         ->name('student.pdf');
+    Route::get('/get-campus', [WalkinController::class, 'getCampus'])->name('get.campus');
+
+    Route::get('/get-program', [WalkinController::class, 'getProgram'])->name('get.program');
 
     Route::get('/fund-release-status', [WalkinController::class, 'fundReleaseStatus'])
         ->name('fund.release.status');
+
+    Route::get('/fund-release-export', [WalkinController::class, 'fundReleaseExport'])
+        ->name('fund.release.export');
 
     Route::get('/commission-enrollment-list', [WalkinController::class, 'commissionEnrollmentList'])
         ->name('commission.enrollment.list');
