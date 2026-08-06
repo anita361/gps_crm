@@ -308,6 +308,8 @@ Route::middleware('login')->group(function () {
 
     Route::get('/operation-status', [WalkinController::class, 'operationStatus'])
         ->name('operation.status');
+    Route::get('/operation-export', [WalkinController::class, 'operationExport'])
+        ->name('operationexport');
 
 
     Route::post(
@@ -336,6 +338,8 @@ Route::middleware('login')->group(function () {
 
     Route::get('/fund-release-status', [WalkinController::class, 'fundReleaseStatus'])
         ->name('fund.release.status');
+    Route::post('/get-colleges', [WalkinController::class, 'getColleges'])->name('get.colleges');
+
 
     Route::get('/fund-release-export', [WalkinController::class, 'fundReleaseExport'])
         ->name('fund.release.export');
@@ -345,6 +349,12 @@ Route::middleware('login')->group(function () {
 
     Route::get('/commission-list', [WalkinController::class, 'commissionList'])
         ->name('commission.list');
+
+    Route::post('/save-commission-status', [WalkinController::class, 'saveCommissionStatus'])
+        ->name('save.commission.status');
+
+    Route::post('/assign-operation', [WalkinController::class, 'assignOperation'])
+        ->name('assign.operation');
 
     Route::get('/enrolled-list', [WalkinController::class, 'enrolledList'])
         ->name('enrolled.list');

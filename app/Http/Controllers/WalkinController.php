@@ -10,7 +10,9 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 use Illuminate\Support\Facades\Schema;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+
+
+
 
 class WalkinController extends Controller
 {
@@ -414,21 +416,7 @@ class WalkinController extends Controller
 
             $mail->send();
 
-            // DB::table('semail_logs')->insert([
 
-            //     'semi_id'      => $request->reg_sno,
-            //     'mobile'       => $request->mobile,
-            //     'email'        => $request->email,
-            //     'message_type' => $request->template,
-            //     'subject'      => $request->subject,
-            //     'message'      => $request->message,
-            //     'template'     => $request->template,
-            //     'attachment'   => $attachment,
-            //     'created_by'   => session('login'),
-            //     'created_date' => now()->format('Y-m-d'),
-            //     'created_time' => now()->format('H:i:s'),
-
-            // ]);
             DB::table('semail_logs')->insert([
                 'email'      => $request->email,
                 'created_by' => session('login'),
@@ -704,10 +692,7 @@ class WalkinController extends Controller
 
 
 
-    //   public function fullBranchReport()
-    // {
-    //      return view('branch_manager.full_branch_report');
-    // }
+
 
     public function fullBranchReport(Request $request)
     {
@@ -715,11 +700,7 @@ class WalkinController extends Controller
         $toDate   = $request->to_date;
         $branch   = $request->branch;
 
-        /*
-    |--------------------------------------------------------------------------
-    | Branch List
-    |--------------------------------------------------------------------------
-    */
+
 
         $branches = DB::table('seminarpre')
             ->whereNotNull('branch')
@@ -728,11 +709,6 @@ class WalkinController extends Controller
             ->orderBy('branch')
             ->pluck('branch');
 
-        /*
-    |--------------------------------------------------------------------------
-    | Counselors
-    |--------------------------------------------------------------------------
-    */
 
         $counselors = DB::table('crm_login')
             ->select('id', 'name')
@@ -793,11 +769,7 @@ class WalkinController extends Controller
             $totalDrop += $drop;
             $totalEnrolled += $enrolled;
         }
-        /*
-    |--------------------------------------------------------------------------
-    | User Details
-    |--------------------------------------------------------------------------
-    */
+
 
         $users = DB::table('seminarpre')
             ->leftJoin('lead_appointed', 'seminarpre.smobile', '=', 'lead_appointed.callerno')
@@ -825,11 +797,7 @@ class WalkinController extends Controller
             $users->whereBetween('seminarpre.walkin_date', [$fromDate, $toDate]);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Remove Duplicate Mobile Numbers
-    |--------------------------------------------------------------------------
-    */
+
 
         $users = $users
             ->orderByDesc('seminarpre.sno')
@@ -837,11 +805,7 @@ class WalkinController extends Controller
             ->unique('smobile')
             ->values();
 
-        /*
-    |--------------------------------------------------------------------------
-    | Return View
-    |--------------------------------------------------------------------------
-    */
+
 
         return view(
             'branch_manager.full_branch_report',
@@ -972,7 +936,7 @@ class WalkinController extends Controller
         <td>{$totals['action']}</td>
     </tr>";
 
-        // ================= Lead Details (Single Query) =================
+
 
         $leadUsers = DB::table('lead_appointed as l')
             ->leftJoin('seminarpre as s', 's.smobile', '=', 'l.callerno')
@@ -1120,10 +1084,7 @@ class WalkinController extends Controller
         );
     }
 
-    // public function dailySalesReport()
-    // {
-    //     return view('branch_manager.daily_sales_report');
-    // }
+
 
     public function dailySalesReport(Request $request)
     {
@@ -1211,7 +1172,7 @@ class WalkinController extends Controller
 
     public function feedbackDetails()
     {
-        // Main table data
+
         $feedbacks = DB::table('remarks')
             ->join('seminarpre', 'remarks.mobile_no', '=', 'seminarpre.smobile')
             ->select(
@@ -1234,7 +1195,7 @@ class WalkinController extends Controller
                     $days = now()->diffInDays($row->follow_date);
                 }
 
-                // Calculate Review Rate
+
                 $ratings = DB::table('user_feedback')
                     ->join(
                         'question_option',
@@ -1317,57 +1278,10 @@ class WalkinController extends Controller
         ]);
     }
 
-    //     public function viewFeedback(Request $request)
-    // {
-    //     $mobile = $request->mobileno;
-    //     $type   = $request->type;
-
-    //     $feedbacks = DB::table('user_feedback')
-    //         ->where('mobile', $mobile)
-    //         ->where('question_type', $type)
-    //         ->orderBy('id')
-    //         ->get();
-
-    //     $data = [];
-
-    //     foreach ($feedbacks as $feedback) {
-
-    //         $question = DB::table('question')
-    //             ->where('id', $feedback->question)
-    //             ->value('question_name');
-
-    //         $answer = DB::table('question_option')
-    //             ->where('id', $feedback->question_option)
-    //             ->value('options');
-
-    //         $data[] = [
-    //             'question' => $question,
-    //             'answer'   => $answer,
-    //         ];
-    //     }
-
-    //     $remarks = DB::table('remarks')
-    //         ->where('mobile_no', $mobile)
-    //         ->where('question_type', $type)
-    //         ->value('remarks');
-
-    //     return response()->json([
-    //         'status'    => true,
-    //         'questions' => $data,
-    //         'remarks'   => $remarks
-    //     ]);
-    // }
-
-
-
-    // public function operationStatus()
-    // {
-    //     return view('operation.operation-status');
-    // }
 
     public function operationStatus(Request $request)
     {
-        // Get logged-in user from Session (NOT Auth)
+
         $user = DB::table('crm_login')
             ->where('id', session('login'))
             ->first();
@@ -1376,11 +1290,7 @@ class WalkinController extends Controller
             return redirect()->route('login');
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Date Filter
-    |--------------------------------------------------------------------------
-    */
+
 
         $query = DB::table('seminarpre');
 
@@ -1392,11 +1302,7 @@ class WalkinController extends Controller
             $query->whereDate('start_date', '<=', $request->ToFltDate);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Student Status
-    |--------------------------------------------------------------------------
-    */
+
 
         if ($request->filled('student_status')) {
 
@@ -1409,88 +1315,55 @@ class WalkinController extends Controller
             ]);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Operation Status
-    |--------------------------------------------------------------------------
-    */
+
 
         if ($request->filled('operation_status')) {
 
             $query->where('opr_stage', $request->operation_status);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Sub Category
-    |--------------------------------------------------------------------------
-    */
 
         if ($request->filled('Sub_category')) {
 
             $query->where('oprStsSend', $request->Sub_category);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Province
-    |--------------------------------------------------------------------------
-    */
+
 
         if ($request->filled('province_name')) {
 
             $query->where('province_name', $request->province_name);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | College
-    |--------------------------------------------------------------------------
-    */
+
 
         if ($request->filled('collage_name')) {
 
             $query->where('collage_name', $request->collage_name);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Campus
-    |--------------------------------------------------------------------------
-    */
+
 
         if ($request->filled('campus_name')) {
 
             $query->where('campus_name', $request->campus_name);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Program
-    |--------------------------------------------------------------------------
-    */
+
 
         if ($request->filled('program_name')) {
 
             $query->where('program_name', $request->program_name);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Counselor
-    |--------------------------------------------------------------------------
-    */
+
 
         if ($request->filled('counselor_id')) {
 
             $query->where('assign_id', $request->counselor_id);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Search
-    |--------------------------------------------------------------------------
-    */
+
 
         if ($request->filled('Getsearch')) {
 
@@ -1507,11 +1380,6 @@ class WalkinController extends Controller
             });
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Counselor Restriction
-    |--------------------------------------------------------------------------
-    */
 
         if ($user->role == 'counselor') {
 
@@ -1525,11 +1393,7 @@ class WalkinController extends Controller
             }
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Province Permission
-    |--------------------------------------------------------------------------
-    */
+
 
         if (in_array($user->username, ['navjot', 'prabjot'])) {
 
@@ -1557,29 +1421,14 @@ class WalkinController extends Controller
             }
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Order
-    |--------------------------------------------------------------------------
-    */
 
         $query->orderByDesc('enrolled_date');
 
-        /*
-    |--------------------------------------------------------------------------
-    | Pagination
-    |--------------------------------------------------------------------------
-    */
 
         $limit = $request->input('limit', 10);
 
         $students = $query->paginate($limit)->withQueryString();
 
-        /*
-    |--------------------------------------------------------------------------
-    | Dropdowns
-    |--------------------------------------------------------------------------
-    */
 
         $colleges = DB::table('college_list')
             ->select('clg_name')
@@ -1632,12 +1481,156 @@ class WalkinController extends Controller
         return $pdf->stream('Student-Consent.pdf');
     }
 
+    public function operationExport(Request $request)
+    {
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+
+        $filename = "operation_export_" . date('Y-m-d_H-i-s') . ".csv";
+
+        header("Content-Type: text/csv; charset=UTF-8");
+        header("Content-Disposition: attachment; filename={$filename}");
+        header("Pragma: no-cache");
+        header("Expires: 0");
 
 
-    // public function fundReleaseStatus()
-    // {
-    //     return view('operation.fund-release-status');
-    // }
+        echo "\xEF\xBB\xBF";
+
+        $output = fopen("php://output", "w");
+
+
+        fputcsv($output, [
+            'Client Name',
+            'Client Number',
+            'Country Name',
+            'Counselor Name',
+            'File Number',
+            'Student Status',
+            'Email',
+            'Province',
+            'College',
+            'Campus',
+            'Program Name',
+            'Enrolled Date',
+            'Start Date',
+            'Operation Status',
+            'Operation Last Status',
+            'Operation Last Status Date',
+            'Student ID',
+            'Lead Source',
+            'Source Remarks'
+        ]);
+
+        $query = DB::table('seminarpre as s')
+            ->select(
+                's.sname',
+                's.smobile',
+                's.scountry',
+                's.assign_name',
+                's.file_no',
+                's.student_status',
+                's.semail',
+                's.province_name',
+                's.collage_name',
+                's.campus_name',
+                's.program_name',
+                's.enrolled_date',
+                's.start_date',
+                's.opr_stage',
+                's.oprStsSend',
+                's.opr_stage_date',
+                's.student_id',
+                's.ssource',
+                's.source_remarks'
+            );
+
+
+        if ($request->filled('FromFltDate')) {
+            $query->whereDate('s.start_date', '>=', $request->FromFltDate);
+        }
+
+        if ($request->filled('ToFltDate')) {
+            $query->whereDate('s.start_date', '<=', $request->ToFltDate);
+        }
+
+        if ($request->filled('operation_status')) {
+            $query->where('s.opr_stage', $request->operation_status);
+        }
+
+        if ($request->filled('student_status')) {
+            $query->where('s.student_status', $request->student_status);
+        }
+
+        if ($request->filled('province')) {
+            $query->where('s.province_name', $request->province);
+        }
+
+        if ($request->filled('college')) {
+            $query->where('s.collage_name', $request->college);
+        }
+
+        if ($request->filled('campus')) {
+            $query->where('s.campus_name', $request->campus);
+        }
+
+        if ($request->filled('program')) {
+            $query->where('s.program_name', $request->program);
+        }
+
+        if ($request->filled('counselor')) {
+            $query->where('s.assign_id', $request->counselor);
+        }
+
+        if ($request->filled('opr_last_date')) {
+            $query->whereDate('s.opr_stage_date', $request->opr_last_date);
+        }
+
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+                $q->where('s.sname', 'like', "%{$search}%")
+                    ->orWhere('s.smobile', 'like', "%{$search}%")
+                    ->orWhere('s.scountry', 'like', "%{$search}%")
+                    ->orWhere('s.student_id', 'like', "%{$search}%")
+                    ->orWhere('s.semail', 'like', "%{$search}%")
+                    ->orWhere('s.file_no', 'like', "%{$search}%");
+            });
+        }
+
+        $rows = $query->orderByDesc('s.sno')->get();
+
+        foreach ($rows as $row) {
+
+            fputcsv($output, [
+                $row->sname,
+                $row->smobile,
+                $row->scountry,
+                $row->assign_name,
+                $row->file_no,
+                $row->student_status,
+                $row->semail,
+                $row->province_name,
+                $row->collage_name,
+                $row->campus_name,
+                $row->program_name,
+                $row->enrolled_date,
+                $row->start_date,
+                $row->opr_stage,
+                $row->oprStsSend,
+                $row->opr_stage_date,
+                $row->student_id,
+                $row->ssource,
+                $row->source_remarks
+            ]);
+        }
+
+        fclose($output);
+        exit;
+    }
+
 
     public function fundReleaseStatus(Request $request)
     {
@@ -1671,144 +1664,662 @@ class WalkinController extends Controller
                 's.student_id',
                 's.ssource',
                 's.source_remarks',
-                DB::raw("COALESCE(s.fund_aol_status,'Pending') as main_status"),
+                's.opr_stage_remarks',
+                's.stage_update_name',
+                's.fund_aol_remarks',
+                's.action_date',
+                DB::raw("IFNULL(s.fund_aol_status,'Pending') as main_status"),
                 'c.name as finance_manager'
             );
 
-        $data = $query->paginate(10);
 
-     
+        if ($request->filled('FromFltDate')) {
+            $query->whereDate('s.start_date', '>=', $request->FromFltDate);
+        }
+
+        if ($request->filled('ToFltDate')) {
+            $query->whereDate('s.start_date', '<=', $request->ToFltDate);
+        }
+
+
+        if ($request->filled('operation_status')) {
+            $query->where('s.opr_stage', $request->operation_status);
+        }
+
+
+        if ($request->filled('student_status')) {
+            $query->where('s.student_status', $request->student_status);
+        }
+
+
+        if ($request->filled('fund_aol_status')) {
+            $query->where('s.fund_aol_status', $request->fund_aol_status);
+        }
+
+
+        if ($request->filled('province')) {
+            $query->where('s.province_name', $request->province);
+        }
+
+
+        if ($request->filled('college')) {
+            $query->where('s.collage_name', $request->college);
+        }
+
+
+        if ($request->filled('campus')) {
+            $query->where('s.campus_name', $request->campus);
+        }
+
+
+        if ($request->filled('program')) {
+            $query->where('s.program_name', $request->program);
+        }
+
+
+        if ($request->filled('opr_last_date')) {
+            $query->whereDate('s.opr_stage_date', $request->opr_last_date);
+        }
+
+
+        if ($request->filled('counselor')) {
+            $query->where('s.assign_id', $request->counselor);
+        }
+
+
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('s.sname', 'like', "%{$search}%")
+                    ->orWhere('s.smobile', 'like', "%{$search}%")
+                    ->orWhere('s.scountry', 'like', "%{$search}%")
+                    ->orWhere('s.student_id', 'like', "%{$search}%")
+                    ->orWhere('s.semail', 'like', "%{$search}%")
+                    ->orWhere('s.file_no', 'like', "%{$search}%");
+            });
+        }
+
+        $query->orderByDesc('s.sno');
+
+        $data = $query->paginate(10)->appends($request->all());
+
+
+        $provinces = DB::table('college_list')
+            ->select('province')
+            ->distinct()
+            ->orderBy('province')
+            ->get();
+
+        $colleges = DB::table('college_list')
+            ->select('clg_name')
+            ->distinct()
+            ->orderBy('clg_name')
+            ->get();
+
+        $counselors = DB::table('crm_login')
+            ->where('role', 'counselor')
+            ->orderBy('name')
+            ->get();
+
         $student = $data->first();
 
-        return view('operation.fund-release-status', compact('data', 'sess_role', 'student'));
+        return view('operation.fund-release-status', compact(
+            'data',
+            'sess_role',
+            'student',
+            'provinces',
+            'colleges',
+            'counselors'
+        ));
     }
+
+
 
     public function fundReleaseExport(Request $request)
     {
-        $filename = "funding_release_" . now()->format('Y-m-d_H-i-s') . ".csv";
+        //   dd('Route Working', $request->all());
+        // dd($request->all());
+        //  dd($_GET, $request->query(), request()->query());
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
 
-        $response = new StreamedResponse(function () use ($request) {
+        $filename = "funding_release_" . date('Y-m-d_H-i-s') . ".csv";
 
-            $handle = fopen('php://output', 'w');
+        header("Content-Type: text/csv; charset=UTF-8");
+        header("Content-Disposition: attachment; filename={$filename}");
+        header("Pragma: no-cache");
+        header("Expires: 0");
 
-            // UTF-8 BOM
-            fprintf($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+        echo "\xEF\xBB\xBF";
 
-            // HEADER
-            fputcsv($handle, [
-                'Client Name',
-                'Client Number',
-                'Country Name',
-                'Counselor Name',
-                'File Number',
-                'Student Status',
-                'Email',
-                'Province',
-                'College',
-                'Campus',
-                'Program Name',
-                'Tuition Fee',
-                'Start Date',
-                'End Date',
-                'Enrolled Date',
-                'Finance Manager',
-                'Finance Apnt Date',
-                'Finance Apnt Time',
-                'Opr Last Status Date',
-                'Operation Status',
-                'Opr Last Status',
-                'Finance Status',
-                'Student Id',
-                'Lead Source',
-                'Source Remarks',
-                'Main Status'
-            ]);
+        $output = fopen("php://output", "w");
 
-            // ✅ SAME QUERY + FILTERS
-            $query = DB::table('seminarpre as s')
-                ->leftJoin('crm_login as c', 'c.id', '=', 's.finance_id')
-                ->select(
-                    DB::raw('ROW_NUMBER() OVER (ORDER BY s.id DESC) as sno'), // ✅ ADD THIS
-                    's.*',
-                    DB::raw("COALESCE(s.fund_aol_status,'Pending') as main_status"),
-                    'c.name as finance_manager'
-                );
 
-            // ✅ APPLY SAME FILTERS
-            if ($request->from_date) {
-                $query->whereDate('s.start_date', '>=', $request->from_date);
-            }
+        fputcsv($output, [
+            'Client Name',
+            'Client Number',
+            'Country Name',
+            'Counselor Name',
+            'File Number',
+            'Student Status',
+            'Email',
+            'Province',
+            'College',
+            'Campus',
+            'Program Name',
+            'Tuition Fee',
+            'Start Date',
+            'End Date',
+            'Enrolled Date',
+            'Finance Manager',
+            'Finance Apnt Date',
+            'Finance Apnt Time',
+            'Opr Last Status Date',
+            'Operation Status',
+            'Opr Last Status',
+            'Finance Status',
+            'Student Id',
+            'Lead Source',
+            'Source Remarks',
+            'Main Status'
+        ]);
 
-            if ($request->to_date) {
-                $query->whereDate('s.start_date', '<=', $request->to_date);
-            }
 
-            if ($request->student_status) {
-                $query->where('s.student_status', $request->student_status);
-            }
+        $query = DB::table('seminarpre as s')
+            ->leftJoin('crm_login as c', 'c.id', '=', 's.finance_id')
+            ->select(
+                's.sname',
+                's.smobile',
+                's.scountry',
+                's.assign_name',
+                's.file_no',
+                's.student_status',
+                's.semail',
+                's.province_name',
+                's.collage_name',
+                's.campus_name',
+                's.program_name',
+                's.tution_fee',
+                's.start_date',
+                's.end_date',
+                's.enrolled_date',
+                's.fin_apnt_date',
+                's.fin_apnt_time',
+                's.opr_stage_date',
+                's.opr_stage',
+                's.oprStsSend',
+                's.osap_status',
+                's.student_id',
+                's.ssource',
+                's.source_remarks',
+                DB::raw("IFNULL(s.fund_aol_status,'Pending') as main_status"),
+                'c.name as finance_manager'
+            );
 
-            if ($request->operation_status) {
-                $query->where('s.opr_stage', $request->operation_status);
-            }
 
-            if ($request->main_status) {
-                $query->where('s.fund_aol_status', $request->main_status);
-            }
 
-            if ($request->search) {
-                $query->where(function ($q) use ($request) {
-                    $q->where('s.sname', 'like', "%{$request->search}%")
-                        ->orWhere('s.smobile', 'like', "%{$request->search}%")
-                        ->orWhere('s.file_no', 'like', "%{$request->search}%");
-                });
-            }
 
-            // ✅ USE CHUNK (BEST PRACTICE)
-            $query->orderBy('s.id')->chunk(500, function ($rows) use ($handle) {
-                foreach ($rows as $row) {
-                    fputcsv($handle, [
-                        str_replace('-', '', $row->sname),
-                        $row->smobile,
-                        $row->scountry,
-                        $row->assign_name,
-                        $row->file_no,
-                        $row->student_status,
-                        $row->semail,
-                        $row->province_name,
-                        $row->collage_name,
-                        $row->campus_name,
-                        $row->program_name,
-                        $row->tution_fee ? '$' . $row->tution_fee : '',
-                        $row->start_date,
-                        $row->end_date,
-                        $row->enrolled_date,
-                        $row->finance_manager,
-                        $row->fin_apnt_date,
-                        $row->fin_apnt_time,
-                        $row->opr_stage_date,
-                        $row->opr_stage,
-                        $row->oprStsSend,
-                        $row->osap_status,
-                        $row->student_id,
-                        $row->ssource,
-                        $row->source_remarks,
-                        $row->main_status
-                    ]);
-                }
+        if ($request->filled('FromFltDate')) {
+            $query->whereDate('s.start_date', '>=', $request->FromFltDate);
+        }
+
+        if ($request->filled('ToFltDate')) {
+            $query->whereDate('s.start_date', '<=', $request->ToFltDate);
+        }
+
+        if ($request->filled('operation_status')) {
+            $query->where('s.opr_stage', $request->operation_status);
+        }
+
+        if ($request->filled('student_status')) {
+            $query->where('s.student_status', $request->student_status);
+        }
+
+        if ($request->filled('fund_aol_status')) {
+            $query->where('s.fund_aol_status', $request->fund_aol_status);
+        }
+
+        if ($request->filled('province')) {
+            $query->where('s.province_name', $request->province);
+        }
+
+        if ($request->filled('college')) {
+            $query->where('s.collage_name', $request->college);
+        }
+
+        if ($request->filled('campus')) {
+            $query->where('s.campus_name', $request->campus);
+        }
+
+        if ($request->filled('program')) {
+            $query->where('s.program_name', $request->program);
+        }
+
+        if ($request->filled('opr_last_date')) {
+            $query->whereDate('s.opr_stage_date', $request->opr_last_date);
+        }
+
+        if ($request->filled('counselor')) {
+            $query->where('s.assign_id', $request->counselor);
+        }
+
+
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('s.sname', 'like', "%$search%")
+                    ->orWhere('s.smobile', 'like', "%$search%")
+                    ->orWhere('s.scountry', 'like', "%$search%")
+                    ->orWhere('s.student_id', 'like', "%$search%")
+                    ->orWhere('s.semail', 'like', "%$search%")
+                    ->orWhere('s.file_no', 'like', "%$search%");
             });
+        }
 
-            fclose($handle);
-        });
 
-        $response->headers->set('Content-Type', 'text/csv');
-        $response->headers->set('Content-Disposition', "attachment; filename=$filename");
+        $rows = $query->orderByDesc('s.sno')->get();
 
-        return $response;
+
+        foreach ($rows as $row) {
+
+            fputcsv($output, [
+
+                $row->sname,
+                $row->smobile,
+                $row->scountry,
+                $row->assign_name,
+                $row->file_no,
+                $row->student_status,
+                $row->semail,
+                $row->province_name,
+                $row->collage_name,
+                $row->campus_name,
+                $row->program_name,
+                $row->tution_fee,
+                $row->start_date,
+                $row->end_date,
+                $row->enrolled_date,
+                $row->finance_manager,
+                $row->fin_apnt_date,
+                $row->fin_apnt_time,
+                $row->opr_stage_date,
+                $row->opr_stage,
+                $row->oprStsSend,
+                $row->osap_status,
+                $row->student_id,
+                $row->ssource,
+                $row->source_remarks,
+                $row->main_status
+
+            ]);
+        }
+
+
+        fclose($output);
+        exit;
     }
 
-    public function commissionEnrollmentList()
+
+    public function getColleges(Request $request)
     {
-        return view('operation.commission-enrollment-list');
+        $province = $request->province_name;
+
+        $colleges = DB::table('college_list')
+            ->where('province', $province)
+            ->select('clg_name')
+            ->distinct()
+            ->orderBy('clg_name')
+            ->get();
+
+        return response()->json($colleges);
+    }
+
+
+
+
+      public function commissionEnrollmentList(Request $request)
+    {
+
+        $limit = in_array((int)$request->limit,[10,25,50,100])
+            ? (int)$request->limit
+            : 10;
+
+
+        $query = DB::table('seminarpre')
+            ->whereIn('student_status',[
+                'enrolled',
+                'Re-enrolled'
+            ]);
+
+
+        // Month filter
+        if($request->filled('monthwise')){
+
+            $date = explode('-',$request->monthwise);
+
+            if(count($date)==2){
+
+                $query->whereYear(
+                    'enrolled_date',
+                    $date[0]
+                )
+                ->whereMonth(
+                    'enrolled_date',
+                    $date[1]
+                );
+
+            }
+        }
+
+
+        // Status
+        if($request->filled('student_status')){
+
+            $query->where(
+                'student_status',
+                $request->student_status
+            );
+
+        }
+
+
+        // Source
+        if($request->filled('ssource')){
+
+            $query->where(
+                'ssource',
+                $request->ssource
+            );
+
+        }
+
+
+        // Province
+        if($request->filled('province_name')){
+
+            $query->where(
+                'province_name',
+                $request->province_name
+            );
+
+        }
+
+
+        // College
+        if($request->filled('collage_name')){
+
+            $query->where(
+                'collage_name',
+                $request->collage_name
+            );
+
+        }
+
+
+        // Campus
+        if($request->filled('campus_name')){
+
+            $query->where(
+                'campus_name',
+                $request->campus_name
+            );
+
+        }
+
+
+        // Program
+        if($request->filled('program_name')){
+
+            $query->where(
+                'program_name',
+                $request->program_name
+            );
+
+        }
+
+
+        // Search
+        if($request->filled('name_mobile_email')){
+
+            $search=$request->name_mobile_email;
+
+
+            $query->where(function($q) use($search){
+
+                $q->where(
+                    'sname',
+                    'LIKE',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'smobile',
+                    'LIKE',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'semail',
+                    'LIKE',
+                    "%{$search}%"
+                )
+                ->orWhere(
+                    'file_no',
+                    'LIKE',
+                    "%{$search}%"
+                );
+
+            });
+
+        }
+
+
+        $students = $query
+            ->orderByDesc('enrolled_date')
+            ->paginate($limit)
+            ->withQueryString();
+
+
+
+        $sources = DB::table('seminarpre')
+            ->whereIn(
+                'student_status',
+                [
+                    'enrolled',
+                    'Re-enrolled'
+                ]
+            )
+            ->whereNotNull('ssource')
+            ->where(
+                'ssource',
+                '!=',
+                ''
+            )
+            ->distinct()
+            ->orderBy('ssource')
+            ->pluck('ssource');
+
+
+
+        $colleges = DB::table('college_list')
+            ->select('clg_name')
+            ->whereNotNull('clg_name')
+            ->distinct()
+            ->orderBy('clg_name')
+            ->get();
+
+
+
+        $operations = DB::table('crm_login')
+            ->where(
+                'role',
+                'operation'
+            )
+            ->orderBy('name')
+            ->get();
+
+
+
+        return view(
+            'operation.commission-enrollment-list',
+            compact(
+                'students',
+                'sources',
+                'colleges',
+                'operations'
+            )
+        );
+
+    }
+//   public function commissionEnrollmentList(Request $request)
+// {
+//     // 🔹 Dropdown Data
+
+//     $provinces = DB::table('college_list')
+//         ->select('province')
+//         ->distinct()
+//         ->orderBy('province')
+//         ->pluck('province');
+
+//     // $colleges = DB::table('college_list')
+//     //     ->when($request->province_name, function ($q) use ($request) {
+//     //         $q->where('province', $request->province_name);
+//     //     })
+//     //     ->select('clg_name')
+//     //     ->distinct()
+//     //     ->orderBy('clg_name')
+//     //     ->pluck('clg_name');
+//     $colleges = DB::table('college_list')
+//     ->when($request->province_name, function ($q) use ($request) {
+//         $q->where('province', $request->province_name);
+//     })
+//     ->select('clg_name')
+//     ->distinct()
+//     ->get(); // ✅ instead of pluck
+
+//     $campuses = DB::table('college_list')
+//         ->when($request->collage_name, function ($q) use ($request) {
+//             $q->where('clg_name', $request->collage_name);
+//         })
+//         ->select('campus_name')
+//         ->distinct()
+//         ->orderBy('campus_name')
+//         ->pluck('campus_name');
+
+//     $programs = DB::table('college_list')
+//         ->when($request->campus_name, function ($q) use ($request) {
+//             $q->where('campus_name', $request->campus_name);
+//         })
+//         ->select('prg_name')
+//         ->distinct()
+//         ->orderBy('prg_name')
+//         ->pluck('prg_name');
+
+//     // ✅ FIXED: use seminarpre instead of students
+//     $sources = DB::table('seminarpre')
+//         ->select('ssource')
+//         ->whereNotNull('ssource')
+//         ->where('ssource', '!=', '')
+//         ->distinct()
+//         ->orderBy('ssource')
+//         ->pluck('ssource');
+
+
+//     // 🔹 Main Data
+
+//     $students = DB::table('seminarpre') // ✅ FIXED
+
+//         ->when($request->monthwise, function ($q) use ($request) {
+//             $q->whereMonth('enrolled_date', date('m', strtotime($request->monthwise)))
+//               ->whereYear('enrolled_date', date('Y', strtotime($request->monthwise)));
+//         })
+
+//         ->when($request->student_status, fn($q) =>
+//             $q->where('student_status', $request->student_status))
+
+//         ->when($request->ssource, fn($q) =>
+//             $q->where('ssource', $request->ssource))
+
+//         ->when($request->province_name, fn($q) =>
+//             $q->where('province', $request->province_name))
+
+//         ->when($request->collage_name, fn($q) =>
+//             $q->where('clg_name', $request->collage_name))
+
+//         ->when($request->campus_name, fn($q) =>
+//             $q->where('campus_name', $request->campus_name))
+
+//         ->when($request->program_name, fn($q) =>
+//             $q->where('prg_name', $request->program_name))
+
+//         ->when($request->search, function ($q) use ($request) {
+//             $q->where(function ($sub) use ($request) {
+//                 $sub->where('sname', 'like', "%{$request->search}%")
+//                     ->orWhere('smobile', 'like', "%{$request->search}%")
+//                     ->orWhere('semail', 'like', "%{$request->search}%")
+//                     ->orWhere('file_no', 'like', "%{$request->search}%");
+//             });
+//         })
+
+//         ->orderByDesc('enrolled_date')
+//         ->paginate($request->limit ?? 10)
+//         ->appends($request->all());
+
+
+//     return view('operation.commission-enrollment-list', compact(
+//         'students',
+//         'provinces',
+//         'colleges',
+//         'campuses',
+//         'programs',
+//         'sources'
+//     ));
+// }
+    public function saveCommissionStatus(Request $request)
+    {
+        DB::table('seminarpre')
+            ->where('sno', $request->id)
+            ->update([
+                'commission_status' => $request->status,
+                'comm_one_amt'      => $request->comm_one_amt,
+                'comm_two_amt'      => $request->comm_two_amt,
+            ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Commission Status Updated'
+        ]);
+    }
+
+    public function assignOperation(Request $request)
+    {
+        DB::table('seminarpre')
+            ->where('sno', $request->appntid)
+            ->update([
+                'officer_id' => $request->assign,
+            ]);
+
+        $user = DB::table('crm_login')
+            ->where('id', $request->assign)
+            ->first();
+
+        if ($user) {
+            DB::table('seminarpre')
+                ->where('sno', $request->appntid)
+                ->update([
+                    'officer_name' => $user->name,
+                ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Operation Assigned Successfully'
+        ]);
     }
 
     public function commissionList()

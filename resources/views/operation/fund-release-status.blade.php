@@ -5,143 +5,140 @@
 
 @section('styles')
 
-<style>
+    <style>
+        .main-crm {
+            margin-top: 35px;
+            padding: 15px;
+            background: #f4f6fb;
+            min-height: 100vh;
+        }
 
-.main-crm {
-    margin-top:35px;
-    padding:15px;
-    background:#f4f6fb;
-    min-height:100vh;
-}
 
+        .manage_file {
+            background: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
+        }
 
-.manage_file {
-    background:#fff;
-    border-radius:12px;
-    overflow:hidden;
-    box-shadow:0 8px 20px rgba(0,0,0,.08);
-}
 
+        .manage_file h2 {
 
-.manage_file h2 {
+            margin: 0;
+            padding: 15px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #fff;
+            background: linear-gradient(90deg, #0d6efd, #315efb);
 
-    margin:0;
-    padding:15px;
-    text-align:center;
-    font-size:20px;
-    font-weight:600;
-    color:#fff;
-    background:linear-gradient(90deg,#0d6efd,#315efb);
+        }
 
-}
 
 
+        .card {
 
-.card {
+            border: none;
+            border-radius: 10px;
+            background: #fafafa;
 
-    border:none;
-    border-radius:10px;
-    background:#fafafa;
+        }
 
-}
 
 
+        .card-body {
 
-.card-body {
+            padding: 20px;
 
-    padding:20px;
+        }
 
-}
 
 
+        label {
 
-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
 
-    font-size:12px;
-    font-weight:600;
-    color:#555;
+        }
 
-}
 
 
+        .form-control {
 
-.form-control {
+            height: 38px;
+            font-size: 13px;
+            border-radius: 6px;
 
-    height:38px;
-    font-size:13px;
-    border-radius:6px;
+        }
 
-}
 
 
+        .btn-sm {
 
-.btn-sm {
+            font-size: 12px;
+            padding: 5px 10px;
 
-    font-size:12px;
-    padding:5px 10px;
+        }
 
-}
 
 
+        .table-responsive {
 
-.table-responsive {
+            overflow: auto;
 
-    overflow:auto;
+        }
 
-}
 
 
+        .table {
 
-.table {
+            font-size: 13px;
 
-    font-size:13px;
+        }
 
-}
 
 
+        .table thead th {
 
-.table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: #1f2937 !important;
+            color: white;
+            text-align: center;
+            white-space: nowrap;
 
-    position:sticky;
-    top:0;
-    z-index:5;
-    background:#1f2937!important;
-    color:white;
-    text-align:center;
-    white-space:nowrap;
+        }
 
-}
 
 
+        .table tbody td {
 
-.table tbody td {
+            white-space: nowrap;
+            vertical-align: middle;
 
-    white-space:nowrap;
-    vertical-align:middle;
+        }
 
-}
 
 
+        .status-select {
 
-.status-select {
+            min-width: 160px;
+            height: 34px;
 
-    min-width:160px;
-    height:34px;
+        }
 
-}
 
 
+        .pagination-wrapper {
 
-.pagination-wrapper {
+            display: flex;
+            justify-content: flex-end;
+            padding: 15px;
 
-    display:flex;
-    justify-content:flex-end;
-    padding:15px;
-
-}
-
-
-</style>
+        }
+    </style>
 
 
 @endsection
@@ -151,1556 +148,1511 @@ label {
 @section('content')
 
 
-<div class="container-fluid main-crm">
+    <div class="container-fluid main-crm">
 
 
-<div class="manage_file">
+        <div class="manage_file">
 
 
-<h2>
+            <h2>
 
-<i class="fa fa-user"></i>
+                <i class="fa fa-user"></i>
 
-Fund Released Status
+                Fund Released Status
 
-</h2>
-
-
-
-@if(session('success'))
-
-<div class="alert alert-success">
-
-{{ session('success') }}
-
-</div>
-
-@endif
+            </h2>
 
 
 
-@if(session('error'))
+            @if (session('success'))
+                <div class="alert alert-success">
 
-<div class="alert alert-danger">
+                    {{ session('success') }}
 
-{{ session('error') }}
+                </div>
+            @endif
 
-</div>
 
-@endif
+
+            @if (session('error'))
+                <div class="alert alert-danger">
+
+                    {{ session('error') }}
+
+                </div>
+            @endif
 
 
 
 
-{{-- FILTER SECTION --}}
+            {{-- FILTER SECTION --}}
 
 
-<div class="card">
+            <div class="card">
 
 
-<div class="card-body">
+                <div class="card-body">
 
 
-<form method="GET" action="{{ route('fund.release.status') }}">
+                    <form method="GET" action="{{ route('fund.release.status') }}">
 
 
 
-<div class="row">
+                        <div class="row">
 
 
-<div class="col-md-3 mb-2">
+                            <div class="col-md-3 mb-2">
 
 
-<label>
-From Start Date
-</label>
+                                <label>
+                                    From Start Date
+                                </label>
 
 
-{{-- <input type="date"
+                                {{-- <input type="date"
 name="from_date"
 class="form-control"
 value="{{ request('from_date') }}"> --}}
-<input type="text"
-name="FromFltDate"
-class="form-control datepick"
-value="{{ request('FromFltDate') }}">
+                                <input type="date" name="FromFltDate" class="form-control datepick"
+                                    value="{{ request('FromFltDate') }}">
 
 
-</div>
+                            </div>
 
 
 
-<div class="col-md-3 mb-2">
+                            <div class="col-md-3 mb-2">
 
 
-<label>
-To Start Date
-</label>
+                                <label>
+                                    To Start Date
+                                </label>
 
 
-{{-- <input type="date"
+                                {{-- <input type="date"
 name="to_date"
 class="form-control"
 value="{{ request('to_date') }}"> --}}
-<input type="text"
-name="ToFltDate"
-class="form-control datepick"
-value="{{ request('ToFltDate') }}">
+                                <input type="date" name="ToFltDate" class="form-control datepick"
+                                    value="{{ request('ToFltDate') }}">
 
 
-</div>
+                            </div>
 
 
 
-<div class="col-md-3 mb-2">
+                            <div class="col-md-3 mb-2">
 
 
-<label>
-Operation Status
-</label>
+                                <label>
+                                    Operation Status
+                                </label>
 
 
-@php
+                                @php
 
-$statusList = [
+                                    $statusList = [
+                                        'Not Process',
+                                        'Campus Login',
+                                        'VeriFast & Wonderlic',
+                                        'Contract',
+                                        'Orientation',
+                                        'FAO Appointment',
+                                        'Drop',
+                                        'Start',
+                                        'FR1',
+                                        'FR2',
+                                        'Cancel',
+                                        'Withdrawal',
+                                        'Not Started',
+                                        'Graduate',
+                                    ];
 
-'Not Process',
-'Campus Login',
-'VeriFast & Wonderlic',
-'Contract',
-'Orientation',
-'FAO Appointment',
-'Drop',
-'Start',
-'FR1',
-'FR2',
-'Cancel',
-'Withdrawal',
-'Not Started',
-'Graduate'
+                                @endphp
 
-];
 
-@endphp
 
+                                <select name="operation_status" class="form-control">
 
 
-<select name="operation_status"
-class="form-control">
+                                    <option value="">
+                                        Select
+                                    </option>
 
 
-<option value="">
-Select
-</option>
 
+                                    @foreach ($statusList as $status)
+                                        <option value="{{ $status }}"
+                                            {{ request('operation_status') == $status ? 'selected' : '' }}>
 
 
-@foreach($statusList as $status)
+                                            {{ $status }}
 
 
-<option value="{{ $status }}"
-{{ request('operation_status') == $status ? 'selected':'' }}>
+                                        </option>
+                                    @endforeach
 
 
-{{ $status }}
 
+                                </select>
 
-</option>
 
+                            </div>
 
-@endforeach
 
 
 
-</select>
+                            <div class="col-md-3 mb-2">
 
 
-</div>
+                                <label>
+                                    Student Status
+                                </label>
 
 
 
+                                <select name="student_status" class="form-control">
 
-<div class="col-md-3 mb-2">
 
+                                    <option value="">
+                                        Select
+                                    </option>
 
-<label>
-Student Status
-</label>
 
+                                    <option value="enrolled"
+                                        {{ request('student_status') == 'enrolled' ? 'selected' : '' }}>
 
+                                        Enrolled
 
-<select name="student_status"
-class="form-control">
+                                    </option>
 
 
-<option value="">
-Select
-</option>
 
+                                </select>
 
-<option value="enrolled"
-{{ request('student_status')=='enrolled'?'selected':'' }}>
 
-Enrolled
+                            </div>
 
-</option>
 
 
+                        </div>
+                        <div class="row mt-2">
 
-</select>
 
+                            <div class="col-md-3 mb-2">
 
-</div>
+                                <label>
+                                    Main Status
+                                </label>
 
 
+                                <select name="fund_aol_status" class="form-control">
 
-</div>
-<div class="row mt-2">
+                                    <option value="">
+                                        Select
+                                    </option>
 
 
-<div class="col-md-3 mb-2">
+                                    @if (request('main_status'))
+                                        <option selected>
+                                            {{ request('main_status') }}
+                                        </option>
+                                    @endif
 
-<label>
-Main Status
-</label>
 
+                                </select>
 
-<select name="fund_aol_status"
-class="form-control">
+                            </div>
 
-<option value="">
-Select
-</option>
 
 
-@if(request('main_status'))
 
-<option selected>
-{{ request('main_status') }}
-</option>
 
-@endif
+                            <div class="col-md-3 mb-2">
 
+                                <label>
+                                    Province
+                                </label>
 
-</select>
 
-</div>
+                                <select name="province" id="province_name" class="form-control">
 
 
+                                    <option value="">
+                                        --Select Province--
+                                    </option>
 
 
+                                    @foreach ($provinces as $province)
+                                        <option value="{{ $province->province }}"
+                                            {{ request('province') == $province->province ? 'selected' : '' }}>
+                                            {{ $province->province }}
+                                        </option>
+                                    @endforeach
 
-<div class="col-md-3 mb-2">
 
-<label>
-Province
-</label>
 
+                                </select>
 
-<select name="province"
-class="form-control">
 
+                            </div>
 
-<option value="">
---Select Province--
-</option>
 
 
-@foreach($provinces ?? [] as $province)
 
 
-<option value="{{ $province->province_name }}"
-{{ request('province')==$province->province_name?'selected':'' }}>
+                            <div class="col-md-3 mb-2">
 
+                                <label>
+                                    College
+                                </label>
 
-{{ $province->province_name }}
 
+                                <select name="college" id="collage_name" class="form-control">
 
-</option>
 
+                                    <option value="">
+                                        --Select College--
+                                    </option>
 
-@endforeach
 
 
-</select>
+                                    @foreach ($colleges ?? [] as $college)
+                                        <option value="{{ $college->clg_name }}"
+                                            {{ request('college') == $college->clg_name ? 'selected' : '' }}>
 
 
-</div>
+                                            {{ $college->clg_name }}
 
 
+                                        </option>
+                                    @endforeach
 
 
+                                </select>
 
-<div class="col-md-3 mb-2">
 
-<label>
-College
-</label>
+                            </div>
 
 
-<select name="college"
-class="form-control">
 
 
-<option value="">
---Select College--
-</option>
 
+                            <div class="col-md-3 mb-2">
 
+                                <label>
+                                    Campus
+                                </label>
 
-@foreach($colleges ?? [] as $college)
 
+                                <select name="campus" id="campus" class="form-control">
 
-<option value="{{ $college->clg_name }}"
-{{ request('college')==$college->clg_name?'selected':'' }}>
 
+                                    <option value="">
+                                        --Select Campus--
+                                    </option>
 
-{{ $college->clg_name }}
 
+                                    @if (request('campus'))
+                                        <option selected>
 
-</option>
+                                            {{ request('campus') }}
 
+                                        </option>
+                                    @endif
 
-@endforeach
 
+                                </select>
 
-</select>
 
+                            </div>
 
-</div>
 
 
+                        </div>
 
 
 
-<div class="col-md-3 mb-2">
 
-<label>
-Campus
-</label>
 
+                        <div class="row mt-2">
 
-<select name="campus"
-id="campus"
-class="form-control">
 
 
-<option value="">
---Select Campus--
-</option>
+                            <div class="col-md-3 mb-2">
 
 
-@if(request('campus'))
+                                <label>
+                                    Program
+                                </label>
 
-<option selected>
 
-{{ request('campus') }}
+                                <select name="program" id="program_name" class="form-control">
 
-</option>
 
+                                    <option value="">
+                                        --Select Program--
+                                    </option>
 
-@endif
 
+                                    @if (request('program'))
+                                        <option selected>
 
-</select>
+                                            {{ request('program') }}
 
+                                        </option>
+                                    @endif
 
-</div>
 
+                                </select>
 
 
-</div>
+                            </div>
 
 
 
 
 
-<div class="row mt-2">
+                            <div class="col-md-3 mb-2">
 
 
+                                <label>
+                                    Opr Last Status Date
+                                </label>
 
-<div class="col-md-3 mb-2">
 
+                                <input type="date" name="opr_last_date" class="form-control"
+                                    value="{{ request('opr_last_date') }}">
 
-<label>
-Program
-</label>
 
+                            </div>
 
-<select name="program"
-id="program"
-class="form-control">
 
 
-<option value="">
---Select Program--
-</option>
 
 
-@if(request('program'))
+                            <div class="col-md-3 mb-2">
 
-<option selected>
 
-{{ request('program') }}
+                                <label>
+                                    Counselor Wise
+                                </label>
 
-</option>
 
+                                <select name="counselor" class="form-control">
 
-@endif
 
+                                    <option value="">
+                                        Select a Counselor
+                                    </option>
 
-</select>
 
 
-</div>
+                                    @foreach ($counselors ?? [] as $counselor)
+                                        <option value="{{ $counselor->id }}"
+                                            {{ request('counselor') == $counselor->id ? 'selected' : '' }}>
 
 
+                                            {{ $counselor->name }}
 
 
+                                        </option>
+                                    @endforeach
 
-<div class="col-md-3 mb-2">
 
+                                </select>
 
-<label>
-Opr Last Status Date
-</label>
 
+                            </div>
 
-<input type="date"
-name="opr_last_date"
-class="form-control"
-value="{{ request('opr_last_date') }}">
 
 
-</div>
 
 
+                            <div class="col-md-3 mb-2">
 
 
+                                <label>
+                                    Name / Phone / Country / Std Id / Email / File No
+                                </label>
 
-<div class="col-md-3 mb-2">
 
+                                <input type="text" name="search" class="form-control" placeholder="Search..."
+                                    value="{{ request('search') }}">
 
-<label>
-Counselor Wise
-</label>
 
 
-<select name="counselor"
-class="form-control">
+                            </div>
 
 
-<option value="">
-Select a Counselor
-</option>
 
+                        </div>
 
 
-@foreach($counselors ?? [] as $counselor)
 
 
-<option value="{{ $counselor->id }}"
-{{ request('counselor')==$counselor->id?'selected':'' }}>
 
+                        <div class="mt-3">
 
-{{ $counselor->name }}
 
+                            <button type="submit" class="btn btn-primary">
 
-</option>
+                                Search
 
+                            </button>
 
-@endforeach
 
 
-</select>
+                            <a href="{{ route('fund.release.status') }}" class="btn btn-secondary">
 
+                                Reset
 
-</div>
+                            </a>
 
 
 
-
-
-<div class="col-md-3 mb-2">
-
-
-<label>
-Name / Phone / Country / Std Id / Email / File No
-</label>
-
-
-<input type="text"
-name="search"
-class="form-control"
-placeholder="Search..."
-value="{{ request('search') }}">
-
-
-
-</div>
-
-
-
-</div>
-
-
-
-
-
-<div class="mt-3">
-
-
-<button type="submit"
-class="btn btn-primary">
-
-Search
-
+                           <button type="submit"
+        formaction="{{ route('fund.release.export') }}"
+        formmethod="GET"
+        class="btn btn-success float-end">
+    Download in Excel
 </button>
 
 
+                        </div>
 
-<a href="{{ route('fund.release.status') }}"
-class="btn btn-secondary">
 
-Reset
 
-</a>
+                    </form>
 
 
+                </div>
 
-<a href="{{ route('fund.release.export',request()->all()) }}"
-class="btn btn-success float-end">
 
-Download in Excel
+            </div>
 
-</a>
+            {{-- TABLE SECTION --}}
 
+            <div class="card mt-3">
 
+                <div class="card-body table-responsive">
 
-</div>
 
+                    <table class="table table-bordered table-striped table-hover">
 
 
-</form>
+                        <thead class="table-dark">
 
+                            <tr>
 
-</div>
+                                <th>Notes</th>
 
+                                <th>Client Name</th>
+                                <th>Client Number</th>
+                                <th>Country Name</th>
+                                <th>Counselor Name</th>
+                                <th>File Number</th>
+                                <th>Student Status</th>
+                                <th>Email</th>
+                                <th>Province</th>
+                                <th>College</th>
+                                <th>Campus</th>
+                                <th>Program Name</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Enrolled Date</th>
 
-</div>
+                                <th>Finance Manager</th>
+                                <th>Finance Apnt Date</th>
+                                <th>Finance Apnt Time</th>
 
-{{-- TABLE SECTION --}}
+                                <th>Opr Last Status Date</th>
+                                <th>Opr Last Remarks</th>
+                                <th>Opr Status Update By</th>
 
-<div class="card mt-3">
+                                <th>Operation Status</th>
+                                <th>Opr Sub Status</th>
+                                <th>CL</th>
+                                <th>Logs</th>
 
-<div class="card-body table-responsive">
 
+                                @if (session('role') != 'counselor')
+                                    <th>
+                                        View
+                                    </th>
+                                @endif
 
-<table class="table table-bordered table-striped table-hover">
 
+                                <th>Email Status</th>
+                                <th>Student Sign</th>
+                                <th>Main Status</th>
 
-<thead class="table-dark">
 
-<tr>
+                                @if (session('role') == 'operation')
+                                    <th>
+                                        Add Student Id
+                                    </th>
+                                @endif
 
-<th>Notes</th>
 
-<th>Client Name</th>
-<th>Client Number</th>
-<th>Country Name</th>
-<th>Counselor Name</th>
-<th>File Number</th>
-<th>Student Status</th>
-<th>Email</th>
-<th>Province</th>
-<th>College</th>
-<th>Campus</th>
-<th>Program Name</th>
-<th>Start Date</th>
-<th>End Date</th>
-<th>Enrolled Date</th>
+                                <th>Student Id</th>
+                                <th>Lead Source</th>
+                                <th>Source Remarks</th>
+                                <th>Finance Status</th>
 
-<th>Finance Manager</th>
-<th>Finance Apnt Date</th>
-<th>Finance Apnt Time</th>
 
-<th>Opr Last Status Date</th>
-<th>Opr Last Remarks</th>
-<th>Opr Status Update By</th>
+                            </tr>
 
-<th>Operation Status</th>
-<th>Opr Sub Status</th>
-<th>CL</th>
-<th>Logs</th>
 
+                        </thead>
 
-@if(session('role') != 'counselor')
 
-<th>
-View
-</th>
 
-@endif
+                        <tbody>
 
 
-<th>Email Status</th>
-<th>Student Sign</th>
-<th>Main Status</th>
 
+                            @forelse($data as $row)
 
-@if(session('role') == 'operation')
 
-<th>
-Add Student Id
-</th>
 
-@endif
+                                <tr>
 
 
-<th>Student Id</th>
-<th>Lead Source</th>
-<th>Source Remarks</th>
-<th>Finance Status</th>
+                                    <td>
 
 
-</tr>
+                                        <button type="button" class="btn btn-success btn-sm open-notes-modal"
+                                            data-file-no="{{ $row->sno ?? '' }}" data-name="{{ $row->sname ?? '' }}">
 
+                                            Notes
 
-</thead>
+                                        </button>
 
 
+                                    </td>
 
-<tbody>
 
 
 
-@forelse($data as $row)
+                                    <td>{{ $row->sname ?? '' }}</td>
 
+                                    <td>{{ $row->smobile ?? '' }}</td>
 
+                                    <td>{{ $row->scountry ?? '' }}</td>
 
-<tr>
+                                    <td>{{ $row->assign_name ?? '' }}</td>
 
+                                    <td>{{ $row->file_no ?? '' }}</td>
 
-<td>
+                                    <td>{{ $row->student_status ?? '' }}</td>
 
+                                    <td>{{ $row->semail ?? '' }}</td>
 
-<button type="button"
-class="btn btn-success btn-sm open-notes-modal"
+                                    <td>{{ $row->province_name ?? '' }}</td>
 
-data-file-no="{{ $row->sno ?? '' }}"
+                                    <td>{{ $row->collage_name ?? '' }}</td>
 
-data-name="{{ $row->sname ?? '' }}">
+                                    <td>{{ $row->campus_name ?? '' }}</td>
 
-Notes
+                                    <td>{{ $row->program_name ?? '' }}</td>
 
-</button>
+                                    <td>{{ $row->start_date ?? '' }}</td>
 
+                                    <td>{{ $row->end_date ?? '' }}</td>
 
-</td>
+                                    <td>{{ $row->enrolled_date ?? '' }}</td>
 
 
+                                    {{-- <td>{{ $row->finance_mang ?? '' }}</td> --}}
+                                    <td>{{ $row->finance_manager }}</td>
 
+                                    <td>{{ $row->fin_apnt_date ?? '' }}</td>
 
-<td>{{ $row->sname ?? '' }}</td>
+                                    <td>{{ $row->fin_apnt_time ?? '' }}</td>
 
-<td>{{ $row->smobile ?? '' }}</td>
 
-<td>{{ $row->scountry ?? '' }}</td>
 
-<td>{{ $row->assign_name ?? '' }}</td>
+                                    {{-- <td>{{ $row->opr_last_status_date ?? '' }}</td> --}}
+                                    <td>{{ $row->opr_stage_date }}</td>
 
-<td>{{ $row->file_no ?? '' }}</td>
+                                    {{-- <td>{{ $row->remarks ?? '' }}</td> --}}
+                                    <td>{{ $row->opr_stage_remarks }}</td>
 
-<td>{{ $row->student_status ?? '' }}</td>
+                                    <td>{{ $row->stage_update_name ?? '' }}</td>
 
-<td>{{ $row->semail ?? '' }}</td>
 
-<td>{{ $row->province_name ?? '' }}</td>
 
-<td>{{ $row->collage_name ?? '' }}</td>
 
-<td>{{ $row->campus_name ?? '' }}</td>
 
-<td>{{ $row->program_name ?? '' }}</td>
+                                    {{-- OPERATION STATUS --}}
 
-<td>{{ $row->start_date ?? '' }}</td>
+                                    <td>
 
-<td>{{ $row->end_date ?? '' }}</td>
 
-<td>{{ $row->enrolled_date ?? '' }}</td>
+                                        <select class="form-control status-select" data-file-no="{{ $row->sno ?? '' }}"
+                                            data-file-name="{{ $row->sname ?? '' }}"
+                                            data-file-email="{{ $row->semail ?? '' }}">
 
 
-<td>{{ $row->finance_mang ?? '' }}</td>
+                                            <option value="">
+                                                Select
+                                            </option>
 
-<td>{{ $row->fin_apnt_date ?? '' }}</td>
 
-<td>{{ $row->fin_apnt_time ?? '' }}</td>
 
+                                            @foreach ($statusList as $status)
+                                                <option value="{{ $status }}"
+                                                    {{ ($row->opr_stage ?? '') == $status ? 'selected' : '' }}>
 
 
-<td>{{ $row->opr_last_status_date ?? '' }}</td>
+                                                    {{ $status }}
 
-<td>{{ $row->remarks ?? '' }}</td>
 
-<td>{{ $row->stage_update_name ?? '' }}</td>
+                                                </option>
+                                            @endforeach
 
 
 
+                                        </select>
 
 
-{{-- OPERATION STATUS --}}
+                                    </td>
 
-<td>
 
 
-<select class="form-control status-select"
 
-data-file-no="{{ $row->sno ?? '' }}"
 
-data-file-name="{{ $row->sname ?? '' }}"
+                                    <td>
 
-data-file-email="{{ $row->semail ?? '' }}"
+                                        {{ $row->oprStsSend ?? '' }}
 
->
+                                    </td>
 
 
-<option value="">
-Select
-</option>
 
 
 
-@foreach($statusList as $status)
+                                    <td class="text-success">
 
 
-<option value="{{ $status }}"
+                                        @if ($row->cl_done ?? false)
+                                            <b>
+                                                Done
+                                            </b>
+                                        @endif
 
-{{ ($row->opr_stage ?? '') == $status ? 'selected':'' }}>
 
+                                    </td>
 
-{{ $status }}
 
 
-</option>
 
 
-@endforeach
 
+                                    <td>
 
 
-</select>
+                                        <button class="btn btn-info btn-sm view-logs-btn"
+                                            data-file-no="{{ $row->sno ?? '' }}" data-name="{{ $row->sname ?? '' }}">
 
+                                            View Logs
 
-</td>
+                                        </button>
 
 
+                                    </td>
 
 
 
-<td>
 
-{{ $row->oprStsSend ?? '' }}
 
-</td>
 
+                                    {{-- VIEW BUTTON --}}
 
+                                    @if (session('role') != 'counselor')
+                                        <td>
 
 
+                                            <a href="{{ route('walking-details', ['smobile' => $row->smobile]) }}"
+                                                class="btn btn-primary btn-sm">
 
-<td class="text-success">
 
+                                                View
 
-@if($row->cl_done ?? false)
 
-<b>
-Done
-</b>
+                                            </a>
 
-@endif
 
+                                        </td>
+                                    @endif
 
-</td>
 
 
 
 
 
+                                    <td>
 
-<td>
 
+                                        @if (($row->conset_mail ?? '') == 'Sent')
+                                            <span class="badge bg-success">
 
-<button class="btn btn-info btn-sm view-logs-btn"
+                                                Sent
 
-data-file-no="{{ $row->sno ?? '' }}"
+                                            </span>
+                                        @else
+                                            <span class="badge bg-warning text-dark">
 
-data-name="{{ $row->sname ?? '' }}">
+                                                Pending
 
-View Logs
+                                            </span>
+                                        @endif
 
-</button>
 
+                                    </td>
 
-</td>
 
 
 
 
 
+                                    <td>
 
-{{-- VIEW BUTTON --}}
 
-@if(session('role') != 'counselor')
+                                        @if (!empty($row->signature) && !empty($row->signature_submit))
+                                            <span class="badge bg-success">
 
+                                                Done
 
-<td>
+                                            </span>
+                                        @else
+                                            <span class="badge bg-danger">
 
+                                                Pending
 
-<a href="{{ route('walking-details',['smobile'=>$row->smobile]) }}"
+                                            </span>
+                                        @endif
 
-class="btn btn-primary btn-sm">
 
 
-View
+                                    </td>
 
 
-</a>
 
 
-</td>
 
 
-@endif
+                                    <td>
 
+                                        {{ $row->main_status ?? '' }}
 
+                                    </td>
 
 
 
 
-<td>
 
 
-@if(($row->conset_mail ?? '') == 'Sent')
+                                    @if (session('role') == 'operation')
+                                        <td>
 
 
-<span class="badge bg-success">
+                                            <button class="btn btn-secondary btn-sm">
 
-Sent
+                                                Add Student Id
 
-</span>
+                                            </button>
 
 
-@else
+                                        </td>
+                                    @endif
 
 
-<span class="badge bg-warning text-dark">
 
-Pending
 
-</span>
 
 
-@endif
+                                    <td>
 
+                                        {{ $row->student_id ?? '' }}
 
-</td>
+                                    </td>
 
 
 
+                                    <td>
 
+                                        {{ $row->ssource ?? '' }}
 
+                                    </td>
 
-<td>
 
 
-@if(!empty($row->signature) && !empty($row->signature_submit))
+                                    <td>
 
+                                        {{ $row->source_remarks ?? '' }}
 
-<span class="badge bg-success">
+                                    </td>
 
-Done
 
-</span>
 
 
-@else
+                                    <td>
 
 
-<span class="badge bg-danger">
+                                        @if (!empty($row->osap_status))
+                                            <button class="btn btn-primary btn-sm">
 
-Pending
+                                                Osap Status
 
-</span>
+                                            </button>
+                                        @endif
 
 
-@endif
+                                    </td>
 
 
 
-</td>
 
 
+                                </tr>
 
 
 
+                            @empty
 
-<td>
 
-{{ $row->main_status ?? '' }}
 
-</td>
+                                <tr>
 
 
+                                    <td colspan="35" class="text-center">
 
+                                        No Records Found
 
+                                    </td>
 
 
-@if(session('role') == 'operation')
+                                </tr>
 
 
-<td>
 
+                            @endforelse
 
-<button class="btn btn-secondary btn-sm">
 
-Add Student Id
 
-</button>
+                        </tbody>
 
 
-</td>
+                    </table>
 
 
-@endif
 
+                    <div class="pagination-wrapper">
 
 
+                        {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
 
 
+                    </div>
 
-<td>
 
-{{ $row->student_id ?? '' }}
 
-</td>
+                </div>
 
 
+            </div>
 
-<td>
+            {{-- NOTES MODAL --}}
 
-{{ $row->ssource ?? '' }}
+            <div class="modal fade" id="notesModal" tabindex="-1">
 
-</td>
+                <div class="modal-dialog modal-lg">
 
+                    <div class="modal-content">
 
 
-<td>
+                        <div class="modal-header bg-success text-white">
 
-{{ $row->source_remarks ?? '' }}
 
-</td>
+                            <h5 class="modal-title">
 
+                                Notes For :
+                                <span id="NotesModalName"></span>
 
+                            </h5>
 
 
-<td>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
 
-@if(!empty($row->osap_status))
+                        </div>
 
 
-<button class="btn btn-primary btn-sm">
 
-Osap Status
+                        <div class="modal-body">
 
-</button>
 
+                            <form id="addNotesForm">
 
-@endif
 
+                                @csrf
 
-</td>
 
+                                <input type="hidden" name="note_id" id="note_id">
 
 
 
+                                <div class="mb-3">
 
-</tr>
 
+                                    <label>
+                                        Add Note
+                                    </label>
 
 
-@empty
+                                    <textarea class="form-control" name="newNote" id="newNote" rows="4" required></textarea>
 
 
+                                </div>
 
-<tr>
 
+                                <button class="btn btn-success">
 
-<td colspan="35" class="text-center">
+                                    Save Note
 
-No Records Found
+                                </button>
 
-</td>
 
+                            </form>
 
-</tr>
 
 
+                            <hr>
 
-@endforelse
 
 
+                            <table class="table table-bordered">
 
-</tbody>
 
+                                <thead>
 
-</table>
 
+                                    <tr>
 
+                                        <th>Sno</th>
+                                        <th>Remarks</th>
+                                        <th>Updated By</th>
+                                        <th>Date</th>
 
-<div class="pagination-wrapper">
+                                    </tr>
 
 
-{{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
+                                </thead>
 
 
-</div>
 
+                                <tbody id="NotesTableBody">
 
 
-</div>
+                                    <tr>
 
+                                        <td colspan="4" class="text-center">
 
-</div>
+                                            No Notes Found
 
-{{-- NOTES MODAL --}}
+                                        </td>
 
-<div class="modal fade" id="notesModal" tabindex="-1">
+                                    </tr>
 
-<div class="modal-dialog modal-lg">
 
-<div class="modal-content">
+                                </tbody>
 
 
-<div class="modal-header bg-success text-white">
+                            </table>
 
 
-<h5 class="modal-title">
 
-Notes For :
-<span id="NotesModalName"></span>
+                        </div>
 
-</h5>
 
+                    </div>
 
-<button type="button"
-class="btn-close"
-data-bs-dismiss="modal"></button>
 
+                </div>
 
-</div>
 
+            </div>
 
 
-<div class="modal-body">
 
 
-<form id="addNotesForm">
 
+            {{-- LOGS MODAL --}}
 
-@csrf
 
+            <div class="modal fade" id="logsModal">
 
-<input type="hidden"
-name="note_id"
-id="note_id">
 
+                <div class="modal-dialog modal-xl">
 
 
-<div class="mb-3">
+                    <div class="modal-content">
 
 
-<label>
-Add Note
-</label>
 
+                        <div class="modal-header">
 
-<textarea class="form-control"
-name="newNote"
-id="newNote"
-rows="4"
-required></textarea>
 
+                            <h5 class="modal-title" id="logsModalLabel">
 
-</div>
+                                Status Logs
 
+                            </h5>
 
-<button class="btn btn-success">
 
-Save Note
 
-</button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
 
-</form>
 
+                        </div>
 
 
-<hr>
 
 
+                        <div class="modal-body">
 
-<table class="table table-bordered">
 
+                            <table class="table table-bordered">
 
-<thead>
 
+                                <thead>
 
-<tr>
+                                    <tr>
 
-<th>Sno</th>
-<th>Remarks</th>
-<th>Updated By</th>
-<th>Date</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Remarks</th>
+                                        <th>Updated By</th>
+                                        <th>Date Time</th>
 
-</tr>
+                                    </tr>
 
 
-</thead>
+                                </thead>
 
 
 
-<tbody id="NotesTableBody">
+                                <tbody id="logsTableBody">
 
 
-<tr>
+                                </tbody>
 
-<td colspan="4"
-class="text-center">
 
-No Notes Found
 
-</td>
+                            </table>
 
-</tr>
 
+                        </div>
 
-</tbody>
 
 
-</table>
+                    </div>
 
 
+                </div>
 
-</div>
 
+            </div>
 
-</div>
 
 
-</div>
 
 
-</div>
+            {{-- STATUS MODAL --}}
 
 
+            <div class="modal fade" id="statusModal">
 
 
+                <div class="modal-dialog">
 
-{{-- LOGS MODAL --}}
 
+                    <div class="modal-content">
 
-<div class="modal fade" id="logsModal">
 
 
-<div class="modal-dialog modal-xl">
+                        <div class="modal-header">
 
 
-<div class="modal-content">
+                            <h5 class="modal-title">
 
+                                Update Status
 
+                            </h5>
 
-<div class="modal-header">
 
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
-<h5 class="modal-title"
-id="logsModalLabel">
 
-Status Logs
+                        </div>
 
-</h5>
 
 
 
-<button type="button"
-class="btn-close"
-data-bs-dismiss="modal"></button>
+                        <form id="statusForm">
 
 
+                            @csrf
 
-</div>
 
+                            <input type="hidden" name="reg_sno" id="file_no">
 
 
+                            <input type="hidden" name="status" id="status">
+                            <input type="hidden" name="remarks_type" value="Operation Status">
 
-<div class="modal-body">
 
 
-<table class="table table-bordered">
+                            <div class="modal-body">
 
 
-<thead>
 
-<tr>
+                                <div class="mb-3">
 
-<th>Date</th>
-<th>Status</th>
-<th>Remarks</th>
-<th>Updated By</th>
-<th>Date Time</th>
 
-</tr>
+                                    <label>
+                                        Date
+                                    </label>
 
 
-</thead>
+                                    <input type="date" name="followup_date" id="date" class="form-control">
 
 
+                                </div>
 
-<tbody id="logsTableBody">
 
 
-</tbody>
 
+                                <div class="mb-3">
 
 
-</table>
+                                    <label>
+                                        Remarks
+                                    </label>
 
 
-</div>
+                                    <textarea name="remarks" id="remarks" class="form-control" required></textarea>
 
 
+                                </div>
 
-</div>
 
 
-</div>
+                            </div>
 
 
-</div>
 
+                            <div class="modal-footer">
 
 
+                                <button type="submit" class="btn btn-primary">
 
+                                    Submit
 
-{{-- STATUS MODAL --}}
+                                </button>
 
 
-<div class="modal fade" id="statusModal">
+                            </div>
 
 
-<div class="modal-dialog">
+                        </form>
 
 
-<div class="modal-content">
 
+                    </div>
 
 
-<div class="modal-header">
+                </div>
 
 
-<h5 class="modal-title">
+            </div>
 
-Update Status
 
-</h5>
 
 
-<button type="button"
-class="btn-close"
-data-bs-dismiss="modal"></button>
 
+        @endsection
 
-</div>
 
 
 
 
-<form id="statusForm">
+        @section('scripts')
 
 
-@csrf
+            <script>
+                $.ajaxSetup({
 
+                    headers: {
 
-<input type="hidden"
-name="reg_sno"
-id="file_no">
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
 
+                    }
 
-<input type="hidden"
-name="status"
-id="status">
+                });
 
 
 
-<div class="modal-body">
 
+                $(document).ready(function() {
 
 
-<div class="mb-3">
 
 
-<label>
-Date
-</label>
 
+                    // STATUS CHANGE
 
-<input type="date"
-name="followup_date"
-id="date"
-class="form-control">
 
+                    $(document).on('change', '.status-select', function() {
 
-</div>
 
+                        let status = $(this).val();
 
 
+                        if (status == '')
+                            return;
 
-<div class="mb-3">
 
 
-<label>
-Remarks
-</label>
+                        $('#file_no').val($(this).data('file-no'));
 
+                        $('#status').val(status);
 
-<textarea name="remarks"
-id="remarks"
-class="form-control"
-required></textarea>
+                        $('#remarks').val('');
 
+                        $('#date').val('');
 
-</div>
 
+                        $('#statusModal').modal('show');
 
 
-</div>
+                    });
 
 
 
-<div class="modal-footer">
 
 
-<button type="submit"
-class="btn btn-primary">
 
-Submit
 
-</button>
+                    // UPDATE STATUS
 
 
-</div>
+                    $('#statusForm').submit(function(e) {
 
 
-</form>
+                        e.preventDefault();
 
 
 
-</div>
+                        $.ajax({
 
 
-</div>
+                            url: "{{ route('operation.updateStatus') }}",
 
+                            type: "POST",
 
-</div>
+                            data: $(this).serialize(),
 
 
+                            success: function(response) {
 
 
+                                $('#statusModal').modal('hide');
 
-@endsection
 
+                                location.reload();
 
 
+                            },
 
 
-@section('scripts')
+                            error: function() {
 
+                                alert('Something went wrong');
 
-<script>
+                            }
 
 
-$.ajaxSetup({
+                        });
 
-headers:{
 
-'X-CSRF-TOKEN':'{{ csrf_token() }}'
 
-}
+                    });
 
-});
 
 
+                    // Province + College => Campus
 
+                    $('#province_name, #collage_name').change(function() {
 
-$(document).ready(function(){
+                        let province_name = $('#province_name').val();
+                        let collage_name = $('#collage_name').val();
 
+                        if (province_name && collage_name) {
 
+                            $.ajax({
 
+                                url: "{{ route('get.campus') }}",
+                                type: "GET",
 
+                                data: {
+                                    province_name: province_name,
+                                    collage_name: collage_name
+                                },
 
-// STATUS CHANGE
+                                success: function(response) {
 
+                                    $('#campus').html('<option value="">--Select Campus--</option>');
 
-$(document).on('change','.status-select',function(){
+                                    $.each(response, function(index, value) {
 
+                                        $('#campus').append(
+                                            '<option value="' + value.campus_name + '">' +
+                                            value.campus_name +
+                                            '</option>'
+                                        );
 
-let status=$(this).val();
+                                    });
 
+                                }
 
-if(status=='')
-return;
+                            });
 
+                        }
 
+                    });
 
-$('#file_no').val($(this).data('file-no'));
 
-$('#status').val(status);
+                    // Campus => Program
 
-$('#remarks').val('');
+                    $('#campus').change(function() {
 
-$('#date').val('');
+                        let province_name = $('#province_name').val();
+                        let collage_name = $('#collage_name').val();
+                        let campus_name = $('#campus').val();
 
+                        if (campus_name) {
 
-$('#statusModal').modal('show');
+                            $.ajax({
 
+                                url: "{{ route('get.program') }}",
+                                type: "GET",
 
-});
+                                data: {
+                                    province_name: province_name,
+                                    collage_name: collage_name,
+                                    campus_name: campus_name
+                                },
 
+                                success: function(response) {
 
+                                    $('#program_name').html('<option value="">Select Program</option>');
 
+                                    $.each(response, function(index, value) {
 
+                                        $('#program_name').append(
+                                            '<option value="' + value.prg_name + '">' +
+                                            value.prg_name +
+                                            '</option>'
+                                        );
 
+                                    });
 
+                                }
 
-// UPDATE STATUS
+                            });
 
+                        }
 
-$('#statusForm').submit(function(e){
+                    });
 
 
-e.preventDefault();
 
 
 
-$.ajax({
 
 
-url:"{{ route('operation.updateStatus') }}",
+                    // OPEN NOTES
 
-type:"POST",
 
-data:$(this).serialize(),
+                    $(document).on('click', '.open-notes-modal', function() {
 
 
-success:function(response){
+                        let id = $(this).data('file-no');
 
+                        let name = $(this).data('name');
 
-$('#statusModal').modal('hide');
 
+                        $('#note_id').val(id);
 
-location.reload();
+                        $('#NotesModalName').text(name);
 
 
-},
+                        loadNotes(id);
 
 
-error:function(){
+                        $('#notesModal').modal('show');
 
-alert('Something went wrong');
 
-}
 
+                    });
 
-});
 
 
 
-});
 
 
 
+                    function loadNotes(id) {
 
 
+                        $.ajax({
 
 
+                            url: "{{ route('notes.get') }}",
 
-// OPEN NOTES
+                            type: "POST",
 
+                            data: {
 
-$(document).on('click','.open-notes-modal',function(){
 
+                                note_id: id,
 
-let id=$(this).data('file-no');
 
-let name=$(this).data('name');
+                                _token: "{{ csrf_token() }}"
 
 
-$('#note_id').val(id);
+                            },
 
-$('#NotesModalName').text(name);
 
+                            success: function(res) {
 
-loadNotes(id);
 
 
-$('#notesModal').modal('show');
+                                let html = '';
 
 
+                                if (res.notes.length) {
 
-});
 
 
+                                    $.each(res.notes, function(i, n) {
 
 
-
-
-
-function loadNotes(id){
-
-
-$.ajax({
-
-
-url:"{{ route('notes.get') }}",
-
-type:"POST",
-
-data:{
-
-
-note_id:id,
-
-
-_token:"{{ csrf_token() }}"
-
-
-},
-
-
-success:function(res){
-
-
-
-let html='';
-
-
-if(res.notes.length){
-
-
-
-$.each(res.notes,function(i,n){
-
-
-html+=`
+                                        html += `
 
 <tr>
 
@@ -1718,15 +1670,13 @@ html+=`
 `;
 
 
-});
+                                    });
 
 
-}
-
-else{
+                                } else {
 
 
-html=`
+                                    html = `
 
 <tr>
 
@@ -1741,21 +1691,21 @@ No Notes Found
 
 `;
 
-}
+                                }
 
 
-$('#NotesTableBody').html(html);
+                                $('#NotesTableBody').html(html);
 
 
 
-}
+                            }
 
 
 
-});
+                        });
 
 
-}
+                    }
 
 
 
@@ -1763,42 +1713,42 @@ $('#NotesTableBody').html(html);
 
 
 
-// SAVE NOTE
+                    // SAVE NOTE
 
 
-$('#addNotesForm').submit(function(e){
+                    $('#addNotesForm').submit(function(e) {
 
 
-e.preventDefault();
+                        e.preventDefault();
 
 
 
-$.ajax({
+                        $.ajax({
 
 
-url:"{{ route('notes.add') }}",
+                            url: "{{ route('notes.add') }}",
 
-type:"POST",
+                            type: "POST",
 
-data:$(this).serialize(),
+                            data: $(this).serialize(),
 
 
-success:function(){
+                            success: function() {
 
 
-loadNotes($('#note_id').val());
+                                loadNotes($('#note_id').val());
 
-$('#newNote').val('');
+                                $('#newNote').val('');
 
 
 
-}
+                            }
 
 
-});
+                        });
 
 
-});
+                    });
 
 
 
@@ -1806,49 +1756,49 @@ $('#newNote').val('');
 
 
 
-// VIEW LOGS
+                    // VIEW LOGS
 
 
 
-$(document).on('click','.view-logs-btn',function(){
+                    $(document).on('click', '.view-logs-btn', function() {
 
 
 
-let id=$(this).data('file-no');
+                        let id = $(this).data('file-no');
 
 
 
-$.ajax({
+                        $.ajax({
 
 
-url:"{{ route('branch.manager.logs') }}",
+                            url: "{{ route('branch.manager.logs') }}",
 
-type:"POST",
+                            type: "POST",
 
 
-data:{
+                            data: {
 
 
-semi_id:id,
+                                semi_id: id,
 
-_token:"{{ csrf_token() }}"
+                                _token: "{{ csrf_token() }}"
 
 
-},
+                            },
 
 
-success:function(res){
+                            success: function(res) {
 
 
 
-let html='';
+                                let html = '';
 
 
-$.each(res.logs,function(i,l){
+                                $.each(res.logs, function(i, l) {
 
 
 
-html+=`
+                                    html += `
 
 <tr>
 
@@ -1868,34 +1818,32 @@ html+=`
 `;
 
 
-});
+                                });
 
 
 
-$('#logsTableBody').html(html);
+                                $('#logsTableBody').html(html);
 
 
-$('#logsModal').modal('show');
-
-
-
-}
-
-
-});
+                                $('#logsModal').modal('show');
 
 
 
-});
+                            }
+
+
+                        });
+
+
+
+                    });
 
 
 
 
 
-});
+                });
+            </script>
 
 
-</script>
-
-
-@endsection
+        @endsection

@@ -36,6 +36,7 @@ class NotesController extends Controller
 
     public function addNote(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'note_id' => 'required',
             'newNote' => 'required'

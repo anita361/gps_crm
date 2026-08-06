@@ -496,6 +496,17 @@
 
                                 </div>
 
+                                <div class="col-md-2">
+
+                                    <label>&nbsp;</label>
+
+                                    <a href="{{ route('operationexport', request()->query()) }}"
+                                        class="btn btn-primary btn-sm">
+                                        Download Excel
+                                    </a>
+
+                                </div>
+
                             </div>
 
                         </form>
@@ -1072,6 +1083,7 @@
                         </button>
 
                     </div>
+
 
                 </form>
 
