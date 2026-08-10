@@ -842,97 +842,87 @@ LOGS MODAL
 =========================================================== --}}
 
                 <div class="modal fade" id="logsModal" tabindex="-1">
-
                     <div class="modal-dialog modal-xl">
-
                         <div class="modal-content">
 
                             <div class="modal-header bg-secondary text-white">
-
                                 <h5 class="modal-title">
-
                                     <i class="fa fa-history"></i>
-
                                     Status Logs :
-
                                     <span id="logsStudentName"></span>
-
                                 </h5>
 
                                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal">
-
                                 </button>
-
                             </div>
 
                             <div class="modal-body">
 
-                                <div class="table-responsive">
+                                {{-- Status Logs --}}
+                                <h5 class="text-center bg-dark text-white p-2 mb-3">
+                                    Status Logs
+                                </h5>
 
+                                <div class="table-responsive mb-4">
                                     <table class="table table-bordered table-striped">
-
                                         <thead class="table-dark">
-
                                             <tr>
-
-                                                <th width="150">
-                                                    Stage Date
-                                                </th>
-
-                                                <th width="180">
-                                                    Status
-                                                </th>
-
-                                                <th>
-                                                    Remarks
-                                                </th>
-
-                                                <th width="180">
-                                                    Updated By
-                                                </th>
-
-                                                <th width="180">
-                                                    Created Date
-                                                </th>
-
+                                                <th width="140">Stage Date</th>
+                                                <th width="180">Status</th>
+                                                <th>Remarks</th>
+                                                <th width="180">Updated By</th>
+                                                <th width="150">Created Date</th>
                                             </tr>
-
                                         </thead>
 
                                         <tbody id="logsTableBody">
-
                                             <tr>
-
                                                 <td colspan="5" class="text-center">
-
-                                                    No Logs Found
-
+                                                    Loading...
                                                 </td>
-
                                             </tr>
-
                                         </tbody>
 
                                     </table>
+                                </div>
 
+                                {{-- Notes --}}
+                                <h5 class="text-center bg-dark text-white p-2 mb-3">
+                                    Notes
+                                </h5>
+
+                                <div class="table-responsive">
+                                    <table class="table table-bordered table-striped">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th width="60">Sno</th>
+                                                <th>Remarks</th>
+                                                <th width="180">Updated By</th>
+                                                <th width="180">Action Datetime</th>
+                                            </tr>
+                                        </thead>
+
+                                        <tbody id="notesTableBody">
+                                            <tr>
+                                                <td colspan="4" class="text-center">
+                                                    Loading...
+                                                </td>
+                                            </tr>
+                                        </tbody>
+
+                                    </table>
                                 </div>
 
                             </div>
 
                             <div class="modal-footer">
-
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-
+                                <button class="btn btn-secondary" data-bs-dismiss="modal">
                                     Close
-
                                 </button>
-
                             </div>
 
                         </div>
-
                     </div>
-
                 </div>
                 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
@@ -1231,6 +1221,41 @@ LOGS MODAL
 
                         }
 
+                        $('#addNotesForm').submit(function(e) {
+
+
+                            e.preventDefault();
+
+
+
+                            $.ajax({
+
+
+                                url: "{{ route('notes.add') }}",
+
+                                type: "POST",
+
+                                data: $(this).serialize(),
+
+
+                                success: function() {
+
+
+                                    loadNotes($('#note_id').val());
+
+                                    $('#newNote').val('');
+
+
+
+                                }
+
+
+                            });
+
+
+                        });
+
+
 
 
 
@@ -1240,111 +1265,137 @@ LOGS MODAL
                         LOGS MODAL
                         ==========================================
                         */
-
-
                         $(document).on('click', '.view-logs-btn', function() {
 
-
                             let id = $(this).data('file-no');
-
                             let name = $(this).data('name');
-
 
                             $('#logsStudentName').text(name);
 
+                            $('#logsTableBody').html(`
+        <tr>
+            <td colspan="5" class="text-center">
+                Loading...
+            </td>
+        </tr>
+    `);
 
-                            $('#logsModal').modal('show');
+                            $('#notesTableBody').html(`
+        <tr>
+            <td colspan="4" class="text-center">
+                Loading...
+            </td>
+        </tr>
+    `);
 
-
-                            $('#logsTableBody').html(
-
-                                '<tr><td colspan="5">Loading...</td></tr>'
-
-                            );
-
-
+                            var modal = new bootstrap.Modal(document.getElementById('logsModal'));
+                            modal.show();
 
                             $.ajax({
 
-
                                 url: "{{ route('branch.manager.logs') }}",
-
                                 type: "POST",
 
                                 data: {
-
-
-                                    semi_id: id
-
-
+                                    semi_id: id,
+                                    _token: "{{ csrf_token() }}"
                                 },
-
 
                                 success: function(res) {
 
+                                    //==================== Status Logs ====================
 
-                                    let html = '';
+                                    let logsHtml = '';
 
-
-
-                                    if (res.logs && res.logs.length) {
-
+                                    if (res.logs.length > 0) {
 
                                         $.each(res.logs, function(i, row) {
 
-
-                                            html += `
-
+                                            logsHtml += `
                         <tr>
-
-                        <td>${row.stage_date ?? ''}</td>
-
-                        <td>${row.stage ?? ''}</td>
-
-                        <td>${row.stage_remarks ?? ''}</td>
-
-                        <td>${row.updated_by ?? ''}</td>
-
-                        <td>${row.created_date ?? ''}</td>
-
+                            <td>${row.stage_date ?? '-'}</td>
+                            <td>${row.stage ?? '-'}</td>
+                            <td>${row.stage_remarks ?? '-'}</td>
+                            <td>${row.updated_by ?? '-'}</td>
+                            <td>${row.created_date ?? '-'}</td>
                         </tr>
-
-                        `;
-
+                    `;
 
                                         });
 
-
                                     } else {
 
-
-                                        html = `
-
+                                        logsHtml = `
                     <tr>
-                    <td colspan="5" class="text-center">
-                    No Logs Found
-                    </td>
+                        <td colspan="5" class="text-center text-danger">
+                            No Status Logs Found
+                        </td>
                     </tr>
-
-                    `;
-
+                `;
 
                                     }
 
+                                    $('#logsTableBody').html(logsHtml);
 
-                                    $('#logsTableBody').html(html);
 
+                                    //==================== Notes ====================
+
+                                    let notesHtml = '';
+
+                                    if (res.notes.length > 0) {
+
+                                        $.each(res.notes, function(i, row) {
+
+                                            notesHtml += `
+                        <tr>
+                            <td>${i + 1}</td>
+                            <td>${row.remarks ?? '-'}</td>
+                            <td>${row.updated_by ?? '-'}</td>
+                            <td>${row.datetime ?? '-'}</td>
+                        </tr>
+                    `;
+
+                                        });
+
+                                    } else {
+
+                                        notesHtml = `
+                    <tr>
+                        <td colspan="4" class="text-center text-danger">
+                            No Notes Found
+                        </td>
+                    </tr>
+                `;
+
+                                    }
+
+                                    $('#notesTableBody').html(notesHtml);
+
+                                },
+
+                                error: function() {
+
+                                    $('#logsTableBody').html(`
+                <tr>
+                    <td colspan="5" class="text-center text-danger">
+                        Unable to load Status Logs.
+                    </td>
+                </tr>
+            `);
+
+                                    $('#notesTableBody').html(`
+                <tr>
+                    <td colspan="4" class="text-center text-danger">
+                        Unable to load Notes.
+                    </td>
+                </tr>
+            `);
 
                                 }
 
-
                             });
 
-
-
                         });
-
-
 
 
 

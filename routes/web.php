@@ -347,8 +347,6 @@ Route::middleware('login')->group(function () {
     Route::get('/commission-enrollment-list', [WalkinController::class, 'commissionEnrollmentList'])
         ->name('commission.enrollment.list');
 
-    Route::get('/commission-list', [WalkinController::class, 'commissionList'])
-        ->name('commission.list');
 
     Route::post('/save-commission-status', [WalkinController::class, 'saveCommissionStatus'])
         ->name('save.commission.status');
@@ -356,11 +354,44 @@ Route::middleware('login')->group(function () {
     Route::post('/assign-operation', [WalkinController::class, 'assignOperation'])
         ->name('assign.operation');
 
+    Route::get('/commission-list', [WalkinController::class, 'commissionList'])
+        ->name('commission.list');
+
+    Route::get('/download-commission-excel', [WalkinController::class, 'downloadCommissionExcel'])
+        ->name('download.commission.excel');
+
+
     Route::get('/enrolled-list', [WalkinController::class, 'enrolledList'])
         ->name('enrolled.list');
 
+
     Route::get('/drop-list', [WalkinController::class, 'dropList'])
         ->name('drop.list');
+    Route::post('/drop/colleges', [WalkinController::class, 'dropColleges'])
+        ->name('drop.colleges');
+
+    Route::post('/drop/campuses', [WalkinController::class, 'dropCampuses'])
+        ->name('drop.campuses');
+
+    Route::post('/drop/programs', [WalkinController::class, 'dropPrograms'])
+        ->name('drop.programs');
+
+    Route::post('/drop/update-status', [WalkinController::class, 'updateDropStatus'])
+        ->name('drop.update-status');
+
+    Route::post('/drop/logs', [WalkinController::class, 'dropLogs'])
+        ->name('drop.logs');
+
+    Route::post('/drop/aol-logs', [WalkinController::class, 'dropAolLogs'])
+        ->name('drop.aol-logs');
+
+    Route::post('/drop/notes', [WalkinController::class, 'dropNotes'])
+        ->name('drop.notes');
+
+    Route::post('/drop/add-note', [WalkinController::class, 'addDropNote'])
+        ->name('drop.add-note');
+    Route::post('/drop/excel', [WalkinController::class, 'dropExcel'])
+        ->name('drop.excel');
 
     Route::get('/appointment-complete', [WalkinController::class, 'appointmentComplete'])
         ->name('appointment.complete');
