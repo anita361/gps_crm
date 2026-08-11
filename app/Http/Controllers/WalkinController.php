@@ -11,6 +11,9 @@ use PHPMailer\PHPMailer\Exception;
 use Illuminate\Support\Facades\Schema;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Session;
+use App\Models\CrmLogin;
+use Carbon\Carbon;
+
 
 
 
@@ -3998,17 +4001,1832 @@ class WalkinController extends Controller
         ]);
     }
 
-    public function appointmentComplete()
+    // public function appointmentComplete()
+    // {
+    //     return view('operation.appointment-complete');
+    // }
+
+    public function appointmentComplete(Request $request)
     {
-        return view('operation.appointment-complete');
+        /*
+    |--------------------------------------------------------------------------
+    | LOGIN USER
+    |--------------------------------------------------------------------------
+    */
+
+        $userId = Session::get('login');
+        $role   = Session::get('role');
+
+        $user = CrmLogin::find($userId);
+
+        if (!$user) {
+            Session::flush();
+
+            return redirect()
+                ->route('login')
+                ->with('error', 'Session expired. Please login again.');
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | FILTERS
+    |--------------------------------------------------------------------------
+    */
+
+        $fromDate = $request->get('FromFltDate');
+
+        $toDate = $request->get('ToFltDate');
+
+        $status = $request->get('osap_status_flt');
+
+        $subStatus = $request->get('sub_status_flt');
+
+        $studentStatus = $request->get('student_status');
+
+        $counselorId = $request->get('counselor_id');
+
+        $source = $request->get('ssource');
+
+        $foaStatus = $request->get('foa-status');
+
+        $province = $request->get('province_name');
+
+        $college = $request->get('collage_name');
+
+        $campus = $request->get('campus_name');
+
+        $program = $request->get('program_name');
+
+        $appointmentType = $request->get('apntType');
+
+        $financeManager = $request->get('finance_mng');
+
+        $foaDate = $request->get('GetFltDate');
+
+        $search = trim(
+            $request->get('name_mobile_email', '')
+        );
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | MAIN QUERY
+    |--------------------------------------------------------------------------
+    */
+
+        $query = DB::table('seminarpre as s')
+            ->whereIn('s.student_status', [
+                'enrolled',
+                'Re-enrolled'
+            ])
+            ->whereNotNull('s.fin_apnt_date')
+            ->where('s.fin_apnt_date', '!=', '');
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | FROM START DATE
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($fromDate)) {
+
+            $query->whereDate(
+                's.start_date',
+                '>=',
+                $fromDate
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | TO START DATE
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($toDate)) {
+
+            $query->whereDate(
+                's.start_date',
+                '<=',
+                $toDate
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | SEARCH
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($search)) {
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where(
+                    's.sname',
+                    'LIKE',
+                    '%' . $search . '%'
+                )
+
+                    ->orWhere(
+                        's.smobile',
+                        'LIKE',
+                        '%' . $search . '%'
+                    )
+
+                    ->orWhere(
+                        's.semail',
+                        'LIKE',
+                        '%' . $search . '%'
+                    )
+
+                    ->orWhere(
+                        's.file_no',
+                        'LIKE',
+                        '%' . $search . '%'
+                    );
+            });
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | STATUS
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($status)) {
+
+            $query->where(
+                's.osap_status',
+                $status
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | SUB STATUS
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($subStatus)) {
+
+            $query->where(
+                's.osap_sub_status',
+                $subStatus
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | STUDENT STATUS
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($studentStatus)) {
+
+            $query->where(
+                's.student_status',
+                $studentStatus
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | COUNSELOR
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($counselorId)) {
+
+            $query->where(
+                's.assign_id',
+                $counselorId
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | SOURCE
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($source)) {
+
+            $query->where(
+                's.ssource',
+                $source
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | FOA STATUS
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($foaStatus)) {
+
+            $query->where(
+                's.foa_status',
+                $foaStatus
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | PROVINCE
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($province)) {
+
+            $query->where(
+                's.province_name',
+                $province
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | COLLEGE
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($college)) {
+
+            $query->where(
+                's.collage_name',
+                $college
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | CAMPUS
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($campus)) {
+
+            $query->where(
+                's.campus_name',
+                $campus
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | PROGRAM
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($program)) {
+
+            $query->where(
+                's.program_name',
+                $program
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | FINANCE MANAGER
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($financeManager)) {
+
+            $query->where(
+                's.finance_id',
+                $financeManager
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | FOA DATE
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($foaDate)) {
+
+            $query->whereDate(
+                's.fin_apnt_date',
+                $foaDate
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | APPOINTMENT TYPE
+    |--------------------------------------------------------------------------
+    */
+
+        $today = Carbon::now('America/Toronto')
+            ->format('Y-m-d');
+
+
+        if ($appointmentType === 'Today') {
+
+            $query->whereDate(
+                's.fin_apnt_date',
+                $today
+            );
+        } elseif ($appointmentType === 'Overdue') {
+
+            $query->whereDate(
+                's.fin_apnt_date',
+                '<',
+                $today
+            );
+        } elseif ($appointmentType === 'Upcoming') {
+
+            $query->whereDate(
+                's.fin_apnt_date',
+                '>',
+                $today
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | COUNSELOR LOGIN RESTRICTION
+    |--------------------------------------------------------------------------
+    */
+
+        if ($role === 'counselor') {
+
+            $query->where(
+                's.assign_id',
+                $userId
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | FINANCE LOGIN RESTRICTION
+    |--------------------------------------------------------------------------
+    */
+
+        if ($role === 'finance') {
+
+            $query->where(
+                's.finance_id',
+                $userId
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | ORDER
+    |--------------------------------------------------------------------------
+    */
+
+        $query->orderByDesc(
+            's.fin_apnt_date'
+        );
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | PAGINATION
+    |--------------------------------------------------------------------------
+    */
+
+        $limit = (int) $request->get(
+            'limit',
+            10
+        );
+
+
+        if (!in_array(
+            $limit,
+            [10, 25, 50, 100]
+        )) {
+
+            $limit = 10;
+        }
+
+
+        $students = $query
+            ->select('s.*')
+            ->paginate($limit)
+            ->withQueryString();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | STATUS DROPDOWN
+    |--------------------------------------------------------------------------
+    */
+
+        $statuses = DB::table('application_sts')
+            ->where('sts', 1)
+            ->select('status')
+            ->distinct()
+            ->orderBy('status')
+            ->pluck('status');
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | SUB STATUS
+    |--------------------------------------------------------------------------
+    */
+
+        $subStatusesQuery = DB::table('seminarpre')
+            ->whereNotNull('osap_sub_status')
+            ->where(
+                'osap_sub_status',
+                '!=',
+                ''
+            );
+
+
+        if (!empty($status)) {
+
+            $subStatusesQuery->where(
+                'osap_status',
+                $status
+            );
+        }
+
+
+        $subStatuses = $subStatusesQuery
+            ->select('osap_sub_status')
+            ->distinct()
+            ->orderBy('osap_sub_status')
+            ->pluck('osap_sub_status');
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | COUNSELORS
+    |--------------------------------------------------------------------------
+    */
+
+        $counselors = CrmLogin::where(
+            'role',
+            'counselor'
+        )
+            ->select(
+                'id',
+                'name'
+            )
+            ->orderBy('name')
+            ->get();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | SOURCES
+    |--------------------------------------------------------------------------
+    */
+
+        $sources = DB::table('seminarpre')
+            ->whereIn(
+                'student_status',
+                [
+                    'enrolled',
+                    'Re-enrolled'
+                ]
+            )
+            ->whereNotNull('ssource')
+            ->where(
+                'ssource',
+                '!=',
+                ''
+            )
+            ->select('ssource')
+            ->distinct()
+            ->orderBy('ssource')
+            ->pluck('ssource');
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | PROVINCES
+    |--------------------------------------------------------------------------
+    */
+
+        $provinces = [
+            'Alberta',
+            'British Columbia',
+            'Ontario'
+        ];
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | COLLEGES
+    |--------------------------------------------------------------------------
+    */
+
+        $colleges = DB::table('college_list')
+            ->whereNotNull('clg_name')
+            ->where(
+                'clg_name',
+                '!=',
+                ''
+            )
+            ->select('clg_name')
+            ->distinct()
+            ->orderBy('clg_name')
+            ->pluck('clg_name');
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | CAMPUSES
+    |--------------------------------------------------------------------------
+    */
+
+        $campuses = collect();
+
+
+        if (!empty($college)) {
+
+            $campuses = DB::table('college_list')
+                ->where(
+                    'clg_name',
+                    $college
+                )
+                ->whereNotNull('campus_name')
+                ->where(
+                    'campus_name',
+                    '!=',
+                    ''
+                )
+                ->select('campus_name')
+                ->distinct()
+                ->orderBy('campus_name')
+                ->pluck('campus_name');
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | PROGRAMS
+    |--------------------------------------------------------------------------
+    */
+
+        $programs = collect();
+
+
+        if (
+            !empty($college)
+            && !empty($campus)
+        ) {
+
+            $programs = DB::table('college_list')
+                ->where(
+                    'clg_name',
+                    $college
+                )
+                ->where(
+                    'campus_name',
+                    $campus
+                )
+                ->whereNotNull('prg_name')
+                ->where(
+                    'prg_name',
+                    '!=',
+                    ''
+                )
+                ->select('prg_name')
+                ->distinct()
+                ->orderBy('prg_name')
+                ->pluck('prg_name');
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | FINANCE MANAGERS
+    |--------------------------------------------------------------------------
+    */
+
+        $financeManagers = CrmLogin::where(
+            'role',
+            'finance'
+        )
+            ->select(
+                'id',
+                'name'
+            )
+            ->orderBy('name')
+            ->get();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | EXCEL PERMISSION
+    |--------------------------------------------------------------------------
+    */
+
+        $canDownloadExcel = in_array(
+            $role,
+            [
+                'branch_manager',
+                'finance',
+                'super_admin'
+            ]
+        );
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | RETURN VIEW
+    |--------------------------------------------------------------------------
+    */
+
+        return view(
+            'operation.appointment-complete',
+            compact(
+                'students',
+                'statuses',
+                'subStatuses',
+                'counselors',
+                'sources',
+                'provinces',
+                'colleges',
+                'campuses',
+                'programs',
+                'financeManagers',
+                'limit',
+                'canDownloadExcel'
+            )
+        );
     }
 
-    public function osapDoneEnrolled()
+    public function updateFoaStatus(Request $request)
     {
-        return view('operation.osap-done-enrolled');
+        $request->validate([
+            'id' => 'required|integer',
+            'status' => 'nullable|string|max:100',
+        ]);
+
+
+        $updated = DB::table('seminarpre')
+            ->where(
+                'sno',
+                $request->id
+            )
+            ->update([
+                'foa_status' => $request->status,
+            ]);
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'FOA Status updated successfully.'
+        ]);
+    }
+    public function appointmentCompleteExport(Request $request)
+    {
+        $query = DB::table('seminarpre as s')
+            ->whereIn(
+                's.student_status',
+                [
+                    'enrolled',
+                    'Re-enrolled'
+                ]
+            )
+            ->whereNotNull('s.fin_apnt_date')
+            ->where(
+                's.fin_apnt_date',
+                '!=',
+                ''
+            );
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | FILTERS
+    |--------------------------------------------------------------------------
+    */
+
+        if ($request->filled('FromFltDate')) {
+
+            $query->whereDate(
+                's.start_date',
+                '>=',
+                $request->FromFltDate
+            );
+        }
+
+
+        if ($request->filled('ToFltDate')) {
+
+            $query->whereDate(
+                's.start_date',
+                '<=',
+                $request->ToFltDate
+            );
+        }
+
+
+        if ($request->filled('osap_status_flt')) {
+
+            $query->where(
+                's.osap_status',
+                $request->osap_status_flt
+            );
+        }
+
+
+        if ($request->filled('sub_status_flt')) {
+
+            $query->where(
+                's.osap_sub_status',
+                $request->sub_status_flt
+            );
+        }
+
+
+        if ($request->filled('student_status')) {
+
+            $query->where(
+                's.student_status',
+                $request->student_status
+            );
+        }
+
+
+        if ($request->filled('counselor_id')) {
+
+            $query->where(
+                's.assign_id',
+                $request->counselor_id
+            );
+        }
+
+
+        if ($request->filled('ssource')) {
+
+            $query->where(
+                's.ssource',
+                $request->ssource
+            );
+        }
+
+
+        if ($request->filled('foa-status')) {
+
+            $query->where(
+                's.foa_status',
+                $request->input('foa-status')
+            );
+        }
+
+
+        if ($request->filled('province_name')) {
+
+            $query->where(
+                's.province_name',
+                $request->province_name
+            );
+        }
+
+
+        if ($request->filled('collage_name')) {
+
+            $query->where(
+                's.collage_name',
+                $request->collage_name
+            );
+        }
+
+
+        if ($request->filled('campus_name')) {
+
+            $query->where(
+                's.campus_name',
+                $request->campus_name
+            );
+        }
+
+
+        if ($request->filled('program_name')) {
+
+            $query->where(
+                's.program_name',
+                $request->program_name
+            );
+        }
+
+
+        if ($request->filled('finance_mng')) {
+
+            $query->where(
+                's.finance_id',
+                $request->finance_mng
+            );
+        }
+
+
+        if ($request->filled('GetFltDate')) {
+
+            $query->whereDate(
+                's.fin_apnt_date',
+                $request->GetFltDate
+            );
+        }
+
+
+        if ($request->filled('name_mobile_email')) {
+
+            $search = trim(
+                $request->name_mobile_email
+            );
+
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where(
+                    's.sname',
+                    'LIKE',
+                    '%' . $search . '%'
+                )
+
+                    ->orWhere(
+                        's.smobile',
+                        'LIKE',
+                        '%' . $search . '%'
+                    )
+
+                    ->orWhere(
+                        's.semail',
+                        'LIKE',
+                        '%' . $search . '%'
+                    )
+
+                    ->orWhere(
+                        's.file_no',
+                        'LIKE',
+                        '%' . $search . '%'
+                    );
+            });
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | APPOINTMENT TYPE
+    |--------------------------------------------------------------------------
+    */
+
+        $today = Carbon::now(
+            'America/Toronto'
+        )->format('Y-m-d');
+
+
+        if ($request->apntType === 'Today') {
+
+            $query->whereDate(
+                's.fin_apnt_date',
+                $today
+            );
+        } elseif ($request->apntType === 'Overdue') {
+
+            $query->whereDate(
+                's.fin_apnt_date',
+                '<',
+                $today
+            );
+        } elseif ($request->apntType === 'Upcoming') {
+
+            $query->whereDate(
+                's.fin_apnt_date',
+                '>',
+                $today
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | USER RESTRICTION
+    |--------------------------------------------------------------------------
+    */
+
+        $userId = Session::get('login');
+
+        $role = Session::get('role');
+
+
+        if ($role === 'counselor') {
+
+            $query->where(
+                's.assign_id',
+                $userId
+            );
+        }
+
+
+        if ($role === 'finance') {
+
+            $query->where(
+                's.finance_id',
+                $userId
+            );
+        }
+
+
+        $rows = $query
+            ->orderByDesc('s.fin_apnt_date')
+            ->get();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | CSV DOWNLOAD
+    |--------------------------------------------------------------------------
+    */
+
+        $filename =
+            'finance-appointment-completed-' .
+            date('Y-m-d') .
+            '.csv';
+
+
+        return response()->streamDownload(
+
+            function () use ($rows) {
+
+                $handle = fopen(
+                    'php://output',
+                    'w'
+                );
+
+
+                /*
+            |--------------------------------------------------------------------------
+            | BOM
+            |--------------------------------------------------------------------------
+            */
+
+                fprintf(
+                    $handle,
+                    chr(0xEF) .
+                        chr(0xBB) .
+                        chr(0xBF)
+                );
+
+
+                /*
+            |--------------------------------------------------------------------------
+            | HEADER
+            |--------------------------------------------------------------------------
+            */
+
+                fputcsv(
+                    $handle,
+                    [
+                        'Name',
+                        'Number',
+                        'Country',
+                        'Counselor Name',
+                        'File Number',
+                        'Student Status',
+                        'Email',
+                        'Province',
+                        'College',
+                        'Campus',
+                        'Program Name',
+                        'Start Date',
+                        'Enrolled Date',
+                        'Finance Manager',
+                        'Finance Apnt Date',
+                        'Finance Apnt Time',
+                        'FOA Status',
+                        'OPR Status',
+                        'Email Sent',
+                        'Signature',
+                        'OSAP Status/Followup',
+                        'Finance Status'
+                    ]
+                );
+
+
+                /*
+            |--------------------------------------------------------------------------
+            | DATA
+            |--------------------------------------------------------------------------
+            */
+
+                foreach ($rows as $row) {
+
+                    $financeName = '-';
+
+
+                    if (!empty($row->finance_id)) {
+
+                        $financeName =
+                            CrmLogin::where(
+                                'id',
+                                $row->finance_id
+                            )->value('name') ?? '-';
+                    }
+
+
+                    fputcsv(
+                        $handle,
+                        [
+                            $row->sname ?? '',
+                            $row->smobile ?? '',
+                            $row->scountry ?? '',
+                            $row->assign_name ?? '',
+                            $row->file_no ?? '',
+                            $row->student_status ?? '',
+                            $row->semail ?? '',
+                            $row->province_name ?? '',
+                            $row->collage_name ?? '',
+                            $row->campus_name ?? '',
+                            $row->program_name ?? '',
+                            $row->start_date ?? '',
+                            $row->enrolled_date ?? '',
+                            $financeName,
+                            $row->fin_apnt_date ?? '',
+                            $row->fin_apnt_time ?? '',
+                            $row->foa_status ?? '',
+                            $row->opr_stage ?? '',
+                            $row->osap_email_sent ?? '',
+                            $row->signature ?? '',
+                            $row->osap_sub_status ?? '',
+                            $row->osap_status ?? ''
+                        ]
+                    );
+                }
+
+
+                fclose($handle);
+            },
+
+            $filename,
+
+            [
+                'Content-Type' =>
+                'text/csv; charset=UTF-8'
+            ]
+
+        );
     }
 
 
+    public function studentConsentPdf(Request $request)
+    {
+        /*
+    |--------------------------------------------------------------------------
+    | Get UID
+    |--------------------------------------------------------------------------
+    */
+
+        $snoid = $request->query('uid');
+
+        if (empty($snoid)) {
+            return redirect()
+                ->back()
+                ->with('error', 'Student ID is missing.');
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Get Student
+    |--------------------------------------------------------------------------
+    |
+    | Original PHP:
+    |
+    | SELECT osap_signature, signature, sname, dob, smobile,
+    | semail, program_name, collage_name
+    | FROM seminarpre
+    | WHERE sno='$snoid'
+    |
+    */
+
+        $student = DB::table('seminarpre')
+            ->where('sno', $snoid)
+            ->first();
+
+
+        if (!$student) {
+            return redirect()
+                ->back()
+                ->with('error', 'Student record not found.');
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Student Data
+    |--------------------------------------------------------------------------
+    */
+
+        $sname = $student->sname ?? '';
+
+        $dob = $student->dob ?? '';
+
+        $semail = $student->semail ?? '';
+
+        $smobile = $student->smobile ?? '';
+
+        $program_name = $student->program_name ?? '';
+
+        $collage_name = $student->collage_name ?? '';
+
+        $signature = $student->signature ?? '';
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Toronto Date
+    |--------------------------------------------------------------------------
+    */
+
+        $datsddsfd = now('America/Toronto')
+            ->format('Y-m-d');
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Logo
+    |--------------------------------------------------------------------------
+    */
+
+        $logoUrl =
+            'https://gps_crm/images/GPS-Logo.png';
+
+        $logoData = @file_get_contents($logoUrl);
+
+        $logoSrc = '';
+
+        if ($logoData !== false) {
+
+            $logoBase64 = base64_encode($logoData);
+
+            $logoSrc =
+                'data:image/png;base64,' .
+                $logoBase64;
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Student Signature
+    |--------------------------------------------------------------------------
+    */
+
+        $sign_Src = '';
+
+        if (!empty($signature)) {
+
+            $signatureUrl =
+                'https://gps_crm/Student_Sign/' .
+                $signature;
+
+            $signatureData =
+                @file_get_contents($signatureUrl);
+
+            if ($signatureData !== false) {
+
+                $signBase64 =
+                    base64_encode($signatureData);
+
+                $sign_Src =
+                    'data:image/png;base64,' .
+                    $signBase64;
+            }
+        }
+
+
+
+
+        $pdf = Pdf::loadView(
+            'operation.student-consent-pdf',
+            [
+                'logoSrc' => $logoSrc,
+                'sname' => $sname,
+                'dob' => $dob,
+                'semail' => $semail,
+                'smobile' => $smobile,
+                'program_name' => $program_name,
+                'collage_name' => $collage_name,
+                'sign_Src' => $sign_Src,
+                'datsddsfd' => $datsddsfd,
+            ]
+        );
+
+
+        $pdf->setPaper(
+            'A4',
+            'portrait'
+        );
+
+
+
+
+        return $pdf->stream(
+            'Student_consent.pdf'
+        );
+    }
+
+    public function studentOsapConsentPdf($uid)
+    {
+        $student = DB::table('students')
+            ->where('sno', $uid)
+            ->first();
+
+        if (!$student) {
+            abort(404, 'Student not found.');
+        }
+
+        $pdf = Pdf::loadView('pdf.student-osap-consent', [
+            'student' => $student,
+        ]);
+
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('student_osap_consent.pdf');
+    }
+
+    public function financeStatusLogs(Request $request)
+    {
+        $logId = (int) $request->input('id');
+
+        if (!$logId) {
+            return response()->json([
+                'success' => false,
+                'logs' => [],
+                'message' => 'Invalid student ID.'
+            ], 400);
+        }
+
+        $logs = DB::table('osap_sts_logs')
+            ->where('semi_id', $logId)
+            ->orderBy('created_datetime', 'desc')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'logs' => $logs
+        ]);
+    }
+
+    public function financeSubStatus(Request $request)
+    {
+        $status = $request->status;
+
+        $subStatuses = DB::table('application_sts')
+            ->where('status', $status)
+            ->where('sts', 1)
+            ->orderBy('sub_status')
+            ->pluck('sub_status');
+
+        $html = '<option value="">-- Select Sub Status --</option>';
+
+        foreach ($subStatuses as $subStatus) {
+            $html .= '<option value="' . e($subStatus) . '">'
+                . e($subStatus)
+                . '</option>';
+        }
+
+        return response($html);
+    }
+
+    public function updateFinanceStatus(Request $request)
+    {
+
+        $request->validate([
+            'log_id' => 'required|integer',
+            'osap_status' => 'required|string',
+            'sub_status' => 'required|string',
+            'osap_collage_name' => 'nullable|string',
+            'osap_followup_date' => 'required',
+            'osap_sts_remarks' => 'required|string',
+        ]);
+
+        $logId = (int) $request->log_id;
+
+        $userId = Session::get('login');
+
+        if (!$userId) {
+            return response()->json([
+                'success' => false,
+                'message' => 'User is not logged in.'
+            ], 401);
+        }
+
+        $user = DB::table('crm_login')
+            ->where('id', $userId)
+            ->first();
+        if (!$user) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Logged-in user not found.'
+            ], 401);
+        }
+
+        $userId = $user->id;
+        $userName = $user->name;
+
+        $followupDate = date(
+            'Y-m-d h:i A',
+            strtotime($request->osap_followup_date)
+        );
+
+        DB::table('osap_sts_logs')->insert([
+            'sub_status' => $request->sub_status,
+            'semi_id' => $logId,
+            'osap_status' => $request->osap_status,
+            'osap_college' => $request->osap_collage_name,
+            'osap_followup_date' => $followupDate,
+            'osap_sts_remarks' => $request->osap_sts_remarks,
+
+            'added_id' => $userId,
+            'added_by' => $userName,
+
+            'created_datetime' => now(),
+        ]);
+
+
+
+        $updated = DB::table('seminarpre')
+            ->where('sno', $logId)
+            ->update([
+                'onid_user_name' => $request->onid_user_name,
+                'onid_user_pass' => $request->onid_user_pass,
+                'osap_sub_status' => $request->sub_status,
+                'osap_status' => $request->osap_status,
+                'osap_followup_date' => $followupDate,
+                'osap_sts_remarks' => $request->osap_sts_remarks,
+                'osap_college' => $request->osap_collage_name,
+            ]);
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Finance status updated successfully.',
+            'updated' => $updated,
+        ]);
+    }
+    // public function osapDoneEnrolled()
+    // {
+    //     return view('operation.osap-done-enrolled');
+    // }
+    public function osapDoneEnrolled(Request $request)
+    {
+
+        $userId = session('login');
+        $role = session('role');
+
+        $user = \App\Models\CrmLogin::find($userId);
+
+        if (!$user) {
+            session()->flush();
+
+            return redirect()
+                ->route('login')
+                ->with('error', 'User session expired.');
+        }
+
+        $sess_username = $user->username ?? '';
+        $sess_name = $user->name ?? '';
+        $sess_role = $user->role ?? $role;
+
+
+        $currentDate = now('America/Toronto')->format('Y-m-d');
+
+
+        $name_mobile_email = $request->get('name_mobile_email');
+        $ssource = $request->get('ssource');
+        $apntType = $request->get('apntType');
+        $foa_status = $request->get('foa-status');
+        $finance_mang_id = $request->get('finance_mang_id');
+
+        $province_name = $request->get('province_name');
+        $collage_names = $request->get('collage_name');
+        $campus_names = $request->get('campus_name');
+        $program_names = $request->get('program_name');
+
+        $apt_date = $request->get('GetFltDate');
+
+        $FromFltDate = $request->get('FromFltDate');
+        $ToFltDate = $request->get('ToFltDate');
+
+
+        $query = \DB::table('seminarpre')
+            ->where('student_status', 'enrolled')
+            ->where('osap_sub_status', 'Osap applied/Documents Done')
+            ->whereDate('start_date', '>=', '2025-09-01');
+
+
+
+        if (!empty($name_mobile_email)) {
+
+            $query->where(function ($q) use ($name_mobile_email) {
+
+                $q->where('sname', 'like', '%' . $name_mobile_email . '%')
+                    ->orWhere('smobile', 'like', '%' . $name_mobile_email . '%')
+                    ->orWhere('semail', 'like', '%' . $name_mobile_email . '%')
+                    ->orWhere('file_no', 'like', '%' . $name_mobile_email . '%');
+            });
+        }
+
+
+
+        if (!empty($ssource)) {
+            $query->where('ssource', $ssource);
+        }
+
+
+
+        if (!empty($apntType)) {
+
+            if ($apntType == 'Today') {
+
+                $query->whereDate('fin_apnt_date', $currentDate);
+            } elseif ($apntType == 'Overdue') {
+
+                $query->whereDate('fin_apnt_date', '<', $currentDate);
+            } elseif ($apntType == 'Upcoming') {
+
+                $query->whereDate('fin_apnt_date', '>', $currentDate);
+            }
+        }
+
+
+
+        if (!empty($foa_status)) {
+            $query->where('foa_status', $foa_status);
+        }
+
+
+
+        if (!empty($finance_mang_id)) {
+            $query->where('finance_id', $finance_mang_id);
+        }
+
+
+
+        if (!empty($province_name)) {
+
+            $query->where('province_name', $province_name);
+        } elseif (
+            ($sess_username == 'prabjot' || $sess_username == 'navjot')
+        ) {
+
+
+            $allowedProvinces = [];
+
+            if (session('Ontario') == 'yes') {
+                $allowedProvinces[] = 'Ontario';
+            }
+
+            if (session('Alberta') == 'yes') {
+                $allowedProvinces[] = 'Alberta';
+            }
+
+            if (session('British_Columbia') == 'yes') {
+                $allowedProvinces[] = 'British Columbia';
+            }
+
+            if (session('Manitoba') == 'yes') {
+                $allowedProvinces[] = 'Manitoba';
+            }
+
+            if (!empty($allowedProvinces)) {
+
+                $query->where(function ($q) use ($allowedProvinces, $sess_name) {
+
+                    $q->where(function ($q2) use ($allowedProvinces, $sess_name) {
+
+                        $q2->whereIn('province_name', $allowedProvinces)
+                            ->where('assign_name', '!=', $sess_name);
+                    })->orWhere('assign_name', $sess_name);
+                });
+            }
+        }
+
+
+        if (!empty($collage_names)) {
+            $query->where('collage_name', $collage_names);
+        }
+
+
+
+        if (!empty($campus_names)) {
+            $query->where('campus_name', $campus_names);
+        }
+
+
+
+        if (!empty($program_names)) {
+            $query->where('program_name', $program_names);
+        }
+
+
+
+        if (!empty($apt_date)) {
+            $query->whereDate('fin_apnt_date', $apt_date);
+        }
+
+
+
+        if (!empty($FromFltDate) && !empty($ToFltDate)) {
+
+            $query->whereBetween('start_date', [
+                $FromFltDate,
+                $ToFltDate
+            ]);
+        } elseif (!empty($FromFltDate)) {
+
+            $query->whereDate('start_date', '>=', $FromFltDate);
+        } elseif (!empty($ToFltDate)) {
+
+            $query->whereDate('start_date', '<=', $ToFltDate);
+        }
+
+
+
+        if ($sess_role == 'counselor' && $sess_username != 'sahil_arora') {
+
+            $query->where('assign_id', $userId);
+        }
+
+
+
+        $query->leftJoin(
+            'crm_login as finance_user',
+            'finance_user.id',
+            '=',
+            'seminarpre.finance_id'
+        );
+
+
+        $query->select(
+            'seminarpre.*',
+            'finance_user.name as finance_manager_name'
+        );
+
+
+        $limit = (int) $request->get('limit', 10);
+
+        if (!in_array($limit, [10, 25, 50, 100])) {
+            $limit = 10;
+        }
+
+        $students = $query
+            ->orderByDesc('enrolled_date')
+            ->paginate($limit)
+            ->withQueryString();
+
+
+
+        $sources = \DB::table('seminarpre')
+            ->where('student_status', 'enrolled')
+            ->whereNotNull('ssource')
+            ->where('ssource', '!=', '')
+            ->groupBy('ssource')
+            ->orderBy('ssource')
+            ->pluck('ssource');
+
+
+        $colleges = \DB::table('college_list')
+            ->select('clg_name')
+            ->whereNotNull('clg_name')
+            ->where('clg_name', '!=', '')
+            ->groupBy('clg_name')
+            ->orderBy('clg_name')
+            ->get();
+
+
+        $operations = \DB::table('crm_login')
+            ->select('id', 'name')
+            ->where('role', 'finance')
+            ->where('act_status', 1)
+            ->orderBy('name')
+            ->get();
+
+
+
+        $campuses = collect();
+
+        if (!empty($collage_names)) {
+
+            $campuses = \DB::table('college_list')
+                ->select('campus_name')
+                ->where('clg_name', $collage_names)
+                ->whereNotNull('campus_name')
+                ->where('campus_name', '!=', '')
+                ->groupBy('campus_name')
+                ->orderBy('campus_name')
+                ->get();
+        }
+
+
+
+        $programs = collect();
+
+        if (!empty($collage_names) && !empty($campus_names)) {
+
+            $programs = \DB::table('college_list')
+                ->select('prg_name')
+                ->where('clg_name', $collage_names)
+                ->where('campus_name', $campus_names)
+                ->whereNotNull('prg_name')
+                ->where('prg_name', '!=', '')
+                ->groupBy('prg_name')
+                ->orderBy('prg_name')
+                ->get();
+        }
+
+
+        return view('operation.osap-done-enrolled', compact(
+            'students',
+            'sources',
+            'colleges',
+            'operations',
+            'campuses',
+            'programs',
+
+            'name_mobile_email',
+            'ssource',
+            'apntType',
+            'foa_status',
+            'finance_mang_id',
+            'province_name',
+            'collage_names',
+            'campus_names',
+            'program_names',
+            'apt_date',
+            'FromFltDate',
+            'ToFltDate',
+
+            'sess_username',
+            'sess_name',
+            'sess_role'
+        ));
+    }
+
+    public function getOsapCampuses(Request $request)
+    {
+        $college = $request->college_id;
+
+        $campuses = DB::table('college_list')
+            ->select('campus_name')
+            ->where('clg_name', $college)
+            ->whereNotNull('campus_name')
+            ->where('campus_name', '!=', '')
+            ->groupBy('campus_name')
+            ->orderBy('campus_name')
+            ->get();
+
+        $html = '<option value="">--Select Campus--</option>';
+
+        foreach ($campuses as $campus) {
+
+            $html .= '<option value="' .
+                e($campus->campus_name) .
+                '">' .
+                e($campus->campus_name) .
+                '</option>';
+        }
+
+        return response($html);
+    }
+
+
+    public function getOsapPrograms(Request $request)
+    {
+        $college = $request->college_id;
+        $campus = $request->campus_id;
+
+        $programs = DB::table('college_list')
+            ->select('prg_name')
+            ->where('clg_name', $college)
+            ->where('campus_name', $campus)
+            ->whereNotNull('prg_name')
+            ->where('prg_name', '!=', '')
+            ->groupBy('prg_name')
+            ->orderBy('prg_name')
+            ->get();
+
+        $html = '<option value="">--Select Program--</option>';
+
+        foreach ($programs as $program) {
+
+            $html .= '<option value="' .
+                e($program->prg_name) .
+                '">' .
+                e($program->prg_name) .
+                '</option>';
+        }
+
+        return response($html);
+    }
+
+    public function getOsapSubStatus(Request $request)
+    {
+        $status = $request->status;
+
+        $subStatuses = DB::table('application_sts')
+            ->where('sts', 1)
+            ->where('status', $status)
+            ->orderBy('id')
+            ->get();
+
+        $html = '<option value="">-- Select Sub Status --</option>';
+
+        foreach ($subStatuses as $row) {
+
+            $html .= '<option value="' .
+                e($row->sub_status) .
+                '">' .
+                e($row->sub_status) .
+                '</option>';
+        }
+
+        return response($html);
+    }
+
+    public function consentForm(Request $request)
+    {
+        $snoid = $request->get('uid');
+
+        if (!$snoid) {
+            abort(404, 'Student ID is required.');
+        }
+
+        $student = DB::table('seminarpre')
+            ->select(
+                'osap_signature',
+                'osap_signature_submit',
+                'sname',
+                'dob',
+                'smobile',
+                'semail',
+                'program_name',
+                'collage_name'
+            )
+            ->where('sno', $snoid)
+            ->first();
+
+        if (!$student) {
+            abort(404, 'Student not found.');
+        }
+
+       
+        $osapSignature = '';
+
+        if (!empty($student->osap_signature)) {
+
+            $osapSignature =
+                'http://gps_crm/Student_Sign/osap/' .
+                $student->osap_signature;
+        }
+
+       
+
+        $data = [
+            'sname' => $student->sname,
+            'dob' => $student->dob,
+            'program_name' => $student->program_name,
+            'collage_name' => $student->collage_name,
+            'osap_signature' => $osapSignature,
+            'osap_signature_submit' => $student->osap_signature_submit,
+        ];
+
+       
+        $pdf = Pdf::loadView(
+            'operation.osap-consent-form',
+            $data
+        );
+
+        $pdf->setPaper('A4', 'portrait');
+
+        return $pdf->stream('osap.pdf');
+    }
 
 
 

@@ -395,7 +395,83 @@ Route::middleware('login')->group(function () {
 
     Route::get('/appointment-complete', [WalkinController::class, 'appointmentComplete'])
         ->name('appointment.complete');
+    Route::post(
+        '/appointment-complete/foa-status',
+        [WalkinController::class, 'updateFoaStatus']
+    )->name('appointment.complete.foa-status');
+
+
+    Route::get(
+        '/appointment-complete/export',
+        [WalkinController::class, 'appointmentCompleteExport']
+    )->name('appointment.complete.export');
+
+    Route::get(
+        '/student-consent-pdf',
+        [WalkinController::class, 'studentConsentPdf']
+    )->name('student.consent.pdf');
+    Route::get('/student/consent/pdf/{uid}', [WalkinController::class, 'studentOsapConsentPdf'])
+        ->name('student.consent.pdf');
+
+    Route::post(
+        '/appointment/complete/finance-status-logs',
+        [WalkinController::class, 'financeStatusLogs']
+    )->name('appointment.complete.finance-status-logs');
+
+    Route::post(
+        '/appointment/complete/finance-sub-status',
+        [WalkinController::class, 'financeSubStatus']
+    )->name('appointment.complete.finance-sub-status');
+
+    Route::post(
+        '/appointment/complete/finance-status-update',
+        [WalkinController::class, 'updateFinanceStatus']
+    )->name('appointment.complete.finance-status-update');
 
     Route::get('/osap-done-enrolled', [WalkinController::class, 'osapDoneEnrolled'])
         ->name('osap.done.enrolled');
+
+    Route::post(
+        '/osap/campuses',
+        [WalkinController::class, 'getOsapCampuses']
+    )->name('osap.campuses');
+
+
+    Route::post(
+        '/osap/programs',
+        [WalkinController::class, 'getOsapPrograms']
+    )->name('osap.programs');
+
+
+    Route::post(
+        '/osap/foa-status',
+        [WalkinController::class, 'updateFoaStatus']
+    )->name('osap.foa.status');
+
+
+    Route::post(
+        '/osap/send-email',
+        [WalkinController::class, 'sendOsapEmail']
+    )->name('osap.send.email');
+
+
+    Route::post(
+        '/osap/logs',
+        [WalkinController::class, 'getOsapLogs']
+    )->name('osap.logs');
+
+
+    Route::post(
+        '/osap/status',
+        [WalkinController::class, 'updateOsapStatus']
+    )->name('osap.status.update');
+
+
+    Route::post(
+        '/osap/sub-status',
+        [WalkinController::class, 'getOsapSubStatus']
+    )->name('osap.sub.status');
+
+    Route::get('/osap/consent-form', [WalkinController::class, 'consentForm'])
+        ->name('osap.consent.form');
 });
