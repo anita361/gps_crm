@@ -474,4 +474,34 @@ Route::middleware('login')->group(function () {
 
     Route::get('/osap/consent-form', [WalkinController::class, 'consentForm'])
         ->name('osap.consent.form');
+
+
+
+    Route::get('/dashboard-reports', [WalkinController::class, 'dashboardReports'])
+        ->name('dashboard.reports');
+    Route::get('/dashboard-reports/excel', [WalkinController::class, 'dashboardReportsExcel'])
+        ->name('dashboard.reports.excel');
+
+
+    Route::get('/lead-date-dashboard', [WalkinController::class, 'leadDashboardReport'])
+        ->name('lead.date.dashboard');
+
+    Route::get('/lead-date-dashboard/download', [WalkinController::class, 'leadDashboardDownloadcsv'])
+        ->name('lead.date.csv');
+
+
+    // Route::get(
+    //     '/daily-activity-reports',
+    //     [WalkinController::class, 'dailyActivityReports']
+    // )->name('daily.activity.reports');
+
+    Route::get(
+        '/daily-activity-reports',
+        [WalkinController::class, 'dailyActivityReports']
+    )->name('daily.activity.reports');
+
+    Route::get(
+        '/daily-activity-reports/download',
+        [WalkinController::class, 'dailyActivityReportDownload']
+    )->name('daily.activity.report.download');
 });

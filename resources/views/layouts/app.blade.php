@@ -287,19 +287,20 @@
 
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('dashboard.reports') }}">
                                     <i class="fa fa-table"></i> Dashboard Reports
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item" href="{{ route('lead.date.dashboard') }}">
                                     <i class="fa fa-calendar"></i> Lead Date Dashboard
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
+                                <a class="dropdown-item {{ request()->routeIs('daily.activity.reports') ? 'active' : '' }}"
+                                    href="{{ route('daily.activity.reports') }}">
                                     <i class="fa fa-calendar-day"></i> Daily Activity Reports
                                 </a>
                             </li>

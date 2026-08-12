@@ -5796,7 +5796,7 @@ class WalkinController extends Controller
             abort(404, 'Student not found.');
         }
 
-       
+
         $osapSignature = '';
 
         if (!empty($student->osap_signature)) {
@@ -5806,7 +5806,7 @@ class WalkinController extends Controller
                 $student->osap_signature;
         }
 
-       
+
 
         $data = [
             'sname' => $student->sname,
@@ -5817,7 +5817,7 @@ class WalkinController extends Controller
             'osap_signature_submit' => $student->osap_signature_submit,
         ];
 
-       
+
         $pdf = Pdf::loadView(
             'operation.osap-consent-form',
             $data
@@ -5833,21 +5833,2796 @@ class WalkinController extends Controller
 
 
 
-    public function dashboardReports()
+
+
+
+    public function dashboardReports(Request $request)
     {
-        return view('dashboard.dashboard_reports');
+
+
+        $getFltDate = $request->input('GetFltDate');
+
+
+
+        $sessRole     = session('sess_role');
+        $sessUsername = session('sess_username');
+        $sessUserId   = session('sess_userid');
+        $sessName     = session('sess_name');
+
+
+
+
+        $query = DB::table('seminarpre')
+            ->where('student_status', 'enrolled')
+            ->where('assign_name', '!=', '');
+
+
+
+
+        if (!empty($getFltDate)) {
+            $query->whereDate('start_date', $getFltDate);
+        }
+
+
+
+
+        if (
+            ($sessRole === 'counselor' && $sessUsername !== 'sahil_arora')
+            || $sessRole === 'branch'
+        ) {
+            $query->where('assign_name', $sessName);
+        }
+
+
+
+
+        $reports = $query
+            ->select(
+                'assign_name'
+            )
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'Campus Login'
+                    AND OprStsSend = 'Done'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS campus_login_done
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'VeriFast & Wonderlic'
+                    AND OprStsSend = 'Sent'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS verifast_sent_count
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'VeriFast & Wonderlic'
+                    AND OprStsSend = 'Done'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS verifast_done_count
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'Contract'
+                    AND OprStsSend = 'Sent'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS contract_sent_count
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'Contract'
+                    AND OprStsSend = 'Done'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS contract_done_count
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'Orientation'
+                    AND OprStsSend = 'Sent'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS orientation_sent_count
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'Orientation'
+                    AND OprStsSend = 'Done'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS orientation_done_count
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'FAO Appointment'
+                    AND OprStsSend = 'Given'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS fao_given_count
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'FAO Appointment'
+                    AND OprStsSend = 'Completed'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS fao_completed_count
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'Drop'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS drop_count
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage = 'Not Process'
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS not_process_count
+        ")
+
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN opr_stage != ''
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS all_total
+        ")
+
+            ->groupBy('assign_name')
+            ->orderBy('assign_name')
+            ->get();
+
+
+
+        $totals = [
+            'campus_login_done'      => 0,
+            'verifast_sent_count'    => 0,
+            'verifast_done_count'    => 0,
+            'contract_sent_count'    => 0,
+            'contract_done_count'    => 0,
+            'orientation_sent_count' => 0,
+            'orientation_done_count' => 0,
+            'fao_given_count'        => 0,
+            'fao_completed_count'    => 0,
+            'drop_count'             => 0,
+            'not_process_count'      => 0,
+            'all_total'              => 0,
+        ];
+
+
+        foreach ($reports as $row) {
+
+            $totals['campus_login_done']
+                += (int) $row->campus_login_done;
+
+            $totals['verifast_sent_count']
+                += (int) $row->verifast_sent_count;
+
+            $totals['verifast_done_count']
+                += (int) $row->verifast_done_count;
+
+            $totals['contract_sent_count']
+                += (int) $row->contract_sent_count;
+
+            $totals['contract_done_count']
+                += (int) $row->contract_done_count;
+
+            $totals['orientation_sent_count']
+                += (int) $row->orientation_sent_count;
+
+            $totals['orientation_done_count']
+                += (int) $row->orientation_done_count;
+
+            $totals['fao_given_count']
+                += (int) $row->fao_given_count;
+
+            $totals['fao_completed_count']
+                += (int) $row->fao_completed_count;
+
+            $totals['drop_count']
+                += (int) $row->drop_count;
+
+            $totals['not_process_count']
+                += (int) $row->not_process_count;
+
+            $totals['all_total']
+                += (int) $row->all_total;
+        }
+
+
+
+        return view(
+            'dashboard.dashboard_reports',
+            compact(
+                'reports',
+                'totals',
+                'getFltDate'
+            )
+        );
+    }
+    public function dashboardReportsExcel(Request $request)
+    {
+
+
+        $getFltDate = $request->input('GetFltDate');
+        $dateTo     = $request->input('date_to');
+
+
+
+
+        $query = DB::table('seminarpre')
+            ->select([
+                'sname',
+                'smobile',
+                'scountry',
+                'assign_name',
+                'file_no',
+                'student_status',
+                'ssource',
+                'source_remarks',
+                'enrolled_date',
+                'semail',
+                'province_name',
+                'collage_name',
+                'campus_name',
+                'program_name',
+                'start_date',
+                'end_date',
+                'opr_stage_date',
+                'opr_stage',
+                'oprStsSend',
+            ]);
+
+
+
+
+        if (!empty($getFltDate)) {
+            $query->whereDate('start_date', '>=', $getFltDate);
+        }
+
+        if (!empty($dateTo)) {
+            $query->whereDate('start_date', '<=', $dateTo);
+        }
+
+
+
+
+        $fileName = 'opr_list_' . now()->format('Y-m-d_H-i-s') . '.csv';
+
+
+
+
+        return response()->streamDownload(function () use ($query) {
+
+
+
+            echo "\xEF\xBB\xBF";
+
+
+            $output = fopen('php://output', 'w');
+
+
+
+
+            fputcsv($output, [
+                'Client Name',
+                'Client Number',
+                'Country Name',
+                'Counselor Name',
+                'File Number',
+                'Student Status',
+                'Source',
+                'Source Remarks',
+                'Enrolled Date',
+                'Email',
+                'Provinence Name',
+                'College',
+                'Campus',
+                'Program Name',
+                'Start Date',
+                'End Date',
+                'Opr Last Status Date',
+                'Operation Status',
+                'Opr Last Status',
+            ]);
+
+
+
+
+            $query->orderBy('enrolled_date', 'desc')
+                ->chunk(500, function ($rows) use ($output) {
+
+                    foreach ($rows as $row) {
+
+
+
+                        $sname = str_replace('-', '', $row->sname ?? '');
+
+
+                        fputcsv($output, [
+                            $sname,
+                            $row->smobile ?? '',
+                            $row->scountry ?? '',
+                            $row->assign_name ?? '',
+                            $row->file_no ?? '',
+                            $row->student_status ?? '',
+                            $row->ssource ?? '',
+                            $row->source_remarks ?? '',
+                            $row->enrolled_date ?? '',
+                            $row->semail ?? '',
+                            $row->province_name ?? '',
+                            $row->collage_name ?? '',
+                            $row->campus_name ?? '',
+                            $row->program_name ?? '',
+                            $row->start_date ?? '',
+                            $row->end_date ?? '',
+                            $row->opr_stage_date ?? '',
+                            $row->opr_stage ?? '',
+                            $row->oprStsSend ?? '',
+                        ]);
+                    }
+
+
+
+
+                    if (ob_get_level() > 0) {
+                        ob_flush();
+                    }
+
+                    flush();
+                });
+
+
+            fclose($output);
+        }, $fileName, [
+
+            'Content-Type' => 'text/csv; charset=UTF-8',
+
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+
+            'Pragma' => 'no-cache',
+
+            'Expires' => '0',
+
+        ]);
     }
 
-    public function leadDateDashboard()
+
+
+    // public function leadDateDashboard()
+    // {
+    //     return view('dashboard.lead_date_dashboard');
+    // }
+
+    public function leadDashboardReport(Request $request)
     {
-        return view('dashboard.lead_date_dashboard');
+
+
+        if (!session()->has('login')) {
+            return redirect()->route('login');
+        }
+
+        $role = session('role');
+        $username = session('username', '');
+
+
+
+        if (empty($username) && session('login')) {
+            $loginUser = DB::table('crm_login')
+                ->where('id', session('login'))
+                ->first();
+
+            if ($loginUser) {
+                $username = $loginUser->username ?? '';
+            }
+        }
+
+
+        $allowedRoles = [
+            'super_admin',
+            'branch_manager',
+        ];
+
+        if (
+            !in_array($role, $allowedRoles) &&
+            !in_array($username, ['prabjot', 'navjot'])
+        ) {
+            return redirect()
+                ->route('login')
+                ->with('error', 'You are not authorized to access this report.');
+        }
+
+
+
+        $dateStart = $request->query('GetFltDatestart', '');
+        $dateEnd   = $request->query('GetFltDateend', '');
+
+
+        if (!empty($dateStart) && !empty($dateEnd)) {
+
+            if ($dateStart > $dateEnd) {
+                return redirect()
+                    ->back()
+                    ->with('error', 'Leads From Date cannot be greater than Leads To Date.');
+            }
+        }
+
+
+        $provinces = [];
+
+        if (in_array($username, ['prabjot', 'navjot'])) {
+
+            if (session('Ontario') === 'yes') {
+                $provinces[] = 'Ontario';
+            }
+
+            if (session('Alberta') === 'yes') {
+                $provinces[] = 'Alberta';
+            }
+
+            if (session('British_Columbia') === 'yes') {
+                $provinces[] = 'British Columbia';
+            }
+
+            if (session('Manitoba') === 'yes') {
+                $provinces[] = 'Manitoba';
+            }
+        }
+
+
+
+        $query = DB::table('seminarpre')
+            ->select(
+                'assign_name as Rep_Name',
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'enrolled'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Enrolled
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Re-enrolled'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Re_enrolled
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Appointment Booked'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Appointment_Booked
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Call Follow-Up'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Call_Follow_Up
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Not Answered'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Not_Answered
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Not Interested'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Not_Interested
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Not Eligible'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Not_Eligible
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = ''
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Pending_Action
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'enrolled'
+                        THEN 1
+
+                        WHEN student_status = 'Re-enrolled'
+                        THEN 1
+
+                        WHEN student_status = 'Appointment Booked'
+                        THEN 1
+
+                        WHEN student_status = 'Call Follow-Up'
+                        THEN 1
+
+                        WHEN student_status = 'Not Answered'
+                        THEN 1
+
+                        WHEN student_status = 'Not Interested'
+                        THEN 1
+
+                        WHEN student_status = 'Not Eligible'
+                        THEN 1
+
+                        WHEN student_status = ''
+                        THEN 1
+
+                        ELSE 0
+                    END
+                ) AS Total_Count
+            ")
+            )
+            ->where('assign_name', '!=', '');
+
+
+        if (!empty($dateStart) && !empty($dateEnd)) {
+
+            $query->whereBetween('reg_date', [
+                $dateStart,
+                $dateEnd
+            ]);
+        }
+
+
+        if (!empty($provinces)) {
+            $query->whereIn('province_name', $provinces);
+        }
+
+
+
+        $rows = $query
+            ->groupBy('assign_name')
+            ->orderBy('assign_name')
+            ->get();
+
+
+
+        $totalQuery = DB::table('seminarpre')
+            ->where('assign_name', '!=', '');
+
+
+        if (!empty($dateStart) && !empty($dateEnd)) {
+
+            $totalQuery->whereBetween('reg_date', [
+                $dateStart,
+                $dateEnd
+            ]);
+        }
+
+
+
+        if (!empty($provinces)) {
+            $totalQuery->whereIn('province_name', $provinces);
+        }
+
+
+
+        $total = $totalQuery
+            ->select(
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'enrolled'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Enrolled
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Re-enrolled'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Re_enrolled
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Appointment Booked'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Appointment_Booked
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Call Follow-Up'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Call_Follow_Up
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Not Answered'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Not_Answered
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Not Interested'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Not_Interested
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Not Eligible'
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Not_Eligible
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = ''
+                        THEN 1
+                        ELSE 0
+                    END
+                ) AS Pending_Action
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'enrolled'
+                        THEN 1
+
+                        WHEN student_status = 'Re-enrolled'
+                        THEN 1
+
+                        WHEN student_status = 'Appointment Booked'
+                        THEN 1
+
+                        WHEN student_status = 'Call Follow-Up'
+                        THEN 1
+
+                        WHEN student_status = 'Not Answered'
+                        THEN 1
+
+                        WHEN student_status = 'Not Interested'
+                        THEN 1
+
+                        WHEN student_status = 'Not Eligible'
+                        THEN 1
+
+                        WHEN student_status = ''
+                        THEN 1
+
+                        ELSE 0
+                    END
+                ) AS Total_Count
+            ")
+            )
+            ->first();
+
+
+
+        if ($total) {
+
+            $total->Rep_Name = 'Total';
+
+            $rows->push($total);
+        }
+
+
+
+        return view(
+            'dashboard.lead_date_dashboard',
+            compact(
+                'rows',
+                'dateStart',
+                'dateEnd'
+            )
+        );
     }
 
-    public function dailyActivityReports()
+
+
+    public function leadDashboardDownloadcsv(Request $request)
     {
-        return view('dashboard.daily_activity_reports');
+
+        if (!session()->has('login')) {
+            return redirect()->route('login');
+        }
+
+
+        $username = session('username', '');
+
+        if (empty($username) && session('login')) {
+
+            $loginUser = DB::table('crm_login')
+                ->where('id', session('login'))
+                ->first();
+
+            if ($loginUser) {
+                $username = $loginUser->username ?? '';
+            }
+        }
+
+
+        $role = session('role');
+
+        $allowedRoles = [
+            'super_admin',
+            'branch_manager',
+        ];
+
+        if (
+            !in_array($role, $allowedRoles) &&
+            !in_array($username, ['prabjot', 'navjot'])
+        ) {
+            return redirect()
+                ->route('login')
+                ->with('error', 'You are not authorized to download this report.');
+        }
+
+
+        $repName = $request->query('rep_name', '');
+        $status  = $request->query('status', '');
+
+        $dateStart = $request->query('GetFltDatestart', '');
+        $dateEnd   = $request->query('GetFltDateend', '');
+
+
+        if ($repName === '' || $status === '') {
+
+            return redirect()
+                ->back()
+                ->with('error', 'Invalid Request');
+        }
+
+
+
+        $provinces = [];
+
+        if (in_array($username, ['prabjot', 'navjot'])) {
+
+            if (session('Ontario') === 'yes') {
+                $provinces[] = 'Ontario';
+            }
+
+            if (session('Alberta') === 'yes') {
+                $provinces[] = 'Alberta';
+            }
+
+            if (session('British_Columbia') === 'yes') {
+                $provinces[] = 'British Columbia';
+            }
+
+            if (session('Manitoba') === 'yes') {
+                $provinces[] = 'Manitoba';
+            }
+        }
+
+
+
+        $query = DB::table('seminarpre')
+            ->select(
+                'sname',
+                'smobile',
+                'semail',
+                'category',
+                'scity',
+                'dob',
+                'marital_status',
+                'scountry',
+                'ssource',
+                'reg_date as lead_date',
+                'student_status',
+                'enrolled_date',
+                'follow_date',
+                'assign_name',
+                'assign_date',
+                'opr_stage',
+                'action_date'
+            );
+
+
+
+        if ($repName === 'Total') {
+
+            $query->where('assign_name', '!=', '');
+        } else {
+
+            $query->where('assign_name', $repName);
+        }
+
+
+
+        if ($status === 'total') {
+
+
+
+            $query->where('student_status', '!=', '');
+        } elseif ($status === 'Pending') {
+
+
+
+            $query->where('student_status', '');
+        } else {
+
+            $query->where('student_status', $status);
+        }
+
+
+
+        if (!empty($dateStart) && !empty($dateEnd)) {
+
+            $query->whereBetween('reg_date', [
+                $dateStart,
+                $dateEnd
+            ]);
+        }
+
+
+        if (!empty($provinces)) {
+
+            $query->whereIn(
+                'province_name',
+                $provinces
+            );
+        }
+
+
+        $records = $query->get();
+
+
+        if ($records->isEmpty()) {
+
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    "No data found for {$repName} in {$status}."
+                );
+        }
+
+
+
+        $safeRepName = preg_replace(
+            '/[^A-Za-z0-9_\-]/',
+            '_',
+            $repName
+        );
+
+        $safeStatus = preg_replace(
+            '/[^A-Za-z0-9_\-]/',
+            '_',
+            $status
+        );
+
+        $filename =
+            'lead_data_' .
+            $safeRepName .
+            '_' .
+            $safeStatus .
+            '.csv';
+
+
+
+        $handle = fopen('php://temp', 'r+');
+
+
+
+        fputcsv($handle, [
+            'Name',
+            'Mobile',
+            'Email',
+            'Category',
+            'City',
+            'Date of Birth',
+            'Marital Status',
+            'Country',
+            'Source',
+            'Lead Date',
+            'Student Status',
+            'Enrolled Date',
+            'Follow-up Date',
+            'Assigned To',
+            'Assigned Date',
+            'Operational Stage',
+            'Action Date'
+        ]);
+
+
+
+        foreach ($records as $row) {
+
+            fputcsv($handle, [
+                $row->sname,
+                $row->smobile,
+                $row->semail,
+                $row->category,
+                $row->scity,
+                $row->dob,
+                $row->marital_status,
+                $row->scountry,
+                $row->ssource,
+                $row->lead_date,
+                $row->student_status,
+                $row->enrolled_date,
+                $row->follow_date,
+                $row->assign_name,
+                $row->assign_date,
+                $row->opr_stage,
+                $row->action_date
+            ]);
+        }
+
+        rewind($handle);
+
+        $csv = stream_get_contents($handle);
+
+        fclose($handle);
+
+
+        return response($csv, 200, [
+
+            'Content-Type' =>
+            'text/csv; charset=UTF-8',
+
+            'Content-Disposition' =>
+            'attachment; filename="' . $filename . '"',
+
+            'Cache-Control' =>
+            'no-cache, no-store, must-revalidate',
+
+            'Pragma' =>
+            'no-cache',
+
+            'Expires' =>
+            '0',
+        ]);
     }
 
+
+
+    // public function dailyActivityReports()
+    // {
+    //     return view('dashboard.daily_activity_reports');
+    // }
+    // public function dailyActivityReports(Request $request)
+    // {
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Logged-in user
+    //     |--------------------------------------------------------------------------
+    //     */
+    //     $user = CrmLogin::find(session('login'));
+
+    //     if (!$user) {
+    //         return redirect()->route('login');
+    //     }
+
+    //     $role = session('role');
+    //     $username = $user->username ?? '';
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Same access condition as old PHP
+    //     |--------------------------------------------------------------------------
+    //     |
+    //     | Old PHP allowed:
+    //     | super_admin
+    //     | branch_manager
+    //     | prabjot
+    //     | navjot
+    //     |
+    //     */
+
+    //     if (
+    //         !in_array($role, [
+    //             'super_admin',
+    //             'branch_manager'
+    //         ])
+    //         &&
+    //         !in_array($username, [
+    //             'prabjot',
+    //             'navjot'
+    //         ])
+    //     ) {
+    //         return redirect()
+    //             ->route('login')
+    //             ->with('error', 'You are not authorized to access this report.');
+    //     }
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Date filters
+    //     |--------------------------------------------------------------------------
+    //     */
+
+    //     $GetFltDatestart = $request->input(
+    //         'GetFltDatestart',
+    //         ''
+    //     );
+
+    //     $GetFltDateend = $request->input(
+    //         'GetFltDateend',
+    //         ''
+    //     );
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Province permissions
+    //     |--------------------------------------------------------------------------
+    //     |
+    //     | Same logic as old PHP.
+    //     |
+    //     */
+
+    //     $provinces = [];
+
+
+    //     if (($user->Ontario ?? '') === 'yes') {
+    //         $provinces[] = 'Ontario';
+    //     }
+
+
+    //     if (($user->Alberta ?? '') === 'yes') {
+    //         $provinces[] = 'Alberta';
+    //     }
+
+
+    //     if (($user->British_Columbia ?? '') === 'yes') {
+    //         $provinces[] = 'British Columbia';
+    //     }
+
+
+    //     if (($user->Manitoba ?? '') === 'yes') {
+    //         $provinces[] = 'Manitoba';
+    //     }
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Main report query
+    //     |--------------------------------------------------------------------------
+    //     */
+
+    //     $query = DB::table('seminarpre')
+    //         ->where('assign_name', '!=', '');
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Date filter
+    //     |--------------------------------------------------------------------------
+    //     */
+
+    //     if (
+    //         !empty($GetFltDatestart)
+    //         &&
+    //         !empty($GetFltDateend)
+    //     ) {
+    //         $query->whereBetween('reg_date', [
+    //             $GetFltDatestart . ' 00:00:00',
+    //             $GetFltDateend . ' 23:59:59'
+    //         ]);
+    //     }
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Province filter
+    //     |--------------------------------------------------------------------------
+    //     |
+    //     | Only prabjot/navjot get province restriction,
+    //     | exactly like the old PHP.
+    //     |
+    //     */
+
+    //     if (
+    //         in_array($username, [
+    //             'prabjot',
+    //             'navjot'
+    //         ])
+    //         &&
+    //         !empty($provinces)
+    //     ) {
+    //         $query->whereIn(
+    //             'province_name',
+    //             $provinces
+    //         );
+    //     }
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Representative report
+    //     |--------------------------------------------------------------------------
+    //     */
+
+    //     $students = $query
+
+    //         ->select('assign_name as Rep_Name')
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'enrolled'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Enrolled
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Re-enrolled'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Re_enrolled
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Appointment Booked'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Appointment_Booked
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Call Follow-Up'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Call_Follow_Up
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Not Answered'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Not_Answered
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Not Interested'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Not_Interested
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Not Eligible'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Not_Eligible
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = ''
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Pending_Action
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status IN (
+    //                         'enrolled',
+    //                         'Re-enrolled',
+    //                         'Appointment Booked',
+    //                         'Call Follow-Up',
+    //                         'Not Answered',
+    //                         'Not Interested',
+    //                         'Not Eligible',
+    //                         ''
+    //                     )
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Total_Count
+    //         ")
+
+    //         ->groupBy('assign_name')
+    //         ->orderBy('assign_name')
+    //         ->get();
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Total row
+    //     |--------------------------------------------------------------------------
+    //     */
+
+    //     $totalQuery = DB::table('seminarpre')
+    //         ->where('assign_name', '!=', '');
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Total date filter
+    //     |--------------------------------------------------------------------------
+    //     */
+
+    //     if (
+    //         !empty($GetFltDatestart)
+    //         &&
+    //         !empty($GetFltDateend)
+    //     ) {
+    //         $totalQuery->whereBetween('reg_date', [
+    //             $GetFltDatestart . ' 00:00:00',
+    //             $GetFltDateend . ' 23:59:59'
+    //         ]);
+    //     }
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Total province filter
+    //     |--------------------------------------------------------------------------
+    //     */
+
+    //     if (
+    //         in_array($username, [
+    //             'prabjot',
+    //             'navjot'
+    //         ])
+    //         &&
+    //         !empty($provinces)
+    //     ) {
+    //         $totalQuery->whereIn(
+    //             'province_name',
+    //             $provinces
+    //         );
+    //     }
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Calculate totals
+    //     |--------------------------------------------------------------------------
+    //     */
+
+    //     $total = $totalQuery
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'enrolled'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Enrolled
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Re-enrolled'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Re_enrolled
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Appointment Booked'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Appointment_Booked
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Call Follow-Up'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Call_Follow_Up
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Not Answered'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Not_Answered
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Not Interested'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Not_Interested
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = 'Not Eligible'
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Not_Eligible
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status = ''
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Pending_Action
+    //         ")
+
+    //         ->selectRaw("
+    //             SUM(
+    //                 CASE
+    //                     WHEN student_status IN (
+    //                         'enrolled',
+    //                         'Re-enrolled',
+    //                         'Appointment Booked',
+    //                         'Call Follow-Up',
+    //                         'Not Answered',
+    //                         'Not Interested',
+    //                         'Not Eligible',
+    //                         ''
+    //                     )
+    //                     THEN 1
+    //                     ELSE 0
+    //                 END
+    //             ) AS Total_Count
+    //         ")
+
+    //         ->first();
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Add Total row
+    //     |--------------------------------------------------------------------------
+    //     */
+
+    //     $students->push((object) [
+
+    //         'Rep_Name' => 'Total',
+
+    //         'Enrolled' =>
+    //         $total->Enrolled ?? 0,
+
+    //         'Re_enrolled' =>
+    //         $total->Re_enrolled ?? 0,
+
+    //         'Appointment_Booked' =>
+    //         $total->Appointment_Booked ?? 0,
+
+    //         'Call_Follow_Up' =>
+    //         $total->Call_Follow_Up ?? 0,
+
+    //         'Not_Answered' =>
+    //         $total->Not_Answered ?? 0,
+
+    //         'Not_Interested' =>
+    //         $total->Not_Interested ?? 0,
+
+    //         'Not_Eligible' =>
+    //         $total->Not_Eligible ?? 0,
+
+    //         'Pending_Action' =>
+    //         $total->Pending_Action ?? 0,
+
+    //         'Total_Count' =>
+    //         $total->Total_Count ?? 0,
+    //     ]);
+
+
+    //     /*
+    //     |--------------------------------------------------------------------------
+    //     | Send data to Blade
+    //     |--------------------------------------------------------------------------
+    //     */
+
+    //     return view(
+    //         'dashboard.daily_activity_reports',
+    //         compact(
+    //             'students',
+    //             'GetFltDatestart',
+    //             'GetFltDateend'
+    //         )
+    //     );
+    // }
+
+    // public function dailyActivityReportDownload(Request $request)
+    // {
+    //     $repName = $request->input('rep_name', '');
+    //     $status = $request->input('status', '');
+
+    //     $dateStart = $request->input('GetFltDatestart', '');
+    //     $dateEnd   = $request->input('GetFltDateend', '');
+
+    //     $provinceFilter = $request->input('provinceFilter', '');
+    //     $repFilter      = $request->input('repFilter', '');
+
+    //     if (empty($repName) || empty($status)) {
+    //         return redirect()
+    //             ->back()
+    //             ->with('error', 'Invalid Request');
+    //     }
+
+    //     $user = CrmLogin::find(session('login'));
+
+    //     if (!$user) {
+    //         return redirect()->route('login');
+    //     }
+
+    //     $role = session('role');
+    //     $username = $user->username ?? '';
+
+    //     if (
+    //         !in_array($role, ['super_admin', 'branch_manager'])
+    //         &&
+    //         !in_array($username, ['prabjot', 'navjot'])
+    //     ) {
+    //         return redirect()
+    //             ->route('login')
+    //             ->with('error', 'You are not authorized to access this report.');
+    //     }
+
+    //     $query = DB::table('seminarpre');
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | Representative
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     if ($repName === 'Total') {
+    //         $query->where('assign_name', '!=', '');
+    //     } else {
+    //         $query->where('assign_name', $repName);
+    //     }
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | Status
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     if ($status === 'total') {
+
+    //         $query->where('student_status', '!=', '');
+    //     } elseif ($status === 'Pending') {
+
+    //         $query->where('student_status', '');
+    //     } else {
+
+    //         $query->where('student_status', $status);
+    //     }
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | Date
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     if (!empty($dateStart) && !empty($dateEnd)) {
+
+    //         $query->whereBetween('reg_date', [
+    //             $dateStart . ' 00:00:00',
+    //             $dateEnd . ' 23:59:59'
+    //         ]);
+    //     }
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | Province permissions
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     $provinces = [];
+
+    //     if (($user->Ontario ?? '') === 'yes') {
+    //         $provinces[] = 'Ontario';
+    //     }
+
+    //     if (($user->Alberta ?? '') === 'yes') {
+    //         $provinces[] = 'Alberta';
+    //     }
+
+    //     if (($user->British_Columbia ?? '') === 'yes') {
+    //         $provinces[] = 'British Columbia';
+    //     }
+
+    //     if (($user->Manitoba ?? '') === 'yes') {
+    //         $provinces[] = 'Manitoba';
+    //     }
+
+    //     if (
+    //         in_array($username, ['prabjot', 'navjot'])
+    //         &&
+    //         !empty($provinces)
+    //     ) {
+    //         $query->whereIn('province_name', $provinces);
+    //     }
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | Additional province filter
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     if (!empty($provinceFilter)) {
+
+    //         if (in_array($provinceFilter, [
+    //             'Ontario',
+    //             'Alberta',
+    //             'British Columbia',
+    //             'Manitoba'
+    //         ])) {
+    //             $query->where(
+    //                 'province_name',
+    //                 $provinceFilter
+    //             );
+    //         }
+    //     }
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | Additional rep filter
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     if (!empty($repFilter) && $repName === 'Total') {
+
+    //         $query->where(
+    //             'assign_name',
+    //             $repFilter
+    //         );
+    //     }
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | Select columns
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     if ($status === 'total') {
+
+    //         $query->select([
+    //             'sname',
+    //             'smobile',
+    //             'semail',
+    //             'category',
+    //             'scity',
+    //             'dob',
+    //             'marital_status',
+    //             'scountry',
+    //             'ssource',
+    //             'reg_date as lead_date',
+    //             'student_status',
+    //             'enrolled_date',
+    //             'follow_date',
+    //             'assign_name',
+    //             'assign_date',
+    //             'opr_stage'
+    //         ]);
+    //     } else {
+
+    //         $query->select([
+    //             'sname',
+    //             'smobile',
+    //             'semail',
+    //             'category',
+    //             'scity',
+    //             'dob',
+    //             'marital_status',
+    //             'scountry',
+    //             'ssource',
+    //             'reg_date as lead_date',
+    //             'student_status',
+    //             'enrolled_date',
+    //             'follow_date',
+    //             'assign_name',
+    //             'assign_date',
+    //             'opr_stage',
+    //             'action_date'
+    //         ]);
+    //     }
+
+    //     $records = $query
+    //         ->orderBy('reg_date', 'desc')
+    //         ->get();
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | No records
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     if ($records->isEmpty()) {
+
+    //         return redirect()
+    //             ->back()
+    //             ->with(
+    //                 'error',
+    //                 "No data found for {$repName} in {$status}."
+    //             );
+    //     }
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | CSV filename
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     $safeRepName = preg_replace(
+    //         '/[^A-Za-z0-9_\-]/',
+    //         '_',
+    //         $repName
+    //     );
+
+    //     $safeStatus = preg_replace(
+    //         '/[^A-Za-z0-9_\-]/',
+    //         '_',
+    //         $status
+    //     );
+
+    //     $filename =
+    //         'lead_data_' .
+    //         $safeRepName .
+    //         '_' .
+    //         $safeStatus .
+    //         '.csv';
+
+    //     /*
+    // |--------------------------------------------------------------------------
+    // | CSV download
+    // |--------------------------------------------------------------------------
+    // */
+
+    //     return response()->streamDownload(function () use (
+    //         $records,
+    //         $status
+    //     ) {
+
+    //         $handle = fopen('php://output', 'w');
+
+    //         /*
+    //     | CSV Header
+    //     */
+
+    //         if ($status === 'total') {
+
+    //             fputcsv($handle, [
+    //                 'Name',
+    //                 'Mobile',
+    //                 'Email',
+    //                 'Category',
+    //                 'City',
+    //                 'Date of Birth',
+    //                 'Marital Status',
+    //                 'Country',
+    //                 'Source',
+    //                 'Lead Date',
+    //                 'Student Status',
+    //                 'Enrolled Date',
+    //                 'Follow-up Date',
+    //                 'Assigned To',
+    //                 'Assigned Date',
+    //                 'Operational Stage'
+    //             ]);
+    //         } else {
+
+    //             fputcsv($handle, [
+    //                 'Name',
+    //                 'Mobile',
+    //                 'Email',
+    //                 'Category',
+    //                 'City',
+    //                 'Date of Birth',
+    //                 'Marital Status',
+    //                 'Country',
+    //                 'Source',
+    //                 'Lead Date',
+    //                 'Student Status',
+    //                 'Enrolled Date',
+    //                 'Follow-up Date',
+    //                 'Assigned To',
+    //                 'Assigned Date',
+    //                 'Operational Stage',
+    //                 'Action Date'
+    //             ]);
+    //         }
+
+    //         /*
+    //     | CSV Rows
+    //     */
+
+    //         foreach ($records as $row) {
+
+    //             $csvRow = [
+    //                 $row->sname,
+    //                 $row->smobile,
+    //                 $row->semail,
+    //                 $row->category,
+    //                 $row->scity,
+    //                 $row->dob,
+    //                 $row->marital_status,
+    //                 $row->scountry,
+    //                 $row->ssource,
+    //                 $row->lead_date,
+    //                 $row->student_status,
+    //                 $row->enrolled_date,
+    //                 $row->follow_date,
+    //                 $row->assign_name,
+    //                 $row->assign_date,
+    //                 $row->opr_stage
+    //             ];
+
+    //             if ($status !== 'total') {
+    //                 $csvRow[] = $row->action_date;
+    //             }
+
+    //             fputcsv($handle, $csvRow);
+    //         }
+
+    //         fclose($handle);
+    //     }, $filename, [
+    //         'Content-Type' => 'text/csv; charset=UTF-8',
+    //     ]);
+    // }
+
+    public function dailyActivityReports(Request $request)
+    {
+        $user = CrmLogin::find(session('login'));
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $role = session('role');
+        $username = $user->username ?? '';
+
+        /*
+    |--------------------------------------------------------------------------
+    | Authorization
+    |--------------------------------------------------------------------------
+    */
+        if (
+            !in_array($role, ['super_admin', 'branch_manager']) &&
+            !in_array($username, ['prabjot', 'navjot'])
+        ) {
+            return redirect()
+                ->route('login')
+                ->with('error', 'You are not authorized to access this report.');
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Filters
+    |--------------------------------------------------------------------------
+    */
+        $GetFltDatestart = $request->input('GetFltDatestart', '');
+        $GetFltDateend   = $request->input('GetFltDateend', '');
+
+        $provinceFilter = $request->input('provinceFilter', '');
+
+        $selectedReps = $request->input('rep_name', []);
+
+        if (!is_array($selectedReps)) {
+            $selectedReps = [$selectedReps];
+        }
+
+        $selectedReps = array_values(
+            array_filter($selectedReps, function ($rep) {
+                return !empty($rep) && $rep !== 'Branch Manager';
+            })
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | User province permissions
+    |--------------------------------------------------------------------------
+    */
+        $allowedProvinces = [];
+
+        if (($user->Ontario ?? '') === 'yes') {
+            $allowedProvinces[] = 'Ontario';
+        }
+
+        if (($user->Alberta ?? '') === 'yes') {
+            $allowedProvinces[] = 'Alberta';
+        }
+
+        if (($user->British_Columbia ?? '') === 'yes') {
+            $allowedProvinces[] = 'British Columbia';
+        }
+
+        if (($user->Manitoba ?? '') === 'yes') {
+            $allowedProvinces[] = 'Manitoba';
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Representatives dropdown
+    |--------------------------------------------------------------------------
+    */
+        $representatives = DB::table('seminarpre')
+            ->whereNotNull('assign_name')
+            ->where('assign_name', '!=', '')
+            ->distinct()
+            ->orderBy('assign_name')
+            ->pluck('assign_name')
+            ->toArray();
+
+        $representatives = array_values(
+            array_unique(
+                array_merge(
+                    ['Branch Manager'],
+                    $representatives
+                )
+            )
+        );
+
+        /*
+    |--------------------------------------------------------------------------
+    | Function to apply common filters
+    |--------------------------------------------------------------------------
+    */
+        $applyCommonFilters = function ($query) use (
+            $GetFltDatestart,
+            $GetFltDateend,
+            $username,
+            $allowedProvinces,
+            $provinceFilter,
+            $selectedReps
+        ) {
+            $query->where('assign_name', '!=', '');
+
+            /*
+        |--------------------------------------------------------------------------
+        | Date filtering
+        |
+        | IMPORTANT:
+        | We DO NOT apply date here.
+        | Enrolled uses enrolled_date.
+        | Other statuses use action_date.
+        |--------------------------------------------------------------------------
+        */
+
+            /*
+        |--------------------------------------------------------------------------
+        | Province restriction for prabjot / navjot
+        |--------------------------------------------------------------------------
+        */
+            if (
+                in_array($username, ['prabjot', 'navjot']) &&
+                !empty($allowedProvinces)
+            ) {
+                $query->whereIn(
+                    'province_name',
+                    $allowedProvinces
+                );
+            }
+
+            /*
+        |--------------------------------------------------------------------------
+        | Province selected from filter
+        |--------------------------------------------------------------------------
+        */
+            if (
+                !empty($provinceFilter) &&
+                in_array($provinceFilter, [
+                    'Ontario',
+                    'Alberta',
+                    'British Columbia',
+                    'Manitoba'
+                ])
+            ) {
+                $query->where(
+                    'province_name',
+                    $provinceFilter
+                );
+            }
+
+            /*
+        |--------------------------------------------------------------------------
+        | Representative filter
+        |--------------------------------------------------------------------------
+        */
+            if (!empty($selectedReps)) {
+                $query->whereIn(
+                    'assign_name',
+                    $selectedReps
+                );
+            }
+
+            return $query;
+        };
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Get representatives statistics
+    |--------------------------------------------------------------------------
+    */
+        $query = DB::table('seminarpre');
+
+        $applyCommonFilters($query);
+
+        /*
+    |--------------------------------------------------------------------------
+    | Enrolled
+    | enrolled_date
+    |--------------------------------------------------------------------------
+    */
+        if (!empty($GetFltDatestart) && !empty($GetFltDateend)) {
+            $query->where(function ($q) use (
+                $GetFltDatestart,
+                $GetFltDateend
+            ) {
+                $q->where(function ($q2) use (
+                    $GetFltDatestart,
+                    $GetFltDateend
+                ) {
+                    $q2->where(
+                        'student_status',
+                        'enrolled'
+                    )
+                        ->whereBetween('enrolled_date', [
+                            $GetFltDatestart . ' 00:00:00',
+                            $GetFltDateend . ' 23:59:59'
+                        ]);
+                })
+
+                    /*
+            |--------------------------------------------------------------------------
+            | Re-enrolled
+            | If you want Re-enrolled to behave like enrolled,
+            | use enrolled_date here as well.
+            |--------------------------------------------------------------------------
+            */
+                    ->orWhere(function ($q2) use (
+                        $GetFltDatestart,
+                        $GetFltDateend
+                    ) {
+                        $q2->where(
+                            'student_status',
+                            'Re-enrolled'
+                        )
+                            ->whereBetween('enrolled_date', [
+                                $GetFltDatestart . ' 00:00:00',
+                                $GetFltDateend . ' 23:59:59'
+                            ]);
+                    })
+
+                    /*
+            |--------------------------------------------------------------------------
+            | Other statuses use action_date
+            |--------------------------------------------------------------------------
+            */
+                    ->orWhere(function ($q2) use (
+                        $GetFltDatestart,
+                        $GetFltDateend
+                    ) {
+                        $q2->whereIn('student_status', [
+                            'Appointment Booked',
+                            'Call Follow-Up',
+                            'Not Answered',
+                            'Not Interested',
+                            'Not Eligible'
+                        ])
+                            ->whereBetween('action_date', [
+                                $GetFltDatestart . ' 00:00:00',
+                                $GetFltDateend . ' 23:59:59'
+                            ]);
+                    })
+
+                    /*
+            |--------------------------------------------------------------------------
+            | Pending Action
+            |--------------------------------------------------------------------------
+            */
+                    ->orWhere(function ($q2) use (
+                        $GetFltDatestart,
+                        $GetFltDateend
+                    ) {
+                        $q2->where('student_status', '')
+                            ->whereBetween('action_date', [
+                                $GetFltDatestart . ' 00:00:00',
+                                $GetFltDateend . ' 23:59:59'
+                            ]);
+                    });
+            });
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Group by representative
+    |--------------------------------------------------------------------------
+    */
+        $students = $query
+            ->select('assign_name as Rep_Name')
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN student_status = 'enrolled'
+                    " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND enrolled_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                           AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS Enrolled
+        ")
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN student_status = 'Re-enrolled'
+                    " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND enrolled_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                           AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS Re_enrolled
+        ")
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN student_status = 'Appointment Booked'
+                    " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND action_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                           AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS Appointment_Booked
+        ")
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN student_status = 'Call Follow-Up'
+                    " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND action_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                           AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS Call_Follow_Up
+        ")
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN student_status = 'Not Answered'
+                    " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND action_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                           AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS Not_Answered
+        ")
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN student_status = 'Not Interested'
+                    " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND action_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                           AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS Not_Interested
+        ")
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN student_status = 'Not Eligible'
+                    " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND action_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                           AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS Not_Eligible
+        ")
+
+            ->selectRaw("
+            SUM(
+                CASE
+                    WHEN student_status = ''
+                    " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND action_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                           AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                    THEN 1
+                    ELSE 0
+                END
+            ) AS Pending_Action
+        ")
+
+            ->selectRaw("
+            (
+                SUM(
+                    CASE
+                        WHEN student_status = 'enrolled'
+                        " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND enrolled_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                               AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                        THEN 1
+                        ELSE 0
+                    END
+                )
+
+                +
+
+                SUM(
+                    CASE
+                        WHEN student_status = 'Re-enrolled'
+                        " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND enrolled_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                               AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                        THEN 1
+                        ELSE 0
+                    END
+                )
+
+                +
+
+                SUM(
+                    CASE
+                        WHEN student_status IN (
+                            'Appointment Booked',
+                            'Call Follow-Up',
+                            'Not Answered',
+                            'Not Interested',
+                            'Not Eligible',
+                            ''
+                        )
+                        " . (
+                !empty($GetFltDatestart) && !empty($GetFltDateend)
+                ? "AND action_date BETWEEN '{$GetFltDatestart} 00:00:00'
+                               AND '{$GetFltDateend} 23:59:59'"
+                : ""
+            ) . "
+                        THEN 1
+                        ELSE 0
+                    END
+                )
+            ) AS Total_Count
+        ")
+
+            ->groupBy('assign_name')
+            ->orderBy('assign_name')
+            ->get();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | TOTAL
+    |--------------------------------------------------------------------------
+    |
+    | Instead of creating another complicated query, calculate totals
+    | from the representative results.
+    |
+    |--------------------------------------------------------------------------
+    */
+
+        $total = (object) [
+            'Enrolled'          => $students->sum('Enrolled'),
+            'Re_enrolled'       => $students->sum('Re_enrolled'),
+            'Appointment_Booked' => $students->sum('Appointment_Booked'),
+            'Call_Follow_Up'    => $students->sum('Call_Follow_Up'),
+            'Not_Answered'      => $students->sum('Not_Answered'),
+            'Not_Interested'    => $students->sum('Not_Interested'),
+            'Not_Eligible'      => $students->sum('Not_Eligible'),
+            'Pending_Action'    => $students->sum('Pending_Action'),
+            'Total_Count'       => $students->sum('Total_Count'),
+        ];
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Add Total row
+    |--------------------------------------------------------------------------
+    */
+        $students->push((object) [
+            'Rep_Name'          => 'Total',
+            'Enrolled'          => $total->Enrolled,
+            'Re_enrolled'       => $total->Re_enrolled,
+            'Appointment_Booked' => $total->Appointment_Booked,
+            'Call_Follow_Up'    => $total->Call_Follow_Up,
+            'Not_Answered'      => $total->Not_Answered,
+            'Not_Interested'    => $total->Not_Interested,
+            'Not_Eligible'      => $total->Not_Eligible,
+            'Pending_Action'    => $total->Pending_Action,
+            'Total_Count'       => $total->Total_Count,
+        ]);
+
+
+        return view(
+            'dashboard.daily_activity_reports',
+            compact(
+                'students',
+                'GetFltDatestart',
+                'GetFltDateend',
+                'allowedProvinces',
+                'representatives',
+                'selectedReps',
+                'provinceFilter'
+            )
+        );
+    }
+
+    public function dailyActivityReportDownload(Request $request)
+    {
+        $user = CrmLogin::find(session('login'));
+
+        if (!$user) {
+            return redirect()->route('login');
+        }
+
+        $role = session('role');
+        $username = $user->username ?? '';
+
+        /*
+    |--------------------------------------------------------------------------
+    | Authorization
+    |--------------------------------------------------------------------------
+    */
+        if (
+            !in_array($role, ['super_admin', 'branch_manager']) &&
+            !in_array($username, ['prabjot', 'navjot'])
+        ) {
+            return redirect()->route('login');
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Request values
+    |--------------------------------------------------------------------------
+    */
+        $repName = $request->input('rep_name', '');
+        $status  = $request->input('status', '');
+
+        $fromDate = $request->input('GetFltDatestart', '');
+        $toDate   = $request->input('GetFltDateend', '');
+
+        $provinceFilter = $request->input('provinceFilter', '');
+
+        /*
+    |--------------------------------------------------------------------------
+    | Selected reps
+    |--------------------------------------------------------------------------
+    */
+        $selectedReps = $request->input('repFilter', []);
+
+        if (!is_array($selectedReps)) {
+            $selectedReps = [$selectedReps];
+        }
+
+        $selectedReps = array_values(
+            array_filter($selectedReps, function ($rep) {
+                return !empty($rep) && $rep !== 'Branch Manager';
+            })
+        );
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Province permissions
+    |--------------------------------------------------------------------------
+    */
+        $allowedProvinces = [];
+
+        if (($user->Ontario ?? '') === 'yes') {
+            $allowedProvinces[] = 'Ontario';
+        }
+
+        if (($user->Alberta ?? '') === 'yes') {
+            $allowedProvinces[] = 'Alberta';
+        }
+
+        if (($user->British_Columbia ?? '') === 'yes') {
+            $allowedProvinces[] = 'British Columbia';
+        }
+
+        if (($user->Manitoba ?? '') === 'yes') {
+            $allowedProvinces[] = 'Manitoba';
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Validate status
+    |--------------------------------------------------------------------------
+    */
+        $allowedStatuses = [
+            'enrolled',
+            'Re-enrolled',
+            'Appointment Booked',
+            'Call Follow-Up',
+            'Not Answered',
+            'Not Interested',
+            'Not Eligible',
+            'Pending',
+            'total'
+        ];
+
+        if (!in_array($status, $allowedStatuses)) {
+            return back()->with('error', 'Invalid status.');
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Base query
+    |--------------------------------------------------------------------------
+    */
+        $query = DB::table('seminarpre')
+            ->where('assign_name', '!=', '');
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Representative
+    |--------------------------------------------------------------------------
+    */
+        if ($repName !== 'Total') {
+
+            $query->where(
+                'assign_name',
+                $repName
+            );
+        } elseif (!empty($selectedReps)) {
+
+            /*
+        | Total + selected reps
+        */
+            $query->whereIn(
+                'assign_name',
+                $selectedReps
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Province restriction for prabjot / navjot
+    |--------------------------------------------------------------------------
+    */
+        if (
+            in_array($username, ['prabjot', 'navjot']) &&
+            !empty($allowedProvinces)
+        ) {
+            $query->whereIn(
+                'province_name',
+                $allowedProvinces
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Selected Province
+    |--------------------------------------------------------------------------
+    */
+        if (
+            !empty($provinceFilter) &&
+            in_array($provinceFilter, [
+                'Ontario',
+                'Alberta',
+                'British Columbia',
+                'Manitoba'
+            ])
+        ) {
+            $query->where(
+                'province_name',
+                $provinceFilter
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | STATUS + DATE
+    |--------------------------------------------------------------------------
+    */
+
+        if ($status === 'enrolled') {
+
+            $query->where(
+                'student_status',
+                'enrolled'
+            );
+
+            if (!empty($fromDate) && !empty($toDate)) {
+                $query->whereBetween('enrolled_date', [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]);
+            }
+        
+        } elseif ($status === 'Pending') {
+
+            $query->where(
+                'student_status',
+                ''
+            );
+
+            if (!empty($fromDate) && !empty($toDate)) {
+                $query->whereBetween('action_date', [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]);
+            }
+        } elseif ($status === 'total') {
+
+            /*
+        |--------------------------------------------------------------------------
+        | Total:
+        | enrolled/re-enrolled => enrolled_date
+        | all other statuses    => action_date
+        |--------------------------------------------------------------------------
+        */
+
+            $query->where(function ($q) use (
+                $fromDate,
+                $toDate
+            ) {
+
+                $q->where(function ($q2) use (
+                    $fromDate,
+                    $toDate
+                ) {
+
+                    $q2->whereIn(
+                        'student_status',
+                        ['enrolled', 'Re-enrolled']
+                    );
+
+                    if (!empty($fromDate) && !empty($toDate)) {
+                        $q2->whereBetween('enrolled_date', [
+                            $fromDate . ' 00:00:00',
+                            $toDate . ' 23:59:59'
+                        ]);
+                    }
+                });
+
+                $q->orWhere(function ($q2) use (
+                    $fromDate,
+                    $toDate
+                ) {
+
+                    $q2->whereIn('student_status', [
+                        'Appointment Booked',
+                        'Call Follow-Up',
+                        'Not Answered',
+                        'Not Interested',
+                        'Not Eligible',
+                        ''
+                    ]);
+
+                    if (!empty($fromDate) && !empty($toDate)) {
+                        $q2->whereBetween('action_date', [
+                            $fromDate . ' 00:00:00',
+                            $toDate . ' 23:59:59'
+                        ]);
+                    }
+                });
+            });
+        } else {
+
+            /*
+        |--------------------------------------------------------------------------
+        | Other statuses
+        |--------------------------------------------------------------------------
+        */
+            $query->where(
+                'student_status',
+                $status
+            );
+
+            if (!empty($fromDate) && !empty($toDate)) {
+                $query->whereBetween('action_date', [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]);
+            }
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Get records
+    |--------------------------------------------------------------------------
+    */
+        $records = $query
+            ->select([
+                'sname',
+                'smobile',
+                'semail',
+                'category',
+                'scity',
+                'dob',
+                'marital_status',
+                'scountry',
+                'ssource',
+                'reg_date as lead_date',
+                'student_status',
+                'enrolled_date',
+                'follow_date',
+                'assign_name',
+                'assign_date',
+                'opr_stage',
+                'action_date',
+            ])
+            ->orderBy('assign_name')
+            ->get();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | No records
+    |--------------------------------------------------------------------------
+    */
+        if ($records->isEmpty()) {
+            return back()->with(
+                'error',
+                "No data found for {$repName} in {$status}."
+            );
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | CSV filename
+    |--------------------------------------------------------------------------
+    */
+        $safeRepName = preg_replace(
+            '/[^A-Za-z0-9_\-]/',
+            '_',
+            $repName
+        );
+
+        $safeStatus = preg_replace(
+            '/[^A-Za-z0-9_\-]/',
+            '_',
+            $status
+        );
+
+        $filename = "lead_data_{$safeRepName}_{$safeStatus}.csv";
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | CSV Download
+    |--------------------------------------------------------------------------
+    */
+        return response()->streamDownload(function () use ($records) {
+
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, [
+                'Name',
+                'Mobile',
+                'Email',
+                'Category',
+                'City',
+                'Date of Birth',
+                'Marital Status',
+                'Country',
+                'Source',
+                'Lead Date',
+                'Student Status',
+                'Enrolled Date',
+                'Follow-up Date',
+                'Assigned To',
+                'Assigned Date',
+                'Operational Stage',
+                'Action Date',
+            ]);
+
+            foreach ($records as $row) {
+
+                fputcsv($handle, [
+                    $row->sname,
+                    $row->smobile,
+                    $row->semail,
+                    $row->category,
+                    $row->scity,
+                    $row->dob,
+                    $row->marital_status,
+                    $row->scountry,
+                    $row->ssource,
+                    $row->lead_date,
+                    $row->student_status,
+                    $row->enrolled_date,
+                    $row->follow_date,
+                    $row->assign_name,
+                    $row->assign_date,
+                    $row->opr_stage,
+                    $row->action_date,
+                ]);
+            }
+
+            fclose($handle);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+    
     public function stitchingReports()
     {
         return view('dashboard.stitching_reports');
