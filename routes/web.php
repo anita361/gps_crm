@@ -504,4 +504,93 @@ Route::middleware('login')->group(function () {
         '/daily-activity-reports/download',
         [WalkinController::class, 'dailyActivityReportDownload']
     )->name('daily.activity.report.download');
+
+    Route::get('/stitching-reports', [WalkinController::class, 'stitchingReports'])
+        ->name('stitching.reports');
+
+
+
+    Route::get(
+        '/all-lead-list',
+        [WalkinController::class, 'allLeadList']
+    )->name('all.lead.list');
+
+
+
+
+    Route::post(
+        '/all-lead/add-note',
+        [WalkinController::class, 'addallNote']
+    )->name('all.lead.add.note');
+
+
+    Route::post(
+        '/all-lead/get-notes',
+        [WalkinController::class, 'getallNotes']
+    )->name('all.lead.get.notes');
+
+    Route::post(
+        '/all-lead/get-call-logs',
+        [WalkinController::class, 'getallCallLogs']
+    )->name('all.lead.get.call.logs');
+
+
+
+
+    Route::post(
+        '/all-lead/assign-operation',
+        [WalkinController::class, 'assignallOperation']
+    )->name('all.lead.assign.operation');
+
+
+
+
+    Route::post(
+        '/all-lead/get-colleges',
+        [WalkinController::class, 'getallColleges']
+    )->name('all.lead.get.colleges');
+
+
+
+    Route::post(
+        '/all-lead/get-campuses',
+        [WalkinController::class, 'getallCampuses']
+    )->name('all.lead.get.campuses');
+
+
+
+
+    Route::post(
+        '/all-lead/get-programs',
+        [WalkinController::class, 'getallPrograms']
+    )->name('all.lead.get.programs');
+
+
+
+    Route::post(
+        '/all-lead/drop-three',
+        [WalkinController::class, 'dropThree']
+    )->name('all.lead.drop.three');
+
+
+    Route::post(
+        '/all-lead/drop-three-head',
+        [WalkinController::class, 'dropThreeHead']
+    )->name('all.lead.drop.three.head');
+
+
+    Route::post(
+        '/all-lead/lead-report-drop',
+        [WalkinController::class, 'leadReportDrop']
+    )->name('all.lead.report.drop');
+
+
+    Route::post(
+        '/all-lead/daily-lead-report-drop',
+        [WalkinController::class, 'dailyLeadReportDrop']
+    )->name('all.lead.daily.drop');
+
+
+    Route::get('/all-lead/download', [WalkinController::class, 'downloadAllLeadsExcel'])
+        ->name('all.lead.download');
 });

@@ -306,14 +306,22 @@
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fa fa-link"></i> Stitching Reports
+                                <a class="dropdown-item {{ request()->routeIs('stitching.reports') ? 'active' : '' }}"
+                                    href="{{ route('stitching.reports') }}">
+
+                                    <i class="fa fa-link"></i>
+                                    Stitching Reports
+
                                 </a>
                             </li>
 
                             <li>
-                                <a class="dropdown-item" href="#">
-                                    <i class="fa fa-users"></i> All Lead List
+                                <a class="dropdown-item {{ request()->routeIs('all.lead.list') ? 'active' : '' }}"
+                                    href="{{ route('all.lead.list') }}">
+
+                                    <i class="fa fa-users"></i>
+                                    All Lead List
+
                                 </a>
                             </li>
                         </ul>
