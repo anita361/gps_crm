@@ -83,7 +83,7 @@
 
     <div class="row">
 
-        {{-- LEFT SIDEBAR --}}
+       
         <div class="col-md-3">
             <div class="nav flex-column nav-pills sidebar">
 
@@ -126,11 +126,11 @@
             </div>
         </div>
 
-        {{-- RIGHT CONTENT --}}
+       
         <div class="col-md-9">
             <div class="tab-content">
 
-                {{-- PERSONAL INFORMATION --}}
+               
                 <div class="tab-pane fade show active" id="personal_info">
                     <div class="card">
 
@@ -336,7 +336,7 @@
                 </div>
 
 
-                {{-- SPOUSE PERSONAL INFORMATION --}}
+              
                 <div class="tab-pane fade" id="spouse_info">
                     <div class="card shadow">
 
@@ -427,7 +427,7 @@
                 </div>
 
 
-                {{-- DEPENDANT INFORMATION --}}
+               
                 <div class="tab-pane fade" id="dependant_info">
                     <div class="card shadow">
 
@@ -497,7 +497,7 @@
                 </div>
 
 
-                {{-- EMERGENCY CONTACT --}}
+               
                 <div class="tab-pane fade" id="emergency_info">
                     <div class="card shadow">
 
@@ -546,7 +546,7 @@
                 </div>
 
 
-                {{-- MANDATORY DOCUMENTS --}}
+               
                 <div class="tab-pane fade" id="documents_info">
                     <div class="card shadow">
 
@@ -707,9 +707,10 @@
                                             Follow-Up Date
                                         </label>
 
+                                     
                                         <input type="date" name="appointment_date" id="appointment_date"
-                                            class="form-control" placeholder="Select Date"
-                                            value="{{ old('appointment_date', isset($student->appointment_date) ? substr($student->appointment_date, 0, 10) : '') }}">
+                                            class="form-control"
+                                            value="{{ old('appointment_date', !empty($student->follow_date) ? substr($student->follow_date, 0, 10) : '') }}">
 
                                         <input type="date" name="followup_date" id="followup_date"
                                             class="form-control"
@@ -723,15 +724,14 @@
                                         <label class="fw-bold" id="main_remarks_type_label">
                                             Remarks Type
                                         </label>
-
-                                        <select name="appointment_remarks_type" id="appointment_remarks_type"
+                                         <select name="appointment_remarks_type" id="appointment_remarks_type"
                                             class="form-select">
 
                                             <option value="">Select Remark Type</option>
 
                                             @foreach ($remarkTypes as $value => $label)
                                                 <option value="{{ $value }}"
-                                                    {{ old('appointment_remarks_type', $student->appointment_remarks_type ?? '') == $value ? 'selected' : '' }}>
+                                                    {{ old('appointment_remarks_type', $student->remark_type ?? '') == $value ? 'selected' : '' }}>
                                                     {{ $label }}
                                                 </option>
                                             @endforeach
@@ -762,7 +762,7 @@
                                         </label>
 
                                         <textarea name="appointment_remarks" id="appointment_remarks" rows="1" class="form-control"
-                                            style="height:38px;">{{ old('appointment_remarks', $student->appointment_remarks ?? ($student->student_remark ?? '')) }}</textarea>
+                                            style="height:38px;">{{ old('appointment_remarks', $student->student_remark ?? '') }}</textarea>
 
                                         <textarea name="remarks" id="remarks" rows="1" class="form-control" style="height:38px; display:none;">{{ old('remarks', $student->student_remark ?? '') }}</textarea>
 
@@ -836,7 +836,7 @@
                                     </div>
 
 
-                                    {{-- COLLEGE --}}
+                                   
                                     <div class="col-md-4 mb-3">
                                         <label class="fw-bold">
                                             College <span class="text-danger">*</span>
@@ -863,7 +863,7 @@
                                     </div>
 
 
-                                    {{-- CAMPUS --}}
+                                    
                                     <div class="col-md-4 mb-3">
                                         <label class="fw-bold">
                                             Campus <span class="text-danger">*</span>
@@ -875,7 +875,7 @@
                                     </div>
 
 
-                                    {{-- PROGRAM --}}
+                                   
                                     <div class="col-md-4 mb-3">
                                         <label class="fw-bold">
                                             Program <span class="text-danger">*</span>
@@ -930,96 +930,93 @@
 
 
 
-                                    <div id="RepFileDetails" class="row" style="display:none;">
+                                    <div class="col-md-12">
+                                        <div id="RepFileDetails" class="row" style="display:none;">
+
+                                            <div class="col-md-4 mb-3">
+
+                                                <label class="fw-bold">
+                                                    Finance Appointment Date
+                                                </label>
+
+                                                <input type="date" class="form-control" name="fin_apnt_date"
+                                                    id="fin_apnt_date"
+                                                    value="{{ old('fin_apnt_date', $student->fin_apnt_date ?? '') }}">
+
+                                            </div>
 
 
-                                        <div class="col-md-4 mb-3">
+                                            <div class="col-md-4 mb-3">
 
-                                            <label class="fw-bold">
-                                                Finance Appointment Date
-                                            </label>
+                                                <label class="fw-bold">
+                                                    Finance Appointment Time
+                                                </label>
 
-                                            <input type="date" class="form-control" name="fin_apnt_date"
-                                                id="fin_apnt_date"
-                                                value="{{ old('fin_apnt_date', $student->fin_apnt_date ?? '') }}">
+                                                <select class="form-select" name="fin_apnt_time" id="fin_apnt_time">
 
-                                        </div>
+                                                    <option value="">--Select Time--</option>
 
-
-
-                                        <div class="col-md-4 mb-3">
-
-                                            <label class="fw-bold">
-                                                Finance Appointment Time
-                                            </label>
-
-                                            <select class="form-select" name="fin_apnt_time" id="fin_apnt_time">
-
-                                                <option value="">--Select Time--</option>
-
-                                                @php
-                                                    $selectedFinanceTime = old(
-                                                        'fin_apnt_time',
-                                                        $student->fin_apnt_time ?? '',
-                                                    );
-
-                                                    $startTime = strtotime('10:00 AM');
-                                                    $endTime = strtotime('8:00 PM');
-                                                    $cutoffTime = strtotime('4:45 PM');
-                                                @endphp
-
-                                                @while ($startTime <= $endTime)
                                                     @php
-                                                        $timeSlot = date('h:i A', $startTime);
+                                                        $selectedFinanceTime = old(
+                                                            'fin_apnt_time',
+                                                            $student->fin_apnt_time ?? '',
+                                                        );
+
+                                                        $startTime = strtotime('10:00 AM');
+                                                        $endTime = strtotime('8:00 PM');
+                                                        $cutoffTime = strtotime('4:45 PM');
                                                     @endphp
 
-                                                    @if ($startTime <= $cutoffTime || $selectedFinanceTime === $timeSlot)
-                                                        <option value="{{ $timeSlot }}"
-                                                            {{ $selectedFinanceTime === $timeSlot ? 'selected' : '' }}>
+                                                    @while ($startTime <= $endTime)
+                                                        @php
+                                                            $timeSlot = date('h:i A', $startTime);
+                                                        @endphp
 
-                                                            {{ $timeSlot }}
+                                                        @if ($startTime <= $cutoffTime || $selectedFinanceTime === $timeSlot)
+                                                            <option value="{{ $timeSlot }}"
+                                                                {{ $selectedFinanceTime === $timeSlot ? 'selected' : '' }}>
+                                                                {{ $timeSlot }}
+                                                            </option>
+                                                        @endif
+
+                                                        @php
+                                                            $startTime = strtotime('+45 minutes', $startTime);
+                                                        @endphp
+                                                    @endwhile
+
+                                                </select>
+
+                                            </div>
+
+
+                                          
+                                            <div class="col-md-4 mb-3">
+
+                                                <label class="fw-bold">
+                                                    Finance User
+                                                </label>
+
+                                                <select class="form-select" name="finance_user" id="finance_user">
+
+                                                    <option value="">
+                                                        Select Finance User
+                                                    </option>
+
+                                                    @foreach ($financeUsers ?? [] as $financeUser)
+                                                        <option value="{{ $financeUser->id }}"
+                                                            {{ old('finance_user', $student->finance_user ?? '') == $financeUser->id ? 'selected' : '' }}>
+
+                                                            {{ $financeUser->name }}
 
                                                         </option>
-                                                    @endif
+                                                    @endforeach
 
-                                                    @php
-                                                        $startTime = strtotime('+45 minutes', $startTime);
-                                                    @endphp
-                                                @endwhile
+                                                </select>
 
-                                            </select>
+                                            </div>
 
                                         </div>
-
-
-                                        {{-- Finance User --}}
-                                        <div class="col-md-4 mb-3">
-
-                                            <label class="fw-bold">
-                                                Finance User
-                                            </label>
-
-                                            <select class="form-select" name="finance_user" id="finance_user">
-
-                                                <option value="">
-                                                    Select Finance User
-                                                </option>
-
-                                                @foreach ($financeUsers ?? [] as $financeUser)
-                                                    <option value="{{ $financeUser->id }}"
-                                                        {{ old('finance_user', $student->finance_user ?? '') == $financeUser->id ? 'selected' : '' }}>
-
-                                                        {{ $financeUser->name }}
-
-                                                    </option>
-                                                @endforeach
-
-                                            </select>
-
-                                        </div>
-
                                     </div>
-
 
                                     <div class="col-md-4 mb-3">
                                         <label class="fw-bold">Remarks Type</label>
@@ -1077,6 +1074,7 @@
 
 
                                     <div class="col-md-12 mb-3 text-end">
+                                        
                                         <button type="button" id="send_enrolled_mail" class="btn btn-success">
                                             <i class="fa fa-envelope"></i> Send Mail
                                         </button>
@@ -1095,6 +1093,7 @@
                         </div>
                     </div>
                 </div>
+
 
 
                 <div class="tab-pane fade" id="message_info">
@@ -1184,7 +1183,7 @@
                 </div>
 
 
-                {{-- STATUS DETAILS --}}
+               
                 <div class="tab-pane fade" id="status_details">
                     <div class="card shadow">
 
@@ -1247,7 +1246,7 @@
                 </div>
 
 
-                {{-- NOTES --}}
+              
                 <div class="tab-pane fade" id="notes_info">
                     <div class="card shadow">
 
@@ -1312,11 +1311,6 @@
         </div>
     </div>
 
-
-    {{-- ==========================================================
-     SCRIPTS
-=========================================================== --}}
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
@@ -1324,7 +1318,7 @@
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 
 
-    {{-- SPOUSE OSAP --}}
+   
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -1347,7 +1341,7 @@
     </script>
 
 
-    {{-- NOTES --}}
+   
     <script>
         $(document).on('click', '.open-notes-modal', function() {
 
@@ -1461,7 +1455,7 @@
     </script>
 
 
-    {{-- SOURCE / COMMISSION --}}
+   
     <script>
         $(document).ready(function() {
 
@@ -1536,7 +1530,7 @@
     </script>
 
 
-    {{-- SUMMERNOTE --}}
+    
     <script>
         $(document).ready(function() {
 
@@ -1665,19 +1659,19 @@
 
                 const status = $status.val();
 
-                // Hide all status-specific sections first
+               
                 $('#call_followup_section').hide();
                 $('#enrolled_section').hide();
 
-                // Show main fields by default
+               
                 $('#main_date_box').show();
                 $('#main_remarks_type_box').show();
                 $('#main_remarks_box').show();
 
-                // Default labels
+               
                 $('#main_date_label').text('Follow-Up Date');
 
-                // Hide all date/remark inputs first
+                
                 $('#appointment_date').hide();
                 $('#followup_date').hide();
 
@@ -1688,9 +1682,7 @@
                 $('#remarks').hide();
 
 
-                // =====================================================
-                // NOT ELIGIBLE / NOT INTERESTED / NOT ANSWERED
-                // =====================================================
+               
                 if (
                     status === 'Not Eligible' ||
                     status === 'Not Interested' ||
@@ -1710,9 +1702,7 @@
                 }
 
 
-                // =====================================================
-                // APPOINTMENT BOOKED
-                // =====================================================
+               
                 if (status === 'Appointment Booked') {
 
                     $('#main_date_box').show();
@@ -1731,9 +1721,7 @@
                 }
 
 
-                // =====================================================
-                // CALL FOLLOW-UP
-                // =====================================================
+               
                 if (status === 'Call Follow-Up') {
 
                     $('#main_date_box').show();
@@ -1805,32 +1793,35 @@
         });
     </script>
 
-
-
-    {{-- REP SUPPORTED FILE --}}
     {{-- <script>
         $(document).ready(function() {
 
-            $('#rep_file_status').on('change', function() {
+            
+            function checkFinanceDateTime() {
 
-                let value = $(this).val();
+                let financeDate = $('#fin_apnt_date').val();
+                let financeTime = $('#fin_apnt_time').val();
 
-                $('#error-rep-file-status').text('');
+                console.log('Finance Date:', financeDate);
+                console.log('Finance Time:', financeTime);
 
-                if (value === 'Yes') {
+                
+                if (financeDate !== '' && financeTime !== '') {
 
-                    console.log('Rep Supported File: Yes');
+                    
+                    $('#finance_user').prop('disabled', false);
 
-                } else if (value === 'No') {
+                } else {
 
-                    console.log('Rep Supported File: No');
+                    
+                    $('#finance_user').prop('disabled', true);
+
+                  
+                    $('#finance_user').val('');
                 }
-            });
+            }
 
-        });
-    </script> --}}
-    <script>
-        $(document).ready(function() {
+
 
             function checkRepFileStatus() {
 
@@ -1840,21 +1831,26 @@
 
                 if (value === 'No') {
 
+
                     $('#RepFileDetails').show();
+
+                    
+                    checkFinanceDateTime();
 
                 } else {
 
+
                     $('#RepFileDetails').hide();
 
+
+                    $('#finance_user').prop('disabled', true);
+
+
+                    $('#finance_user').val('');
                 }
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Rep Supported File Change
-            |--------------------------------------------------------------------------
-            */
 
             $('#rep_file_status').on('change', function() {
 
@@ -1863,50 +1859,254 @@
             });
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Page Load
-            |--------------------------------------------------------------------------
-            | If existing record has No, show Finance Details automatically.
-            |--------------------------------------------------------------------------
-            */
+
+            $('#fin_apnt_date').on('change', function() {
+
+                checkFinanceDateTime();
+
+            });
+
+
+
+            $('#fin_apnt_time').on('change', function() {
+
+                checkFinanceDateTime();
+
+            });
+
+
 
             checkRepFileStatus();
 
         });
-    </script>
+    </script> --}}
+   <script>
+    $(document).ready(function() {
+
+        function checkFinanceDateTime() {
+
+            let financeDate = $('#fin_apnt_date').val();
+            let financeTime = $('#fin_apnt_time').val();
+
+            console.log('Finance Date:', financeDate);
+            console.log('Finance Time:', financeTime);
+
+            if (financeDate !== '' && financeTime !== '') {
+
+                $.ajax({
+                    url: "{{ route('get.finance.user') }}",
+                    type: "POST",
+                    dataType: "json",
+
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        finance_date: financeDate,
+                        finance_time: financeTime,
+
+                        // Keep these if they exist in your Blade
+                        sessRole: @json($sess_role ?? ''),
+                        finance_userd: @json($loginsdata ?? ''),
+                        reg_sno: $("input[name='reg_sno']").val()
+                    },
+
+                    beforeSend: function() {
+
+                        $('#finance_user')
+                            .prop('disabled', true)
+                            .empty()
+                            .append(
+                                '<option value="">Loading Finance User...</option>'
+                            );
+                    },
+
+                    success: function(response) {
+
+                        console.log(
+                            'Finance User Response:',
+                            response
+                        );
+
+                        // IMPORTANT:
+                        // Your response contains users[]
+                        let users = response.users || [];
+
+                        console.log(
+                            'Finance Users:',
+                            users
+                        );
 
 
+                        /*
+                         * Clear the existing dropdown
+                         */
+                        $('#finance_user').empty();
 
-    {{-- ==========================================================
-     PROVINCE → COLLEGE → CAMPUS → PROGRAM
-=========================================================== --}}
+
+                        /*
+                         * Add default option
+                         */
+                        $('#finance_user').append(
+                            $('<option>', {
+                                value: '',
+                                text: 'Select Finance User'
+                            })
+                        );
+
+
+                        /*
+                         * Add Finance Users returned by PHP
+                         */
+                        $.each(users, function(index, user) {
+
+                            $('#finance_user').append(
+                                $('<option>', {
+                                    value: user.id,
+                                    text: user.name
+                                })
+                            );
+
+                        });
+
+
+                        /*
+                         * Automatically select the first
+                         * available Finance User
+                         */
+                        if (users.length > 0) {
+
+                            $('#finance_user')
+                                .val(users[0].id)
+                                .trigger('change');
+
+                            console.log(
+                                'Selected Finance User:',
+                                users[0].name,
+                                users[0].id
+                            );
+
+                        } else {
+
+                            $('#finance_user').val('');
+
+                            console.log(
+                                'No Finance User available for this Date and Time.'
+                            );
+                        }
+
+
+                        /*
+                         * Enable dropdown after loading
+                         */
+                        $('#finance_user').prop('disabled', false);
+                    },
+
+                    error: function(xhr) {
+
+                        console.log(
+                            'Finance User Error:',
+                            xhr.responseText
+                        );
+
+                        $('#finance_user')
+                            .empty()
+                            .append(
+                                '<option value="">Select Finance User</option>'
+                            )
+                            .prop('disabled', false);
+                    }
+                });
+
+            } else {
+
+                /*
+                 * Date or Time is empty
+                 */
+                $('#finance_user')
+                    .prop('disabled', true)
+                    .empty()
+                    .append(
+                        '<option value="">Select Finance User</option>'
+                    );
+            }
+        }
+
+
+        function checkRepFileStatus() {
+
+            let value = $('#rep_file_status').val();
+
+            $('#error-rep-file-status').text('');
+
+            if (value === 'No') {
+
+                $('#RepFileDetails').show();
+
+                checkFinanceDateTime();
+
+            } else {
+
+                $('#RepFileDetails').hide();
+
+                $('#finance_user')
+                    .prop('disabled', true)
+                    .empty()
+                    .append(
+                        '<option value="">Select Finance User</option>'
+                    );
+            }
+        }
+
+
+        /*
+         * Rep File Status
+         */
+        $('#rep_file_status').on('change', function() {
+
+            checkRepFileStatus();
+
+        });
+
+
+        /*
+         * Finance Appointment Date
+         */
+        $('#fin_apnt_date').on('change', function() {
+
+            checkFinanceDateTime();
+
+        });
+
+
+        /*
+         * Finance Appointment Time
+         */
+        $('#fin_apnt_time').on('change', function() {
+
+            checkFinanceDateTime();
+
+        });
+
+
+        /*
+         * Initial check
+         */
+        checkRepFileStatus();
+
+    });
+</script>
+
+
     <script>
         $(document).ready(function() {
 
-            /*
-            |--------------------------------------------------------------------------
-            | SAVED VALUES
-            |--------------------------------------------------------------------------
-            */
-
             const savedProvince = @json(old('province', $student->province ?? ''));
-
             const savedCollege = @json(old('college', $student->college ?? ($student->collage_name ?? '')));
-
             const savedCampus = @json(old('campus', $student->campus ?? ($student->campus_name ?? '')));
-
             const savedProgram = @json(old('program', $student->program ?? ($student->program_name ?? '')));
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | LOAD COLLEGES
-            | Province → College
-            |--------------------------------------------------------------------------
-            */
 
-            function loadColleges(selectSavedCollege = false) {
+            function loadColleges(selectSaved = false) {
 
                 let province = $('#status_province').val();
 
@@ -1927,20 +2127,12 @@
                 }
 
                 $.ajax({
-
                     url: "{{ route('get.colleges') }}",
-
                     type: "POST",
-
                     dataType: "json",
 
                     data: {
                         _token: "{{ csrf_token() }}",
-
-                        /*
-                         * IMPORTANT:
-                         * Controller expects province_name
-                         */
                         province_name: province
                     },
 
@@ -1954,60 +2146,47 @@
 
                     success: function(response) {
 
-                        console.log('College response:', response);
+                        console.log('COLLEGE RESPONSE:', response);
 
                         $('#status_college').html(
                             '<option value="">Select College</option>'
                         );
 
-                        /*
-                         * Controller returns direct array:
-                         *
-                         * [
-                         *   { clg_name: "ABC College" },
-                         *   { clg_name: "XYZ College" }
-                         * ]
-                         */
+                        if (!Array.isArray(response)) {
+                            console.log('College response is not an array');
+                            return;
+                        }
 
-                        let colleges = Array.isArray(response) ?
-                            response : [];
+                        response.forEach(function(college) {
 
-                        colleges.forEach(function(college) {
+                            let collegeName = college.clg_name ?? '';
 
-                            let value = college.clg_name ?? '';
-
-                            if (!value) {
+                            if (!collegeName) {
                                 return;
                             }
 
-                            let option = $('<option></option>')
-                                .val(value)
-                                .text(value);
+                            let option = $('<option>')
+                                .val(collegeName)
+                                .text(collegeName);
 
                             if (
-                                selectSavedCollege &&
-                                String(value) === String(savedCollege)
+                                selectSaved &&
+                                String(collegeName).trim() ===
+                                String(savedCollege).trim()
                             ) {
                                 option.prop('selected', true);
                             }
 
                             $('#status_college').append(option);
-
                         });
 
 
-                        /*
-                         * If editing existing record,
-                         * automatically load campus.
-                         */
 
                         if (
-                            selectSavedCollege &&
+                            selectSaved &&
                             $('#status_college').val()
                         ) {
-
                             loadCampus(true);
-
                         }
 
                     },
@@ -2015,34 +2194,24 @@
                     error: function(xhr) {
 
                         console.log(
-                            'College loading error:',
+                            'COLLEGE ERROR:',
+                            xhr.status,
                             xhr.responseText
                         );
 
                         $('#status_college').html(
                             '<option value="">Unable to load College</option>'
                         );
-
                     }
-
                 });
-
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | LOAD CAMPUS
-            | Province + College → Campus
-            |--------------------------------------------------------------------------
-            */
 
-            function loadCampus(loadSavedProgram = false) {
+            function loadCampus(selectSaved = false) {
 
                 let province = $('#status_province').val();
-
                 let college = $('#status_college').val();
-
 
                 $('#status_campus').html(
                     '<option value="">Select Campus</option>'
@@ -2052,29 +2221,24 @@
                     '<option value="">Select Program</option>'
                 );
 
-
                 if (!province || !college) {
+                    console.log('Missing province or college');
                     return;
                 }
 
+                console.log('Loading Campus:', {
+                    province_name: province,
+                    collage_name: college
+                });
 
                 $.ajax({
 
                     url: "{{ route('get.campus') }}",
-
                     type: "GET",
-
                     dataType: "json",
 
                     data: {
-
-                        /*
-                         * IMPORTANT:
-                         * Controller expects these exact names
-                         */
-
                         province_name: province,
-
                         collage_name: college
                     },
 
@@ -2088,67 +2252,47 @@
 
                     success: function(response) {
 
-                        console.log('Campus response:', response);
+                        console.log('CAMPUS RESPONSE:', response);
 
                         $('#status_campus').html(
                             '<option value="">Select Campus</option>'
                         );
 
+                        if (!Array.isArray(response)) {
+                            console.log('Campus response is not an array');
+                            return;
+                        }
 
-                        /*
-                         * Controller returns direct array:
-                         *
-                         * [
-                         *   { campus_name: "Main Campus" },
-                         *   { campus_name: "North Campus" }
-                         * ]
-                         */
+                        response.forEach(function(campus) {
 
-                        let campuses = Array.isArray(response) ?
-                            response : [];
+                            let campusName = campus.campus_name ?? '';
 
-
-                        campuses.forEach(function(campus) {
-
-                            let value = campus.campus_name ?? '';
-
-                            if (!value) {
+                            if (!campusName) {
                                 return;
                             }
 
-
-                            let option = $('<option></option>')
-                                .val(value)
-                                .text(value);
-
+                            let option = $('<option>')
+                                .val(campusName)
+                                .text(campusName);
 
                             if (
-                                String(value) ===
-                                String(savedCampus)
+                                selectSaved &&
+                                String(campusName).trim() ===
+                                String(savedCampus).trim()
                             ) {
-
                                 option.prop('selected', true);
-
                             }
 
-
                             $('#status_campus').append(option);
-
                         });
 
 
-                        /*
-                         * Existing student:
-                         * automatically load programs
-                         */
 
                         if (
-                            loadSavedProgram &&
+                            selectSaved &&
                             $('#status_campus').val()
                         ) {
-
                             loadProgram(true);
-
                         }
 
                     },
@@ -2156,45 +2300,47 @@
                     error: function(xhr) {
 
                         console.log(
-                            'Campus loading error:',
+                            'CAMPUS ERROR:',
+                            xhr.status,
                             xhr.responseText
                         );
 
                         $('#status_campus').html(
                             '<option value="">Unable to load Campus</option>'
                         );
-
                     }
-
                 });
-
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | LOAD PROGRAM
-            | Province + College + Campus → Program
-            |--------------------------------------------------------------------------
-            */
 
-            function loadProgram(selectSavedProgram = false) {
+            function loadProgram(selectSaved = false) {
 
                 let province = $('#status_province').val();
-
                 let college = $('#status_college').val();
-
                 let campus = $('#status_campus').val();
-
 
                 $('#status_program').html(
                     '<option value="">Select Program</option>'
                 );
 
-
                 if (!province || !college || !campus) {
+
+                    console.log('Missing values for program:', {
+                        province: province,
+                        college: college,
+                        campus: campus
+                    });
+
                     return;
                 }
+
+
+                console.log('Loading Program:', {
+                    province_name: province,
+                    collage_name: college,
+                    campus_name: campus
+                });
 
 
                 $.ajax({
@@ -2206,16 +2352,8 @@
                     dataType: "json",
 
                     data: {
-
-                        /*
-                         * IMPORTANT:
-                         * Controller expects these exact names
-                         */
-
                         province_name: province,
-
                         collage_name: college,
-
                         campus_name: campus
                     },
 
@@ -2229,53 +2367,46 @@
 
                     success: function(response) {
 
-                        console.log('Program response:', response);
+                        console.log('PROGRAM RESPONSE:', response);
 
                         $('#status_program').html(
                             '<option value="">Select Program</option>'
                         );
 
 
-                        /*
-                         * Controller returns direct array:
-                         *
-                         * [
-                         *   { prg_name: "Program 1" },
-                         *   { prg_name: "Program 2" }
-                         * ]
-                         */
+                        if (!Array.isArray(response)) {
 
-                        let programs = Array.isArray(response) ?
-                            response : [];
+                            console.log(
+                                'Program response is not an array'
+                            );
+
+                            return;
+                        }
 
 
-                        programs.forEach(function(program) {
+                        response.forEach(function(program) {
 
-                            /*
-                             * IMPORTANT:
-                             * Controller returns prg_name
-                             */
+                            let programName =
+                                program.prg_name ??
+                                program.program_name ??
+                                '';
 
-                            let value = program.prg_name ?? '';
-
-                            if (!value) {
+                            if (!programName) {
                                 return;
                             }
 
 
-                            let option = $('<option></option>')
-                                .val(value)
-                                .text(value);
+                            let option = $('<option>')
+                                .val(programName)
+                                .text(programName);
 
 
                             if (
-                                selectSavedProgram &&
-                                String(value) ===
-                                String(savedProgram)
+                                selectSaved &&
+                                String(programName).trim() ===
+                                String(savedProgram).trim()
                             ) {
-
                                 option.prop('selected', true);
-
                             }
 
 
@@ -2288,7 +2419,13 @@
                     error: function(xhr) {
 
                         console.log(
-                            'Program loading error:',
+                            'PROGRAM ERROR:',
+                            xhr.status,
+                            xhr.responseText
+                        );
+
+                        console.log(
+                            'PROGRAM RESPONSE:',
                             xhr.responseText
                         );
 
@@ -2299,17 +2436,15 @@
                     }
 
                 });
-
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | PROVINCE CHANGE
-            |--------------------------------------------------------------------------
-            */
 
             $('#status_province').on('change', function() {
+
+                let province = $(this).val();
+
+                console.log('Province changed:', province);
 
                 $('#status_college').html(
                     '<option value="">Select College</option>'
@@ -2323,19 +2458,21 @@
                     '<option value="">Select Program</option>'
                 );
 
+                if (!province) {
+                    return;
+                }
 
                 loadColleges(false);
 
             });
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | COLLEGE CHANGE
-            |--------------------------------------------------------------------------
-            */
 
             $('#status_college').on('change', function() {
+
+                let college = $(this).val();
+
+                console.log('College changed:', college);
 
                 $('#status_campus').html(
                     '<option value="">Select Campus</option>'
@@ -2345,90 +2482,218 @@
                     '<option value="">Select Program</option>'
                 );
 
+                if (!college) {
+                    return;
+                }
 
                 loadCampus(false);
 
             });
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | CAMPUS CHANGE
-            |--------------------------------------------------------------------------
-            */
 
             $('#status_campus').on('change', function() {
+
+                let campus = $(this).val();
+
+                console.log('Campus changed:', campus);
 
                 $('#status_program').html(
                     '<option value="">Select Program</option>'
                 );
 
+                if (!campus) {
+                    return;
+                }
 
                 loadProgram(false);
 
             });
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | PAGE LOAD
-            |--------------------------------------------------------------------------
-            */
 
             if (savedProvince) {
 
-                /*
-                 * Set province first
-                 */
+                console.log('Saved Province:', savedProvince);
 
                 $('#status_province').val(savedProvince);
 
-
-                /*
-                 * Always load colleges from database.
-                 * This makes Province → College work even when
-                 * $colleges is not passed from controller.
-                 */
-
                 loadColleges(true);
-
             }
 
         });
     </script>
     <script>
-document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
 
-    const status = document.getElementById('status');
-    const enrolledSection = document.getElementById('enrolled_section');
-    const updateButtonBox = document.getElementById('update_button_box');
+            const status = document.getElementById('status');
+            const enrolledSection = document.getElementById('enrolled_section');
+            const updateButtonBox = document.getElementById('update_button_box');
 
-    function toggleEnrolledSection() {
+            function toggleEnrolledSection() {
 
-        if (status.value === 'Enrolled') {
+                if (status.value === 'Enrolled') {
 
-            // Show enrolled section
-            enrolledSection.style.display = 'flex';
 
-            // Hide Update button
-            updateButtonBox.style.display = 'none';
+                    enrolledSection.style.display = 'flex';
 
-        } else {
 
-            // Hide enrolled section
-            enrolledSection.style.display = 'none';
+                    updateButtonBox.style.display = 'none';
 
-            // Show Update button
-            updateButtonBox.style.display = 'block';
+                } else {
+
+
+                    enrolledSection.style.display = 'none';
+
+
+                    updateButtonBox.style.display = 'block';
+                }
+            }
+
+
+            toggleEnrolledSection();
+
+
+            status.addEventListener('change', function() {
+                toggleEnrolledSection();
+            });
+
+        });
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            const appointmentDate = document.getElementById('appointment_date');
+            const followupDate = document.getElementById('followup_date');
+
+            const appointmentRemarkType =
+                document.getElementById('appointment_remarks_type');
+
+            const remarkType =
+                document.getElementById('remarks_type');
+
+            const appointmentRemarks =
+                document.getElementById('appointment_remarks');
+
+            const remarks =
+                document.getElementById('remarks');
+
+
+
+            if (appointmentDate && followupDate) {
+
+                if (appointmentDate.value) {
+                    followupDate.value = appointmentDate.value;
+                }
+
+                appointmentDate.addEventListener('change', function() {
+                    followupDate.value = this.value;
+                });
+            }
+
+
+
+            if (appointmentRemarkType && remarkType) {
+
+                if (appointmentRemarkType.value) {
+                    remarkType.value = appointmentRemarkType.value;
+                }
+
+                appointmentRemarkType.addEventListener('change', function() {
+                    remarkType.value = this.value;
+                });
+            }
+
+
+
+            if (appointmentRemarks && remarks) {
+
+                if (appointmentRemarks.value) {
+                    remarks.value = appointmentRemarks.value;
+                }
+
+                appointmentRemarks.addEventListener('input', function() {
+                    remarks.value = this.value;
+                });
+            }
+
+        });
+    </script>
+    <script>
+$(document).ready(function () {
+
+    $('#send_enrolled_mail').on('click', function (e) {
+
+        e.preventDefault();
+
+        let button = $(this);
+
+        let regSno = $('input[name="reg_sno"]').val();
+
+        if (!regSno) {
+            alert('Student registration number is missing.');
+            return;
         }
-    }
 
-    // Run when page loads
-    toggleEnrolledSection();
+        // Prevent multiple clicks
+        button.prop('disabled', true);
 
-    // Run when status changes
-    status.addEventListener('change', function () {
-        toggleEnrolledSection();
+        let originalHtml = button.html();
+
+        button.html(
+            '<i class="fa fa-spinner fa-spin"></i> Sending...'
+        );
+
+        $.ajax({
+
+            url: "{{ route('enrolled.sendMail') }}",
+
+            type: "POST",
+
+            data: {
+                _token: "{{ csrf_token() }}",
+                reg_sno: regSno
+            },
+
+            success: function (response) {
+
+                if (response.success) {
+
+                    alert(response.message);
+
+                    button.html(
+                        '<i class="fa fa-check"></i> Mail Sent'
+                    );
+
+                } else {
+
+                    alert(response.message);
+
+                    button.prop('disabled', false);
+                    button.html(originalHtml);
+                }
+            },
+
+            error: function (xhr) {
+
+                let message = 'Unable to send email.';
+
+                if (
+                    xhr.responseJSON &&
+                    xhr.responseJSON.message
+                ) {
+                    message = xhr.responseJSON.message;
+                }
+
+                alert(message);
+
+                button.prop('disabled', false);
+                button.html(originalHtml);
+            }
+
+        });
+
     });
 
 });

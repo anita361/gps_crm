@@ -593,4 +593,12 @@ Route::middleware('login')->group(function () {
 
     Route::get('/all-lead/download', [WalkinController::class, 'downloadAllLeadsExcel'])
         ->name('all.lead.download');
+
+
+        Route::post('/get-finance-user', [WalkinController::class, 'getFinanceUser'])
+    ->name('get.finance.user');
+
+
+         Route::post('/enrolled/send-mail', [WalkinController::class, 'sendMail'])
+        ->name('enrolled.sendMail');
 });

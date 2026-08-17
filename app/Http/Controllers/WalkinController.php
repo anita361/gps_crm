@@ -14,6 +14,9 @@ use Illuminate\Support\Facades\Session;
 use App\Models\CrmLogin;
 use Carbon\Carbon;
 
+// use App\Mail\ChangeStatusMail;
+use App\Mail\StudentConsentMail;
+
 
 
 
@@ -244,54 +247,284 @@ class WalkinController extends Controller
         );
     }
 
-
-
     public function updateStatus(Request $request)
     {
         $request->validate([
-            'reg_sno'        => 'required',
-            'status'         => 'required',
-            'followup_date'  => 'nullable',
-            'remarks_type'   => 'nullable',
-            'remarks'        => 'nullable',
+            'reg_sno' => 'required',
+            'status' => 'required',
+
+            'appointment_date' => 'nullable|date',
+            'followup_date' => 'nullable|date',
+
+            'appointment_remarks_type' => 'nullable|string|max:100',
+            'remarks_type' => 'nullable|string|max:100',
+
+            'appointment_remarks' => 'nullable|string',
+            'remarks' => 'nullable|string',
+
+            'appointment_country_status' => 'nullable|string|max:100',
+            'country_status' => 'nullable|string|max:100',
+
+            'province' => 'nullable|string|max:100',
+            'college' => 'nullable|string|max:255',
+            'campus' => 'nullable|string|max:255',
+            'program' => 'nullable|string|max:255',
+
+            'start_date' => 'nullable|date',
+            'end_date' => 'nullable|date',
+
+            'rep_file_status' => 'nullable|in:Yes,No',
+
+            'fin_apnt_date' => 'nullable|date',
+            'fin_apnt_time' => 'nullable|string|max:50',
+            'finance_user' => 'nullable',
+
+            'enrolled_remarks_type' => 'nullable|string|max:100',
+            'enrolled_remarks' => 'nullable|string',
+            'enrolled_country_status' => 'nullable|string|max:100',
         ]);
+
+
+
 
         $user = DB::table('crm_login')
             ->where('id', session('login'))
             ->first();
 
 
+
+        $student = DB::table('seminarpre')
+            ->where('sno', $request->reg_sno)
+            ->first();
+
+        if (!$student) {
+            return redirect()
+                ->back()
+                ->with('error', 'Student record not found.');
+        }
+
+
+
+        $followupDate = $request->followup_date
+            ?: $request->appointment_date
+            ?: $student->follow_date;
+
+        $remarksType = $request->remarks_type
+            ?: $request->appointment_remarks_type
+            ?: $student->remark_type;
+
+        $remarks = $request->remarks
+            ?: $request->appointment_remarks
+            ?: $student->student_remark;
+
+        $countryStatus = $request->country_status
+            ?: $request->appointment_country_status
+            ?: $student->country_status;
+
+
+
+
         DB::table('opr_sts_logs')->insert([
             'main_id'          => $request->reg_sno,
             'stage'            => $request->status,
-            'stage_date'       => $request->followup_date,
+            'stage_date'       => $followupDate,
+
             'created_name'     => $user ? $user->name : '',
             'created_id'       => $user ? $user->id : '',
+
             'created_datetime' => now(),
             'created_date'     => now()->toDateString(),
-            'stage_remarks'    => $request->remarks,
+
+            'stage_remarks'    => $remarks,
+
             'oprStsSend'       => 1,
         ]);
 
 
+
+
+        $updateData = [
+
+
+
+            'status' => $request->status,
+
+
+
+            'follow_date' => $followupDate,
+
+
+
+            'remark_type' => $remarksType,
+
+            'student_remark' => $remarks,
+
+
+
+            'opr_stage' => $request->status,
+
+            'opr_stage_date' => $followupDate,
+
+            'opr_stage_remarks' => $remarks,
+
+
+
+            'country_status' => $countryStatus,
+
+
+
+            'stage_update_id' => $user ? $user->id : '',
+
+            'stage_update_name' => $user ? $user->name : '',
+
+
+
+            'update_date' => now()->toDateString(),
+
+            'update_time' => now()->format('H:i:s'),
+        ];
+
+
+
+
+        if ($request->filled('province')) {
+            $updateData['province_name'] = $request->province;
+        }
+
+        if ($request->filled('college')) {
+            $updateData['collage_name'] = $request->college;
+        }
+
+        if ($request->filled('campus')) {
+            $updateData['campus_name'] = $request->campus;
+        }
+
+        if ($request->filled('program')) {
+            $updateData['program_name'] = $request->program;
+        }
+
+        if ($request->filled('start_date')) {
+            $updateData['start_date'] = $request->start_date;
+        }
+
+        if ($request->filled('end_date')) {
+            $updateData['end_date'] = $request->end_date;
+        }
+
+        if ($request->filled('rep_file_status')) {
+            $updateData['rep_file_status'] = $request->rep_file_status;
+        }
+
+        if ($request->filled('fin_apnt_date')) {
+            $updateData['fin_apnt_date'] = $request->fin_apnt_date;
+        }
+
+        if ($request->filled('fin_apnt_time')) {
+            $updateData['fin_apnt_time'] = $request->fin_apnt_time;
+        }
+
+        if ($request->filled('finance_user')) {
+            $updateData['finance_id'] = $request->finance_user;
+        }
+
+
+
+
         DB::table('seminarpre')
             ->where('sno', $request->reg_sno)
+            ->update($updateData);
+
+
+
+        return redirect()
+            ->back()
+            ->with('success', 'Status Updated Successfully.');
+    }
+
+
+   public function sendMail(Request $request)
+{
+    $request->validate([
+        'reg_sno' => 'required',
+    ]);
+
+    $student = DB::table('seminarpre')
+        ->where('sno', $request->reg_sno)
+        ->first();
+
+    if (!$student) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Student record not found.'
+        ], 404);
+    }
+
+    if (empty($student->semail)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Student email address not found.'
+        ], 422);
+    }
+
+    $studentName = $student->sname ?? 'Student';
+
+    $consentUrl = 'http://127.0.0.1:8000/walking-details?uid=' . $student->sno;
+
+    try {
+
+        Mail::send(
+            'emails.student-consent',
+            [
+                'studentName' => $studentName,
+                'consentUrl'  => $consentUrl,
+            ],
+            function ($message) use ($student, $studentName) {
+
+                $message->from(
+                    config('mail.from.address'),
+                    config('mail.from.name')
+                );
+
+                 $message->to(
+                    'anita@imperialdigitech.com',
+                    $studentName
+                );
+
+                $message->subject(
+                    'Student Consent & Responsibility Letter'
+                );
+            }
+        );
+
+        DB::table('seminarpre')
+            ->where('sno', $student->sno)
             ->update([
-                'status'            => $request->status,
-                'follow_date'       => $request->followup_date,
-                'remark_type'       => $request->remarks_type,
-                'student_remark'    => $request->remarks,
-                'opr_stage'         => $request->status,
-                'opr_stage_date'    => $request->followup_date,
-                'opr_stage_remarks' => $request->remarks,
-                'stage_update_id'   => $user ? $user->id : '',
-                'stage_update_name' => $user ? $user->name : '',
-                'update_date'       => now()->toDateString(),
-                'update_time'       => now()->format('H:i:s'),
+                'conset_mail' => 'Sent'
             ]);
 
-        return redirect()->back()->with('success', 'Status Updated Successfully.');
+        return response()->json([
+            'success' => true,
+            'message' => 'Consent email sent successfully.'
+        ]);
+
+    } catch (\Throwable $e) {
+
+        \Log::error('Student consent email failed', [
+            'student_id' => $student->sno,
+            'email'      => $student->semail,
+            'error'      => $e->getMessage(),
+            'file'       => $e->getFile(),
+            'line'       => $e->getLine(),
+        ]);
+
+        return response()->json([
+            'success' => false,
+
+            // TEMPORARY - shows the real error
+            'message' => $e->getMessage()
+        ], 500);
     }
+}
 
     public function getCampus(Request $request)
     {
@@ -6885,7 +7118,7 @@ class WalkinController extends Controller
 
 
 
-    
+
     public function dailyActivityReports(Request $request)
     {
         $user = CrmLogin::find(session('login'));
@@ -8591,179 +8824,235 @@ class WalkinController extends Controller
             'not_interested' => $notInterested,
         ]);
     }
- public function downloadAllLeadsExcel(Request $request)
-{
-    $nameMobileEmail = $request->input('name_mobile_email');
-    $studentStatus   = $request->input('student_status');
-    $subStatus       = $request->input('sub_status');
-    $source          = $request->input('ssource');
+    public function downloadAllLeadsExcel(Request $request)
+    {
+        $nameMobileEmail = $request->input('name_mobile_email');
+        $studentStatus   = $request->input('student_status');
+        $subStatus       = $request->input('sub_status');
+        $source          = $request->input('ssource');
 
-    $query = DB::table('seminarpre')
-        ->select([
-            'sname',
-            'smobile',
-            'scountry',
-            'ssource',
-            'source_remarks',
-            'assign_name',
-            'file_no',
-            'semail',
-            'collage_name',
-            'campus_name',
-            'program_name',
-            'officer_name',
-            'enrolled_date',
-            'student_status',
-            'opr_stage',
-        ]);
+        $query = DB::table('seminarpre')
+            ->select([
+                'sname',
+                'smobile',
+                'scountry',
+                'ssource',
+                'source_remarks',
+                'assign_name',
+                'file_no',
+                'semail',
+                'collage_name',
+                'campus_name',
+                'program_name',
+                'officer_name',
+                'enrolled_date',
+                'student_status',
+                'opr_stage',
+            ]);
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Name / Mobile / Email Search
     |--------------------------------------------------------------------------
     */
 
-    if (!empty($nameMobileEmail)) {
+        if (!empty($nameMobileEmail)) {
 
-        $query->where(function ($q) use ($nameMobileEmail) {
+            $query->where(function ($q) use ($nameMobileEmail) {
 
-            $q->where('sname', 'LIKE', '%' . $nameMobileEmail . '%')
-                ->orWhere('smobile', 'LIKE', '%' . $nameMobileEmail . '%')
-                ->orWhere('semail', 'LIKE', '%' . $nameMobileEmail . '%');
+                $q->where('sname', 'LIKE', '%' . $nameMobileEmail . '%')
+                    ->orWhere('smobile', 'LIKE', '%' . $nameMobileEmail . '%')
+                    ->orWhere('semail', 'LIKE', '%' . $nameMobileEmail . '%');
+            });
+        }
 
-        });
-    }
-
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Student Status
     |--------------------------------------------------------------------------
     */
 
-    if (!empty($studentStatus)) {
-        $query->where('student_status', $studentStatus);
-    }
+        if (!empty($studentStatus)) {
+            $query->where('student_status', $studentStatus);
+        }
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Sub Status
     |--------------------------------------------------------------------------
     */
 
-    if (!empty($subStatus)) {
-        $query->where('opr_stage', $subStatus);
-    }
+        if (!empty($subStatus)) {
+            $query->where('opr_stage', $subStatus);
+        }
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | Source
     |--------------------------------------------------------------------------
     */
 
-    if (!empty($source)) {
-        $query->where('ssource', $source);
-    }
+        if (!empty($source)) {
+            $query->where('ssource', $source);
+        }
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | File Name
     |--------------------------------------------------------------------------
     */
 
-    $fileName = 'All_lead_' . now()->format('Y-m-d_H-i-s') . '.csv';
+        $fileName = 'All_lead_' . now()->format('Y-m-d_H-i-s') . '.csv';
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | CSV Download
     |--------------------------------------------------------------------------
     */
 
-    return response()->streamDownload(function () use ($query) {
+        return response()->streamDownload(function () use ($query) {
 
-        // UTF-8 BOM for Excel
-        echo "\xEF\xBB\xBF";
+            // UTF-8 BOM for Excel
+            echo "\xEF\xBB\xBF";
 
-        $output = fopen('php://output', 'w');
+            $output = fopen('php://output', 'w');
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | CSV Header
         |--------------------------------------------------------------------------
         */
 
-        fputcsv($output, [
-            'S.No',
-            'Client Name',
-            'Client Number',
-            'Country Name',
-            'Source',
-            'Source Remarks',
-            'Counselor Name',
-            'File Number',
-            'Email',
-            'College',
-            'Campus',
-            'Program Name',
-            'Officer Name',
-            'Enrollment Date',
-            'Student Status',
-            'Operation Stage'
-        ]);
+            fputcsv($output, [
+                'S.No',
+                'Client Name',
+                'Client Number',
+                'Country Name',
+                'Source',
+                'Source Remarks',
+                'Counselor Name',
+                'File Number',
+                'Email',
+                'College',
+                'Campus',
+                'Program Name',
+                'Officer Name',
+                'Enrollment Date',
+                'Student Status',
+                'Operation Stage'
+            ]);
 
-        /*
+            /*
         |--------------------------------------------------------------------------
         | Get Data in Chunks
         |--------------------------------------------------------------------------
         */
 
-        $num = 0;
+            $num = 0;
 
-        $query->orderBy('enrolled_date', 'desc')
-            ->chunk(500, function ($rows) use ($output, &$num) {
+            $query->orderBy('enrolled_date', 'desc')
+                ->chunk(500, function ($rows) use ($output, &$num) {
 
-                foreach ($rows as $row) {
+                    foreach ($rows as $row) {
 
-                    $num++;
+                        $num++;
 
-                    fputcsv($output, [
-                        $num,
-                        $row->sname ?? '',
-                        $row->smobile ?? '',
-                        $row->scountry ?? '',
-                        $row->ssource ?? '',
-                        $row->source_remarks ?? '',
-                        $row->assign_name ?? '',
-                        $row->file_no ?? '',
-                        $row->semail ?? '',
-                        $row->collage_name ?? '',
-                        $row->campus_name ?? '',
-                        $row->program_name ?? '',
-                        $row->officer_name ?? '',
-                        $row->enrolled_date ?? '',
-                        $row->student_status ?? '',
-                        $row->opr_stage ?? '',
-                    ]);
-                }
+                        fputcsv($output, [
+                            $num,
+                            $row->sname ?? '',
+                            $row->smobile ?? '',
+                            $row->scountry ?? '',
+                            $row->ssource ?? '',
+                            $row->source_remarks ?? '',
+                            $row->assign_name ?? '',
+                            $row->file_no ?? '',
+                            $row->semail ?? '',
+                            $row->collage_name ?? '',
+                            $row->campus_name ?? '',
+                            $row->program_name ?? '',
+                            $row->officer_name ?? '',
+                            $row->enrolled_date ?? '',
+                            $row->student_status ?? '',
+                            $row->opr_stage ?? '',
+                        ]);
+                    }
 
-                if (ob_get_level() > 0) {
-                    ob_flush();
-                }
+                    if (ob_get_level() > 0) {
+                        ob_flush();
+                    }
 
-                flush();
-            });
+                    flush();
+                });
 
-        fclose($output);
+            fclose($output);
+        }, $fileName, [
 
-    }, $fileName, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
 
-        'Content-Type' => 'text/csv; charset=UTF-8',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
 
-        'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
 
-        'Pragma' => 'no-cache',
+            'Expires' => '0',
 
-        'Expires' => '0',
+        ]);
+    }
 
-    ]);
-}
+    public function getFinanceUser(Request $request)
+    {
+        $financeDate = $request->finance_date;
+        $financeTime = $request->finance_time;
+        $sessRole = $request->sessRole ?? '';
+        $financeUserd = $request->finance_userd ?? '';
+
+        $disabled = [];
+
+
+        if ($financeDate && $financeTime) {
+
+            $disabled = DB::table('seminarpre')
+                ->whereIn('student_status', ['enrolled', 'Re-enrolled'])
+                ->where('fin_apnt_date', '!=', '')
+                ->where('fin_apnt_date', $financeDate)
+                ->where('fin_apnt_time', $financeTime)
+                ->distinct()
+                ->pluck('finance_id')
+                ->toArray();
+        }
+
+
+
+        $query = DB::table('crm_login')
+            ->select('id', 'name')
+            ->where('role', 'finance')
+            ->where('act_status', 1)
+            ->whereNotIn('username', ['gps_finance', 'testfinance']);
+
+
+
+
+        if (
+            $financeUserd != '' &&
+            ($sessRole == 'operation' || $sessRole == 'finance')
+        ) {
+            $query->where('id', $financeUserd);
+        }
+
+
+
+        if (!empty($disabled)) {
+            $query->whereNotIn('id', $disabled);
+        }
+
+
+        $users = $query->get();
+
+
+
+
+        return response()->json([
+            'status' => true,
+            'users' => $users
+        ]);
+    }
 }
