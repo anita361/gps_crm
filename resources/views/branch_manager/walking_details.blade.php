@@ -83,7 +83,7 @@
 
     <div class="row">
 
-       
+
         <div class="col-md-3">
             <div class="nav flex-column nav-pills sidebar">
 
@@ -126,11 +126,11 @@
             </div>
         </div>
 
-       
+
         <div class="col-md-9">
             <div class="tab-content">
 
-               
+
                 <div class="tab-pane fade show active" id="personal_info">
                     <div class="card">
 
@@ -336,7 +336,7 @@
                 </div>
 
 
-              
+
                 <div class="tab-pane fade" id="spouse_info">
                     <div class="card shadow">
 
@@ -427,7 +427,7 @@
                 </div>
 
 
-               
+
                 <div class="tab-pane fade" id="dependant_info">
                     <div class="card shadow">
 
@@ -497,7 +497,7 @@
                 </div>
 
 
-               
+
                 <div class="tab-pane fade" id="emergency_info">
                     <div class="card shadow">
 
@@ -546,7 +546,7 @@
                 </div>
 
 
-               
+
                 <div class="tab-pane fade" id="documents_info">
                     <div class="card shadow">
 
@@ -707,7 +707,7 @@
                                             Follow-Up Date
                                         </label>
 
-                                     
+
                                         <input type="date" name="appointment_date" id="appointment_date"
                                             class="form-control"
                                             value="{{ old('appointment_date', !empty($student->follow_date) ? substr($student->follow_date, 0, 10) : '') }}">
@@ -724,7 +724,7 @@
                                         <label class="fw-bold" id="main_remarks_type_label">
                                             Remarks Type
                                         </label>
-                                         <select name="appointment_remarks_type" id="appointment_remarks_type"
+                                        <select name="appointment_remarks_type" id="appointment_remarks_type"
                                             class="form-select">
 
                                             <option value="">Select Remark Type</option>
@@ -836,7 +836,7 @@
                                     </div>
 
 
-                                   
+
                                     <div class="col-md-4 mb-3">
                                         <label class="fw-bold">
                                             College <span class="text-danger">*</span>
@@ -863,7 +863,7 @@
                                     </div>
 
 
-                                    
+
                                     <div class="col-md-4 mb-3">
                                         <label class="fw-bold">
                                             Campus <span class="text-danger">*</span>
@@ -875,7 +875,7 @@
                                     </div>
 
 
-                                   
+
                                     <div class="col-md-4 mb-3">
                                         <label class="fw-bold">
                                             Program <span class="text-danger">*</span>
@@ -989,7 +989,7 @@
                                             </div>
 
 
-                                          
+
                                             <div class="col-md-4 mb-3">
 
                                                 <label class="fw-bold">
@@ -1074,9 +1074,10 @@
 
 
                                     <div class="col-md-12 mb-3 text-end">
-                                        
+
                                         <button type="button" id="send_enrolled_mail" class="btn btn-success">
-                                            <i class="fa fa-envelope"></i> Send Mail
+                                            <i class="fa fa-envelope"></i>
+                                            {{ ($student->conset_mail ?? '') == 'Sent' ? 'ReSend Email' : 'Send Mail' }}
                                         </button>
                                     </div>
 
@@ -1183,7 +1184,7 @@
                 </div>
 
 
-               
+
                 <div class="tab-pane fade" id="status_details">
                     <div class="card shadow">
 
@@ -1246,7 +1247,7 @@
                 </div>
 
 
-              
+
                 <div class="tab-pane fade" id="notes_info">
                     <div class="card shadow">
 
@@ -1318,7 +1319,7 @@
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 
 
-   
+
     <script>
         document.addEventListener("DOMContentLoaded", function() {
 
@@ -1341,7 +1342,7 @@
     </script>
 
 
-   
+
     <script>
         $(document).on('click', '.open-notes-modal', function() {
 
@@ -1455,7 +1456,7 @@
     </script>
 
 
-   
+
     <script>
         $(document).ready(function() {
 
@@ -1530,7 +1531,7 @@
     </script>
 
 
-    
+
     <script>
         $(document).ready(function() {
 
@@ -1659,19 +1660,19 @@
 
                 const status = $status.val();
 
-               
+
                 $('#call_followup_section').hide();
                 $('#enrolled_section').hide();
 
-               
+
                 $('#main_date_box').show();
                 $('#main_remarks_type_box').show();
                 $('#main_remarks_box').show();
 
-               
+
                 $('#main_date_label').text('Follow-Up Date');
 
-                
+
                 $('#appointment_date').hide();
                 $('#followup_date').hide();
 
@@ -1682,7 +1683,7 @@
                 $('#remarks').hide();
 
 
-               
+
                 if (
                     status === 'Not Eligible' ||
                     status === 'Not Interested' ||
@@ -1702,7 +1703,7 @@
                 }
 
 
-               
+
                 if (status === 'Appointment Booked') {
 
                     $('#main_date_box').show();
@@ -1721,7 +1722,7 @@
                 }
 
 
-               
+
                 if (status === 'Call Follow-Up') {
 
                     $('#main_date_box').show();
@@ -1880,220 +1881,220 @@
 
         });
     </script> --}}
-   <script>
-    $(document).ready(function() {
+    <script>
+        $(document).ready(function() {
 
-        function checkFinanceDateTime() {
+            function checkFinanceDateTime() {
 
-            let financeDate = $('#fin_apnt_date').val();
-            let financeTime = $('#fin_apnt_time').val();
+                let financeDate = $('#fin_apnt_date').val();
+                let financeTime = $('#fin_apnt_time').val();
 
-            console.log('Finance Date:', financeDate);
-            console.log('Finance Time:', financeTime);
+                console.log('Finance Date:', financeDate);
+                console.log('Finance Time:', financeTime);
 
-            if (financeDate !== '' && financeTime !== '') {
+                if (financeDate !== '' && financeTime !== '') {
 
-                $.ajax({
-                    url: "{{ route('get.finance.user') }}",
-                    type: "POST",
-                    dataType: "json",
+                    $.ajax({
+                        url: "{{ route('get.finance.user') }}",
+                        type: "POST",
+                        dataType: "json",
 
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                        finance_date: financeDate,
-                        finance_time: financeTime,
+                        data: {
+                            _token: "{{ csrf_token() }}",
+                            finance_date: financeDate,
+                            finance_time: financeTime,
 
-                        // Keep these if they exist in your Blade
-                        sessRole: @json($sess_role ?? ''),
-                        finance_userd: @json($loginsdata ?? ''),
-                        reg_sno: $("input[name='reg_sno']").val()
-                    },
+                            // Keep these if they exist in your Blade
+                            sessRole: @json($sess_role ?? ''),
+                            finance_userd: @json($loginsdata ?? ''),
+                            reg_sno: $("input[name='reg_sno']").val()
+                        },
 
-                    beforeSend: function() {
+                        beforeSend: function() {
 
-                        $('#finance_user')
-                            .prop('disabled', true)
-                            .empty()
-                            .append(
-                                '<option value="">Loading Finance User...</option>'
+                            $('#finance_user')
+                                .prop('disabled', true)
+                                .empty()
+                                .append(
+                                    '<option value="">Loading Finance User...</option>'
+                                );
+                        },
+
+                        success: function(response) {
+
+                            console.log(
+                                'Finance User Response:',
+                                response
                             );
-                    },
 
-                    success: function(response) {
+                            // IMPORTANT:
+                            // Your response contains users[]
+                            let users = response.users || [];
 
-                        console.log(
-                            'Finance User Response:',
-                            response
-                        );
-
-                        // IMPORTANT:
-                        // Your response contains users[]
-                        let users = response.users || [];
-
-                        console.log(
-                            'Finance Users:',
-                            users
-                        );
+                            console.log(
+                                'Finance Users:',
+                                users
+                            );
 
 
-                        /*
-                         * Clear the existing dropdown
-                         */
-                        $('#finance_user').empty();
+                            /*
+                             * Clear the existing dropdown
+                             */
+                            $('#finance_user').empty();
 
 
-                        /*
-                         * Add default option
-                         */
-                        $('#finance_user').append(
-                            $('<option>', {
-                                value: '',
-                                text: 'Select Finance User'
-                            })
-                        );
-
-
-                        /*
-                         * Add Finance Users returned by PHP
-                         */
-                        $.each(users, function(index, user) {
-
+                            /*
+                             * Add default option
+                             */
                             $('#finance_user').append(
                                 $('<option>', {
-                                    value: user.id,
-                                    text: user.name
+                                    value: '',
+                                    text: 'Select Finance User'
                                 })
                             );
 
-                        });
+
+                            /*
+                             * Add Finance Users returned by PHP
+                             */
+                            $.each(users, function(index, user) {
+
+                                $('#finance_user').append(
+                                    $('<option>', {
+                                        value: user.id,
+                                        text: user.name
+                                    })
+                                );
+
+                            });
 
 
-                        /*
-                         * Automatically select the first
-                         * available Finance User
-                         */
-                        if (users.length > 0) {
+                            /*
+                             * Automatically select the first
+                             * available Finance User
+                             */
+                            if (users.length > 0) {
+
+                                $('#finance_user')
+                                    .val(users[0].id)
+                                    .trigger('change');
+
+                                console.log(
+                                    'Selected Finance User:',
+                                    users[0].name,
+                                    users[0].id
+                                );
+
+                            } else {
+
+                                $('#finance_user').val('');
+
+                                console.log(
+                                    'No Finance User available for this Date and Time.'
+                                );
+                            }
+
+
+                            /*
+                             * Enable dropdown after loading
+                             */
+                            $('#finance_user').prop('disabled', false);
+                        },
+
+                        error: function(xhr) {
+
+                            console.log(
+                                'Finance User Error:',
+                                xhr.responseText
+                            );
 
                             $('#finance_user')
-                                .val(users[0].id)
-                                .trigger('change');
-
-                            console.log(
-                                'Selected Finance User:',
-                                users[0].name,
-                                users[0].id
-                            );
-
-                        } else {
-
-                            $('#finance_user').val('');
-
-                            console.log(
-                                'No Finance User available for this Date and Time.'
-                            );
+                                .empty()
+                                .append(
+                                    '<option value="">Select Finance User</option>'
+                                )
+                                .prop('disabled', false);
                         }
+                    });
 
+                } else {
 
-                        /*
-                         * Enable dropdown after loading
-                         */
-                        $('#finance_user').prop('disabled', false);
-                    },
-
-                    error: function(xhr) {
-
-                        console.log(
-                            'Finance User Error:',
-                            xhr.responseText
+                    /*
+                     * Date or Time is empty
+                     */
+                    $('#finance_user')
+                        .prop('disabled', true)
+                        .empty()
+                        .append(
+                            '<option value="">Select Finance User</option>'
                         );
-
-                        $('#finance_user')
-                            .empty()
-                            .append(
-                                '<option value="">Select Finance User</option>'
-                            )
-                            .prop('disabled', false);
-                    }
-                });
-
-            } else {
-
-                /*
-                 * Date or Time is empty
-                 */
-                $('#finance_user')
-                    .prop('disabled', true)
-                    .empty()
-                    .append(
-                        '<option value="">Select Finance User</option>'
-                    );
+                }
             }
-        }
 
 
-        function checkRepFileStatus() {
+            function checkRepFileStatus() {
 
-            let value = $('#rep_file_status').val();
+                let value = $('#rep_file_status').val();
 
-            $('#error-rep-file-status').text('');
+                $('#error-rep-file-status').text('');
 
-            if (value === 'No') {
+                if (value === 'No') {
 
-                $('#RepFileDetails').show();
+                    $('#RepFileDetails').show();
+
+                    checkFinanceDateTime();
+
+                } else {
+
+                    $('#RepFileDetails').hide();
+
+                    $('#finance_user')
+                        .prop('disabled', true)
+                        .empty()
+                        .append(
+                            '<option value="">Select Finance User</option>'
+                        );
+                }
+            }
+
+
+            /*
+             * Rep File Status
+             */
+            $('#rep_file_status').on('change', function() {
+
+                checkRepFileStatus();
+
+            });
+
+
+            /*
+             * Finance Appointment Date
+             */
+            $('#fin_apnt_date').on('change', function() {
 
                 checkFinanceDateTime();
 
-            } else {
-
-                $('#RepFileDetails').hide();
-
-                $('#finance_user')
-                    .prop('disabled', true)
-                    .empty()
-                    .append(
-                        '<option value="">Select Finance User</option>'
-                    );
-            }
-        }
+            });
 
 
-        /*
-         * Rep File Status
-         */
-        $('#rep_file_status').on('change', function() {
+            /*
+             * Finance Appointment Time
+             */
+            $('#fin_apnt_time').on('change', function() {
 
+                checkFinanceDateTime();
+
+            });
+
+
+            /*
+             * Initial check
+             */
             checkRepFileStatus();
 
         });
-
-
-        /*
-         * Finance Appointment Date
-         */
-        $('#fin_apnt_date').on('change', function() {
-
-            checkFinanceDateTime();
-
-        });
-
-
-        /*
-         * Finance Appointment Time
-         */
-        $('#fin_apnt_time').on('change', function() {
-
-            checkFinanceDateTime();
-
-        });
-
-
-        /*
-         * Initial check
-         */
-        checkRepFileStatus();
-
-    });
-</script>
+    </script>
 
 
     <script>
@@ -2621,81 +2622,81 @@
         });
     </script>
     <script>
-$(document).ready(function () {
+        $(document).ready(function() {
 
-    $('#send_enrolled_mail').on('click', function (e) {
+            $('#send_enrolled_mail').on('click', function(e) {
 
-        e.preventDefault();
+                e.preventDefault();
 
-        let button = $(this);
+                let button = $(this);
 
-        let regSno = $('input[name="reg_sno"]').val();
+                let regSno = $('input[name="reg_sno"]').val();
 
-        if (!regSno) {
-            alert('Student registration number is missing.');
-            return;
-        }
-
-        // Prevent multiple clicks
-        button.prop('disabled', true);
-
-        let originalHtml = button.html();
-
-        button.html(
-            '<i class="fa fa-spinner fa-spin"></i> Sending...'
-        );
-
-        $.ajax({
-
-            url: "{{ route('enrolled.sendMail') }}",
-
-            type: "POST",
-
-            data: {
-                _token: "{{ csrf_token() }}",
-                reg_sno: regSno
-            },
-
-            success: function (response) {
-
-                if (response.success) {
-
-                    alert(response.message);
-
-                    button.html(
-                        '<i class="fa fa-check"></i> Mail Sent'
-                    );
-
-                } else {
-
-                    alert(response.message);
-
-                    button.prop('disabled', false);
-                    button.html(originalHtml);
-                }
-            },
-
-            error: function (xhr) {
-
-                let message = 'Unable to send email.';
-
-                if (
-                    xhr.responseJSON &&
-                    xhr.responseJSON.message
-                ) {
-                    message = xhr.responseJSON.message;
+                if (!regSno) {
+                    alert('Student registration number is missing.');
+                    return;
                 }
 
-                alert(message);
+                // Prevent multiple clicks
+                button.prop('disabled', true);
 
-                button.prop('disabled', false);
-                button.html(originalHtml);
-            }
+                let originalHtml = button.html();
+
+                button.html(
+                    '<i class="fa fa-spinner fa-spin"></i> Sending...'
+                );
+
+                $.ajax({
+
+                    url: "{{ route('enrolled.sendMail') }}",
+
+                    type: "POST",
+
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                        reg_sno: regSno
+                    },
+
+                    success: function(response) {
+
+                        if (response.success) {
+
+                            alert(response.message);
+
+                            button.html(
+                                '<i class="fa fa-check"></i> Mail Sent'
+                            );
+
+                        } else {
+
+                            alert(response.message);
+
+                            button.prop('disabled', false);
+                            button.html(originalHtml);
+                        }
+                    },
+
+                    error: function(xhr) {
+
+                        let message = 'Unable to send email.';
+
+                        if (
+                            xhr.responseJSON &&
+                            xhr.responseJSON.message
+                        ) {
+                            message = xhr.responseJSON.message;
+                        }
+
+                        alert(message);
+
+                        button.prop('disabled', false);
+                        button.html(originalHtml);
+                    }
+
+                });
+
+            });
 
         });
-
-    });
-
-});
-</script>
+    </script>
 @endsection

@@ -13,6 +13,8 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Session;
 use App\Models\CrmLogin;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 
 // use App\Mail\ChangeStatusMail;
 use App\Mail\StudentConsentMail;
@@ -440,91 +442,250 @@ class WalkinController extends Controller
             ->back()
             ->with('success', 'Status Updated Successfully.');
     }
+    public function sendMail(Request $request)
+    {
+        $request->validate([
+            'reg_sno' => 'required',
+        ]);
 
+        $student = DB::table('seminarpre')
+            ->where('sno', $request->reg_sno)
+            ->first();
 
-   public function sendMail(Request $request)
+        if (!$student) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student record not found.'
+            ], 404);
+        }
+
+        if (empty($student->semail)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student email address not found.'
+            ], 422);
+        }
+
+        $studentName = $student->sname ?? 'Student';
+
+        /*
+    |--------------------------------------------------------------------------
+    | Laravel replacement of createSigWav.php
+    |--------------------------------------------------------------------------
+    */
+
+        $consentUrl = route('student-consent', [
+            'id'   => base64_encode($student->sno),
+            'code' => $student->expire_link,
+        ]);
+
+        try {
+
+            Mail::send(
+                'emails.student-consent',
+                [
+                    'studentName' => $studentName,
+                    'consentUrl'  => $consentUrl,
+                ],
+                function ($message) use ($student, $studentName) {
+
+                    $message->from(
+                        config('mail.from.address'),
+                        config('mail.from.name')
+                    );
+
+                    $message->to(
+                        $student->semail,
+                        $studentName
+                    );
+
+                    $message->subject(
+                        'Student Consent & Responsibility Letter'
+                    );
+                }
+            );
+
+            DB::table('seminarpre')
+                ->where('sno', $student->sno)
+                ->update([
+                    'conset_mail' => 'Sent'
+                ]);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Consent email sent successfully.'
+            ]);
+        } catch (\Throwable $e) {
+
+            \Log::error('Student consent email failed', [
+                'student_id' => $student->sno,
+                'email'      => $student->semail,
+                'error'      => $e->getMessage(),
+                'file'       => $e->getFile(),
+                'line'       => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function studentConsent(Request $request)
 {
-    $request->validate([
-        'reg_sno' => 'required',
-    ]);
+    if (!$request->has('id') || !$request->has('code')) {
+        abort(404, 'Invalid student link.');
+    }
+
+    $code = $request->query('code');
+    $encodedId = $request->query('id');
+
+    $studentId = base64_decode($encodedId, true);
+
+    if ($studentId === false || !is_numeric($studentId)) {
+        abort(404, 'Invalid student ID.');
+    }
 
     $student = DB::table('seminarpre')
-        ->where('sno', $request->reg_sno)
+        ->where('sno', $studentId)
         ->first();
 
     if (!$student) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Student record not found.'
-        ], 404);
+        abort(404, 'Student not found.');
     }
 
-    if (empty($student->semail)) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Student email address not found.'
-        ], 422);
+    if (
+        $code != $student->expire_link &&
+        $code != $student->osap_expire_link
+    ) {
+        abort(403, 'This link is invalid or expired.');
     }
 
     $studentName = $student->sname ?? 'Student';
 
-    $consentUrl = 'http://127.0.0.1:8000/walking-details?uid=' . $student->sno;
+    $alreadySigned = !empty($student->signature);
 
-    try {
+    $nameLength = strlen($studentName);
 
-        Mail::send(
-            'emails.student-consent',
-            [
-                'studentName' => $studentName,
-                'consentUrl'  => $consentUrl,
-            ],
-            function ($message) use ($student, $studentName) {
+    if ($nameLength >= 25 && $nameLength <= 30) {
+        $styleFontSize = '23px';
+    } elseif ($nameLength >= 31 && $nameLength <= 38) {
+        $styleFontSize = '21px';
+    } else {
+        $styleFontSize = '26px';
+    }
 
-                $message->from(
-                    config('mail.from.address'),
-                    config('mail.from.name')
-                );
+    return view('student-consent', [
+        'student'       => $student,
+        'studentName'   => $studentName,
+        'styleFontSize' => $styleFontSize,
+        'alreadySigned' => $alreadySigned,
+        'studentId'     => $student->sno,
+    ]);
+}
+    /**
+     * Show Student Consent / Signature Selection Page
+     */
 
-                 $message->to(
-                    'anita@imperialdigitech.com',
-                    $studentName
-                );
 
-                $message->subject(
-                    'Student Consent & Responsibility Letter'
-                );
-            }
-        );
+    /**
+     * Save Selected Student Signature
+     */
+    public function saveStudentSignature(Request $request)
+    {
+        $request->validate([
+            'id'  => 'required|integer',
+            'fid' => 'required|integer|between:1,6',
+        ]);
+
+        $student = DB::table('seminarpre')
+            ->where('sno', $request->id)
+            ->first();
+
+        if (!$student) {
+
+            return response()->json([
+                'status'  => 404,
+                'success' => false,
+                'message' => 'Student not found.'
+            ], 404);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Already Signed
+    |--------------------------------------------------------------------------
+    */
+
+        if (!empty($student->signature)) {
+
+            return response()->json([
+                'status'  => 409,
+                'success' => false,
+                'message' => 'You have already signed the contract.'
+            ], 409);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Signature Style
+    |--------------------------------------------------------------------------
+    */
+
+        $signatureStyles = [
+            1 => 'PaulSignature-WEJY',
+            2 => 'Amadgone-BW1ax',
+            3 => 'Heatwood-GOKPO',
+            4 => 'MaradonaSignature-DOMv0',
+            5 => 'PandemiDemo-6Ygqx',
+            6 => 'SouthSand-qZ611',
+        ];
+
+        if (!isset($signatureStyles[$request->fid])) {
+
+            return response()->json([
+                'status'  => 422,
+                'success' => false,
+                'message' => 'Invalid signature selected.'
+            ], 422);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Save Signature
+    |--------------------------------------------------------------------------
+    */
 
         DB::table('seminarpre')
             ->where('sno', $student->sno)
             ->update([
-                'conset_mail' => 'Sent'
+                'signature' => $request->fid,
             ]);
 
         return response()->json([
+            'status'  => 200,
             'success' => true,
-            'message' => 'Consent email sent successfully.'
+            'message' => 'Signature saved successfully.',
+            'id'      => $student->sno,
         ]);
-
-    } catch (\Throwable $e) {
-
-        \Log::error('Student consent email failed', [
-            'student_id' => $student->sno,
-            'email'      => $student->semail,
-            'error'      => $e->getMessage(),
-            'file'       => $e->getFile(),
-            'line'       => $e->getLine(),
-        ]);
-
-        return response()->json([
-            'success' => false,
-
-            // TEMPORARY - shows the real error
-            'message' => $e->getMessage()
-        ], 500);
     }
-}
+    public function studentConsentSuccess($id)
+    {
+        $student = DB::table('seminarpre')
+            ->where('sno', $id)
+            ->first();
+
+        if (!$student) {
+            abort(404, 'Student not found.');
+        }
+
+        return view('emails.student-consent-success', [
+            'student' => $student,
+            'studentName' => $student->sname ?? 'Student',
+        ]);
+    }
+
 
     public function getCampus(Request $request)
     {

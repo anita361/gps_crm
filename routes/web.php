@@ -595,10 +595,19 @@ Route::middleware('login')->group(function () {
         ->name('all.lead.download');
 
 
-        Route::post('/get-finance-user', [WalkinController::class, 'getFinanceUser'])
-    ->name('get.finance.user');
+    Route::post('/get-finance-user', [WalkinController::class, 'getFinanceUser'])
+        ->name('get.finance.user');
 
 
-         Route::post('/enrolled/send-mail', [WalkinController::class, 'sendMail'])
-        ->name('enrolled.sendMail');
+   Route::post('/enrolled/send-mail', [WalkinController::class, 'sendMail'])
+    ->name('enrolled.sendMail');
+
+Route::get('/student-consent', [WalkinController::class, 'studentConsent'])
+    ->name('student-consent');
+
+Route::post('/student-consent/signature', [WalkinController::class, 'saveStudentSignature'])
+    ->name('student-consent.signature');
+
+Route::get('/student-consent/success/{id}', [WalkinController::class, 'studentConsentSuccess'])
+    ->name('student-consent.success');
 });
