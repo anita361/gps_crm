@@ -12,17 +12,13 @@ use App\Models\AssignStatus;
 
 class LeadController extends Controller
 {
-    /**
-     * Show New Lead Form
-     */
+
     public function create()
     {
         return view('branch_manager.new_lead');
     }
 
-    /**
-     * Store New Lead
-     */
+
     public function store(Request $request)
     {
         $request->validate([
@@ -61,11 +57,7 @@ class LeadController extends Controller
 
         try {
 
-            /*
-            |--------------------------------------------------------------------------
-            | Check Existing Seminar Record
-            |--------------------------------------------------------------------------
-            */
+
 
             $seminar = SeminarPre::where('smobile', $phone)->first();
 
@@ -88,18 +80,15 @@ class LeadController extends Controller
                     'marital_status'   => $request->marital_status,
                     'gender'           => $request->gender,
 
-                    'husband_name'     => $request->husband_name,
-                    'wife_name'        => $request->wife_name,
+                    'husband_name' => $request->husband_name ?? '',
+                    'wife_name'   => $request->wife_name ?? '',
 
                     'ssource'          => $request->ssource,
                     'source_remarks'   => $request->source_remarks,
 
                 ];
 
-                /*
-                 * Original PHP:
-                 * Only Branch Manager and Counselor update assignment.
-                 */
+
                 if (in_array($userRole, ['branch_manager', 'counselor'])) {
 
                     $seminarData['assign_name'] = $userName;
@@ -113,7 +102,7 @@ class LeadController extends Controller
             } else {
                 $seminarData = [
 
-                    // Required legacy fields
+
                     'lead_sno'            => '',
                     'user_id'             => $user->id,
                     'category'            => '',
@@ -137,7 +126,7 @@ class LeadController extends Controller
                     'finance_id'          => 0,
                     'comm_amount'         => 0,
 
-                   
+
                     'fname'               => $request->fname,
                     'lname'               => $request->lname,
                     'sname'               => trim($request->fname . ' ' . $request->lname),
@@ -177,20 +166,6 @@ class LeadController extends Controller
                     'update_time'         => '',
                 ];
 
-                /*
-                |--------------------------------------------------------------------------
-                | Original PHP Logic
-                |--------------------------------------------------------------------------
-                | Branch Manager & Counselor:
-                |   Save assignment fields.
-                |
-                | Other users except Branch:
-                |   Insert without assignment.
-                |
-                | Branch:
-                |   Do not insert.
-                |--------------------------------------------------------------------------
-                */
 
                 if (in_array($userRole, ['branch_manager', 'counselor'])) {
 
@@ -212,22 +187,14 @@ class LeadController extends Controller
                 }
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Lead Appointed
-            |--------------------------------------------------------------------------
-            */
+
 
             $lead = LeadAppointed::where('seminar_id', $seminarId)->first();
 
             if ($lead) {
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Update Existing Lead
-                |--------------------------------------------------------------------------
-                */
+
 
                 $leadData = [
 
@@ -241,8 +208,8 @@ class LeadController extends Controller
                     'marital_status'  => $request->marital_status,
                     'gender'          => $request->gender,
 
-                    'husband_name'    => $request->husband_name,
-                    'wife_name'       => $request->wife_name,
+                    'husband_name' => $request->husband_name ?? '',
+                    'wife_name'   => $request->wife_name ?? '',
 
                     'created_date'    => $today->toDateString(),
                     'created_time'    => $today->format('H:i:s'),
@@ -250,12 +217,6 @@ class LeadController extends Controller
 
                 ];
 
-                /*
-                |--------------------------------------------------------------------------
-                | Original PHP
-                | Only Branch Manager & Counselor update assignment fields
-                |--------------------------------------------------------------------------
-                */
 
                 if (in_array($userRole, ['branch_manager', 'counselor'])) {
 
@@ -267,11 +228,6 @@ class LeadController extends Controller
                 $lead->update($leadData);
             } else {
 
-                /*
-                |--------------------------------------------------------------------------
-                | Insert New Lead
-                |--------------------------------------------------------------------------
-                */
 
                 $leadData = [
 
@@ -287,8 +243,8 @@ class LeadController extends Controller
                     'marital_status'  => $request->marital_status,
                     'gender'          => $request->gender,
 
-                    'husband_name'    => $request->husband_name,
-                    'wife_name'       => $request->wife_name,
+                    'husband_name' => $request->husband_name ?? '',
+                    'wife_name'   => $request->wife_name ?? '',
 
                     'created_date'    => $today->toDateString(),
                     'created_time'    => $today->format('H:i:s'),
@@ -296,12 +252,7 @@ class LeadController extends Controller
 
                 ];
 
-                /*
-                |--------------------------------------------------------------------------
-                | Original PHP
-                | Only Branch Manager & Counselor insert assignment fields
-                |--------------------------------------------------------------------------
-                */
+
 
                 if (in_array($userRole, ['branch_manager', 'counselor'])) {
 
@@ -313,22 +264,10 @@ class LeadController extends Controller
                 LeadAppointed::create($leadData);
             }
 
-            /*
-            |--------------------------------------------------------------------------
-            | Assign Status
-            |--------------------------------------------------------------------------
-            */
 
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Assign Status
-            |--------------------------------------------------------------------------
-            | Original PHP:
-            | Only Branch Manager & Counselor insert/update assign_status
-            |--------------------------------------------------------------------------
-            */
+
 
             if (in_array($userRole, ['branch_manager', 'counselor'])) {
 
@@ -364,11 +303,7 @@ class LeadController extends Controller
         }
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Ajax Phone Check
-    |--------------------------------------------------------------------------
-    */
+
 
     public function checkPhone(Request $request)
     {

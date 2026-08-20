@@ -16,7 +16,7 @@ class BranchManagerController extends Controller
             ->select(
                 'lead_appointed.*',
 
-                
+
                 'seminarpre.sno as semi_id',
                 'seminarpre.sname',
                 'seminarpre.file_no',
@@ -26,52 +26,37 @@ class BranchManagerController extends Controller
                 'seminarpre.scountry',
                 'seminarpre.ssource',
 
-                
+
                 'crm_login.name as created_by_name'
             );
 
 
-       
+
         if ($request->filled('mobile')) {
             $query->where('lead_appointed.callerno', 'like', '%' . $request->mobile . '%');
         }
 
-      
+
         if ($request->filled('email')) {
             $query->where('lead_appointed.email', 'like', '%' . $request->email . '%');
         }
 
-        
+
         if ($request->filled('student_name')) {
             $query->where('seminarpre.sname', 'like', '%' . $request->student_name . '%');
         }
 
-        
+
         if ($request->filled('file_number')) {
             $query->where('seminarpre.file_no', $request->file_number);
-        }
-
-        
-        if (
+        } if (
             !$request->filled('mobile') &&
             !$request->filled('email') &&
             !$request->filled('student_name') &&
             !$request->filled('file_number')
         ) {
 
-            $today = now()->format('Y-m-d');
-
-            $query->where(function ($q) use ($today) {
-
-                $q->whereDate('lead_appointed.appointed_date', $today)
-
-                    ->orWhere(function ($q2) use ($today) {
-
-                        $q2->where('lead_appointed.walkin_status', 3)
-                            ->whereDate('lead_appointed.created_date', $today)
-                            ->where('lead_appointed.created_by', 'callcenter');
-                    });
-            });
+            $query->whereRaw('1 = 0');
         }
 
         $appointments = $query
@@ -92,7 +77,6 @@ class BranchManagerController extends Controller
     {
         $semi_id = $request->semi_id;
 
-        
         $logs = DB::table('opr_sts_logs')
             ->where('main_id', $semi_id)
             ->orderByDesc('id')
@@ -109,7 +93,6 @@ class BranchManagerController extends Controller
                 ];
             });
 
-       
         $notes = DB::table('notes_logs')
             ->where('main_id', $semi_id)
             ->orderByDesc('created_datetime')
@@ -131,120 +114,178 @@ class BranchManagerController extends Controller
 
 
 
-public function walking_details($smobile)
-{
-     $student = DB::table('seminarpre')
-                ->where('smobile', $smobile)
-                ->first();
+    public function walking_details($smobile)
+    {
+        $student = DB::table('seminarpre')
+            ->where('smobile', $smobile)
+            ->first();
 
-    if (!$student) {
-        abort(404, 'Student not found');
+        if (!$student) {
+            abort(404, 'Student not found');
+        }
+
+        return view('branch_manager.walking_details', compact('student'));
     }
 
-    return view('branch_manager.walking_details', compact('student'));
-}
+    public function branchDashboard(Request $request)
+    {
+        $query = DB::table('lead_appointed')
+            ->leftJoin(
+                'seminarpre',
+                'lead_appointed.callerno',
+                '=',
+                'seminarpre.smobile'
+            )
+            ->leftJoin(
+                'crm_login',
+                'lead_appointed.userid',
+                '=',
+                'crm_login.id'
+            )
+            ->select(
+                'lead_appointed.*',
 
-public function branchDashboard(Request $request)
-{
-    $query = DB::table('lead_appointed')
-        ->leftJoin('seminarpre', 'lead_appointed.callerno', '=', 'seminarpre.smobile')
-        ->leftJoin('crm_login', 'lead_appointed.userid', '=', 'crm_login.id')
+                'seminarpre.sno as semi_id',
+                'seminarpre.sname',
+                'seminarpre.file_no',
+                'seminarpre.student_status',
+                'seminarpre.category',
+                'seminarpre.assign_name',
+                'seminarpre.scountry',
+                'seminarpre.ssource',
 
-        ->select(
-            'lead_appointed.*',
+                'crm_login.name as created_by_name'
+            );
 
-            'seminarpre.sno as semi_id',
-            'seminarpre.sname',
-            'seminarpre.file_no',
-            'seminarpre.student_status',
-            'seminarpre.category',
-            'seminarpre.assign_name',
-            'seminarpre.scountry',
-            'seminarpre.ssource',
 
-            'crm_login.name as created_by_name'
+
+        if ($request->filled('mobile')) {
+            $query->where(
+                'lead_appointed.callerno',
+                'like',
+                '%' . $request->mobile . '%'
+            );
+        }
+
+
+
+        if ($request->filled('email')) {
+            $query->where(
+                'lead_appointed.email',
+                'like',
+                '%' . $request->email . '%'
+            );
+        }
+
+
+
+        if ($request->filled('student_name')) {
+            $query->where(
+                'seminarpre.sname',
+                'like',
+                '%' . $request->student_name . '%'
+            );
+        }
+
+
+
+        if ($request->filled('file_number')) {
+            $query->where(
+                'seminarpre.file_no',
+                $request->file_number
+            );
+        }
+
+
+        if (
+            !$request->filled('mobile') &&
+            !$request->filled('email') &&
+            !$request->filled('student_name') &&
+            !$request->filled('file_number')
+        ) {
+
+            $today = now()->format('Y-m-d');
+
+            $query->where(function ($q) use ($today) {
+
+                $q->whereDate(
+                    'lead_appointed.appointed_date',
+                    $today
+                )
+
+                    ->orWhere(function ($q2) use ($today) {
+
+                        $q2->where(
+                            'lead_appointed.walkin_status',
+                            3
+                        )
+                            ->whereDate(
+                                'lead_appointed.created_date',
+                                $today
+                            )
+                            ->where(
+                                'lead_appointed.created_by',
+                                'callcenter'
+                            );
+                    });
+            });
+        }
+
+
+
+        $perPage = (int) $request->get('per_page', 10);
+
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 10;
+        }
+
+
+
+        $appointments = $query
+            ->orderByDesc('lead_appointed.id')
+            ->paginate($perPage)
+            ->withQueryString();
+
+
+        $counselors = DB::table('crm_login')
+            ->whereIn('role', [
+                'counselor',
+                'branch_manager'
+            ])
+            ->select(
+                'id',
+                'name'
+            )
+            ->get();
+
+
+        return view(
+            'branch.dashboard',
+            compact(
+                'appointments',
+                'counselors'
+            )
         );
-
-
-    // Search filters
-    if ($request->filled('mobile')) {
-        $query->where('lead_appointed.callerno', 'like', '%' . $request->mobile . '%');
     }
 
-    if ($request->filled('email')) {
-        $query->where('lead_appointed.email', 'like', '%' . $request->email . '%');
+    public function adminBranchReport()
+    {
+        return view('admin.admin_branch_report');
     }
 
-    if ($request->filled('student_name')) {
-        $query->where('seminarpre.sname', 'like', '%' . $request->student_name . '%');
-    }
+    public function branchSummary(Request $request)
+    {
+        $from = $request->from_date;
+        $to   = $request->to_date;
 
-    if ($request->filled('file_number')) {
-        $query->where('seminarpre.file_no', $request->file_number);
-    }
+        $query = DB::table('lead_appointed')
+            ->leftJoin('seminarpre', 'lead_appointed.callerno', '=', 'seminarpre.smobile');
 
+        if ($from && $to) {
+            $query->whereBetween('lead_appointed.created_date', [$from, $to]);
+        }
 
-    // Default today data
-    if (
-        !$request->filled('mobile') &&
-        !$request->filled('email') &&
-        !$request->filled('student_name') &&
-        !$request->filled('file_number')
-    ) {
-
-        $today = now()->format('Y-m-d');
-
-        $query->where(function ($q) use ($today) {
-
-            $q->whereDate('lead_appointed.appointed_date', $today)
-
-              ->orWhere(function ($q2) use ($today) {
-
-                    $q2->where('lead_appointed.walkin_status', 3)
-                        ->whereDate('lead_appointed.created_date', $today)
-                        ->where('lead_appointed.created_by', 'callcenter');
-
-                });
-
-        });
-    }
-
-
-    $appointments = $query
-        ->orderByDesc('lead_appointed.id')
-        ->paginate(10);
-
-
-    $counselors = DB::table('crm_login')
-        ->whereIn('role', ['counselor', 'branch_manager'])
-        ->select('id', 'name')
-        ->get();
-
-
-    return view('branch.dashboard', compact(
-        'appointments',
-        'counselors'
-    ));
-}
-
-public function adminBranchReport()
-{
-    return view('admin.admin_branch_report');
-}
-
-public function branchSummary(Request $request)
-{
-    $from = $request->from_date;
-    $to   = $request->to_date;
-
-    $query = DB::table('lead_appointed')
-        ->leftJoin('seminarpre', 'lead_appointed.callerno', '=', 'seminarpre.smobile');
-
-    if ($from && $to) {
-        $query->whereBetween('lead_appointed.created_date', [$from, $to]);
-    }
-
-    $data = $query->select(
+        $data = $query->select(
             'lead_appointed.branch',
 
             DB::raw("SUM(CASE WHEN lead_appointed.source='call_center' AND lead_appointed.type='fresh' THEN 1 ELSE 0 END) as fresh_call"),
@@ -259,44 +300,241 @@ public function branchSummary(Request $request)
 
             DB::raw("SUM(CASE WHEN seminarpre.student_status='enrolled' THEN 1 ELSE 0 END) as enrolled")
         )
-        ->groupBy('lead_appointed.branch')
-        ->get();
+            ->groupBy('lead_appointed.branch')
+            ->get();
 
-    $totals = [
-        'fresh_call' => $data->sum('fresh_call'),
-        'old_call' => $data->sum('old_call'),
-        'fresh_branch' => $data->sum('fresh_branch'),
-        'old_branch' => $data->sum('old_branch'),
-        'enrolled_walkin' => $data->sum('enrolled_walkin'),
-        'total_walkin' => $data->sum('total_walkin'),
-        'enrolled' => $data->sum('enrolled'),
-    ];
+        $totals = [
+            'fresh_call' => $data->sum('fresh_call'),
+            'old_call' => $data->sum('old_call'),
+            'fresh_branch' => $data->sum('fresh_branch'),
+            'old_branch' => $data->sum('old_branch'),
+            'enrolled_walkin' => $data->sum('enrolled_walkin'),
+            'total_walkin' => $data->sum('total_walkin'),
+            'enrolled' => $data->sum('enrolled'),
+        ];
 
-    // ✅ ADD THIS (USER DETAILS QUERY)
-    $users = DB::table('seminarpre')
-        ->leftJoin('lead_appointed', 'lead_appointed.callerno', '=', 'seminarpre.smobile')
-        ->when($from && $to, function ($q) use ($from, $to) {
-            $q->whereBetween('lead_appointed.created_date', [$from, $to]);
-        })
-        ->select(
-            'seminarpre.sname as client_name',
-            'seminarpre.smobile as client_number',
-            'seminarpre.scountry as country',
-            'seminarpre.svisa as visa',
-            'lead_appointed.branch',
-            'lead_appointed.counselor_name',
-            'lead_appointed.created_date as walkin_date',
-            'seminarpre.student_status as file_status',
-            'seminarpre.file_no'
-        )
-        ->get();
+        // ✅ ADD THIS (USER DETAILS QUERY)
+        $users = DB::table('seminarpre')
+            ->leftJoin('lead_appointed', 'lead_appointed.callerno', '=', 'seminarpre.smobile')
+            ->when($from && $to, function ($q) use ($from, $to) {
+                $q->whereBetween('lead_appointed.created_date', [$from, $to]);
+            })
+            ->select(
+                'seminarpre.sname as client_name',
+                'seminarpre.smobile as client_number',
+                'seminarpre.scountry as country',
+                'seminarpre.svisa as visa',
+                'lead_appointed.branch',
+                'lead_appointed.counselor_name',
+                'lead_appointed.created_date as walkin_date',
+                'seminarpre.student_status as file_status',
+                'seminarpre.file_no'
+            )
+            ->get();
 
-    return response()->json([
-        'data' => $data,
-        'totals' => $totals,
-        'users' => $users   // ✅ IMPORTANT
-    ]);
-}
+        return response()->json([
+            'data' => $data,
+            'totals' => $totals,
+            'users' => $users
+        ]);
+    }
 
+    public function assignCounselor(Request $request)
+    {
+        $request->validate([
+            'mobile'    => 'required',
+            'assign'    => 'required|integer',
+            'appntid'   => 'required|integer',
+            'category'  => 'required|string',
+        ]);
 
+        DB::beginTransaction();
+
+        try {
+
+            /*
+        |--------------------------------------------------------------------------
+        | Logged In User
+        |--------------------------------------------------------------------------
+        */
+            $user = DB::table('crm_login')
+                ->where('id', session('login'))
+                ->first();
+
+            if (!$user) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Logged in user not found.'
+                ], 401);
+            }
+
+            $user_id   = $user->id;
+            $user_role = $user->role;
+
+            /*
+        |--------------------------------------------------------------------------
+        | Request Data
+        |--------------------------------------------------------------------------
+        */
+            $mobile      = str_replace(' ', '', $request->mobile);
+            $counselorId = $request->assign;
+            $appntId     = $request->appntid;
+            $category    = $request->category;
+
+            /*
+        |--------------------------------------------------------------------------
+        | Get Counselor
+        |--------------------------------------------------------------------------
+        */
+            $counselor = DB::table('crm_login')
+                ->where('id', $counselorId)
+                ->whereIn('role', ['counselor', 'branch_manager'])
+                ->first();
+
+            if (!$counselor) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Counselor not found.'
+                ], 422);
+            }
+
+            $counselorName = $counselor->name;
+
+            /*
+        |--------------------------------------------------------------------------
+        | Get Seminar Data
+        |--------------------------------------------------------------------------
+        */
+            $seminar = DB::table('seminarpre')
+                ->where('smobile', $mobile)
+                ->first();
+
+            if (!$seminar) {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Student/seminar record not found.'
+                ], 404);
+            }
+
+            $seminarId = $seminar->sno;
+            $leadSno   = $seminar->lead_sno;
+
+            /*
+        |--------------------------------------------------------------------------
+        | Date / Time
+        |--------------------------------------------------------------------------
+        */
+            $date = now()->format('Y-m-d');
+            $time = now()->format('H:i:s');
+
+            /*
+        |--------------------------------------------------------------------------
+        | Update seminarpre
+        |--------------------------------------------------------------------------
+        */
+            DB::table('seminarpre')
+                ->where('smobile', $mobile)
+                ->update([
+                    'assign_name' => $counselorName,
+                    'category'    => $category,
+                    'assign_id'   => $counselorId,
+                    'assign_date' => $date,
+                ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Update lead_appointed
+        |--------------------------------------------------------------------------
+        */
+            DB::table('lead_appointed')
+                ->where('id', $appntId)
+                ->update([
+                    'assign_name' => $counselorName,
+                    'category'    => $category,
+                    'assign_id'   => $counselorId,
+                    'assign_date' => $date,
+                ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Insert assign_status
+        |--------------------------------------------------------------------------
+        */
+            DB::table('assign_status')->insert([
+                'seminar_id'       => $seminarId,
+                'lead_sno'         => $leadSno,
+                'lead_appointed_id' => $appntId,
+                'counelor_id'      => $counselorId,
+                'category'         => $category,
+                'status'           => '1',
+                'created_date'     => $date,
+                'created_time'     => $time,
+            ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Notification Type
+        |--------------------------------------------------------------------------
+        */
+            if ($user_role == 'branch_manager') {
+                $assinType = 'brancmanager_assign';
+            } elseif ($user_role == 'counselor') {
+                $assinType = 'couns_assign';
+            } elseif ($user_role == 'branch') {
+                $assinType = 'reception_assign';
+            } elseif ($user_role == 'super_admin') {
+                $assinType = 'super_assign';
+            } else {
+                $assinType = '';
+            }
+
+            /*
+        |--------------------------------------------------------------------------
+        | Insert Notification
+        |--------------------------------------------------------------------------
+        */
+            DB::table('noifications')->insert([
+                'phone_no'   => $mobile,
+                'noti_type'  => $assinType,
+                'sender_id'  => $user_id,
+                'reciver_id' => $counselorId,
+                'seen_status' => '1',
+                'created_date' => $date,
+            ]);
+
+            /*
+        |--------------------------------------------------------------------------
+        | Counselor Status Log
+        |--------------------------------------------------------------------------
+        */
+            DB::table('counslor_status')->insert([
+                'seminar_id'      => $seminarId,
+                'counslor_id'     => $counselorId,
+                'counslor_name'   => $counselorName,
+                'status_counsalar' => 'follow-up',
+                'follow_date'     => $date,
+                'follow_time'     => $time,
+                'remark'          => 'Counslor change',
+                'remark_type'     => 'Counslor change',
+                'created_date'    => $date,
+                'created_time'    => $time,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'status' => true,
+                'message' => 'Counselor assigned successfully.'
+            ]);
+        } catch (\Throwable $e) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Unable to assign counselor.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
 }

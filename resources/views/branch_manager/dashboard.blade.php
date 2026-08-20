@@ -30,13 +30,34 @@
                                 Search By Name, Number, Email and File No
                             </label>
 
-                            <select class="form-select" id="search_type" onchange="showSearchField()">
+                            {{-- <select class="form-select" id="search_type" onchange="showSearchField()">
 
                                 <option value="">Search Using</option>
                                 <option value="student_name">Search Student Name</option>
                                 <option value="mobile">Search Mobile</option>
                                 <option value="email">Search Email</option>
                                 <option value="file">Search File</option>
+
+                            </select> --}}
+                            <select class="form-select" id="search_type" onchange="showSearchField()">
+
+                                <option value="">Search Using</option>
+
+                                <option value="student_name" {{ request('student_name') ? 'selected' : '' }}>
+                                    Search Student Name
+                                </option>
+
+                                <option value="mobile" {{ request('mobile') ? 'selected' : '' }}>
+                                    Search Mobile
+                                </option>
+
+                                <option value="email" {{ request('email') ? 'selected' : '' }}>
+                                    Search Email
+                                </option>
+
+                                <option value="file" {{ request('file_number') ? 'selected' : '' }}>
+                                    Search File
+                                </option>
 
                             </select>
 
@@ -436,7 +457,7 @@
                                         </div>
 
 
-                                        <!-- END ASSIGN MODAL -->
+
 
 
                                     </td>
@@ -573,7 +594,7 @@
                     </div>
 
                 </div>
-                <!-- NOTES MODAL START -->
+
                 <div class="modal fade" id="notesModal" tabindex="-1">
 
                     <div class="modal-dialog modal-lg">
@@ -651,27 +672,31 @@
                     </div>
 
                 </div>
-                <!-- NOTES MODAL END -->
 
-                <div class="d-flex justify-content-between mt-3">
 
-                    <small>
-                        Showing 0 to 0 of 0 entries
-                    </small>
+
+
+                <div class="d-flex justify-content-between align-items-center mt-3">
 
                     <div>
+                        <small class="text-muted">
+                            Showing
+                            {{ $appointments->firstItem() ?? 0 }}
+                            to
+                            {{ $appointments->lastItem() ?? 0 }}
+                            of
+                            {{ $appointments->total() }}
+                            entries
+                        </small>
+                    </div>
 
-                        <button class="btn btn-outline-secondary btn-sm">
-                            Previous
-                        </button>
-
-                        <button class="btn btn-outline-secondary btn-sm">
-                            Next
-                        </button>
-
+                    <div>
+                        {{ $appointments->withQueryString()->links() }}
                     </div>
 
                 </div>
+
+
 
             </div>
 
@@ -716,11 +741,7 @@
 
         $(document).ready(function() {
 
-            /*
-            |--------------------------------------------------------------------------
-            | VIEW LOGS
-            |--------------------------------------------------------------------------
-            */
+
 
             $(document).on('click', '.view-logs-btn', function() {
 
@@ -814,11 +835,7 @@
             });
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | OPEN NOTES MODAL
-            |--------------------------------------------------------------------------
-            */
+
 
             $(document).on('click', '.open-notes-modal', function() {
 
@@ -836,11 +853,6 @@
             });
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | LOAD NOTES
-            |--------------------------------------------------------------------------
-            */
 
             function loadNotes(noteId) {
 
@@ -912,11 +924,6 @@
                 });
 
             }
-            /*
-            |--------------------------------------------------------------------------
-            | SAVE NOTE
-            |--------------------------------------------------------------------------
-            */
 
             $('#addNotesForm').submit(function(e) {
 
@@ -932,10 +939,10 @@
 
                         alert(res.message);
 
-                        // Clear textbox
+
                         $('#newNote').val('');
 
-                        // Reload notes list after adding note
+
                         loadNotes($('#note_id').val());
 
                     },

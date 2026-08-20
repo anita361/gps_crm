@@ -79,6 +79,31 @@
         #enrolled_section {
             margin-top: 0 !important;
         }
+
+        #emailLogsModal .modal-header {
+            padding: 15px;
+        }
+
+        #emailLogsModal .modal-title {
+            color: #111;
+            font-size: 18px;
+        }
+
+        #emailLogsModal .table thead th {
+            background-color: #3f6df2;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        #emailLogsModal .table td,
+        #emailLogsModal .table th {
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        #emailLogsModal .modal-footer {
+            padding: 10px 15px;
+        }
     </style>
 
     <div class="row">
@@ -252,11 +277,20 @@
                                             value="{{ old('smobile', $student->smobile) }}">
 
                                         <div class="mt-2">
-                                            <button type="button" class="btn btn-primary btn-sm">Update Mobile
-                                                No</button>
-                                            <button type="button" class="btn btn-update btn-sm">View Logs</button>
+                                            <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                data-bs-target="#updatemobileno">
+                                                Update Mobile No
+                                            </button>
+                                            {{-- <button type="button" class="btn btn-update btn-sm">View Logs</button> --}}
+                                            <button type="button" class="btn btn-update btn-sm view_mobile_logs"
+                                                data-mobile="{{ $student->smobile }}" data-bs-toggle="modal"
+                                                data-bs-target="#mobileLogsModal">
+                                                View Logs
+                                            </button>
                                         </div>
                                     </div>
+
+
 
                                     <div class="col-md-3 mb-3">
                                         <label>Email ID</label>
@@ -264,8 +298,17 @@
                                             value="{{ old('semail', $student->semail) }}">
 
                                         <div class="mt-2">
-                                            <button type="button" class="btn btn-primary btn-sm">Update Email</button>
-                                            <button type="button" class="btn btn-update btn-sm">View Logs</button>
+                                            <button type="button" class="btn btn-primary btn-sm update-email-btn"
+                                                data-bs-toggle="modal" data-bs-target="#updateemailmodal"
+                                                data-semi-id="{{ $student->sno }}" data-mobile="{{ $student->smobile }}"
+                                                data-email="{{ $student->semail }}">
+                                                Update Email
+                                            </button>
+                                            <button type="button" class="btn btn-update btn-sm view_email_logs"
+                                                data-email="{{ $student->semail }}" data-bs-toggle="modal"
+                                                data-bs-target="#emailLogsModal">
+                                                View Logs
+                                            </button>
                                         </div>
                                     </div>
 
@@ -331,6 +374,276 @@
                                 </div>
 
                             </form>
+
+
+                            <!-- Update Mobile Number Modal -->
+                            <div class="modal fade" id="updatemobileno" tabindex="-1" role="dialog"
+                                aria-labelledby="updateMobileModalLabel" aria-hidden="true">
+
+                                <div class="modal-dialog modal-sm" role="document">
+
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="updateMobileModalLabel"
+                                                style="color:#d20921;font-weight:600;">
+                                                Update Mobile No
+                                            </h5>
+
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+
+                                        <form method="POST" action="{{ route('walkin.mobile.update') }}"
+                                            id="update_mobile_no">
+
+                                            @csrf
+
+                                            <div class="modal-body">
+
+                                                <div class="form-group">
+
+                                                    <label>
+                                                        <span>Mobile Number</span>
+                                                    </label>
+
+                                                    <input type="text" class="form-control numberget" name="mobile_no"
+                                                        id="mobile_no" value="{{ $student->smobile }}"
+                                                        placeholder="Enter Mobile Number">
+
+                                                    <!-- Old Mobile Number -->
+                                                    <input type="hidden" name="old_no" id="old_no"
+                                                        value="{{ $student->smobile }}">
+
+                                                    <!-- Student ID -->
+                                                    <input type="hidden" name="semi_id" value="{{ $student->sno }}">
+
+                                                    <br>
+
+                                                    <span class="text-danger error-messages-mobile_no"
+                                                        id="error"></span>
+
+                                                </div>
+
+                                            </div>
+
+                                            <div class="modal-footer">
+
+                                                <button type="button" class="btn btn-primary" id="update_mobile">
+                                                    Update
+                                                </button>
+
+                                                <button type="button" class="btn btn-default" data-bs-dismiss="modal">
+                                                    Cancel
+                                                </button>
+
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+
+                            <!-- Mobile Number Logs Modal -->
+                            <div class="modal fade" id="mobileLogsModal" tabindex="-1"
+                                aria-labelledby="mobileLogsModalLabel" aria-hidden="true">
+
+                                <div class="modal-dialog modal-lg">
+
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+
+                                            <h5 class="modal-title" id="mobileLogsModalLabel"
+                                                style="color:#d20921;font-weight:600;">
+                                                Mobile Number Logs
+                                            </h5>
+
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                            </button>
+
+                                        </div>
+
+                                        <div class="modal-body">
+
+                                            <div class="table-responsive">
+
+                                                <table class="table table-bordered table-striped">
+
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Old Mobile</th>
+                                                            <th>New Mobile</th>
+                                                            <th>Updated By</th>
+                                                            <th>Updated At</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="mobileLogsBody">
+
+                                                        <tr>
+                                                            <td colspan="5" class="text-center">
+                                                                Loading...
+                                                            </td>
+                                                        </tr>
+
+                                                    </tbody>
+
+                                                </table>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="modal-footer">
+
+                                            <button type="button" class="btn btn-default" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="modal fade" id="updateemailmodal" tabindex="-1"
+                                aria-labelledby="updateEmailModalLabel" aria-hidden="true">
+
+                                <div class="modal-dialog modal-sm">
+
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+
+                                            <h5 class="modal-title" id="updateEmailModalLabel"
+                                                style="color:#d20921;font-weight:600;">
+                                                Update Email ID
+                                            </h5>
+
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                            </button>
+
+                                        </div>
+
+                                        <form id="update_email_form" method="POST"
+                                            action="{{ route('student.update.email') }}">
+
+                                            @csrf
+
+                                            <div class="modal-body">
+
+                                                <div class="mb-3">
+                                                    <label for="new_email" class="form-label">
+                                                        Email ID
+                                                    </label>
+
+                                                    <input type="email" class="form-control" name="new_email"
+                                                        id="new_email" placeholder="Enter Email ID">
+
+                                                    <div class="text-danger mt-1 error-messages-email"></div>
+                                                </div>
+
+                                                <input type="hidden" name="old_email" id="old_email">
+                                                <input type="hidden" name="mobile_no" id="mobile_nos">
+                                                <input type="hidden" name="semi_id" id="semi_id">
+
+                                            </div>
+
+                                            <div class="modal-footer">
+
+                                                <button type="submit" class="btn btn-primary" id="update_email_btn">
+                                                    Update
+                                                </button>
+
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Cancel
+                                                </button>
+
+                                            </div>
+
+                                        </form>
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Email Logs Modal -->
+                            <div class="modal fade" id="emailLogsModal" tabindex="-1"
+                                aria-labelledby="emailLogsModalLabel" aria-hidden="true">
+
+                                <div class="modal-dialog modal-lg">
+
+                                    <div class="modal-content">
+
+                                        <div class="modal-header">
+
+                                            <h5 class="modal-title" id="emailLogsModalLabel" style="font-weight:600;">
+                                                Email Logs
+                                            </h5>
+
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close">
+                                            </button>
+
+                                        </div>
+
+                                        <div class="modal-body">
+
+                                            <div class="table-responsive">
+
+                                                <table class="table table-bordered table-striped"
+                                                    style="margin-bottom:0;">
+
+                                                    <thead>
+                                                        <tr>
+                                                            <th>#</th>
+                                                            <th>Old Email</th>
+                                                            <th>New Email</th>
+                                                            <th>Updated By</th>
+                                                            <th>Updated At</th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    <tbody id="emailLogsBody">
+
+                                                        <tr>
+                                                            <td colspan="5" class="text-center">
+                                                                Loading...
+                                                            </td>
+                                                        </tr>
+
+                                                    </tbody>
+
+                                                </table>
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="modal-footer">
+
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
                         </div>
                     </div>
                 </div>
@@ -1317,6 +1630,7 @@
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
 
     <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
 
@@ -2699,4 +3013,951 @@
 
         });
     </script>
+
+    <script>
+        $(document).on('click', '#update_mobile', function(e) {
+
+            e.preventDefault();
+
+            var mobileNo = $.trim($('#mobile_no').val());
+            var oldNo = $.trim($('#old_no').val());
+
+            console.log('New Mobile:', mobileNo);
+            console.log('Old Mobile:', oldNo);
+
+            if (mobileNo === '') {
+                $('#error').text('Please enter mobile number.');
+                return;
+            }
+
+            if (mobileNo === oldNo) {
+                $('#error').text(
+                    'New mobile number must be different from old mobile number.'
+                );
+                return;
+            }
+
+            $('#error').text('');
+
+            var form = $('#update_mobile_no');
+
+            if (form.length === 0) {
+                alert('Update form not found.');
+                return;
+            }
+
+            var button = $('#update_mobile');
+
+            button.prop('disabled', true);
+            button.text('Updating...');
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                dataType: 'json',
+
+                success: function(response) {
+
+                    console.log('Mobile Update Response:', response);
+
+                    if (response.status === true) {
+
+                        alert('Mobile number updated successfully.');
+
+                        window.location.href =
+                            "{{ url('/walking-details') }}/" +
+                            encodeURIComponent(response.mobile);
+
+                    } else {
+
+                        button.prop('disabled', false);
+                        button.text('Update');
+
+                        $('#error').text(
+                            response.message ||
+                            'Unable to update mobile number.'
+                        );
+                    }
+                },
+                error: function(xhr) {
+
+                    console.log('Mobile Update Error:', xhr.status);
+                    console.log(xhr.responseText);
+
+                    button.prop('disabled', false);
+                    button.text('Update');
+
+                    var message = 'Something went wrong.';
+
+                    if (xhr.responseJSON && xhr.responseJSON.message) {
+                        message = xhr.responseJSON.message;
+                    }
+
+                    if (
+                        xhr.status === 422 &&
+                        xhr.responseJSON &&
+                        xhr.responseJSON.errors
+                    ) {
+
+                        var errors = xhr.responseJSON.errors;
+
+                        if (errors.mobile_no) {
+                            message = errors.mobile_no[0];
+                        }
+
+                        if (errors.semi_id) {
+                            message = errors.semi_id[0];
+                        }
+                    }
+
+                    $('#error').text(message);
+                }
+            });
+
+        });
+    </script>
+
+    <script>
+        $(document).on('click', '.view_email_logs', function() {
+
+            var email = $(this).data('email');
+
+            var tbody = $('#emailLogsBody');
+
+            tbody.html(`
+        <tr>
+            <td colspan="5" class="text-center">
+                Loading...
+            </td>
+        </tr>
+    `);
+
+            $.ajax({
+
+                url: "{{ url('/walking/email-logs') }}/" +
+                    encodeURIComponent(email),
+
+                type: "GET",
+
+                dataType: "json",
+
+                success: function(response) {
+
+                    tbody.empty();
+
+                    if (
+                        response.status === true &&
+                        response.logs &&
+                        response.logs.length > 0
+                    ) {
+
+                        $.each(response.logs, function(index, log) {
+
+                            tbody.append(`
+                        <tr>
+                            <td>${index + 1}</td>
+
+                            <td>${log.old_email ?? ''}</td>
+
+                            <td>${log.new_email ?? ''}</td>
+
+                            <td>${log.updated_by ?? ''}</td>
+
+                            <td>${formatEmailLogDate(log.updated_at)}</td>
+                        </tr>
+                    `);
+
+                        });
+
+                    } else {
+
+                        tbody.html(`
+                    <tr>
+                        <td colspan="5"
+                            class="text-center">
+                            No Email Logs Found
+                        </td>
+                    </tr>
+                `);
+                    }
+
+                },
+
+                error: function(xhr) {
+
+                    console.log(xhr.responseText);
+
+                    tbody.html(`
+                <tr>
+                    <td colspan="5"
+                        class="text-center text-danger">
+                        Unable to load email logs.
+                    </td>
+                </tr>
+            `);
+                }
+
+            });
+
+        });
+
+
+        function formatEmailLogDate(dateString) {
+            if (!dateString) {
+                return '';
+            }
+
+            var date = new Date(dateString);
+
+            if (isNaN(date.getTime())) {
+                return dateString;
+            }
+
+            var day = String(date.getDate()).padStart(2, '0');
+            var month = String(date.getMonth() + 1).padStart(2, '0');
+            var year = date.getFullYear();
+
+            var hours = date.getHours();
+            var minutes = String(date.getMinutes()).padStart(2, '0');
+
+            var ampm = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+
+            hours = String(hours).padStart(2, '0');
+
+            return day + '-' +
+                month + '-' +
+                year + ' ' +
+                hours + ':' +
+                minutes + ' ' +
+                ampm;
+        }
+    </script>
+
+    <script>
+        $(document).on('click', '.view_mobile_logs', function() {
+
+            var mobile = $(this).data('mobile');
+
+            var tbody = $('#mobileLogsBody');
+
+            tbody.html(`
+        <tr>
+            <td colspan="5" class="text-center">
+                Loading...
+            </td>
+        </tr>
+    `);
+
+            $.ajax({
+
+                url: "{{ url('/walking/mobile-logs') }}/" +
+                    encodeURIComponent(mobile),
+
+                type: "GET",
+
+                dataType: "json",
+
+                success: function(response) {
+
+                    console.log('Mobile Logs:', response);
+
+                    tbody.empty();
+
+                    if (
+                        response.status === true &&
+                        response.logs &&
+                        response.logs.length > 0
+                    ) {
+
+                        $.each(response.logs, function(index, log) {
+
+                            tbody.append(`
+                        <tr>
+                            <td>${index + 1}</td>
+
+                            <td>${log.old_mobile ?? ''}</td>
+
+                            <td>${log.new_mobile ?? ''}</td>
+
+                            <td>${log.updated_by ?? ''}</td>
+
+                            <td>${formatMobileLogDate(log.updated_at)}</td>
+                        </tr>
+                    `);
+
+                        });
+
+                    } else {
+
+                        tbody.html(`
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            No Logs Found
+                        </td>
+                    </tr>
+                `);
+                    }
+
+                },
+
+                error: function(xhr) {
+
+                    console.log('Mobile Logs Error:', xhr.responseText);
+
+                    tbody.html(`
+                <tr>
+                    <td colspan="5" class="text-center text-danger">
+                        Unable to load mobile logs.
+                    </td>
+                </tr>
+            `);
+                }
+
+            });
+
+        });
+
+
+        function formatMobileLogDate(dateString) {
+            if (!dateString) {
+                return '';
+            }
+
+            var date = new Date(dateString);
+
+            if (isNaN(date.getTime())) {
+                return dateString;
+            }
+
+            var day = String(date.getDate()).padStart(2, '0');
+            var month = String(date.getMonth() + 1).padStart(2, '0');
+            var year = date.getFullYear();
+
+            var hours = date.getHours();
+            var minutes = String(date.getMinutes()).padStart(2, '0');
+
+            var ampm = hours >= 12 ? 'PM' : 'AM';
+
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+
+            hours = String(hours).padStart(2, '0');
+
+            return day + '-' +
+                month + '-' +
+                year + ' ' +
+                hours + ':' +
+                minutes + ' ' +
+                ampm;
+        }
+    </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+
+            console.log('Email Update JS Loaded');
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | OPEN EMAIL MODAL
+            |--------------------------------------------------------------------------
+            */
+
+            document.querySelectorAll('.update-email-btn').forEach(function(button) {
+
+                button.addEventListener('click', function() {
+
+                    console.log('Update Email button clicked');
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Get data from button
+                    |--------------------------------------------------------------------------
+                    */
+
+                    const semiId =
+                        this.getAttribute('data-semi-id') || '';
+
+                    const mobileNo =
+                        this.getAttribute('data-mobile') || '';
+
+                    const oldEmail =
+                        this.getAttribute('data-email') || '';
+
+
+                    console.log('Semi ID:', semiId);
+                    console.log('Mobile:', mobileNo);
+                    console.log('Old Email:', oldEmail);
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Put values into modal
+                    |--------------------------------------------------------------------------
+                    */
+
+                    document.getElementById('semi_id').value =
+                        semiId;
+
+                    document.getElementById('mobile_nos').value =
+                        mobileNo;
+
+                    document.getElementById('old_email').value =
+                        oldEmail;
+
+                    document.getElementById('new_email').value =
+                        oldEmail;
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Clear old error
+                    |--------------------------------------------------------------------------
+                    */
+
+                    document.querySelector(
+                        '.error-messages-email'
+                    ).textContent = '';
+
+                });
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | EMAIL FORM SUBMIT
+            |--------------------------------------------------------------------------
+            */
+
+            const form =
+                document.getElementById('update_email_form');
+
+            const button =
+                document.getElementById('update_email_btn');
+
+
+            if (!form) {
+
+                console.error(
+                    'update_email_form not found'
+                );
+
+                return;
+            }
+
+
+            form.addEventListener('submit', function(e) {
+
+                e.preventDefault();
+
+
+                console.log(
+                    'Email update form submitted'
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Get values
+                |--------------------------------------------------------------------------
+                */
+
+                const newEmail =
+                    document.getElementById('new_email')
+                    .value
+                    .trim();
+
+                const oldEmail =
+                    document.getElementById('old_email')
+                    .value
+                    .trim();
+
+                const mobileNo =
+                    document.getElementById('mobile_nos')
+                    .value
+                    .trim();
+
+                const semiId =
+                    document.getElementById('semi_id')
+                    .value
+                    .trim();
+
+
+                const errorMessage =
+                    document.querySelector(
+                        '.error-messages-email'
+                    );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Clear error
+                |--------------------------------------------------------------------------
+                */
+
+                errorMessage.textContent = '';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | DEBUG
+                |--------------------------------------------------------------------------
+                */
+
+                console.log('==========================');
+                console.log('NEW EMAIL:', newEmail);
+                console.log('OLD EMAIL:', oldEmail);
+                console.log('MOBILE:', mobileNo);
+                console.log('SEMI ID:', semiId);
+                console.log('==========================');
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Validate email
+                |--------------------------------------------------------------------------
+                */
+
+                if (newEmail === '') {
+
+                    errorMessage.textContent =
+                        'Please enter Email ID.';
+
+                    document.getElementById(
+                        'new_email'
+                    ).focus();
+
+                    return;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Validate email format
+                |--------------------------------------------------------------------------
+                */
+
+                const emailPattern =
+                    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+                if (!emailPattern.test(newEmail)) {
+
+                    errorMessage.textContent =
+                        'Please enter a valid Email ID.';
+
+                    document.getElementById(
+                        'new_email'
+                    ).focus();
+
+                    return;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Check same email
+                |--------------------------------------------------------------------------
+                */
+
+                if (
+                    oldEmail !== '' &&
+                    newEmail.toLowerCase() ===
+                    oldEmail.toLowerCase()
+                ) {
+
+                    errorMessage.textContent =
+                        'Please enter a different Email ID.';
+
+                    document.getElementById(
+                        'new_email'
+                    ).focus();
+
+                    return;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Mobile validation
+                |--------------------------------------------------------------------------
+                */
+
+                if (mobileNo === '') {
+
+                    alert(
+                        'Mobile number is missing.'
+                    );
+
+                    return;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Student ID validation
+                |--------------------------------------------------------------------------
+                */
+
+                if (semiId === '') {
+
+                    alert(
+                        'Student ID is missing.'
+                    );
+
+                    return;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Confirmation
+                |--------------------------------------------------------------------------
+                */
+
+                const confirmUpdate = confirm(
+                    'Are you sure you want to update email ID?'
+                );
+
+
+                if (!confirmUpdate) {
+                    return;
+                }
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Disable button
+                |--------------------------------------------------------------------------
+                */
+
+                button.disabled = true;
+
+                button.innerHTML =
+                    'Updating...';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | FormData
+                |--------------------------------------------------------------------------
+                */
+
+                const formData =
+                    new FormData(form);
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Make sure values are included
+                |--------------------------------------------------------------------------
+                */
+
+                formData.set(
+                    'new_email',
+                    newEmail
+                );
+
+                formData.set(
+                    'old_email',
+                    oldEmail
+                );
+
+                formData.set(
+                    'mobile_no',
+                    mobileNo
+                );
+
+                formData.set(
+                    'semi_id',
+                    semiId
+                );
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | AJAX REQUEST
+                |--------------------------------------------------------------------------
+                */
+
+                fetch(form.action, {
+
+                        method: 'POST',
+
+                        headers: {
+
+                            'Accept': 'application/json',
+
+                            'X-Requested-With': 'XMLHttpRequest'
+
+                        },
+
+                        body: formData
+
+                    })
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Response
+                    |--------------------------------------------------------------------------
+                    */
+
+                    .then(async function(response) {
+
+                        console.log(
+                            'HTTP STATUS:',
+                            response.status
+                        );
+
+
+                        const data =
+                            await response.json();
+
+
+                        console.log(
+                            'SERVER RESPONSE:',
+                            data
+                        );
+
+
+                        if (!response.ok) {
+
+                            throw {
+                                status: response.status,
+
+                                data: data
+                            };
+                        }
+
+
+                        return data;
+
+                    })
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Success
+                    |--------------------------------------------------------------------------
+                    */
+
+                    .then(function(response) {
+
+                        console.log(
+                            'FINAL RESPONSE:',
+                            response
+                        );
+
+
+                        if (response.status === true) {
+
+                            alert(
+                                response.message ||
+                                'Email ID updated successfully.'
+                            );
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Bootstrap 5 Modal Close
+                            |--------------------------------------------------------------------------
+                            */
+
+                            const modalElement =
+                                document.getElementById(
+                                    'updateemailmodal'
+                                );
+
+
+                            const modal =
+                                bootstrap.Modal.getInstance(
+                                    modalElement
+                                );
+
+
+                            if (modal) {
+
+                                modal.hide();
+
+                            } else {
+
+                                const newModal =
+                                    new bootstrap.Modal(
+                                        modalElement
+                                    );
+
+                                newModal.hide();
+                            }
+
+
+                            /*
+                            |--------------------------------------------------------------------------
+                            | Reload page
+                            |--------------------------------------------------------------------------
+                            */
+
+                            setTimeout(function() {
+
+                                window.location.reload();
+
+                            }, 500);
+
+
+                        } else {
+
+                            button.disabled = false;
+
+                            button.innerHTML =
+                                'Update';
+
+
+                            alert(
+                                response.message ||
+                                'Email update failed.'
+                            );
+                        }
+
+                    })
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Error
+                    |--------------------------------------------------------------------------
+                    */
+
+                    .catch(function(error) {
+
+                        console.error(
+                            'EMAIL UPDATE ERROR:',
+                            error
+                        );
+
+
+                        button.disabled = false;
+
+                        button.innerHTML =
+                            'Update';
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Laravel validation error
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                            error.status === 422 &&
+                            error.data &&
+                            error.data.errors
+                        ) {
+
+                            const errors =
+                                error.data.errors;
+
+
+                            if (errors.new_email) {
+
+                                errorMessage.textContent =
+                                    errors.new_email[0];
+
+                                return;
+                            }
+
+
+                            let firstError = '';
+
+
+                            Object.keys(errors).forEach(
+                                function(key) {
+
+                                    if (
+                                        firstError === '' &&
+                                        errors[key] &&
+                                        errors[key].length
+                                    ) {
+
+                                        firstError =
+                                            errors[key][0];
+                                    }
+
+                                }
+                            );
+
+
+                            errorMessage.textContent =
+                                firstError ||
+                                'Validation error.';
+
+
+                            return;
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | General error
+                        |--------------------------------------------------------------------------
+                        */
+
+                        let message =
+                            'Something went wrong while updating email.';
+
+
+                        if (
+                            error.data &&
+                            error.data.message
+                        ) {
+
+                            message =
+                                error.data.message;
+                        }
+
+
+                        alert(message);
+
+                    });
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Clear error when typing
+            |--------------------------------------------------------------------------
+            */
+
+            const emailInput =
+                document.getElementById(
+                    'new_email'
+                );
+
+
+            if (emailInput) {
+
+                emailInput.addEventListener(
+                    'input',
+                    function() {
+
+                        document.querySelector(
+                            '.error-messages-email'
+                        ).textContent = '';
+
+                    }
+                );
+
+            }
+
+        });
+    </script>
+
+
 @endsection

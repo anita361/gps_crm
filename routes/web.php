@@ -32,8 +32,16 @@ Route::middleware('login')->group(function () {
 
     Route::get('/branch-manager-dashboard', [BranchManagerController::class, 'branchManagerDashboard'])
         ->name('branch.manager.dashboard');
+
+
+
+
     Route::post('/branch-summary', [BranchManagerController::class, 'branchSummary'])
         ->name('branch.summary');
+
+
+    Route::post('/branch-dashboard/assign-counselor', [BranchManagerController::class, 'assignCounselor'])
+        ->name('branch.manager.assign');
 
 
 
@@ -148,6 +156,19 @@ Route::middleware('login')->group(function () {
 
     Route::post('/walkin/personal', [WalkinController::class, 'updatePersonal'])
         ->name('walkin.personal');
+
+    Route::post('/walkin/mobile/update', [WalkinController::class, 'updateMobile'])
+        ->name('walkin.mobile.update');
+
+        Route::get('/walking/mobile-logs/{smobile}', [WalkinController::class, 'mobileLogs'])
+    ->name('walking.mobile.logs');
+
+    Route::post('/student/update-email', [WalkinController::class, 'updateEmail'])
+    ->name('student.update.email');
+
+
+    Route::get('/walking/email-logs/{email}', [WalkinController::class, 'emailLogs'])
+        ->name('walking.email.logs');
 
     Route::post('/student/spouse/save', [WalkinController::class, 'updateSpouse'])
         ->name('student.spouse.save');
@@ -599,15 +620,15 @@ Route::middleware('login')->group(function () {
         ->name('get.finance.user');
 
 
-   Route::post('/enrolled/send-mail', [WalkinController::class, 'sendMail'])
-    ->name('enrolled.sendMail');
+    Route::post('/enrolled/send-mail', [WalkinController::class, 'sendMail'])
+        ->name('enrolled.sendMail');
 
-Route::get('/student-consent', [WalkinController::class, 'studentConsent'])
-    ->name('student-consent');
+    Route::get('/student-consent', [WalkinController::class, 'studentConsent'])
+        ->name('student-consent');
 
-Route::post('/student-consent/signature', [WalkinController::class, 'saveStudentSignature'])
-    ->name('student-consent.signature');
+    Route::post('/student-consent/signature', [WalkinController::class, 'saveStudentSignature'])
+        ->name('student-consent.signature');
 
-Route::get('/student-consent/success/{id}', [WalkinController::class, 'studentConsentSuccess'])
-    ->name('student-consent.success');
+    Route::get('/student-consent/success/{id}', [WalkinController::class, 'studentConsentSuccess'])
+        ->name('student-consent.success');
 });

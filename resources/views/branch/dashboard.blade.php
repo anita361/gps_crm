@@ -12,7 +12,7 @@
             <div class="card-header bg-primary text-white text-center">
                 <h5 class="mb-0">
                     <i class="fa fa-search"></i>
-                    Branch Dashboard
+                  Branch Dashboard
                 </h5>
             </div>
 
@@ -32,17 +32,29 @@
                             <select class="form-select" id="search_type" onchange="showSearchField()">
 
                                 <option value="">Search Using</option>
-                                <option value="student_name">Search Student Name</option>
-                                <option value="mobile">Search Mobile</option>
-                                <option value="email">Search Email</option>
-                                <option value="file">Search File</option>
+                                <option value="student_name" {{ request()->filled('student_name') ? 'selected' : '' }}>
+                                    Search Student Name
+                                </option>
+
+                                <option value="mobile" {{ request()->filled('mobile') ? 'selected' : '' }}>
+                                    Search Mobile
+                                </option>
+
+                                <option value="email" {{ request()->filled('email') ? 'selected' : '' }}>
+                                    Search Email
+                                </option>
+
+                                <option value="file" {{ request()->filled('file_number') ? 'selected' : '' }}>
+                                    Search File
+                                </option>
 
                             </select>
 
                         </div>
 
                         <!-- Student Name -->
-                        <div class="col-lg-5 col-md-7" id="student_name_div" style="display:none;">
+                        <div class="col-lg-5 col-md-7" id="student_name_div"
+                            style="{{ request()->filled('student_name') ? 'display:block;' : 'display:none;' }}">
 
                             <label class="fw-bold mb-2">
                                 Student Name
@@ -51,7 +63,7 @@
                             <div class="input-group">
 
                                 <input type="text" name="student_name" class="form-control"
-                                    placeholder="Enter Student Name">
+                                    placeholder="Enter Student Name" value="{{ request('student_name') }}">
 
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-search"></i> Search
@@ -62,7 +74,8 @@
                         </div>
 
                         <!-- Mobile -->
-                        <div class="col-lg-5 col-md-7" id="mobile_div" style="display:none;">
+                        <div class="col-lg-5 col-md-7" id="mobile_div"
+                            style="{{ request()->filled('mobile') ? 'display:block;' : 'display:none;' }}">
 
                             <label class="fw-bold mb-2">
                                 Mobile Number
@@ -70,7 +83,8 @@
 
                             <div class="input-group">
 
-                                <input type="text" name="mobile" class="form-control" placeholder="Enter Mobile Number">
+                                <input type="text" name="mobile" class="form-control" placeholder="Enter Mobile Number"
+                                    value="{{ request('mobile') }}">
 
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-search"></i> Search
@@ -81,7 +95,8 @@
                         </div>
 
                         <!-- Email -->
-                        <div class="col-lg-5 col-md-7" id="email_div" style="display:none;">
+                        <div class="col-lg-5 col-md-7" id="email_div"
+                            style="{{ request()->filled('email') ? 'display:block;' : 'display:none;' }}">
 
                             <label class="fw-bold mb-2">
                                 Email Address
@@ -89,7 +104,8 @@
 
                             <div class="input-group">
 
-                                <input type="email" name="email" class="form-control" placeholder="Enter Email Address">
+                                <input type="email" name="email" class="form-control" placeholder="Enter Email Address"
+                                    value="{{ request('email') }}">
 
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-search"></i> Search
@@ -100,7 +116,8 @@
                         </div>
 
                         <!-- File Number -->
-                        <div class="col-lg-5 col-md-7" id="file_div" style="display:none;">
+                        <div class="col-lg-5 col-md-7" id="file_div"
+                            style="{{ request()->filled('file_number') ? 'display:block;' : 'display:none;' }}">
 
                             <label class="fw-bold mb-2">
                                 File Number
@@ -109,7 +126,7 @@
                             <div class="input-group">
 
                                 <input type="text" name="file_number" class="form-control"
-                                    placeholder="Enter File Number">
+                                    placeholder="Enter File Number" value="{{ request('file_number') }}">
 
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-search"></i> Search
@@ -126,6 +143,7 @@
             </div>
 
         </div>
+
         <div class="text-center mb-5">
 
             <div>
@@ -169,11 +187,24 @@
 
                         <label>Show Entries</label>
 
-                        <select class="form-select w-auto">
-                            <option>10</option>
-                            <option>25</option>
-                            <option>50</option>
-                            <option>100</option>
+                        <select name="per_page" class="form-select w-auto" onchange="changePerPage(this.value)">
+
+                            <option value="10" {{ request('per_page', 10) == 10 ? 'selected' : '' }}>
+                                10
+                            </option>
+
+                            <option value="25" {{ request('per_page') == 25 ? 'selected' : '' }}>
+                                25
+                            </option>
+
+                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>
+                                50
+                            </option>
+
+                            <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>
+                                100
+                            </option>
+
                         </select>
 
                     </div>
@@ -216,14 +247,13 @@
 
                         <tbody>
 
-
                             @forelse($appointments as $row)
                                 <tr>
-
 
                                     <!-- Notes -->
 
                                     <td>
+
                                         <button type="button" class="btn btn-success btn-sm open-notes-modal"
                                             data-file-no="{{ $row->semi_id ?? '' }}"
                                             data-name="{{ $row->sname ?? $row->applicant_name }}">
@@ -231,8 +261,8 @@
                                             Notes
 
                                         </button>
-                                    </td>
 
+                                    </td>
 
 
                                     <!-- Client Name -->
@@ -244,7 +274,6 @@
                                     </td>
 
 
-
                                     <!-- Client Email -->
 
                                     <td>
@@ -252,7 +281,6 @@
                                         {{ $row->email }}
 
                                     </td>
-
 
 
                                     <!-- Client Number -->
@@ -264,7 +292,6 @@
                                     </td>
 
 
-
                                     <!-- Rep Name -->
 
                                     <td>
@@ -272,7 +299,6 @@
                                         {{ $row->assign_name ?? 'Branch Manager' }}
 
                                     </td>
-
 
 
                                     <!-- No Accompanying -->
@@ -284,9 +310,7 @@
                                     </td>
 
 
-
-
-                                    <!-- Walkin Date -->
+                                    <!-- Walk-in Date -->
 
                                     <td>
 
@@ -295,13 +319,9 @@
                                     </td>
 
 
-
-
-
-                                    <!-- Walkin Status -->
+                                    <!-- Walk-in Status -->
 
                                     <td>
-
 
                                         @if ($row->walkin_status == 0)
                                             <span class="btn btn-success btn-sm">
@@ -324,27 +344,22 @@
                                         @elseif($row->walkin_status == 3)
                                             <button class="btn btn-success btn-sm"
                                                 onclick="WallkinStatus(
-'{{ $row->callerno }}',
-'1',
-'{{ $row->id }}'
-)">
+                                                    '{{ $row->callerno }}',
+                                                    '1',
+                                                    '{{ $row->id }}'
+                                                )">
 
                                                 Lead
 
                                             </button>
                                         @endif
 
-
                                     </td>
 
 
-
-
-
-                                    <!-- Assign Counselor -->
+                                    <!-- Assign Counsellor -->
 
                                     <td>
-
 
                                         @if (empty($row->assign_id))
                                             <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
@@ -362,72 +377,59 @@
                                             </button>
                                         @endif
 
-
                                     </td>
-
-
-
 
 
                                     <!-- View -->
 
-
                                     <td>
-
 
                                         <a href="{{ route('walking-details', ['smobile' => $row->callerno]) }}"
                                             class="btn btn-primary btn-sm">
-                                            View
-                                        </a>
 
+                                            View
+
+                                        </a>
 
                                     </td>
 
 
-
-
-
                                     <!-- File Number -->
 
-
                                     <td>
-
 
                                         @if ($row->student_status == 'enrolled')
                                             {{ $row->file_no }}
                                         @endif
 
-
                                     </td>
-
-
-
 
 
                                     <!-- Logs -->
 
-
                                     <td>
 
+                                        {{-- <button class="btn btn-info btn-sm view-logs-btn"
+                                            data-file-no="{{ $row->id }}"
+                                            data-name="{{ $row->applicant_name }}">
+
+                                            View Logs
+
+                                        </button> --}}
 
                                         <button class="btn btn-info btn-sm view-logs-btn"
-                                            data-file-no="{{ $row->id }}" data-name="{{ $row->applicant_name }}">
+                                            data-file-no="{{ $row->semi_id ?? $row->id }}"
+                                            data-name="{{ $row->sname ?? $row->applicant_name }}">
 
                                             View Logs
 
                                         </button>
 
-
                                     </td>
-
-
 
                                 </tr>
 
-
-
                             @empty
-
 
                                 <tr>
 
@@ -440,12 +442,208 @@
                                 </tr>
                             @endforelse
 
-
-
                         </tbody>
 
-
                     </table>
+
+
+                    <!-- ========================================================= -->
+                    <!-- ASSIGN COUNSELOR MODAL -->
+                    <!-- ========================================================= -->
+
+                    @foreach ($appointments as $row)
+                        <div class="modal fade" id="assignModal{{ $row->id }}" tabindex="-1"
+                            aria-labelledby="assignModalLabel{{ $row->id }}" aria-hidden="true">
+
+                            <div class="modal-dialog modal-sm">
+
+                                <div class="modal-content">
+
+                                    <div class="modal-header">
+
+                                        <h5 class="modal-title" id="assignModalLabel{{ $row->id }}">
+
+                                            Assign Counselor
+
+                                        </h5>
+
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close">
+
+                                        </button>
+
+                                    </div>
+
+
+                                    <div class="modal-body">
+
+                                        <form class="assign-counselor-form" method="POST"
+                                            action="{{ route('branch.manager.assign') }}">
+
+                                            @csrf
+
+                                            <!-- Mobile -->
+
+                                            <input type="hidden" name="mobile" value="{{ $row->callerno }}">
+
+
+                                            <!-- Appointment ID -->
+
+                                            <input type="hidden" name="appntid" value="{{ $row->id }}">
+
+
+                                            <!-- COUNSELLOR -->
+
+                                            <div class="form-group mb-3">
+
+                                                <label class="fw-bold">
+
+                                                    Select Counsellor
+
+                                                </label>
+
+                                                <select name="assign" class="form-control" required>
+
+                                                    <option value="">
+
+                                                        Assign User
+
+                                                    </option>
+
+                                                    @foreach ($counselors as $counselor)
+                                                        <option value="{{ $counselor->id }}"
+                                                            {{ ($row->assign_id ?? '') == $counselor->id ? 'selected' : '' }}>
+
+                                                            {{ $counselor->name }}
+
+                                                        </option>
+                                                    @endforeach
+
+                                                </select>
+
+                                            </div>
+
+
+                                            <!-- CATEGORY -->
+
+                                            <div class="form-group mb-3">
+
+                                                <label class="fw-bold">
+
+                                                    Change Category
+
+                                                </label>
+
+                                                <select name="category" class="form-control" required>
+
+                                                    <option value="">
+
+                                                        Select Category
+
+                                                    </option>
+
+                                                    <option value="Business"
+                                                        {{ ($row->category ?? '') == 'Business' ? 'selected' : '' }}>
+
+                                                        Business
+
+                                                    </option>
+
+                                                    <option value="Skilled"
+                                                        {{ ($row->category ?? '') == 'Skilled' ? 'selected' : '' }}>
+
+                                                        Skilled
+
+                                                    </option>
+
+                                                    <option value="Tourist Visa"
+                                                        {{ ($row->category ?? '') == 'Tourist Visa' ? 'selected' : '' }}>
+
+                                                        Tourist Visa
+
+                                                    </option>
+
+                                                    <option value="Open work permit"
+                                                        {{ ($row->category ?? '') == 'Open work permit' ? 'selected' : '' }}>
+
+                                                        Open work permit
+
+                                                    </option>
+
+                                                    <option value="Other"
+                                                        {{ ($row->category ?? '') == 'Other' ? 'selected' : '' }}>
+
+                                                        Other
+
+                                                    </option>
+
+                                                </select>
+
+                                            </div>
+
+
+                                            <!-- CURRENT ASSIGNMENT -->
+
+                                            @if (!empty($row->assign_id))
+                                                <div class="alert alert-info">
+
+                                                    <strong>
+
+                                                        Currently Assigned:
+
+                                                    </strong>
+
+                                                    <br>
+
+                                                    {{ $row->assign_name ?? 'N/A' }}
+
+                                                </div>
+                                            @endif
+
+
+                                            <!-- SUBMIT -->
+
+                                            <button type="submit" class="btn btn-primary w-100 assign_submit">
+
+                                                @if (!empty($row->assign_id))
+                                                    <i class="fa fa-refresh"></i>
+
+                                                    Update Assignment
+                                                @else
+                                                    <i class="fa fa-user-plus"></i>
+
+                                                    Assign
+                                                @endif
+
+                                            </button>
+
+                                        </form>
+
+                                    </div>
+
+
+                                    <div class="modal-footer">
+
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                                            Close
+
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    @endforeach
+
+
+                    <!-- ========================================================= -->
+                    <!-- LOGS MODAL -->
+                    <!-- ========================================================= -->
+
                     <div class="modal fade" id="logsModal" tabindex="-1">
 
                         <div class="modal-dialog modal-xl">
@@ -455,10 +653,13 @@
                                 <div class="modal-header">
 
                                     <h5 class="modal-title" id="logsModalLabel">
+
                                         Status Update Logs
+
                                     </h5>
 
                                     <button type="button" class="btn-close" data-bs-dismiss="modal">
+
                                     </button>
 
                                 </div>
@@ -466,7 +667,9 @@
                                 <div class="modal-body">
 
                                     <h5 class="text-center bg-dark text-white p-2">
+
                                         Logs
+
                                     </h5>
 
                                     <table class="table table-bordered">
@@ -490,6 +693,7 @@
                                         </tbody>
 
                                     </table>
+
 
                                     <h5 class="text-center bg-dark text-white p-2 mt-4">
 
@@ -518,8 +722,6 @@
 
                                     </table>
 
-
-
                                 </div>
 
                             </div>
@@ -529,7 +731,10 @@
                     </div>
 
                 </div>
+
+
                 <!-- NOTES MODAL START -->
+
                 <div class="modal fade" id="notesModal" tabindex="-1">
 
                     <div class="modal-dialog modal-lg">
@@ -541,14 +746,17 @@
                                 <h5 class="modal-title">
 
                                     Notes For :
+
                                     <span id="NotesModalName"></span>
 
                                 </h5>
 
                                 <button type="button" class="btn-close" data-bs-dismiss="modal">
+
                                 </button>
 
                             </div>
+
 
                             <div class="modal-body">
 
@@ -558,6 +766,7 @@
 
                                     <input type="hidden" id="note_id" name="note_id">
 
+
                                     <div class="mb-3">
 
                                         <label>Add Note</label>
@@ -565,6 +774,7 @@
                                         <textarea class="form-control" id="newNote" name="newNote" rows="4"></textarea>
 
                                     </div>
+
 
                                     <button type="submit" class="btn btn-success">
 
@@ -574,7 +784,9 @@
 
                                 </form>
 
+
                                 <hr>
+
 
                                 <table class="table table-bordered">
 
@@ -583,11 +795,8 @@
                                         <tr>
 
                                             <th>Sno</th>
-
                                             <th>Remarks</th>
-
                                             <th>Updated By</th>
-
                                             <th>Action Datetime</th>
 
                                         </tr>
@@ -607,39 +816,48 @@
                     </div>
 
                 </div>
-                <!-- NOTES MODAL END -->
+
+
 
 
             </div>
 
-            <div class="d-flex justify-content-between mt-3">
 
-                <small>
-                    Showing 0 to 0 of 0 entries
-                </small>
+
+
+            <div class="d-flex justify-content-between align-items-center mt-3 mb-3 px-3">
 
                 <div>
+                    <small class="text-muted">
+                        Showing
+                        {{ $appointments->firstItem() ?? 0 }}
+                        to
+                        {{ $appointments->lastItem() ?? 0 }}
+                        of
+                        {{ $appointments->total() }}
+                        entries
+                    </small>
+                </div>
 
-                    <button class="btn btn-outline-secondary btn-sm">
-                        Previous
-                    </button>
-
-                    <button class="btn btn-outline-secondary btn-sm">
-                        Next
-                    </button>
-
+                <div>
+                    {{ $appointments->links() }}
                 </div>
 
             </div>
+
+
+
 
         </div>
 
     </div>
 
-    </div>
-
 @endsection
+
+
 @push('scripts')
+
+
     <script>
         function showSearchField() {
 
@@ -649,159 +867,413 @@
             document.getElementById('file_div').style.display = 'none';
 
 
-            let searchType = document.getElementById('search_type').value;
+            let searchType =
+                document.getElementById('search_type').value;
+
 
             switch (searchType) {
+
                 case 'student_name':
+
                     document.getElementById('student_name_div').style.display = 'block';
+
                     break;
+
 
                 case 'mobile':
+
                     document.getElementById('mobile_div').style.display = 'block';
+
                     break;
+
 
                 case 'email':
+
                     document.getElementById('email_div').style.display = 'block';
+
                     break;
 
+
                 case 'file':
+
                     document.getElementById('file_div').style.display = 'block';
+
                     break;
+
 
                 default:
 
                     break;
+
             }
+
         }
 
 
         document.addEventListener('DOMContentLoaded', function() {
+
             showSearchField();
+
         });
     </script>
+
+
+
+
+    <script>
+        function changePerPage(value) {
+
+            let url = new URL(window.location.href);
+
+            url.searchParams.set('per_page', value);
+
+            url.searchParams.set('page', 1);
+
+            window.location.href = url.toString();
+
+        }
+    </script>
+    <!-- ========================================================= -->
+    <!-- LOGS / NOTES SCRIPT -->
+    <!-- ========================================================= -->
+
     <script>
         function showSearchField() {
 
             $('#student_name_div,#mobile_div,#email_div,#file_div').hide();
 
-            let searchType = $('#search_type').val();
+            let searchType =
+                $('#search_type').val();
+
 
             switch (searchType) {
 
                 case 'student_name':
+
                     $('#student_name_div').show();
+
                     break;
+
 
                 case 'mobile':
+
                     $('#mobile_div').show();
+
                     break;
+
 
                 case 'email':
+
                     $('#email_div').show();
+
                     break;
+
 
                 case 'file':
+
                     $('#file_div').show();
+
                     break;
+
             }
+
         }
 
+
         document.addEventListener('DOMContentLoaded', function() {
+
             showSearchField();
+
         });
+
 
         $(document).ready(function() {
 
-            /*
-            |--------------------------------------------------------------------------
-            | VIEW LOGS
-            |--------------------------------------------------------------------------
-            */
 
             $(document).on('click', '.view-logs-btn', function() {
 
-                let fileNo = $(this).data('file-no');
-                let name = $(this).data('name');
+                let fileNo =
+                    $(this).data('file-no');
 
-                $('#logsModalLabel').text('Status Update Logs - ' + name);
+                let name =
+                    $(this).data('name');
+
+
+                console.log(
+                    'Logs seminar ID:',
+                    fileNo
+                );
+
+
+                $('#logsModalLabel').text(
+                    'Status Update Logs - ' +
+                    name
+                );
+
+
+                $('#logsTableBody').html(`
+
+                    <tr>
+
+                        <td colspan="5"
+                            class="text-center">
+
+                            Loading logs...
+
+                        </td>
+
+                    </tr>
+
+                `);
+
+
+                $('#logsNotesTableBody').html(`
+
+                    <tr>
+
+                        <td colspan="4"
+                            class="text-center">
+
+                            Loading notes...
+
+                        </td>
+
+                    </tr>
+
+                `);
+
 
                 $.ajax({
 
                     url: "{{ route('branch.manager.logs') }}",
+
                     type: "POST",
 
                     data: {
+
                         semi_id: fileNo,
+
                         _token: "{{ csrf_token() }}"
+
                     },
+
 
                     success: function(response) {
 
-                        let logsHtml = '';
+                        console.log(
+                            'Logs response:',
+                            response
+                        );
 
-                        if (response.logs.length > 0) {
 
-                            response.logs.forEach(function(log) {
+                        /*
+                        STATUS LOGS
+                        */
 
-                                logsHtml += `
-                                <tr>
-                                    <td>${log.stage_date ?? ''}</td>
-                                    <td>${log.stage ?? ''} ${log.oprStsSend ?? ''}</td>
-                                    <td>${log.stage_remarks ?? ''}</td>
-                                    <td>${log.updated_by ?? ''}</td>
-                                    <td>${log.created_date ?? ''}</td>
-                                </tr>
-                            `;
-                            });
+                        let logsHtml =
+                            '';
+
+
+                        if (
+                            response.logs &&
+                            response.logs.length > 0
+                        ) {
+
+                            response.logs.forEach(
+                                function(log) {
+
+                                    logsHtml += `
+
+                                            <tr>
+
+                                                <td>
+                                                    ${log.stage_date ?? ''}
+                                                </td>
+
+                                                <td>
+                                                    ${log.stage ?? ''}
+                                                    ${log.oprStsSend ?? ''}
+                                                </td>
+
+                                                <td>
+                                                    ${log.stage_remarks ?? ''}
+                                                </td>
+
+                                                <td>
+                                                    ${log.updated_by ?? ''}
+                                                </td>
+
+                                                <td>
+                                                    ${log.created_date ?? ''}
+                                                </td>
+
+                                            </tr>
+
+                                        `;
+
+                                }
+                            );
 
                         } else {
 
                             logsHtml = `
-                            <tr>
-                                <td colspan="5" class="text-center">
-                                    No Logs Found
-                                </td>
-                            </tr>
-                        `;
+
+                                    <tr>
+
+                                        <td colspan="5"
+                                            class="text-center">
+
+                                            No Logs Found
+
+                                        </td>
+
+                                    </tr>
+
+                                `;
+
                         }
 
-                        $('#logsTableBody').html(logsHtml);
 
-                        let notesHtml = '';
+                        $('#logsTableBody')
+                            .html(logsHtml);
 
-                        if (response.notes.length > 0) {
 
-                            response.notes.forEach(function(note, index) {
+                        /*
+                        NOTES
+                        */
 
-                                notesHtml += `
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${note.remarks ?? ''}</td>
-                                    <td>${note.updated_by ?? ''}</td>
-                                    <td>${note.datetime ?? note.created_datetime ?? ''}</td>
-                                </tr>
-                            `;
-                            });
+                        let notesHtml =
+                            '';
+
+
+                        if (
+                            response.notes &&
+                            response.notes.length > 0
+                        ) {
+
+                            response.notes.forEach(
+                                function(note, index) {
+
+                                    notesHtml += `
+
+                                            <tr>
+
+                                                <td>
+                                                    ${index + 1}
+                                                </td>
+
+                                                <td>
+                                                    ${note.remarks ?? ''}
+                                                </td>
+
+                                                <td>
+                                                    ${note.updated_by ?? ''}
+                                                </td>
+
+                                                <td>
+                                                    ${
+                                                        note.datetime ??
+                                                        note.created_datetime ??
+                                                        note.created_date ??
+                                                        ''
+                                                    }
+                                                </td>
+
+                                            </tr>
+
+                                        `;
+
+                                }
+                            );
 
                         } else {
 
                             notesHtml = `
-                            <tr>
-                                <td colspan="4" class="text-center">
-                                    No Notes Found
-                                </td>
-                            </tr>
-                        `;
+
+                                    <tr>
+
+                                        <td colspan="4"
+                                            class="text-center">
+
+                                            No Notes Found
+
+                                        </td>
+
+                                    </tr>
+
+                                `;
+
                         }
 
-                        $('#logsNotesTableBody').html(notesHtml);
 
-                        $('#logsModal').modal('show');
+                        $('#logsNotesTableBody')
+                            .html(notesHtml);
+
+
+                        /*
+                        OPEN BOOTSTRAP 5 MODAL
+                        */
+
+                        let logsModalElement =
+                            document.getElementById(
+                                'logsModal'
+                            );
+
+
+                        let logsModal =
+                            bootstrap.Modal.getOrCreateInstance(
+                                logsModalElement
+                            );
+
+
+                        logsModal.show();
+
                     },
 
-                    error: function() {
 
-                        alert('Unable to load logs.');
+                    error: function(xhr) {
+
+                        console.log(
+                            'Logs Error:',
+                            xhr.responseText
+                        );
+
+
+                        $('#logsTableBody').html(`
+
+                                <tr>
+
+                                    <td colspan="5"
+                                        class="text-danger text-center">
+
+                                        Unable to load logs.
+
+                                    </td>
+
+                                </tr>
+
+                            `);
+
+
+                        $('#logsNotesTableBody').html(`
+
+                                <tr>
+
+                                    <td colspan="4"
+                                        class="text-danger text-center">
+
+                                        Unable to load notes.
+
+                                    </td>
+
+                                </tr>
+
+                            `);
+
+
+                        alert(
+                            'Unable to load logs.'
+                        );
 
                     }
 
@@ -811,143 +1283,379 @@
 
 
             /*
-            |--------------------------------------------------------------------------
-            | OPEN NOTES MODAL
-            |--------------------------------------------------------------------------
+            OPEN NOTES MODAL
             */
 
-            $(document).on('click', '.open-notes-modal', function() {
+            $(document).on(
+                'click',
+                '.open-notes-modal',
+                function() {
 
-                let fileNo = $(this).data('file-no');
-                let name = $(this).data('name');
+                    let fileNo =
+                        $(this).data('file-no');
 
-                $('#note_id').val(fileNo);
-                $('#NotesModalName').text(name);
-                $('#newNote').val('');
+                    let name =
+                        $(this).data('name');
 
-                loadNotes(fileNo);
 
-                $('#notesModal').modal('show');
+                    $('#note_id')
+                        .val(fileNo);
 
-            });
+                    $('#NotesModalName')
+                        .text(name);
+
+                    $('#newNote')
+                        .val('');
+
+
+                    loadNotes(fileNo);
+
+
+                    $('#notesModal')
+                        .modal('show');
+
+                }
+            );
 
 
             /*
-            |--------------------------------------------------------------------------
-            | LOAD NOTES
-            |--------------------------------------------------------------------------
+            LOAD NOTES
             */
 
             function loadNotes(noteId) {
 
                 $('#NotesTableBody').html(`
-        <tr>
-            <td colspan="4" class="text-center">
-                Loading...
-            </td>
-        </tr>
-    `);
+
+                    <tr>
+
+                        <td colspan="4"
+                            class="text-center">
+
+                            Loading...
+
+                        </td>
+
+                    </tr>
+
+                `);
+
 
                 $.ajax({
 
                     url: "{{ route('notes.get') }}",
+
                     type: "POST",
 
                     data: {
+
                         note_id: noteId,
+
                         _token: "{{ csrf_token() }}"
+
                     },
+
 
                     success: function(response) {
 
-                        let notesHtml = '';
+                        let notesHtml =
+                            '';
 
-                        if (response.status && response.notes.length > 0) {
 
-                            response.notes.forEach(function(note, index) {
+                        if (
+                            response.status &&
+                            response.notes.length > 0
+                        ) {
 
-                                notesHtml += `
-                        <tr>
-                            <td>${index + 1}</td>
-                            <td><p>${note.remarks ?? ''}</p></td>
-                            <td>${note.updated_by ?? ''}</td>
-                            <td>${note.datetime ?? ''}</td>
-                        </tr>
-                    `;
+                            response.notes.forEach(
+                                function(note, index) {
 
-                            });
+                                    notesHtml += `
+
+                                            <tr>
+
+                                                <td>
+                                                    ${index + 1}
+                                                </td>
+
+                                                <td>
+                                                    <p>
+                                                        ${note.remarks ?? ''}
+                                                    </p>
+                                                </td>
+
+                                                <td>
+                                                    ${note.updated_by ?? ''}
+                                                </td>
+
+                                                <td>
+                                                    ${note.datetime ?? ''}
+                                                </td>
+
+                                            </tr>
+
+                                        `;
+
+                                }
+                            );
 
                         } else {
 
                             notesHtml = `
-                    <tr>
-                        <td colspan="4" class="text-center">
-                            No Notes Found
-                        </td>
-                    </tr>
-                `;
+
+                                    <tr>
+
+                                        <td colspan="4"
+                                            class="text-center">
+
+                                            No Notes Found
+
+                                        </td>
+
+                                    </tr>
+
+                                `;
 
                         }
 
-                        $('#NotesTableBody').html(notesHtml);
+
+                        $('#NotesTableBody')
+                            .html(notesHtml);
 
                     },
+
 
                     error: function() {
 
                         $('#NotesTableBody').html(`
-                <tr>
-                    <td colspan="4" class="text-danger text-center">
-                        Failed to load notes
-                    </td>
-                </tr>
-            `);
+
+                                <tr>
+
+                                    <td colspan="4"
+                                        class="text-danger text-center">
+
+                                        Failed to load notes
+
+                                    </td>
+
+                                </tr>
+
+                            `);
 
                     }
 
                 });
 
             }
+
+
             /*
-            |--------------------------------------------------------------------------
-            | SAVE NOTE
-            |--------------------------------------------------------------------------
+            ADD NOTES
             */
 
-            $('#addNotesForm').submit(function(e) {
+            $('#addNotesForm').submit(
+                function(e) {
+
+                    e.preventDefault();
+
+
+                    $.ajax({
+
+                        url: "{{ route('notes.add') }}",
+
+                        type: "POST",
+
+                        data: $(this).serialize(),
+
+
+                        success: function(res) {
+
+                            alert(
+                                res.message
+                            );
+
+
+                            $('#newNote')
+                                .val('');
+
+
+                            loadNotes(
+                                $('#note_id')
+                                .val()
+                            );
+
+                        },
+
+
+                        error: function(xhr) {
+
+                            alert(
+                                'Unable to save note.'
+                            );
+
+
+                            console.log(
+                                xhr.responseText
+                            );
+
+                        }
+
+                    });
+
+                }
+            );
+
+        });
+    </script>
+
+
+    <!-- ========================================================= -->
+    <!-- ASSIGN COUNSELOR SCRIPT -->
+    <!-- ========================================================= -->
+
+    <script>
+        $(document).on(
+            'submit',
+            '.assign-counselor-form',
+            function(e) {
 
                 e.preventDefault();
 
+
+                let form =
+                    $(this);
+
+
+                let button =
+                    form.find(
+                        '.assign_submit'
+                    );
+
+
+                let originalText =
+                    button.html();
+
+
+                button.prop(
+                    'disabled',
+                    true
+                );
+
+
+                button.html(
+                    '<i class="fa fa-spinner fa-spin"></i> Saving...'
+                );
+
+
                 $.ajax({
 
-                    url: "{{ route('notes.add') }}",
-                    type: "POST",
-                    data: $(this).serialize(),
+                    url: form.attr('action'),
 
-                    success: function(res) {
+                    type: 'POST',
 
-                        alert(res.message);
+                    data: form.serialize(),
 
-                        // Clear textbox
-                        $('#newNote').val('');
 
-                        // Reload notes list after adding note
-                        loadNotes($('#note_id').val());
+                    success: function(response) {
+
+                        if (response.status) {
+
+                            alert(
+                                response.message
+                            );
+
+
+                            let modalElement =
+                                form.closest(
+                                    '.modal'
+                                )[0];
+
+
+                            let modalInstance =
+                                bootstrap.Modal.getInstance(
+                                    modalElement
+                                );
+
+
+                            if (modalInstance) {
+
+                                modalInstance.hide();
+
+                            }
+
+
+                            location.reload();
+
+                        } else {
+
+                            alert(
+                                response.message ||
+                                'Unable to assign counselor.'
+                            );
+
+                        }
 
                     },
 
+
                     error: function(xhr) {
 
-                        alert('Unable to save note.');
+                        let message =
+                            'Unable to assign counselor.';
 
-                        console.log(xhr.responseText);
+
+                        if (xhr.responseJSON) {
+
+                            if (
+                                xhr.responseJSON.message
+                            ) {
+
+                                message =
+                                    xhr.responseJSON.message;
+
+                            }
+
+
+                            if (
+                                xhr.responseJSON.errors
+                            ) {
+
+                                let errors =
+                                    xhr.responseJSON.errors;
+
+
+                                message =
+                                    Object.values(errors)
+                                    .flat()
+                                    .join('\n');
+
+                            }
+
+                        }
+
+
+                        alert(message);
+
+                    },
+
+
+                    complete: function() {
+
+                        button.prop(
+                            'disabled',
+                            false
+                        );
+
+
+                        button.html(
+                            originalText
+                        );
 
                     }
 
                 });
 
-            });
+            }
 
-        });
+        );
     </script>
 @endpush
