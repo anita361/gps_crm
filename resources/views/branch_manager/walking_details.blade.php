@@ -1340,7 +1340,7 @@
 
                                             @foreach ($remarkTypes as $value => $label)
                                                 <option value="{{ $value }}"
-                                                    {{ old('enrolled_remarks_type', $student->enrolled_remarks_type ?? '') == $value ? 'selected' : '' }}>
+                                                    {{ old('enrolled_remarks_type', $student->remark_type ?? '') == $value ? 'selected' : '' }}>
                                                     {{ $label }}
                                                 </option>
                                             @endforeach

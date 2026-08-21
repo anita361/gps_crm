@@ -342,6 +342,7 @@
 
                                 </div>
 
+
                                 <div class="col-md-2">
 
                                     <label>Province</label>
@@ -374,23 +375,21 @@
 
                                 </div>
 
+
+
                                 <div class="col-md-2">
 
                                     <label>College</label>
 
                                     <select class="form-control" name="collage_name" id="collage_name">
-
                                         <option value="">Select College</option>
 
                                         @foreach ($colleges as $college)
                                             <option value="{{ $college->clg_name }}"
                                                 {{ request('collage_name') == $college->clg_name ? 'selected' : '' }}>
-
                                                 {{ $college->clg_name }}
-
                                             </option>
                                         @endforeach
-
                                     </select>
 
                                 </div>
@@ -402,11 +401,13 @@
                             <div class="row">
 
                                 <div class="col-md-2">
+
                                     <label>Campus</label>
-                                    <select class="form-control form-select campus-select" name="campus_name"
-                                        id="campus">
+
+                                    <select class="form-control" name="campus_name" id="campus_name">
                                         <option value="">--Select Campus--</option>
                                     </select>
+
                                 </div>
 
                                 <div class="col-md-2">
@@ -414,17 +415,10 @@
                                     <label>Program</label>
 
                                     <select class="form-control" name="program_name" id="program_name">
-                                        <option value="">Select Program</option>
-
-                                        @if (request('program_name'))
-                                            <option value="{{ request('program_name') }}" selected>
-                                                {{ request('program_name') }}
-                                            </option>
-                                        @endif
+                                        <option value="">--Select Program--</option>
                                     </select>
 
                                 </div>
-
                                 <div class="col-md-2">
 
                                     <label>Counselor</label>
@@ -1035,42 +1029,59 @@
                 </div>
 
                 <form id="statusForm" autocomplete="off">
+
                     @csrf
 
-                    <!-- Hidden Fields -->
                     <input type="hidden" id="file_no" name="reg_sno">
+
                     <input type="hidden" id="status" name="status">
+
                     <input type="hidden" id="file_name" name="file_name">
+
                     <input type="hidden" id="file_email" name="file_email">
+
                     <input type="hidden" id="assign_name_id" name="assign_name">
+
                     <input type="hidden" id="smobile_number" name="smobile_number">
 
-                    <!-- Controller expects this -->
                     <input type="hidden" name="remarks_type" value="Operation Status">
+
 
                     <div class="modal-body">
 
                         <div class="mb-3" id="oprStsSendDiv" style="display:none;">
+
                             <label class="form-label" id="SendLabel"></label>
 
                             <select class="form-control" id="oprStsSend" name="oprStsSend">
                             </select>
+
                         </div>
 
-                        <div class="mb-3">
-                            <label for="date" class="form-label">Date</label>
 
-                            <!-- Controller expects followup_date -->
-                            <input type="date" class="form-control" id="date" name="followup_date">
+                        <div class="mb-3">
+
+                            <label for="date" class="form-label">
+                                Date
+                            </label>
+
+                            <input type="date" class="form-control" id="date" name="date">
+
                         </div>
 
+
                         <div class="mb-3">
-                            <label for="remarks" class="form-label">Remarks</label>
+
+                            <label for="remarks" class="form-label">
+                                Remarks
+                            </label>
 
                             <textarea class="form-control" id="remarks" name="remarks" rows="3" required></textarea>
+
                         </div>
 
                     </div>
+
 
                     <div class="modal-footer">
 
@@ -1083,7 +1094,6 @@
                         </button>
 
                     </div>
-
 
                 </form>
 
@@ -1203,27 +1213,26 @@
 
                 e.preventDefault();
 
-                let btn = $(this).find('button[type="submit"]');
+                let form = $(this);
+                let btn = form.find('button[type="submit"]');
 
                 $.ajax({
 
-                    url: "{{ route('operation.updateStatus') }}",
+                    url: "{{ route('update-operation-status') }}",
 
                     type: "POST",
 
-                    data: $(this).serialize(),
+                    data: form.serialize(),
 
                     beforeSend: function() {
-
                         btn.prop('disabled', true).text('Saving...');
-
                     },
 
                     success: function(response) {
 
                         btn.prop('disabled', false).text('Submit');
 
-                        if (response.success !== false) {
+                        if (response.success) {
 
                             $('#statusModal').modal('hide');
 
@@ -1240,26 +1249,30 @@
                             Swal.fire({
                                 icon: 'error',
                                 title: 'Error',
-                                text: response.message || 'Something went wrong.'
+                                text: response.message || 'Something Went Wrong'
                             });
-
                         }
-
                     },
-                    error: function() {
+
+                    error: function(xhr) {
 
                         btn.prop('disabled', false).text('Submit');
+
+                        console.log(xhr.responseText);
+
+                        let message = 'Error updating status';
+
+                        if (xhr.responseJSON && xhr.responseJSON.message) {
+                            message = xhr.responseJSON.message;
+                        }
 
                         Swal.fire({
                             icon: 'error',
                             title: 'Error',
-                            text: 'Something went wrong.'
+                            text: message
                         });
-
                     }
-
                 });
-
             });
             //=======================================
             // VIEW OPERATION LOGS
@@ -1520,98 +1533,99 @@
 
 
 
-            // Province + College => Campus
 
-            $('#province_name, #collage_name').change(function() {
 
-                let province_name = $('#province_name').val();
-                let collage_name = $('#collage_name').val();
+            $('#collage_name').on('change', function() {
 
-                if (province_name && collage_name) {
+                let college_id = $(this).val();
 
-                    $.ajax({
+                $('#campus_name').html(
+                    '<option value="">--Select Campus--</option>'
+                );
 
-                        url: "{{ route('get.campus') }}",
-                        type: "GET",
+                $('#program_name').html(
+                    '<option value="">--Select Program--</option>'
+                );
 
-                        data: {
-                            province_name: province_name,
-                            collage_name: collage_name
-                        },
-
-                        success: function(response) {
-
-                            $('#campus').html(
-                                '<option value="">--Select Campus--</option>'
-                            );
-
-                            $.each(response, function(index, value) {
-
-                                $('#campus').append(
-                                    '<option value="' + value.campus_name + '">' +
-                                    value.campus_name +
-                                    '</option>'
-                                );
-
-                            });
-
-                        }
-
-                    });
-
+                if (!college_id) {
+                    return;
                 }
 
+                $.ajax({
+                    url: "{{ route('osap.campuses') }}",
+                    type: "POST",
+
+                    data: {
+                        college_id: college_id,
+                        _token: "{{ csrf_token() }}"
+                    },
+
+                    success: function(response) {
+
+                        $('#campus_name').html(response);
+
+                        $('#program_name').html(
+                            '<option value="">--Select Program--</option>'
+                        );
+                    },
+
+                    error: function(xhr) {
+
+                        console.log(xhr.responseText);
+
+                        $('#campus_name').html(
+                            '<option value="">--Select Campus--</option>'
+                        );
+
+                        $('#program_name').html(
+                            '<option value="">--Select Program--</option>'
+                        );
+                    }
+                });
             });
 
 
+            // ==========================================
+            // Campus -> Program
+            // ==========================================
 
-            // Campus => Program
+            $('#campus_name').on('change', function() {
 
-            $('#campus').change(function() {
+                let campus_id = $(this).val();
+                let college_id = $('#collage_name').val();
 
-                let province_name = $('#province_name').val();
-                let collage_name = $('#collage_name').val();
-                let campus_name = $('#campus').val();
+                $('#program_name').html(
+                    '<option value="">--Select Program--</option>'
+                );
 
-
-                if (campus_name) {
-
-                    $.ajax({
-
-                        url: "{{ route('get.program') }}",
-                        type: "GET",
-
-                        data: {
-                            province_name: province_name,
-                            collage_name: collage_name,
-                            campus_name: campus_name
-                        },
-
-                        success: function(response) {
-
-                            $('#program_name').html(
-                                '<option value="">Select Program</option>'
-                            );
-
-
-                            $.each(response, function(index, value) {
-
-                                $('#program_name').append(
-
-                                    '<option value="' + value.prg_name + '">' +
-                                    value.prg_name +
-                                    '</option>'
-
-                                );
-
-                            });
-
-                        }
-
-                    });
-
+                if (!college_id || !campus_id) {
+                    return;
                 }
 
+                $.ajax({
+                    url: "{{ route('osap.programs') }}",
+                    type: "POST",
+
+                    data: {
+                        college_id: college_id,
+                        campus_id: campus_id,
+                        _token: "{{ csrf_token() }}"
+                    },
+
+                    success: function(response) {
+
+                        $('#program_name').html(response);
+                    },
+
+                    error: function(xhr) {
+
+                        console.log(xhr.responseText);
+
+                        $('#program_name').html(
+                            '<option value="">--Select Program--</option>'
+                        );
+                    }
+                });
             });
         });
     </script>

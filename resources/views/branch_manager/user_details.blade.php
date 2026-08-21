@@ -4,11 +4,11 @@
 
 <div class="container-fluid mt-3">
 
-    @if(session('success'))
+    {{-- @if(session('success'))
         <div class="alert alert-success">
             {{ session('success') }}
         </div>
-    @endif
+    @endif --}}
 
     <div class="card shadow">
 

@@ -160,11 +160,11 @@ Route::middleware('login')->group(function () {
     Route::post('/walkin/mobile/update', [WalkinController::class, 'updateMobile'])
         ->name('walkin.mobile.update');
 
-        Route::get('/walking/mobile-logs/{smobile}', [WalkinController::class, 'mobileLogs'])
-    ->name('walking.mobile.logs');
+    Route::get('/walking/mobile-logs/{smobile}', [WalkinController::class, 'mobileLogs'])
+        ->name('walking.mobile.logs');
 
     Route::post('/student/update-email', [WalkinController::class, 'updateEmail'])
-    ->name('student.update.email');
+        ->name('student.update.email');
 
 
     Route::get('/walking/email-logs/{email}', [WalkinController::class, 'emailLogs'])
@@ -356,13 +356,11 @@ Route::middleware('login')->group(function () {
     Route::get('/get-campus', [WalkinController::class, 'getCampus'])->name('get.campus');
 
     Route::get('/get-program', [WalkinController::class, 'getProgram'])->name('get.program');
-
     Route::get('/fund-release-status', [WalkinController::class, 'fundReleaseStatus'])
         ->name('fund.release.status');
     Route::post('/get-colleges', [WalkinController::class, 'getColleges'])->name('get.colleges');
 
-
-    Route::get('/fund-release-export', [WalkinController::class, 'fundReleaseExport'])
+   Route::get('/fund-release-export', [WalkinController::class, 'fundReleaseExport'])
         ->name('fund.release.export');
 
     Route::get('/commission-enrollment-list', [WalkinController::class, 'commissionEnrollmentList'])

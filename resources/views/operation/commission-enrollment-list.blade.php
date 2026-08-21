@@ -192,11 +192,9 @@
                         {{-- Province --}}
 
                         <div class="col-md-2 mb-3">
-
                             <label>Province</label>
 
                             <select class="form-control" id="province_name" name="province_name">
-
                                 <option value="">-- Select Province --</option>
 
                                 <option value="Alberta" {{ request('province_name') == 'Alberta' ? 'selected' : '' }}>
@@ -211,90 +209,381 @@
                                 <option value="Ontario" {{ request('province_name') == 'Ontario' ? 'selected' : '' }}>
                                     Ontario
                                 </option>
-
                             </select>
-
                         </div>
-
                         {{-- College --}}
 
-                        <div class="col-md-2 mb-3">
-
+                        <<div class="col-md-2 mb-3">
                             <label>College</label>
 
                             <select class="form-control" id="collage_name" name="collage_name">
-
                                 <option value="">-- Select College --</option>
-
-                                @foreach ($colleges as $college)
-                                    <option value="{{ $college->clg_name }}"
-                                        {{ request('collage_name') == $college->clg_name ? 'selected' : '' }}>
-
-                                        {{ $college->clg_name }}
-
-                                    </option>
-                                @endforeach
-
                             </select>
+                    </div>
 
-                        </div>
+                    {{-- Campus --}}
 
-                        {{-- Campus --}}
+                    <div class="col-md-3 mb-2">
+                        <label>Campus</label>
 
-                        <div class="col-md-3 mb-2">
+                        <select class="form-control" id="campus" name="campus_name">
+                            <option value="">-- Select Campus --</option>
+                        </select>
+                    </div>
 
-                            <label>Campus</label>
-                            <select class="form-control" id="campus" name="campus_name">
+                    {{-- Program --}}
 
-                                <option value="">
-                                    --Select Campus--
-                                </option>
+                    <div class="col-md-2 mb-3">
+                        <label>Program</label>
 
-                                @if (request('campus_name'))
-                                    <option selected value="{{ request('campus_name') }}">
-                                        {{ request('campus_name') }}
-                                    </option>
-                                @endif
+                        <select class="form-control" id="program_name" name="program_name">
+                            <option value="">-- Select Program --</option>
+                        </select>
+                    </div>
 
-                            </select>
+                    {{-- Search --}}
 
-                        </div>
+                    <div class="col-md-4 mb-3">
 
-                        {{-- Program --}}
+                        <label>
+                            Name / Mobile / Email / File No
+                        </label>
 
-                        <div class="col-md-2 mb-3">
+                        <input type="text" class="form-control" name="name_mobile_email"
+                            value="{{ request('name_mobile_email') }}" placeholder="Search Here">
 
-                            <label>Program</label>
+                    </div>
 
-                            <select class="form-control" id="program_name" name="program_name">
+                    <div class="col-md-2 mb-3 d-flex align-items-end">
 
-                                <option value="">
-                                    -- Select Program --
-                                </option>
+                        <button class="btn btn-success w-100">
 
-                            </select>
+                            <i class="fa fa-search"></i>
+                            Search
 
-                        </div>
+                        </button>
 
-                        {{-- Search --}}
+                    </div>
 
-                        <div class="col-md-4 mb-3">
+            </div>
 
-                            <label>
-                                Name / Mobile / Email / File No
+            </form>
+
+            <hr>
+
+            {{-- Entries --}}
+
+            <div class="row mb-3">
+
+                <div class="col-md-6">
+
+                    <form method="GET">
+
+                        @foreach (request()->query() as $key => $value)
+                            @if ($key != 'limit' && $key != 'page')
+                                <input type="hidden" name="{{ $key }}" value="{{ $value }}">
+                            @endif
+                        @endforeach
+
+                        <div class="d-flex align-items-center">
+
+                            <label class="me-2">
+                                Show
                             </label>
 
-                            <input type="text" class="form-control" name="name_mobile_email"
-                                value="{{ request('name_mobile_email') }}" placeholder="Search Here">
+                            <select name="limit" class="form-select" style="width:90px;" onchange="this.form.submit()">
+
+                                <option value="10" {{ request('limit', 10) == 10 ? 'selected' : '' }}>
+                                    10
+                                </option>
+
+                                <option value="25" {{ request('limit') == 25 ? 'selected' : '' }}>
+                                    25
+                                </option>
+
+                                <option value="50" {{ request('limit') == 50 ? 'selected' : '' }}>
+                                    50
+                                </option>
+
+                                <option value="100" {{ request('limit') == 100 ? 'selected' : '' }}>
+                                    100
+                                </option>
+
+                            </select>
+
+                            <span class="ms-2">
+                                Entries
+                            </span>
 
                         </div>
 
-                        <div class="col-md-2 mb-3 d-flex align-items-end">
+                    </form>
 
-                            <button class="btn btn-success w-100">
+                </div>
 
-                                <i class="fa fa-search"></i>
-                                Search
+            </div>
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover table-striped" id="opr_table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Notes</th>
+                            <th>Name</th>
+                            <th>Number</th>
+                            <th>Country</th>
+                            <th>Source</th>
+                            <th>Counselor</th>
+                            <th>File No</th>
+                            <th>Status</th>
+                            <th>Email</th>
+                            <th>Province</th>
+                            <th>College</th>
+                            <th>Campus</th>
+                            <th>Program</th>
+                            <th>Officer</th>
+                            <th>Enrolled Date</th>
+                            <th>View</th>
+                            <th>Commission</th>
+                            <th>Assign</th>
+                            <th>Logs</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @forelse($students as $row)
+                            <tr>
+
+                                <td>
+
+                                    <button type="button" class="btn btn-success btn-sm open-notes-modal"
+                                        data-file-no="{{ $row->sno }}" data-name="{{ $row->sname }}">
+
+                                        <i class="fa fa-sticky-note"></i>
+                                        Notes
+
+                                    </button>
+
+                                </td>
+
+                                <td>{{ $row->sname }}</td>
+
+                                <td>
+
+                                    @if (!empty($row->old_file_no) && $row->student_status == 'Re-enrolled')
+                                        <a class="btn btn-success btn-sm"
+                                            href="{{ route('student.history', ['smobile' => $row->smobile]) }}">
+
+                                            {{ $row->smobile }}
+
+                                        </a>
+                                    @else
+                                        {{ $row->smobile }}
+                                    @endif
+
+                                </td>
+
+                                <td>{{ $row->scountry }}</td>
+
+                                <td>{{ $row->ssource }}</td>
+
+                                <td>{{ $row->assign_name }}</td>
+
+                                <td>{{ $row->file_no }}</td>
+
+                                <td>
+
+                                    <span class="badge bg-success">
+
+                                        {{ $row->student_status }}
+
+                                    </span>
+
+                                </td>
+
+                                <td>{{ $row->semail }}</td>
+
+                                <td>{{ $row->province_name }}</td>
+
+                                <td>{{ $row->collage_name }}</td>
+
+                                <td>{{ $row->campus_name }}</td>
+
+                                <td>{{ $row->program_name }}</td>
+
+                                <td>{{ $row->officer_name }}</td>
+
+                                <td>{{ $row->enrolled_date }}</td>
+
+                                <td>
+
+                                    <a href="{{ route('walking-details', ['smobile' => $row->smobile]) }}"
+                                        class="btn btn-primary btn-sm">
+
+                                        View
+
+                                    </a>
+
+                                </td>
+
+                                <td>
+
+                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#commisionstatus" data-id="{{ $row->sno }}">
+
+                                        Status
+
+                                    </button>
+
+                                    <br>
+
+                                    <small>
+                                        {{ $row->commission_status ?? 'Pending' }}
+                                    </small>
+
+                                </td>
+
+                                <td>
+
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                        data-bs-target="#myassignModal" data-id="{{ $row->sno }}">
+
+                                        Change Assign
+
+                                    </button>
+
+                                </td>
+
+                                <td>
+
+                                    <button class="btn btn-secondary btn-sm view-logs-btn"
+                                        data-file-no="{{ $row->sno }}" data-name="{{ $row->sname }}">
+
+                                        <i class="fa fa-history"></i>
+                                        Logs
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+
+                        @empty
+
+                            <tr>
+
+                                <td colspan="19" class="text-center">
+
+                                    No Record Found
+
+                                </td>
+
+                            </tr>
+                        @endforelse
+
+                    </tbody>
+
+                </table>
+
+            </div>
+            {{-- ===========================================================
+COMMISSION STATUS MODAL
+=========================================================== --}}
+
+            <div class="modal fade" id="commisionstatus" tabindex="-1">
+
+                <div class="modal-dialog">
+
+                    <div class="modal-content">
+
+                        <div class="modal-header bg-primary text-white">
+
+                            <h5 class="modal-title">
+                                <i class="fa fa-money"></i>
+                                Commission Status
+                            </h5>
+
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal">
+                            </button>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <form id="commissionForm">
+
+                                @csrf
+
+                                <input type="hidden" id="recordId" name="id">
+
+                                <div class="mb-3">
+
+                                    <label>
+                                        Commission Status
+                                    </label>
+
+                                    <select class="form-control" id="commissionStatus" name="status">
+
+                                        <option value="">
+                                            Select Status
+                                        </option>
+
+                                        <option value="Commission 1">
+                                            Commission 1
+                                        </option>
+
+                                        <option value="Commission 2">
+                                            Commission 2
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                                <div class="mb-3 d-none" id="commissionOneGroup">
+
+                                    <label>
+                                        Commission One Amount
+                                    </label>
+
+                                    <input type="number" class="form-control" id="commissionAmountOne"
+                                        name="comm_one_amt" placeholder="Enter Amount">
+
+                                </div>
+
+                                <div class="mb-3 d-none" id="commissionTwoGroup">
+
+                                    <label>
+                                        Commission Two Amount
+                                    </label>
+
+                                    <input type="number" class="form-control" id="commissionAmountTwo"
+                                        name="comm_two_amt" placeholder="Enter Amount">
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                        <div class="modal-footer">
+
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+
+                                Close
+
+                            </button>
+
+                            <button type="button" class="btn btn-success" id="saveCommissionBtn">
+
+                                <i class="fa fa-save"></i>
+                                Save
 
                             </button>
 
@@ -302,424 +591,97 @@
 
                     </div>
 
-                </form>
-
-                <hr>
-
-                {{-- Entries --}}
-
-                <div class="row mb-3">
-
-                    <div class="col-md-6">
-
-                        <form method="GET">
-
-                            @foreach (request()->query() as $key => $value)
-                                @if ($key != 'limit' && $key != 'page')
-                                    <input type="hidden" name="{{ $key }}" value="{{ $value }}">
-                                @endif
-                            @endforeach
-
-                            <div class="d-flex align-items-center">
-
-                                <label class="me-2">
-                                    Show
-                                </label>
-
-                                <select name="limit" class="form-select" style="width:90px;"
-                                    onchange="this.form.submit()">
-
-                                    <option value="10" {{ request('limit', 10) == 10 ? 'selected' : '' }}>
-                                        10
-                                    </option>
-
-                                    <option value="25" {{ request('limit') == 25 ? 'selected' : '' }}>
-                                        25
-                                    </option>
-
-                                    <option value="50" {{ request('limit') == 50 ? 'selected' : '' }}>
-                                        50
-                                    </option>
-
-                                    <option value="100" {{ request('limit') == 100 ? 'selected' : '' }}>
-                                        100
-                                    </option>
-
-                                </select>
-
-                                <span class="ms-2">
-                                    Entries
-                                </span>
-
-                            </div>
-
-                        </form>
-
-                    </div>
-
                 </div>
 
-                <div class="table-responsive">
+            </div>
 
-                    <table class="table table-bordered table-hover table-striped" id="opr_table">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Notes</th>
-                                <th>Name</th>
-                                <th>Number</th>
-                                <th>Country</th>
-                                <th>Source</th>
-                                <th>Counselor</th>
-                                <th>File No</th>
-                                <th>Status</th>
-                                <th>Email</th>
-                                <th>Province</th>
-                                <th>College</th>
-                                <th>Campus</th>
-                                <th>Program</th>
-                                <th>Officer</th>
-                                <th>Enrolled Date</th>
-                                <th>View</th>
-                                <th>Commission</th>
-                                <th>Assign</th>
-                                <th>Logs</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            @forelse($students as $row)
-                                <tr>
-
-                                    <td>
-
-                                        <button type="button" class="btn btn-success btn-sm open-notes-modal"
-                                            data-file-no="{{ $row->sno }}" data-name="{{ $row->sname }}">
-
-                                            <i class="fa fa-sticky-note"></i>
-                                            Notes
-
-                                        </button>
-
-                                    </td>
-
-                                    <td>{{ $row->sname }}</td>
-
-                                    <td>
-
-                                        @if (!empty($row->old_file_no) && $row->student_status == 'Re-enrolled')
-                                            <a class="btn btn-success btn-sm"
-                                                href="{{ route('student.history', ['smobile' => $row->smobile]) }}">
-
-                                                {{ $row->smobile }}
-
-                                            </a>
-                                        @else
-                                            {{ $row->smobile }}
-                                        @endif
-
-                                    </td>
-
-                                    <td>{{ $row->scountry }}</td>
-
-                                    <td>{{ $row->ssource }}</td>
-
-                                    <td>{{ $row->assign_name }}</td>
-
-                                    <td>{{ $row->file_no }}</td>
-
-                                    <td>
-
-                                        <span class="badge bg-success">
-
-                                            {{ $row->student_status }}
-
-                                        </span>
-
-                                    </td>
-
-                                    <td>{{ $row->semail }}</td>
-
-                                    <td>{{ $row->province_name }}</td>
-
-                                    <td>{{ $row->collage_name }}</td>
-
-                                    <td>{{ $row->campus_name }}</td>
-
-                                    <td>{{ $row->program_name }}</td>
-
-                                    <td>{{ $row->officer_name }}</td>
-
-                                    <td>{{ $row->enrolled_date }}</td>
-
-                                    <td>
-
-                                        <a href="{{ route('walking-details', ['smobile' => $row->smobile]) }}"
-                                            class="btn btn-primary btn-sm">
-
-                                            View
-
-                                        </a>
-
-                                    </td>
-
-                                    <td>
-
-                                        <button class="btn btn-info btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#commisionstatus" data-id="{{ $row->sno }}">
-
-                                            Status
-
-                                        </button>
-
-                                        <br>
-
-                                        <small>
-                                            {{ $row->commission_status ?? 'Pending' }}
-                                        </small>
-
-                                    </td>
-
-                                    <td>
-
-                                        <button class="btn btn-warning btn-sm" data-bs-toggle="modal"
-                                            data-bs-target="#myassignModal" data-id="{{ $row->sno }}">
-
-                                            Change Assign
-
-                                        </button>
-
-                                    </td>
-
-                                    <td>
-
-                                        <button class="btn btn-secondary btn-sm view-logs-btn"
-                                            data-file-no="{{ $row->sno }}" data-name="{{ $row->sname }}">
-
-                                            <i class="fa fa-history"></i>
-                                            Logs
-
-                                        </button>
-
-                                    </td>
-
-                                </tr>
-
-                            @empty
-
-                                <tr>
-
-                                    <td colspan="19" class="text-center">
-
-                                        No Record Found
-
-                                    </td>
-
-                                </tr>
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
-                </div>
-                {{-- ===========================================================
-COMMISSION STATUS MODAL
-=========================================================== --}}
-
-                <div class="modal fade" id="commisionstatus" tabindex="-1">
-
-                    <div class="modal-dialog">
-
-                        <div class="modal-content">
-
-                            <div class="modal-header bg-primary text-white">
-
-                                <h5 class="modal-title">
-                                    <i class="fa fa-money"></i>
-                                    Commission Status
-                                </h5>
-
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal">
-                                </button>
-
-                            </div>
-
-                            <div class="modal-body">
-
-                                <form id="commissionForm">
-
-                                    @csrf
-
-                                    <input type="hidden" id="recordId" name="id">
-
-                                    <div class="mb-3">
-
-                                        <label>
-                                            Commission Status
-                                        </label>
-
-                                        <select class="form-control" id="commissionStatus" name="status">
-
-                                            <option value="">
-                                                Select Status
-                                            </option>
-
-                                            <option value="Commission 1">
-                                                Commission 1
-                                            </option>
-
-                                            <option value="Commission 2">
-                                                Commission 2
-                                            </option>
-
-                                        </select>
-
-                                    </div>
-
-                                    <div class="mb-3 d-none" id="commissionOneGroup">
-
-                                        <label>
-                                            Commission One Amount
-                                        </label>
-
-                                        <input type="number" class="form-control" id="commissionAmountOne"
-                                            name="comm_one_amt" placeholder="Enter Amount">
-
-                                    </div>
-
-                                    <div class="mb-3 d-none" id="commissionTwoGroup">
-
-                                        <label>
-                                            Commission Two Amount
-                                        </label>
-
-                                        <input type="number" class="form-control" id="commissionAmountTwo"
-                                            name="comm_two_amt" placeholder="Enter Amount">
-
-                                    </div>
-
-                                </form>
-
-                            </div>
-
-                            <div class="modal-footer">
-
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-
-                                    Close
-
-                                </button>
-
-                                <button type="button" class="btn btn-success" id="saveCommissionBtn">
-
-                                    <i class="fa fa-save"></i>
-                                    Save
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </div>
-
-                {{-- ===========================================================
+            {{-- ===========================================================
 ASSIGN OPERATION MODAL
 =========================================================== --}}
 
-                <div class="modal fade" id="myassignModal" tabindex="-1">
+            <div class="modal fade" id="myassignModal" tabindex="-1">
 
-                    <div class="modal-dialog">
+                <div class="modal-dialog">
 
-                        <div class="modal-content">
+                    <div class="modal-content">
 
-                            <div class="modal-header bg-warning">
+                        <div class="modal-header bg-warning">
 
-                                <h5 class="modal-title">
+                            <h5 class="modal-title">
 
-                                    <i class="fa fa-user-plus"></i>
+                                <i class="fa fa-user-plus"></i>
 
-                                    Assign Operation
+                                Assign Operation
 
-                                </h5>
+                            </h5>
 
-                                <button type="button" class="btn-close" data-bs-dismiss="modal">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal">
 
-                                </button>
+                            </button>
 
-                            </div>
+                        </div>
 
-                            <div class="modal-body">
+                        <div class="modal-body">
 
-                                <form id="assign_register">
+                            <form id="assign_register">
 
-                                    @csrf
+                                @csrf
 
-                                    <input type="hidden" id="appntid" name="appntid">
+                                <input type="hidden" id="appntid" name="appntid">
 
-                                    <div class="mb-3">
+                                <div class="mb-3">
 
-                                        <label>
-                                            Assign User
-                                        </label>
+                                    <label>
+                                        Assign User
+                                    </label>
 
-                                        <select class="form-control" name="assign" required>
+                                    <select class="form-control" name="assign" required>
 
-                                            <option value="">
-                                                Select User
+                                        <option value="">
+                                            Select User
+                                        </option>
+
+                                        @foreach ($operations as $user)
+                                            <option value="{{ $user->id }}">
+
+                                                {{ $user->name }}
+
                                             </option>
+                                        @endforeach
 
-                                            @foreach ($operations as $user)
-                                                <option value="{{ $user->id }}">
+                                    </select>
 
-                                                    {{ $user->name }}
+                                </div>
 
-                                                </option>
-                                            @endforeach
+                                <div class="mb-3">
 
-                                        </select>
+                                    <label>
+                                        Remarks
+                                    </label>
 
-                                    </div>
+                                    <textarea class="form-control" name="remarks" rows="4" placeholder="Enter Remarks"></textarea>
 
-                                    <div class="mb-3">
+                                </div>
 
-                                        <label>
-                                            Remarks
-                                        </label>
+                            </form>
 
-                                        <textarea class="form-control" name="remarks" rows="4" placeholder="Enter Remarks"></textarea>
+                        </div>
 
-                                    </div>
+                        <div class="modal-footer">
 
-                                </form>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
 
-                            </div>
+                                Close
 
-                            <div class="modal-footer">
+                            </button>
 
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <button type="button" class="btn btn-success assign_submit">
 
-                                    Close
+                                <i class="fa fa-save"></i>
 
-                                </button>
+                                Assign
 
-                                <button type="button" class="btn btn-success assign_submit">
-
-                                    <i class="fa fa-save"></i>
-
-                                    Assign
-
-                                </button>
-
-                            </div>
+                            </button>
 
                         </div>
 
@@ -727,107 +689,107 @@ ASSIGN OPERATION MODAL
 
                 </div>
 
-                {{-- ===========================================================
+            </div>
+
+            {{-- ===========================================================
 NOTES MODAL
 =========================================================== --}}
 
-                <div class="modal fade" id="notesModal" tabindex="-1">
+            <div class="modal fade" id="notesModal" tabindex="-1">
 
-                    <div class="modal-dialog modal-xl">
+                <div class="modal-dialog modal-xl">
 
-                        <div class="modal-content">
+                    <div class="modal-content">
 
-                            <div class="modal-header bg-success text-white">
+                        <div class="modal-header bg-success text-white">
 
-                                <h5 class="modal-title">
+                            <h5 class="modal-title">
 
-                                    <i class="fa fa-sticky-note"></i>
+                                <i class="fa fa-sticky-note"></i>
 
-                                    Notes For : <span id="NotesModalName"></span>
+                                Notes For : <span id="NotesModalName"></span>
 
-                                </h5>
+                            </h5>
 
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal">
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal">
+
+                            </button>
+
+                        </div>
+
+                        <div class="modal-body">
+
+                            <form id="addNotesForm">
+
+                                @csrf
+
+                                <input type="hidden" id="note_id" name="note_id">
+
+                                <div class="mb-3">
+
+                                    <label>
+                                        Add Note
+                                    </label>
+
+                                    <textarea class="form-control" id="newNote" name="newNote" rows="4" placeholder="Enter Note..." required></textarea>
+
+                                </div>
+
+                                <button type="submit" id="saveNoteBtn" class="btn btn-success">
+
+                                    <i class="fa fa-save"></i>
+
+                                    Save Note
 
                                 </button>
 
-                            </div>
+                            </form>
 
-                            <div class="modal-body">
+                            <hr>
 
-                                <form id="addNotesForm">
+                            <div class="table-responsive">
 
-                                    @csrf
+                                <table class="table table-bordered table-striped">
 
-                                    <input type="hidden" id="note_id" name="note_id">
+                                    <thead class="table-dark">
 
-                                    <div class="mb-3">
+                                        <tr>
 
-                                        <label>
-                                            Add Note
-                                        </label>
+                                            <th width="70">
+                                                S.No.
+                                            </th>
 
-                                        <textarea class="form-control" id="newNote" name="newNote" rows="4" placeholder="Enter Note..." required></textarea>
+                                            <th>
+                                                Remarks
+                                            </th>
 
-                                    </div>
+                                            <th width="180">
+                                                Updated By
+                                            </th>
 
-                                    <button type="submit" id="saveNoteBtn" class="btn btn-success">
+                                            <th width="180">
+                                                Date
+                                            </th>
 
-                                        <i class="fa fa-save"></i>
+                                        </tr>
 
-                                        Save Note
+                                    </thead>
 
-                                    </button>
+                                    <tbody id="NotesTableBody">
 
-                                </form>
+                                        <tr>
 
-                                <hr>
+                                            <td colspan="4" class="text-center">
 
-                                <div class="table-responsive">
+                                                No Notes Found
 
-                                    <table class="table table-bordered table-striped">
+                                            </td>
 
-                                        <thead class="table-dark">
+                                        </tr>
 
-                                            <tr>
+                                    </tbody>
 
-                                                <th width="70">
-                                                    S.No.
-                                                </th>
-
-                                                <th>
-                                                    Remarks
-                                                </th>
-
-                                                <th width="180">
-                                                    Updated By
-                                                </th>
-
-                                                <th width="180">
-                                                    Date
-                                                </th>
-
-                                            </tr>
-
-                                        </thead>
-
-                                        <tbody id="NotesTableBody">
-
-                                            <tr>
-
-                                                <td colspan="4" class="text-center">
-
-                                                    No Notes Found
-
-                                                </td>
-
-                                            </tr>
-
-                                        </tbody>
-
-                                    </table>
-
-                                </div>
+                                </table>
 
                             </div>
 
@@ -837,341 +799,343 @@ NOTES MODAL
 
                 </div>
 
-                {{-- ===========================================================
+            </div>
+
+            {{-- ===========================================================
 LOGS MODAL
 =========================================================== --}}
 
-                <div class="modal fade" id="logsModal" tabindex="-1">
-                    <div class="modal-dialog modal-xl">
-                        <div class="modal-content">
+            <div class="modal fade" id="logsModal" tabindex="-1">
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
 
-                            <div class="modal-header bg-secondary text-white">
-                                <h5 class="modal-title">
-                                    <i class="fa fa-history"></i>
-                                    Status Logs :
-                                    <span id="logsStudentName"></span>
-                                </h5>
+                        <div class="modal-header bg-secondary text-white">
+                            <h5 class="modal-title">
+                                <i class="fa fa-history"></i>
+                                Status Logs :
+                                <span id="logsStudentName"></span>
+                            </h5>
 
-                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal">
-                                </button>
+                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal">
+                            </button>
+                        </div>
+
+                        <div class="modal-body">
+
+                            {{-- Status Logs --}}
+                            <h5 class="text-center bg-dark text-white p-2 mb-3">
+                                Status Logs
+                            </h5>
+
+                            <div class="table-responsive mb-4">
+                                <table class="table table-bordered table-striped">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th width="140">Stage Date</th>
+                                            <th width="180">Status</th>
+                                            <th>Remarks</th>
+                                            <th width="180">Updated By</th>
+                                            <th width="150">Created Date</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="logsTableBody">
+                                        <tr>
+                                            <td colspan="5" class="text-center">
+                                                Loading...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+
+                                </table>
                             </div>
 
-                            <div class="modal-body">
+                            {{-- Notes --}}
+                            <h5 class="text-center bg-dark text-white p-2 mb-3">
+                                Notes
+                            </h5>
 
-                                {{-- Status Logs --}}
-                                <h5 class="text-center bg-dark text-white p-2 mb-3">
-                                    Status Logs
-                                </h5>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped">
+                                    <thead class="table-dark">
+                                        <tr>
+                                            <th width="60">Sno</th>
+                                            <th>Remarks</th>
+                                            <th width="180">Updated By</th>
+                                            <th width="180">Action Datetime</th>
+                                        </tr>
+                                    </thead>
 
-                                <div class="table-responsive mb-4">
-                                    <table class="table table-bordered table-striped">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th width="140">Stage Date</th>
-                                                <th width="180">Status</th>
-                                                <th>Remarks</th>
-                                                <th width="180">Updated By</th>
-                                                <th width="150">Created Date</th>
-                                            </tr>
-                                        </thead>
+                                    <tbody id="notesTableBody">
+                                        <tr>
+                                            <td colspan="4" class="text-center">
+                                                Loading...
+                                            </td>
+                                        </tr>
+                                    </tbody>
 
-                                        <tbody id="logsTableBody">
-                                            <tr>
-                                                <td colspan="5" class="text-center">
-                                                    Loading...
-                                                </td>
-                                            </tr>
-                                        </tbody>
-
-                                    </table>
-                                </div>
-
-                                {{-- Notes --}}
-                                <h5 class="text-center bg-dark text-white p-2 mb-3">
-                                    Notes
-                                </h5>
-
-                                <div class="table-responsive">
-                                    <table class="table table-bordered table-striped">
-                                        <thead class="table-dark">
-                                            <tr>
-                                                <th width="60">Sno</th>
-                                                <th>Remarks</th>
-                                                <th width="180">Updated By</th>
-                                                <th width="180">Action Datetime</th>
-                                            </tr>
-                                        </thead>
-
-                                        <tbody id="notesTableBody">
-                                            <tr>
-                                                <td colspan="4" class="text-center">
-                                                    Loading...
-                                                </td>
-                                            </tr>
-                                        </tbody>
-
-                                    </table>
-                                </div>
-
-                            </div>
-
-                            <div class="modal-footer">
-                                <button class="btn btn-secondary" data-bs-dismiss="modal">
-                                    Close
-                                </button>
+                                </table>
                             </div>
 
                         </div>
+
+                        <div class="modal-footer">
+                            <button class="btn btn-secondary" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                        </div>
+
                     </div>
                 </div>
-                <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+            </div>
+            <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-                <script>
-                    $(document).ready(function() {
-
-
-                        /*
-                        ==========================================
-                        CSRF TOKEN
-                        ==========================================
-                        */
-
-                        $.ajaxSetup({
-
-                            headers: {
-
-                                'X-CSRF-TOKEN': "{{ csrf_token() }}"
-
-                            }
-
-                        });
+            <script>
+                $(document).ready(function() {
 
 
+                    /*
+                    ==========================================
+                    CSRF TOKEN
+                    ==========================================
+                    */
 
-                        /*
-                        ==========================================
-                        PROVINCE + COLLEGE => CAMPUS
-                        ==========================================
-                        */
+                    $.ajaxSetup({
 
-                        $('#province_name, #collage_name').on('change', function() {
+                        headers: {
 
+                            'X-CSRF-TOKEN': "{{ csrf_token() }}"
 
-                            let province_name = $('#province_name').val();
-                            let collage_name = $('#collage_name').val();
+                        }
 
-
-                            if (province_name && collage_name) {
-
-
-                                $.ajax({
-
-                                    url: "{{ route('get.campus') }}",
-
-                                    type: "GET",
-
-                                    data: {
-
-                                        province_name: province_name,
-                                        collage_name: collage_name
-
-                                    },
+                    });
 
 
-                                    success: function(response) {
+
+                    /*
+                    ==========================================
+                    PROVINCE + COLLEGE => CAMPUS
+                    ==========================================
+                    */
+
+                    $('#province_name, #collage_name').on('change', function() {
 
 
-                                        $('#campus')
-                                            .html('<option value="">--Select Campus--</option>');
+                        let province_name = $('#province_name').val();
+                        let collage_name = $('#collage_name').val();
 
 
-                                        $.each(response, function(index, value) {
+                        if (province_name && collage_name) {
 
 
-                                            $('#campus').append(
+                            $.ajax({
 
-                                                `<option value="${value.campus_name}">
+                                url: "{{ route('get.campus') }}",
+
+                                type: "GET",
+
+                                data: {
+
+                                    province_name: province_name,
+                                    collage_name: collage_name
+
+                                },
+
+
+                                success: function(response) {
+
+
+                                    $('#campus')
+                                        .html('<option value="">--Select Campus--</option>');
+
+
+                                    $.each(response, function(index, value) {
+
+
+                                        $('#campus').append(
+
+                                            `<option value="${value.campus_name}">
                                 ${value.campus_name}
                             </option>`
 
-                                            );
+                                        );
 
 
-                                        });
+                                    });
 
 
-                                    },
+                                },
 
-                                    error: function(xhr) {
+                                error: function(xhr) {
 
-                                        console.log(xhr.responseText);
+                                    console.log(xhr.responseText);
 
-                                    }
+                                }
 
 
-                                });
+                            });
 
 
-                            }
+                        }
 
 
-                        });
+                    });
 
 
 
 
 
-                        /*
-                        ==========================================
-                        CAMPUS => PROGRAM
-                        ==========================================
-                        */
+                    /*
+                    ==========================================
+                    CAMPUS => PROGRAM
+                    ==========================================
+                    */
 
 
-                        $('#campus').on('change', function() {
+                    $('#campus').on('change', function() {
 
 
-                            let province_name = $('#province_name').val();
-                            let collage_name = $('#collage_name').val();
-                            let campus_name = $('#campus').val();
+                        let province_name = $('#province_name').val();
+                        let collage_name = $('#collage_name').val();
+                        let campus_name = $('#campus').val();
 
 
 
-                            if (campus_name) {
+                        if (campus_name) {
 
-
-
-                                $.ajax({
-
-
-                                    url: "{{ route('get.program') }}",
-
-                                    type: "GET",
-
-                                    data: {
-
-
-                                        province_name: province_name,
-                                        collage_name: collage_name,
-                                        campus_name: campus_name
-
-
-                                    },
-
-
-                                    success: function(response) {
-
-
-                                        $('#program_name')
-                                            .html('<option value="">--Select Program--</option>');
-
-
-                                        $.each(response, function(index, value) {
-
-
-                                            $('#program_name').append(
-
-                                                `<option value="${value.prg_name}">
-                                ${value.prg_name}
-                            </option>`
-
-                                            );
-
-
-                                        });
-
-
-                                    },
-
-                                    error: function(xhr) {
-
-                                        console.log(xhr.responseText);
-
-                                    }
-
-
-
-                                });
-
-
-
-                            }
-
-
-
-                        });
-
-
-
-
-
-                        /*
-                        ==========================================
-                        NOTES MODAL
-                        ==========================================
-                        */
-
-
-                        $(document).on('click', '.open-notes-modal', function() {
-
-
-                            let id = $(this).data('file-no');
-                            let name = $(this).data('name');
-
-
-                            $('#note_id').val(id);
-
-                            $('#NotesModalName').text(name);
-
-                            $('#newNote').val('');
-
-
-                            $('#notesModal').modal('show');
-
-
-                            loadNotes(id);
-
-
-                        });
-
-
-
-
-
-                        function loadNotes(id) {
 
 
                             $.ajax({
 
 
-                                url: "{{ route('notes.get') }}",
+                                url: "{{ route('get.program') }}",
 
-                                type: "POST",
+                                type: "GET",
 
                                 data: {
 
 
-                                    note_id: id
+                                    province_name: province_name,
+                                    collage_name: collage_name,
+                                    campus_name: campus_name
 
 
                                 },
 
 
-                                success: function(res) {
+                                success: function(response) {
 
 
-                                    let html = '';
+                                    $('#program_name')
+                                        .html('<option value="">--Select Program--</option>');
 
 
-                                    if (res.notes && res.notes.length) {
+                                    $.each(response, function(index, value) {
 
 
-                                        $.each(res.notes, function(i, row) {
+                                        $('#program_name').append(
+
+                                            `<option value="${value.prg_name}">
+                                ${value.prg_name}
+                            </option>`
+
+                                        );
 
 
-                                            html += `
+                                    });
+
+
+                                },
+
+                                error: function(xhr) {
+
+                                    console.log(xhr.responseText);
+
+                                }
+
+
+
+                            });
+
+
+
+                        }
+
+
+
+                    });
+
+
+
+
+
+                    /*
+                    ==========================================
+                    NOTES MODAL
+                    ==========================================
+                    */
+
+
+                    $(document).on('click', '.open-notes-modal', function() {
+
+
+                        let id = $(this).data('file-no');
+                        let name = $(this).data('name');
+
+
+                        $('#note_id').val(id);
+
+                        $('#NotesModalName').text(name);
+
+                        $('#newNote').val('');
+
+
+                        $('#notesModal').modal('show');
+
+
+                        loadNotes(id);
+
+
+                    });
+
+
+
+
+
+                    function loadNotes(id) {
+
+
+                        $.ajax({
+
+
+                            url: "{{ route('notes.get') }}",
+
+                            type: "POST",
+
+                            data: {
+
+
+                                note_id: id
+
+
+                            },
+
+
+                            success: function(res) {
+
+
+                                let html = '';
+
+
+                                if (res.notes && res.notes.length) {
+
+
+                                    $.each(res.notes, function(i, row) {
+
+
+                                        html += `
 
                         <tr>
 
@@ -1188,14 +1152,14 @@ LOGS MODAL
                         `;
 
 
-                                        });
+                                    });
 
 
 
-                                    } else {
+                                } else {
 
 
-                                        html = `
+                                    html = `
 
                     <tr>
                     <td colspan="4" class="text-center">
@@ -1206,73 +1170,73 @@ LOGS MODAL
                     `;
 
 
-                                    }
-
-
-                                    $('#NotesTableBody').html(html);
-
-
-
                                 }
 
 
-                            });
-
-
-                        }
-
-                        $('#addNotesForm').submit(function(e) {
-
-
-                            e.preventDefault();
+                                $('#NotesTableBody').html(html);
 
 
 
-                            $.ajax({
-
-
-                                url: "{{ route('notes.add') }}",
-
-                                type: "POST",
-
-                                data: $(this).serialize(),
-
-
-                                success: function() {
-
-
-                                    loadNotes($('#note_id').val());
-
-                                    $('#newNote').val('');
-
-
-
-                                }
-
-
-                            });
+                            }
 
 
                         });
 
 
+                    }
+
+                    $('#addNotesForm').submit(function(e) {
+
+
+                        e.preventDefault();
+
+
+
+                        $.ajax({
+
+
+                            url: "{{ route('notes.add') }}",
+
+                            type: "POST",
+
+                            data: $(this).serialize(),
+
+
+                            success: function() {
+
+
+                                loadNotes($('#note_id').val());
+
+                                $('#newNote').val('');
+
+
+
+                            }
+
+
+                        });
+
+
+                    });
 
 
 
 
-                        /*
-                        ==========================================
-                        LOGS MODAL
-                        ==========================================
-                        */
-                        $(document).on('click', '.view-logs-btn', function() {
 
-                            let id = $(this).data('file-no');
-                            let name = $(this).data('name');
 
-                            $('#logsStudentName').text(name);
+                    /*
+                    ==========================================
+                    LOGS MODAL
+                    ==========================================
+                    */
+                    $(document).on('click', '.view-logs-btn', function() {
 
-                            $('#logsTableBody').html(`
+                        let id = $(this).data('file-no');
+                        let name = $(this).data('name');
+
+                        $('#logsStudentName').text(name);
+
+                        $('#logsTableBody').html(`
         <tr>
             <td colspan="5" class="text-center">
                 Loading...
@@ -1280,7 +1244,7 @@ LOGS MODAL
         </tr>
     `);
 
-                            $('#notesTableBody').html(`
+                        $('#notesTableBody').html(`
         <tr>
             <td colspan="4" class="text-center">
                 Loading...
@@ -1288,30 +1252,30 @@ LOGS MODAL
         </tr>
     `);
 
-                            var modal = new bootstrap.Modal(document.getElementById('logsModal'));
-                            modal.show();
+                        var modal = new bootstrap.Modal(document.getElementById('logsModal'));
+                        modal.show();
 
-                            $.ajax({
+                        $.ajax({
 
-                                url: "{{ route('branch.manager.logs') }}",
-                                type: "POST",
+                            url: "{{ route('branch.manager.logs') }}",
+                            type: "POST",
 
-                                data: {
-                                    semi_id: id,
-                                    _token: "{{ csrf_token() }}"
-                                },
+                            data: {
+                                semi_id: id,
+                                _token: "{{ csrf_token() }}"
+                            },
 
-                                success: function(res) {
+                            success: function(res) {
 
-                                    //==================== Status Logs ====================
+                                //==================== Status Logs ====================
 
-                                    let logsHtml = '';
+                                let logsHtml = '';
 
-                                    if (res.logs.length > 0) {
+                                if (res.logs.length > 0) {
 
-                                        $.each(res.logs, function(i, row) {
+                                    $.each(res.logs, function(i, row) {
 
-                                            logsHtml += `
+                                        logsHtml += `
                         <tr>
                             <td>${row.stage_date ?? '-'}</td>
                             <td>${row.stage ?? '-'}</td>
@@ -1321,11 +1285,11 @@ LOGS MODAL
                         </tr>
                     `;
 
-                                        });
+                                    });
 
-                                    } else {
+                                } else {
 
-                                        logsHtml = `
+                                    logsHtml = `
                     <tr>
                         <td colspan="5" class="text-center text-danger">
                             No Status Logs Found
@@ -1333,20 +1297,20 @@ LOGS MODAL
                     </tr>
                 `;
 
-                                    }
+                                }
 
-                                    $('#logsTableBody').html(logsHtml);
+                                $('#logsTableBody').html(logsHtml);
 
 
-                                    //==================== Notes ====================
+                                //==================== Notes ====================
 
-                                    let notesHtml = '';
+                                let notesHtml = '';
 
-                                    if (res.notes.length > 0) {
+                                if (res.notes.length > 0) {
 
-                                        $.each(res.notes, function(i, row) {
+                                    $.each(res.notes, function(i, row) {
 
-                                            notesHtml += `
+                                        notesHtml += `
                         <tr>
                             <td>${i + 1}</td>
                             <td>${row.remarks ?? '-'}</td>
@@ -1355,11 +1319,11 @@ LOGS MODAL
                         </tr>
                     `;
 
-                                        });
+                                    });
 
-                                    } else {
+                                } else {
 
-                                        notesHtml = `
+                                    notesHtml = `
                     <tr>
                         <td colspan="4" class="text-center text-danger">
                             No Notes Found
@@ -1367,15 +1331,15 @@ LOGS MODAL
                     </tr>
                 `;
 
-                                    }
+                                }
 
-                                    $('#notesTableBody').html(notesHtml);
+                                $('#notesTableBody').html(notesHtml);
 
-                                },
+                            },
 
-                                error: function() {
+                            error: function() {
 
-                                    $('#logsTableBody').html(`
+                                $('#logsTableBody').html(`
                 <tr>
                     <td colspan="5" class="text-center text-danger">
                         Unable to load Status Logs.
@@ -1383,7 +1347,7 @@ LOGS MODAL
                 </tr>
             `);
 
-                                    $('#notesTableBody').html(`
+                                $('#notesTableBody').html(`
                 <tr>
                     <td colspan="4" class="text-center text-danger">
                         Unable to load Notes.
@@ -1391,195 +1355,67 @@ LOGS MODAL
                 </tr>
             `);
 
-                                }
-
-                            });
-
-                        });
-
-
-
-
-                        /*
-                        ==========================================
-                        ASSIGN MODAL
-                        ==========================================
-                        */
-
-
-                        $('#myassignModal').on('show.bs.modal', function(e) {
-
-
-                            let id = $(e.relatedTarget).data('id');
-
-
-                            $('#appntid').val(id);
-
-
-                        });
-
-
-
-
-
-                        $('.assign_submit').click(function() {
-
-
-
-                            $.ajax({
-
-
-                                url: "{{ route('assign.operation') }}",
-
-                                type: "POST",
-
-                                data: $('#assign_register').serialize(),
-
-
-                                success: function(res) {
-
-
-                                    alert(res.message);
-
-                                    location.reload();
-
-
-                                },
-
-
-                                error: function(xhr) {
-
-                                    console.log(xhr.responseText);
-
-                                }
-
-
-
-                            });
-
-
-
-                        });
-
-
-
-
-
-
-                        /*
-                        ==========================================
-                        COMMISSION STATUS
-                        ==========================================
-                        */
-
-
-                        $('#commisionstatus').on('show.bs.modal', function(e) {
-
-
-                            let id = $(e.relatedTarget).data('id');
-
-
-                            $('#recordId').val(id);
-
-
-
-                        });
-
-
-
-
-                        $('#commissionStatus').on('change', function() {
-
-
-                            let val = $(this).val();
-
-
-                            $('#commissionOneGroup')
-                                .addClass('d-none');
-
-
-                            $('#commissionTwoGroup')
-                                .addClass('d-none');
-
-
-
-                            if (val == "Commission 1") {
-
-
-                                $('#commissionOneGroup')
-                                    .removeClass('d-none');
-
-
                             }
 
-
-                            if (val == "Commission 2") {
-
-
-                                $('#commissionOneGroup')
-                                    .removeClass('d-none');
-
-
-                                $('#commissionTwoGroup')
-                                    .removeClass('d-none');
-
-
-                            }
-
-
-
                         });
 
+                    });
+
+
+
+
+                    /*
+                    ==========================================
+                    ASSIGN MODAL
+                    ==========================================
+                    */
+
+
+                    $('#myassignModal').on('show.bs.modal', function(e) {
+
+
+                        let id = $(e.relatedTarget).data('id');
+
+
+                        $('#appntid').val(id);
+
+
+                    });
 
 
 
 
 
-                        $('#saveCommissionBtn').click(function() {
-
-
-                            $.ajax({
-
-
-                                url: "{{ route('save.commission.status') }}",
-
-                                type: "POST",
-
-                                data: {
-
-
-                                    id: $('#recordId').val(),
-
-                                    status: $('#commissionStatus').val(),
-
-                                    comm_one_amt: $('#commissionAmountOne').val(),
-
-                                    comm_two_amt: $('#commissionAmountTwo').val()
-
-
-                                },
-
-
-                                success: function(res) {
-
-
-                                    alert(res.message);
-
-                                    location.reload();
-
-
-                                },
-
-
-                                error: function(xhr) {
-
-                                    console.log(xhr.responseText);
-
-                                }
+                    $('.assign_submit').click(function() {
 
 
 
-                            });
+                        $.ajax({
+
+
+                            url: "{{ route('assign.operation') }}",
+
+                            type: "POST",
+
+                            data: $('#assign_register').serialize(),
+
+
+                            success: function(res) {
+
+
+                                alert(res.message);
+
+                                location.reload();
+
+
+                            },
+
+
+                            error: function(xhr) {
+
+                                console.log(xhr.responseText);
+
+                            }
 
 
 
@@ -1588,6 +1424,134 @@ LOGS MODAL
 
 
                     });
-                </script>
 
-            @endsection
+
+
+
+
+
+                    /*
+                    ==========================================
+                    COMMISSION STATUS
+                    ==========================================
+                    */
+
+
+                    $('#commisionstatus').on('show.bs.modal', function(e) {
+
+
+                        let id = $(e.relatedTarget).data('id');
+
+
+                        $('#recordId').val(id);
+
+
+
+                    });
+
+
+
+
+                    $('#commissionStatus').on('change', function() {
+
+
+                        let val = $(this).val();
+
+
+                        $('#commissionOneGroup')
+                            .addClass('d-none');
+
+
+                        $('#commissionTwoGroup')
+                            .addClass('d-none');
+
+
+
+                        if (val == "Commission 1") {
+
+
+                            $('#commissionOneGroup')
+                                .removeClass('d-none');
+
+
+                        }
+
+
+                        if (val == "Commission 2") {
+
+
+                            $('#commissionOneGroup')
+                                .removeClass('d-none');
+
+
+                            $('#commissionTwoGroup')
+                                .removeClass('d-none');
+
+
+                        }
+
+
+
+                    });
+
+
+
+
+
+
+                    $('#saveCommissionBtn').click(function() {
+
+
+                        $.ajax({
+
+
+                            url: "{{ route('save.commission.status') }}",
+
+                            type: "POST",
+
+                            data: {
+
+
+                                id: $('#recordId').val(),
+
+                                status: $('#commissionStatus').val(),
+
+                                comm_one_amt: $('#commissionAmountOne').val(),
+
+                                comm_two_amt: $('#commissionAmountTwo').val()
+
+
+                            },
+
+
+                            success: function(res) {
+
+
+                                alert(res.message);
+
+                                location.reload();
+
+
+                            },
+
+
+                            error: function(xhr) {
+
+                                console.log(xhr.responseText);
+
+                            }
+
+
+
+                        });
+
+
+
+                    });
+
+
+
+                });
+            </script>
+
+        @endsection

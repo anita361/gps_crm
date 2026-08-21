@@ -15,6 +15,7 @@ use App\Models\CrmLogin;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
+use App\Models\Student;
 
 
 use App\Mail\StudentConsentMail;
@@ -132,97 +133,96 @@ class WalkinController extends Controller
     // }
 
     public function show($smobile)
-{
-    /*
+    {
+        /*
     |--------------------------------------------------------------------------
     | GET STUDENT
     |--------------------------------------------------------------------------
     */
 
-    $student = DB::table('seminarpre')
-        ->leftJoin(
-            'lead_appointed',
-            'seminarpre.sno',
-            '=',
-            'lead_appointed.seminar_id'
-        )
-        ->where('seminarpre.smobile', $smobile)
-        ->select(
-            'seminarpre.*',
+        $student = DB::table('seminarpre')
+            ->leftJoin(
+                'lead_appointed',
+                'seminarpre.sno',
+                '=',
+                'lead_appointed.seminar_id'
+            )
+            ->where('seminarpre.smobile', $smobile)
+            ->select(
+                'seminarpre.*',
 
-            // Keep both province columns separate
-            'seminarpre.province_name as seminar_province_name',
-            'lead_appointed.province_name as lead_province_name'
-        )
-        ->first();
+                // Keep both province columns separate
+                'seminarpre.province_name as seminar_province_name',
+                'lead_appointed.province_name as lead_province_name'
+            )
+            ->first();
 
-    if (!$student) {
-        abort(404, 'Student not found');
-    }
+        if (!$student) {
+            abort(404, 'Student not found');
+        }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | LOGIN USER
     |--------------------------------------------------------------------------
     */
 
-    $login_id = session('login');
+        $login_id = session('login');
 
-    $user = DB::table('crm_login')
-        ->where('id', $login_id)
-        ->first();
+        $user = DB::table('crm_login')
+            ->where('id', $login_id)
+            ->first();
 
-    $sess_username = $user->username ?? '';
+        $sess_username = $user->username ?? '';
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | PROVINCES
     |--------------------------------------------------------------------------
     */
 
-    if (
-        $sess_username == 'jk@prises' ||
-        $sess_username == 'jk_careers'
-    ) {
+        if (
+            $sess_username == 'jk@prises' ||
+            $sess_username == 'jk_careers'
+        ) {
 
-        $provinces = DB::table('college_list')
-            ->select('province')
-            ->where('clg_name', 'AOL')
-            ->groupBy('province')
-            ->orderBy('province', 'ASC')
-            ->get();
+            $provinces = DB::table('college_list')
+                ->select('province')
+                ->where('clg_name', 'AOL')
+                ->groupBy('province')
+                ->orderBy('province', 'ASC')
+                ->get();
+        } else {
 
-    } else {
-
-        $provinces = DB::table('college_list')
-            ->select('province')
-            ->groupBy('province')
-            ->orderBy('province', 'ASC')
-            ->get();
-    }
+            $provinces = DB::table('college_list')
+                ->select('province')
+                ->groupBy('province')
+                ->orderBy('province', 'ASC')
+                ->get();
+        }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | STATUS HISTORY
     |--------------------------------------------------------------------------
     */
 
-    $statusHistory = DB::table('opr_sts_logs')
-        ->where('main_id', $student->sno)
-        ->orderBy('id', 'DESC')
-        ->get();
+        $statusHistory = DB::table('opr_sts_logs')
+            ->where('main_id', $student->sno)
+            ->orderBy('id', 'DESC')
+            ->get();
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | MAP DATABASE VALUES TO BLADE VALUES
     |--------------------------------------------------------------------------
     */
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | PROVINCE
     |--------------------------------------------------------------------------
@@ -235,86 +235,85 @@ class WalkinController extends Controller
     |
     */
 
-    $student->province = '';
+        $student->province = '';
 
-    if (!empty($student->seminar_province_name)) {
+        if (!empty($student->seminar_province_name)) {
 
-        $student->province = trim(
-            $student->seminar_province_name
-        );
+            $student->province = trim(
+                $student->seminar_province_name
+            );
+        } elseif (!empty($student->lead_province_name)) {
 
-    } elseif (!empty($student->lead_province_name)) {
-
-        $student->province = trim(
-            $student->lead_province_name
-        );
-    }
+            $student->province = trim(
+                $student->lead_province_name
+            );
+        }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | COLLEGE
     |--------------------------------------------------------------------------
     */
 
-    $student->college = '';
+        $student->college = '';
 
-    if (!empty($student->collage_name)) {
+        if (!empty($student->collage_name)) {
 
-        $student->college = trim(
-            $student->collage_name
-        );
-    }
+            $student->college = trim(
+                $student->collage_name
+            );
+        }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | CAMPUS
     |--------------------------------------------------------------------------
     */
 
-    $student->campus = '';
+        $student->campus = '';
 
-    if (!empty($student->campus_name)) {
+        if (!empty($student->campus_name)) {
 
-        $student->campus = trim(
-            $student->campus_name
-        );
-    }
+            $student->campus = trim(
+                $student->campus_name
+            );
+        }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | PROGRAM
     |--------------------------------------------------------------------------
     */
 
-    $student->program = '';
+        $student->program = '';
 
-    if (!empty($student->program_name)) {
+        if (!empty($student->program_name)) {
 
-        $student->program = trim(
-            $student->program_name
-        );
-    }
+            $student->program = trim(
+                $student->program_name
+            );
+        }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | FINANCE USER
     |--------------------------------------------------------------------------
     */
 
-    $student->finance_user = '';
+        $student->finance_user = '';
 
-    if (!empty($student->finance_id)) {
+        if (!empty($student->finance_id)) {
 
-        $student->finance_user =
-            $student->finance_id;
-    }
+            $student->finance_user =
+                $student->finance_id;
+        }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | FALLBACK PROVINCE FROM COLLEGE
     |--------------------------------------------------------------------------
@@ -324,121 +323,121 @@ class WalkinController extends Controller
     |
     */
 
-    if (
-        empty($student->province) &&
-        !empty($student->college)
-    ) {
-
-        $collegeProvince = DB::table('college_list')
-            ->where(
-                'clg_name',
-                $student->college
-            )
-            ->select('province')
-            ->first();
-
         if (
-            $collegeProvince &&
-            !empty($collegeProvince->province)
+            empty($student->province) &&
+            !empty($student->college)
         ) {
 
-            $student->province =
-                trim($collegeProvince->province);
+            $collegeProvince = DB::table('college_list')
+                ->where(
+                    'clg_name',
+                    $student->college
+                )
+                ->select('province')
+                ->first();
+
+            if (
+                $collegeProvince &&
+                !empty($collegeProvince->province)
+            ) {
+
+                $student->province =
+                    trim($collegeProvince->province);
+            }
         }
-    }
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | GET COLLEGES
     |--------------------------------------------------------------------------
     */
 
-    $colleges = DB::table('college_list')
-        ->select(
-            'clg_name',
-            'province'
-        )
-        ->orderBy(
-            'clg_name',
-            'ASC'
-        )
-        ->get();
+        $colleges = DB::table('college_list')
+            ->select(
+                'clg_name',
+                'province'
+            )
+            ->orderBy(
+                'clg_name',
+                'ASC'
+            )
+            ->get();
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | GET FINANCE USERS
     |--------------------------------------------------------------------------
     */
 
-    $financeUsers = DB::table('crm_login')
-        ->select(
-            'id',
-            'name'
-        )
-        ->orderBy(
-            'name',
-            'ASC'
-        )
-        ->get();
+        $financeUsers = DB::table('crm_login')
+            ->select(
+                'id',
+                'name'
+            )
+            ->orderBy(
+                'name',
+                'ASC'
+            )
+            ->get();
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | NOTES
     |--------------------------------------------------------------------------
     */
 
-    $notes = DB::table('notes_logs')
-        ->where(
-            'main_id',
-            $student->sno
-        )
-        ->orderBy(
-            'id',
-            'DESC'
-        )
-        ->get();
+        $notes = DB::table('notes_logs')
+            ->where(
+                'main_id',
+                $student->sno
+            )
+            ->orderBy(
+                'id',
+                'DESC'
+            )
+            ->get();
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | EMAIL TEMPLATES
     |--------------------------------------------------------------------------
     */
 
-    $templates = DB::table('email_temp')
-        ->where(
-            'act_status',
-            1
-        )
-        ->orderBy(
-            'temp_name',
-            'ASC'
-        )
-        ->get();
+        $templates = DB::table('email_temp')
+            ->where(
+                'act_status',
+                1
+            )
+            ->orderBy(
+                'temp_name',
+                'ASC'
+            )
+            ->get();
 
 
-    /*
+        /*
     |--------------------------------------------------------------------------
     | RETURN VIEW
     |--------------------------------------------------------------------------
     */
 
-    return view(
-        'branch_manager.walking_details',
-        compact(
-            'student',
-            'provinces',
-            'statusHistory',
-            'notes',
-            'templates',
-            'colleges',
-            'financeUsers'
-        )
-    );
-}
+        return view(
+            'branch_manager.walking_details',
+            compact(
+                'student',
+                'provinces',
+                'statusHistory',
+                'notes',
+                'templates',
+                'colleges',
+                'financeUsers'
+            )
+        );
+    }
 
     public function updateMobile(Request $request)
     {
@@ -962,526 +961,559 @@ class WalkinController extends Controller
     //         ->with('success', 'Status Updated Successfully.');
     // }
 
+    public function updateOperationStatus(Request $request)
+    {
+        try {
 
+            $request->validate([
+                'reg_sno'       => 'required',
+                'status'        => 'required',
+                'remarks'       => 'required',
+                'followup_date' => 'nullable|date',
+            ]);
+
+
+
+            $userId = session('login');
+
+            if (!$userId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Logged-in user ID not found in session.'
+                ], 401);
+            }
+
+
+            $user = CrmLogin::where('id', $userId)->first();
+
+            if (!$user) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Logged-in user not found.'
+                ], 404);
+            }
+
+            $sess_id = $user->id;
+
+
+            $sess_name = $user->username;
+
+
+            $semi_id = $request->reg_sno;
+
+            $file_name = $request->file_name ?? '';
+
+            $file_email = $request->file_email ?? '';
+
+            $stage = $request->status;
+
+            $oprStsSend = $request->oprStsSend ?? '';
+
+            $stage_date = $request->followup_date;
+
+            if (empty($stage_date)) {
+                $stage_date = now()->format('Y-m-d');
+            }
+
+            $assign_name = $request->assign_name ?? '';
+
+            $smobile_number = $request->smobile_number ?? '';
+
+            $stage_remarks = $request->remarks;
+
+
+
+            DB::table('opr_sts_logs')->insert([
+                'main_id'          => $semi_id,
+                'stage'            => $stage,
+                'stage_date'       => $stage_date,
+                'created_name'     => $sess_name,
+                'created_id'       => $sess_id,
+                'created_datetime' => now(),
+                'created_date'     => now()->format('Y-m-d'),
+                'stage_remarks'    => $stage_remarks,
+                'oprStsSend'       => $oprStsSend,
+            ]);
+
+
+
+            DB::table('seminarpre')
+                ->where('sno', $semi_id)
+                ->update([
+                    'opr_stage'         => $stage,
+                    'opr_stage_date'    => $stage_date,
+                    'stage_update_id'   => $sess_id,
+                    'stage_update_name' => $sess_name,
+                    'opr_stage_remarks' => $stage_remarks,
+                    'oprStsSend'        => $oprStsSend,
+                ]);
+
+
+            DB::table('noifications')->insert([
+                'phone_no'     => $smobile_number,
+                'noti_type'    => 'notyfy',
+                'sender_id'    => $sess_id,
+                'reciver_id'   => $semi_id,
+                'seen_status'  => '1',
+                'delete_satatus' => '0',
+                'created_date' => now()->format('Y-m-d'),
+                'modified_date' => '',
+                'assign_name'  => $assign_name,
+            ]);
+
+
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Status Updated Successfully'
+            ]);
+        } catch (\Throwable $e) {
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Unable to update operation status.',
+                'error'   => $e->getMessage()
+            ], 500);
+        }
+    }
     public function updateStatus(Request $request)
-{
-    /*
-    |--------------------------------------------------------------------------
-    | VALIDATION
-    |--------------------------------------------------------------------------
-    */
+    {
 
-    $request->validate([
 
-        'reg_sno' => 'required',
+        $request->validate([
 
-        'status' => 'required',
+            'reg_sno' => 'required',
 
-        'appointment_date' => 'nullable|date',
+            'status' => 'required',
 
-        'followup_date' => 'nullable|date',
+            'appointment_date' => 'nullable|date',
 
-        'appointment_remarks_type' =>
+            'followup_date' => 'nullable|date',
+
+            'appointment_remarks_type' =>
             'nullable|string|max:100',
 
-        'remarks_type' =>
+            'remarks_type' =>
             'nullable|string|max:100',
 
-        'appointment_remarks' =>
+            'appointment_remarks' =>
             'nullable|string',
 
-        'remarks' =>
+            'remarks' =>
             'nullable|string',
 
-        'appointment_country_status' =>
+            'appointment_country_status' =>
             'nullable|string|max:100',
 
-        'country_status' =>
+            'country_status' =>
             'nullable|string|max:100',
 
-        'province' =>
+            'province' =>
             'nullable|string|max:100',
 
-        'college' =>
+            'college' =>
             'nullable|string|max:255',
 
-        'campus' =>
+            'campus' =>
             'nullable|string|max:255',
 
-        'program' =>
+            'program' =>
             'nullable|string|max:255',
 
-        'start_date' =>
+            'start_date' =>
             'nullable|date',
 
-        'end_date' =>
+            'end_date' =>
             'nullable|date',
 
-        'rep_file_status' =>
+            'rep_file_status' =>
             'nullable|in:Yes,No',
 
-        'fin_apnt_date' =>
+            'fin_apnt_date' =>
             'nullable|date',
 
-        'fin_apnt_time' =>
+            'fin_apnt_time' =>
             'nullable|string|max:50',
 
-        'finance_user' =>
+            'finance_user' =>
             'nullable',
 
-        'enrolled_remarks_type' =>
+            'enrolled_remarks_type' =>
             'nullable|string|max:100',
 
-        'enrolled_remarks' =>
+            'enrolled_remarks' =>
             'nullable|string',
 
-        'enrolled_country_status' =>
+            'enrolled_country_status' =>
             'nullable|string|max:100',
-    ]);
+        ]);
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | LOGIN USER
-    |--------------------------------------------------------------------------
-    */
-
-    $user = DB::table('crm_login')
-        ->where(
-            'id',
-            session('login')
-        )
-        ->first();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | GET STUDENT
-    |--------------------------------------------------------------------------
-    */
+        $user = DB::table('crm_login')
+            ->where(
+                'id',
+                session('login')
+            )
+            ->first();
 
-    $student = DB::table('seminarpre')
-        ->where(
-            'sno',
-            $request->reg_sno
-        )
-        ->first();
 
-    if (!$student) {
+
+
+        $student = DB::table('seminarpre')
+            ->where(
+                'sno',
+                $request->reg_sno
+            )
+            ->first();
+
+        if (!$student) {
+
+            return redirect()
+                ->back()
+                ->with(
+                    'error',
+                    'Student record not found.'
+                );
+        }
+
+
+
+
+        $followupDate =
+            $request->followup_date
+            ?: $request->appointment_date
+            ?: ($student->follow_date ?? null);
+
+
+
+
+        $remarksType =
+            $request->remarks_type
+            ?: $request->appointment_remarks_type
+            ?: ($student->remark_type ?? null);
+
+
+
+        $remarks =
+            $request->remarks
+            ?: $request->appointment_remarks
+            ?: ($student->student_remark ?? null);
+
+
+
+        $countryStatus =
+            $request->country_status
+            ?: $request->appointment_country_status
+            ?: ($student->country_status ?? null);
+
+
+
+
+        DB::table('opr_sts_logs')->insert([
+
+            'main_id' =>
+            $request->reg_sno,
+
+            'stage' =>
+            $request->status,
+
+            'stage_date' =>
+            $followupDate,
+
+            'created_name' =>
+            $user ? $user->name : '',
+
+            'created_id' =>
+            $user ? $user->id : '',
+
+            'created_datetime' =>
+            now(),
+
+            'created_date' =>
+            now()->toDateString(),
+
+            'stage_remarks' =>
+            $remarks,
+
+            'oprStsSend' =>
+            1,
+        ]);
+
+
+
+        // $updateData = [
+
+
+
+        //     'status' =>
+        //     $request->status,
+
+
+
+
+        //     'follow_date' =>
+        //     $followupDate,
+
+
+
+        //     'remark_type' =>
+        //     $remarksType,
+
+        //     'student_remark' =>
+        //     $remarks,
+
+
+
+
+        //     'opr_stage' =>
+        //     $request->status,
+
+        //     'opr_stage_date' =>
+        //     $followupDate,
+
+        //     'opr_stage_remarks' =>
+        //     $remarks,
+
+
+
+
+        //     'country_status' =>
+        //     $countryStatus,
+
+
+
+
+        //     'enrolled_remarks_type' =>
+        //     $request->filled('enrolled_remarks_type')
+        //         ? trim($request->enrolled_remarks_type)
+        //         : ($student->enrolled_remarks_type ?? null),
+
+
+        //     'enrolled_remarks' =>
+        //     $request->filled('enrolled_remarks')
+        //         ? $request->enrolled_remarks
+        //         : ($student->enrolled_remarks ?? null),
+
+
+
+
+        //     'enrolled_country_status' =>
+        //     $request->filled('enrolled_country_status')
+        //         ? $request->enrolled_country_status
+        //         : (
+        //             $student->enrolled_country_status
+        //             ?? $student->country_status
+        //             ?? null
+        //         ),
+
+
+
+
+        //     'stage_update_id' =>
+        //     $user ? $user->id : '',
+
+        //     'stage_update_name' =>
+        //     $user ? $user->name : '',
+
+
+
+        //     'update_date' =>
+        //     now()->toDateString(),
+
+        //     'update_time' =>
+        //     now()->format('H:i:s'),
+        // ];
+
+        $updateData = [
+
+            'status' =>
+            $request->status,
+
+            'follow_date' =>
+            $followupDate,
+
+            'remark_type' =>
+            $remarksType,
+
+            'student_remark' =>
+            $remarks,
+
+            'opr_stage' =>
+            $request->status,
+
+            'opr_stage_date' =>
+            $followupDate,
+
+            'opr_stage_remarks' =>
+            $remarks,
+
+            'country_status' =>
+            $countryStatus,
+
+            'stage_update_id' =>
+            $user ? $user->id : '',
+
+            'stage_update_name' =>
+            $user ? $user->name : '',
+
+            'update_date' =>
+            now()->toDateString(),
+
+            'update_time' =>
+            now()->format('H:i:s'),
+        ];
+
+
+
+
+
+
+        if ($request->filled('province')) {
+
+            $updateData['province_name'] =
+                trim($request->province);
+        } else {
+
+            $updateData['province_name'] =
+                $student->province_name ?? null;
+        }
+
+
+
+
+        if ($request->filled('college')) {
+
+            $updateData['collage_name'] =
+                trim($request->college);
+        } else {
+
+            $updateData['collage_name'] =
+                $student->collage_name ?? null;
+        }
+
+
+
+
+        if ($request->filled('campus')) {
+
+            $updateData['campus_name'] =
+                trim($request->campus);
+        } else {
+
+            $updateData['campus_name'] =
+                $student->campus_name ?? null;
+        }
+
+
+
+
+        if ($request->filled('program')) {
+
+            $updateData['program_name'] =
+                trim($request->program);
+        } else {
+
+            $updateData['program_name'] =
+                $student->program_name ?? null;
+        }
+
+
+
+
+        if ($request->filled('start_date')) {
+
+            $updateData['start_date'] =
+                $request->start_date;
+        } else {
+
+            $updateData['start_date'] =
+                $student->start_date ?? null;
+        }
+
+
+
+        if ($request->filled('end_date')) {
+
+            $updateData['end_date'] =
+                $request->end_date;
+        } else {
+
+            $updateData['end_date'] =
+                $student->end_date ?? null;
+        }
+
+
+
+        if ($request->filled('rep_file_status')) {
+
+            $updateData['rep_file_status'] =
+                $request->rep_file_status;
+        } else {
+
+            $updateData['rep_file_status'] =
+                $student->rep_file_status ?? null;
+        }
+
+
+
+        if ($request->filled('fin_apnt_date')) {
+
+            $updateData['fin_apnt_date'] =
+                $request->fin_apnt_date;
+        } else {
+
+            $updateData['fin_apnt_date'] =
+                $student->fin_apnt_date ?? null;
+        }
+
+
+
+
+        if ($request->filled('fin_apnt_time')) {
+
+            $updateData['fin_apnt_time'] =
+                $request->fin_apnt_time;
+        } else {
+
+            $updateData['fin_apnt_time'] =
+                $student->fin_apnt_time ?? null;
+        }
+
+
+
+
+        if ($request->filled('finance_user')) {
+
+            $updateData['finance_id'] =
+                $request->finance_user;
+        } else {
+
+            $updateData['finance_id'] =
+                $student->finance_id ?? null;
+        }
+
+
+
+
+        DB::table('seminarpre')
+            ->where(
+                'sno',
+                $request->reg_sno
+            )
+            ->update($updateData);
+
+
+
 
         return redirect()
             ->back()
             ->with(
-                'error',
-                'Student record not found.'
+                'success',
+                'Status Updated Successfully.'
             );
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | FOLLOW UP DATE
-    |--------------------------------------------------------------------------
-    */
-
-    $followupDate =
-        $request->followup_date
-        ?: $request->appointment_date
-        ?: ($student->follow_date ?? null);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | REMARK TYPE
-    |--------------------------------------------------------------------------
-    */
-
-    $remarksType =
-        $request->remarks_type
-        ?: $request->appointment_remarks_type
-        ?: ($student->remark_type ?? null);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | REMARKS
-    |--------------------------------------------------------------------------
-    */
-
-    $remarks =
-        $request->remarks
-        ?: $request->appointment_remarks
-        ?: ($student->student_remark ?? null);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | COUNTRY STATUS
-    |--------------------------------------------------------------------------
-    */
-
-    $countryStatus =
-        $request->country_status
-        ?: $request->appointment_country_status
-        ?: ($student->country_status ?? null);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | INSERT STATUS HISTORY
-    |--------------------------------------------------------------------------
-    */
-
-    DB::table('opr_sts_logs')->insert([
-
-        'main_id' =>
-            $request->reg_sno,
-
-        'stage' =>
-            $request->status,
-
-        'stage_date' =>
-            $followupDate,
-
-        'created_name' =>
-            $user ? $user->name : '',
-
-        'created_id' =>
-            $user ? $user->id : '',
-
-        'created_datetime' =>
-            now(),
-
-        'created_date' =>
-            now()->toDateString(),
-
-        'stage_remarks' =>
-            $remarks,
-
-        'oprStsSend' =>
-            1,
-    ]);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | MAIN UPDATE DATA
-    |--------------------------------------------------------------------------
-    */
-
-    $updateData = [
-
-        /*
-        | Status
-        */
-
-        'status' =>
-            $request->status,
-
-
-        /*
-        | Follow-up
-        */
-
-        'follow_date' =>
-            $followupDate,
-
-
-        /*
-        | Remarks
-        */
-
-        'remark_type' =>
-            $remarksType,
-
-        'student_remark' =>
-            $remarks,
-
-
-        /*
-        | OPR Stage
-        */
-
-        'opr_stage' =>
-            $request->status,
-
-        'opr_stage_date' =>
-            $followupDate,
-
-        'opr_stage_remarks' =>
-            $remarks,
-
-
-        /*
-        | Country status
-        */
-
-        'country_status' =>
-            $countryStatus,
-
-
-        /*
-        | Enrolled remarks
-        */
-
-        'enrolled_remarks_type' =>
-            $request->filled('enrolled_remarks_type')
-                ? trim($request->enrolled_remarks_type)
-                : ($student->enrolled_remarks_type ?? null),
-
-
-        'enrolled_remarks' =>
-            $request->filled('enrolled_remarks')
-                ? $request->enrolled_remarks
-                : ($student->enrolled_remarks ?? null),
-
-
-        /*
-        | IMPORTANT:
-        | Don't use student->country_status directly first.
-        | Preserve enrolled_country_status if it already exists.
-        */
-
-        'enrolled_country_status' =>
-            $request->filled('enrolled_country_status')
-                ? $request->enrolled_country_status
-                : (
-                    $student->enrolled_country_status
-                    ?? $student->country_status
-                    ?? null
-                ),
-
-
-        /*
-        | Updated by
-        */
-
-        'stage_update_id' =>
-            $user ? $user->id : '',
-
-        'stage_update_name' =>
-            $user ? $user->name : '',
-
-
-        /*
-        | Updated date/time
-        */
-
-        'update_date' =>
-            now()->toDateString(),
-
-        'update_time' =>
-            now()->format('H:i:s'),
-    ];
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PROVINCE
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('province')) {
-
-        $updateData['province_name'] =
-            trim($request->province);
-
-    } else {
-
-        $updateData['province_name'] =
-            $student->province_name ?? null;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | COLLEGE
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('college')) {
-
-        $updateData['collage_name'] =
-            trim($request->college);
-
-    } else {
-
-        $updateData['collage_name'] =
-            $student->collage_name ?? null;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | CAMPUS
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('campus')) {
-
-        $updateData['campus_name'] =
-            trim($request->campus);
-
-    } else {
-
-        $updateData['campus_name'] =
-            $student->campus_name ?? null;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | PROGRAM
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('program')) {
-
-        $updateData['program_name'] =
-            trim($request->program);
-
-    } else {
-
-        $updateData['program_name'] =
-            $student->program_name ?? null;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | START DATE
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('start_date')) {
-
-        $updateData['start_date'] =
-            $request->start_date;
-
-    } else {
-
-        $updateData['start_date'] =
-            $student->start_date ?? null;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | END DATE
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('end_date')) {
-
-        $updateData['end_date'] =
-            $request->end_date;
-
-    } else {
-
-        $updateData['end_date'] =
-            $student->end_date ?? null;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | REP FILE STATUS
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('rep_file_status')) {
-
-        $updateData['rep_file_status'] =
-            $request->rep_file_status;
-
-    } else {
-
-        $updateData['rep_file_status'] =
-            $student->rep_file_status ?? null;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | FINANCE APPOINTMENT DATE
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('fin_apnt_date')) {
-
-        $updateData['fin_apnt_date'] =
-            $request->fin_apnt_date;
-
-    } else {
-
-        $updateData['fin_apnt_date'] =
-            $student->fin_apnt_date ?? null;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | FINANCE APPOINTMENT TIME
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('fin_apnt_time')) {
-
-        $updateData['fin_apnt_time'] =
-            $request->fin_apnt_time;
-
-    } else {
-
-        $updateData['fin_apnt_time'] =
-            $student->fin_apnt_time ?? null;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | FINANCE USER
-    |--------------------------------------------------------------------------
-    */
-
-    if ($request->filled('finance_user')) {
-
-        $updateData['finance_id'] =
-            $request->finance_user;
-
-    } else {
-
-        $updateData['finance_id'] =
-            $student->finance_id ?? null;
-    }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE STUDENT
-    |--------------------------------------------------------------------------
-    */
-
-    DB::table('seminarpre')
-        ->where(
-            'sno',
-            $request->reg_sno
-        )
-        ->update($updateData);
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | REDIRECT
-    |--------------------------------------------------------------------------
-    */
-
-    return redirect()
-        ->back()
-        ->with(
-            'success',
-            'Status Updated Successfully.'
-        );
-}
 
     public function sendMail(Request $request)
     {
@@ -1621,14 +1653,9 @@ class WalkinController extends Controller
             'studentId'     => $student->sno,
         ]);
     }
-    /**
-     * Show Student Consent / Signature Selection Page
-     */
 
 
-    /**
-     * Save Selected Student Signature
-     */
+
     public function saveStudentSignature(Request $request)
     {
         $request->validate([
@@ -1649,11 +1676,7 @@ class WalkinController extends Controller
             ], 404);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Already Signed
-    |--------------------------------------------------------------------------
-    */
+
 
         if (!empty($student->signature)) {
 
@@ -1664,11 +1687,7 @@ class WalkinController extends Controller
             ], 409);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Signature Style
-    |--------------------------------------------------------------------------
-    */
+
 
         $signatureStyles = [
             1 => 'PaulSignature-WEJY',
@@ -1688,11 +1707,6 @@ class WalkinController extends Controller
             ], 422);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Save Signature
-    |--------------------------------------------------------------------------
-    */
 
         DB::table('seminarpre')
             ->where('sno', $student->sno)
@@ -2052,51 +2066,33 @@ class WalkinController extends Controller
         return view('branch_manager.add_new_user');
     }
 
-
     public function storeUser(Request $request)
     {
-        $request->validate([
-            'fname'          => 'required|string|max:100',
-            'lname'          => 'required|string|max:100',
-            'new_user_name'  => 'required|unique:crm_login,username',
-            'user_password'  => 'required|min:4',
-            'role'           => 'required',
+        $validated = $request->validate([
+            'fname'         => 'required|string|max:100',
+            'lname'         => 'required|string|max:100',
+            'new_user_name' => 'required|unique:crm_login,username',
+            'user_password' => 'required|min:4',
+            'role'          => 'required',
         ]);
 
         DB::table('crm_login')->insert([
-
-            'name'          => $request->fname . ' ' . $request->lname,
-
-            'username'      => $request->new_user_name,
-
-            'password'      => bcrypt($request->user_password),
-
-            'org_password'  => $request->user_password,
-
-            'role'          => $request->role,
-
-            'branch'        => 'chandigarh',
-
-            'offical_email' => '',
-
-            'superadmin'    => '0',
-
-            'CanadaTeam'    => '0',
-
-            'status_age_report' => '0',
-
-            'gb_per'        => '0',
-
-            'Alberta'       => '0',
-
-            'British Columbia' => '0',
-
-            'Manitoba'      => '0',
-
-            'Ontario'       => '0',
-
-            'act_status'    => 1
-
+            'name'               => $validated['fname'] . ' ' . $validated['lname'],
+            'username'           => $validated['new_user_name'],
+            'password'           => bcrypt($validated['user_password']),
+            'org_password'       => $validated['user_password'],
+            'role'               => $validated['role'],
+            'branch'             => 'chandigarh',
+            'offical_email'      => '',
+            'superadmin'         => '0',
+            'CanadaTeam'         => '0',
+            'status_age_report'  => '0',
+            'gb_per'             => '0',
+            'Alberta'            => '0',
+            'British Columbia'  => '0',
+            'Manitoba'           => '0',
+            'Ontario'            => '0',
+            'act_status'         => 1,
         ]);
 
         return redirect()
@@ -2712,6 +2708,140 @@ class WalkinController extends Controller
 
         ]);
     }
+
+    /**
+     * Province -> College
+     */
+    public function operationGetColleges(Request $request)
+    {
+        $provinceName = $request->province_name;
+
+        if (empty($provinceName)) {
+            return response()->json([
+                'success' => false,
+                'html' => '<option value="">--Select College--</option>'
+            ]);
+        }
+
+        $query = DB::table('college_list')
+            ->select('clg_name')
+            ->where('province', $provinceName);
+
+        /*
+    |--------------------------------------------------------------------------
+    | Same condition as old PHP
+    |--------------------------------------------------------------------------
+    */
+
+        $sessUsername = session('username');
+
+        if ($sessUsername === 'jk_careers') {
+            $query->where('clg_name', 'AOL');
+        }
+
+        $colleges = $query
+            ->whereNotNull('clg_name')
+            ->where('clg_name', '!=', '')
+            ->groupBy('clg_name')
+            ->orderBy('clg_name', 'ASC')
+            ->get();
+
+        $html = '<option value="">--Select College--</option>';
+
+        foreach ($colleges as $college) {
+            $html .= '<option value="' .
+                e($college->clg_name) .
+                '">' .
+                e($college->clg_name) .
+                '</option>';
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ]);
+    }
+
+    /**
+     * College -> Campus
+     */
+    public function operationGetCampuses(Request $request)
+    {
+        $collegeId = $request->college_id;
+
+        if (empty($collegeId)) {
+            return response()->json([
+                'success' => false,
+                'html' => '<option value="">--Select Campus--</option>'
+            ]);
+        }
+
+        $campuses = DB::table('college_list')
+            ->select('campus_name')
+            ->where('clg_name', $collegeId)
+            ->whereNotNull('campus_name')
+            ->where('campus_name', '!=', '')
+            ->groupBy('campus_name')
+            ->orderBy('campus_name', 'ASC')
+            ->get();
+
+        $html = '<option value="">--Select Campus--</option>';
+
+        foreach ($campuses as $campus) {
+            $html .= '<option value="' .
+                e($campus->campus_name) .
+                '">' .
+                e($campus->campus_name) .
+                '</option>';
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ]);
+    }
+
+    /**
+     * College + Campus -> Program
+     */
+    public function operationGetPrograms(Request $request)
+    {
+        $campusId = $request->campus_id;
+        $collegeId = $request->college_id;
+
+        if (empty($collegeId) || empty($campusId)) {
+            return response()->json([
+                'success' => false,
+                'html' => '<option value="">--Select Program--</option>'
+            ]);
+        }
+
+        $programs = DB::table('college_list')
+            ->select('prg_name')
+            ->where('clg_name', $collegeId)
+            ->where('campus_name', $campusId)
+            ->whereNotNull('prg_name')
+            ->where('prg_name', '!=', '')
+            ->groupBy('prg_name')
+            ->orderBy('prg_name', 'ASC')
+            ->get();
+
+        $html = '<option value="">--Select Program--</option>';
+
+        foreach ($programs as $program) {
+            $html .= '<option value="' .
+                e($program->prg_name) .
+                '">' .
+                e($program->prg_name) .
+                '</option>';
+        }
+
+        return response()->json([
+            'success' => true,
+            'html' => $html
+        ]);
+    }
+
 
 
     public function operationStatus(Request $request)
@@ -6321,11 +6451,7 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | APPOINTMENT TYPE
-    |--------------------------------------------------------------------------
-    */
+
 
         $today = Carbon::now(
             'America/Toronto'
@@ -6355,11 +6481,7 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | USER RESTRICTION
-    |--------------------------------------------------------------------------
-    */
+
 
         $userId = Session::get('login');
 
@@ -6389,11 +6511,7 @@ class WalkinController extends Controller
             ->get();
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | CSV DOWNLOAD
-    |--------------------------------------------------------------------------
-    */
+
 
         $filename =
             'finance-appointment-completed-' .
@@ -6411,11 +6529,7 @@ class WalkinController extends Controller
                 );
 
 
-                /*
-            |--------------------------------------------------------------------------
-            | BOM
-            |--------------------------------------------------------------------------
-            */
+
 
                 fprintf(
                     $handle,
@@ -6425,11 +6539,7 @@ class WalkinController extends Controller
                 );
 
 
-                /*
-            |--------------------------------------------------------------------------
-            | HEADER
-            |--------------------------------------------------------------------------
-            */
+
 
                 fputcsv(
                     $handle,
@@ -6460,11 +6570,6 @@ class WalkinController extends Controller
                 );
 
 
-                /*
-            |--------------------------------------------------------------------------
-            | DATA
-            |--------------------------------------------------------------------------
-            */
 
                 foreach ($rows as $row) {
 
@@ -6527,11 +6632,7 @@ class WalkinController extends Controller
 
     public function studentConsentPdf(Request $request)
     {
-        /*
-    |--------------------------------------------------------------------------
-    | Get UID
-    |--------------------------------------------------------------------------
-    */
+
 
         $snoid = $request->query('uid');
 
@@ -6542,19 +6643,7 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Get Student
-    |--------------------------------------------------------------------------
-    |
-    | Original PHP:
-    |
-    | SELECT osap_signature, signature, sname, dob, smobile,
-    | semail, program_name, collage_name
-    | FROM seminarpre
-    | WHERE sno='$snoid'
-    |
-    */
+
 
         $student = DB::table('seminarpre')
             ->where('sno', $snoid)
@@ -6568,11 +6657,6 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Student Data
-    |--------------------------------------------------------------------------
-    */
 
         $sname = $student->sname ?? '';
 

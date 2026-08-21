@@ -2,7 +2,6 @@
 
 @section('title', 'Fund Released Status')
 
-
 @section('styles')
 
     <style>
@@ -13,7 +12,6 @@
             min-height: 100vh;
         }
 
-
         .manage_file {
             background: #fff;
             border-radius: 12px;
@@ -21,9 +19,7 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, .08);
         }
 
-
         .manage_file h2 {
-
             margin: 0;
             padding: 15px;
             text-align: center;
@@ -31,1134 +27,2309 @@
             font-weight: 600;
             color: #fff;
             background: linear-gradient(90deg, #0d6efd, #315efb);
-
         }
 
-
-
         .card {
-
             border: none;
             border-radius: 10px;
             background: #fafafa;
-
         }
-
-
 
         .card-body {
-
             padding: 20px;
-
         }
 
-
-
         label {
-
             font-size: 12px;
             font-weight: 600;
             color: #555;
-
+            margin-bottom: 5px;
         }
 
-
-
-        .form-control {
-
+        .form-control,
+        .form-select {
             height: 38px;
             font-size: 13px;
             border-radius: 6px;
-
+            border: 1px solid #ced4da;
         }
 
-
+        .form-control:focus,
+        .form-select:focus {
+            box-shadow: none;
+            border-color: #0d6efd;
+        }
 
         .btn-sm {
-
             font-size: 12px;
             padding: 5px 10px;
-
+            border-radius: 5px;
         }
 
+        .btn-success {
+            background: #198754;
+            border: none;
+        }
 
+        .btn-success:hover {
+            background: #157347;
+        }
+
+        .btn-primary {
+            background: #0d6efd;
+            border: none;
+        }
 
         .table-responsive {
-
+            border-radius: 10px;
             overflow: auto;
-
         }
-
-
 
         .table {
-
             font-size: 13px;
-
+            margin-bottom: 0;
         }
 
-
-
         .table thead th {
-
             position: sticky;
             top: 0;
             z-index: 5;
             background: #1f2937 !important;
-            color: white;
+            color: #fff;
             text-align: center;
+            vertical-align: middle;
             white-space: nowrap;
-
+            padding: 10px;
         }
-
-
 
         .table tbody td {
-
             white-space: nowrap;
             vertical-align: middle;
-
+            padding: 8px;
         }
 
+        .table tbody tr:nth-child(even) {
+            background: #f8f9fa;
+        }
 
+        .table tbody tr:hover {
+            background: #e8f1ff;
+        }
 
         .status-select {
-
             min-width: 160px;
             height: 34px;
-
+            font-size: 13px;
         }
 
-
+        .badge {
+            padding: 6px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+        }
 
         .pagination-wrapper {
-
             display: flex;
-            justify-content: flex-end;
+            justify-content: space-between;
+            align-items: center;
             padding: 15px;
+            border-top: 1px solid #eee;
+        }
 
+        .pagination .page-link {
+            border-radius: 5px;
+            margin: 0 2px;
+        }
+
+        .pagination .active .page-link {
+            background: #0d6efd;
+            border-color: #0d6efd;
+        }
+
+        .modal-content {
+            border: none;
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            background: #0d6efd;
+            color: #fff;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .table-area {
+            max-height: 70vh;
+        }
+
+        .table-area::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        .table-area::-webkit-scrollbar-thumb {
+            background: #b8b8b8;
+            border-radius: 10px;
+        }
+
+        .table-area::-webkit-scrollbar-track {
+            background: #eee;
+        }
+
+        @media(max-width:768px) {
+
+            .main-crm {
+                padding: 5px;
+            }
+
+            .card-body {
+                padding: 10px;
+            }
+
+            .pagination-wrapper {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .manage_file h2 {
+                font-size: 18px;
+            }
+
+            .table {
+                font-size: 12px;
+            }
+
+            .form-control,
+            .form-select {
+                margin-bottom: 10px;
+            }
         }
     </style>
-
 
 @endsection
 
 
-
 @section('content')
 
+    <section class="crm-Lead-Summary container-fluid">
 
-    <div class="container-fluid main-crm">
+        <div class="container-fluid main-crm">
 
+            <div class="manage_file">
 
-        <div class="manage_file">
+                {{-- ============================= --}}
+                {{-- PAGE HEADER --}}
+                {{-- ============================= --}}
 
+                <h2>
+                    <i class="fa fa-user"></i>
+                    Fund Released Status
+                </h2>
 
-            <h2>
 
-                <i class="fa fa-user"></i>
+                {{-- ============================= --}}
+                {{-- SUCCESS MESSAGE --}}
+                {{-- ============================= --}}
 
-                Fund Released Status
-
-            </h2>
-
-
-
-            @if (session('success'))
-                <div class="alert alert-success">
-
-                    {{ session('success') }}
-
-                </div>
-            @endif
-
-
-
-            @if (session('error'))
-                <div class="alert alert-danger">
-
-                    {{ session('error') }}
-
-                </div>
-            @endif
-
-
-
-
-            {{-- FILTER SECTION --}}
-
-
-            <div class="card">
-
-
-                <div class="card-body">
-
-
-                    <form method="GET" action="{{ route('fund.release.status') }}">
-
-
-
-                        <div class="row">
-
-
-                            <div class="col-md-3 mb-2">
-
-
-                                <label>
-                                    From Start Date
-                                </label>
-
-
-                                {{-- <input type="date"
-name="from_date"
-class="form-control"
-value="{{ request('from_date') }}"> --}}
-                                <input type="date" name="FromFltDate" class="form-control datepick"
-                                    value="{{ request('FromFltDate') }}">
-
-
-                            </div>
-
-
-
-                            <div class="col-md-3 mb-2">
-
-
-                                <label>
-                                    To Start Date
-                                </label>
-
-
-                                {{-- <input type="date"
-name="to_date"
-class="form-control"
-value="{{ request('to_date') }}"> --}}
-                                <input type="date" name="ToFltDate" class="form-control datepick"
-                                    value="{{ request('ToFltDate') }}">
-
-
-                            </div>
-
-
-
-                            <div class="col-md-3 mb-2">
-
-
-                                <label>
-                                    Operation Status
-                                </label>
-
-
-                                @php
-
-                                    $statusList = [
-                                        'Not Process',
-                                        'Campus Login',
-                                        'VeriFast & Wonderlic',
-                                        'Contract',
-                                        'Orientation',
-                                        'FAO Appointment',
-                                        'Drop',
-                                        'Start',
-                                        'FR1',
-                                        'FR2',
-                                        'Cancel',
-                                        'Withdrawal',
-                                        'Not Started',
-                                        'Graduate',
-                                    ];
-
-                                @endphp
-
-
-
-                                <select name="operation_status" class="form-control">
-
-
-                                    <option value="">
-                                        Select
-                                    </option>
-
-
-
-                                    @foreach ($statusList as $status)
-                                        <option value="{{ $status }}"
-                                            {{ request('operation_status') == $status ? 'selected' : '' }}>
-
-
-                                            {{ $status }}
-
-
-                                        </option>
-                                    @endforeach
-
-
-
-                                </select>
-
-
-                            </div>
-
-
-
-
-                            <div class="col-md-3 mb-2">
-
-
-                                <label>
-                                    Student Status
-                                </label>
-
-
-
-                                <select name="student_status" class="form-control">
-
-
-                                    <option value="">
-                                        Select
-                                    </option>
-
-
-                                    <option value="enrolled"
-                                        {{ request('student_status') == 'enrolled' ? 'selected' : '' }}>
-
-                                        Enrolled
-
-                                    </option>
-
-
-
-                                </select>
-
-
-                            </div>
-
-
-
-                        </div>
-                        <div class="row mt-2">
-
-
-                            <div class="col-md-3 mb-2">
-
-                                <label>
-                                    Main Status
-                                </label>
-
-
-                                <select name="fund_aol_status" class="form-control">
-
-                                    <option value="">
-                                        Select
-                                    </option>
-
-
-                                    @if (request('main_status'))
-                                        <option selected>
-                                            {{ request('main_status') }}
-                                        </option>
-                                    @endif
-
-
-                                </select>
-
-                            </div>
-
-
-
-
-
-                            <div class="col-md-3 mb-2">
-
-                                <label>
-                                    Province
-                                </label>
-
-
-                                <select name="province" id="province_name" class="form-control">
-
-
-                                    <option value="">
-                                        --Select Province--
-                                    </option>
-
-
-                                    @foreach ($provinces as $province)
-                                        <option value="{{ $province->province }}"
-                                            {{ request('province') == $province->province ? 'selected' : '' }}>
-                                            {{ $province->province }}
-                                        </option>
-                                    @endforeach
-
-
-
-                                </select>
-
-
-                            </div>
-
-
-
-
-
-                            <div class="col-md-3 mb-2">
-
-                                <label>
-                                    College
-                                </label>
-
-
-                                <select name="college" id="collage_name" class="form-control">
-
-
-                                    <option value="">
-                                        --Select College--
-                                    </option>
-
-
-
-                                    @foreach ($colleges ?? [] as $college)
-                                        <option value="{{ $college->clg_name }}"
-                                            {{ request('college') == $college->clg_name ? 'selected' : '' }}>
-
-
-                                            {{ $college->clg_name }}
-
-
-                                        </option>
-                                    @endforeach
-
-
-                                </select>
-
-
-                            </div>
-
-
-
-
-
-                            <div class="col-md-3 mb-2">
-
-                                <label>
-                                    Campus
-                                </label>
-
-
-                                <select name="campus" id="campus" class="form-control">
-
-
-                                    <option value="">
-                                        --Select Campus--
-                                    </option>
-
-
-                                    @if (request('campus'))
-                                        <option selected>
-
-                                            {{ request('campus') }}
-
-                                        </option>
-                                    @endif
-
-
-                                </select>
-
-
-                            </div>
-
-
-
-                        </div>
-
-
-
-
-
-                        <div class="row mt-2">
-
-
-
-                            <div class="col-md-3 mb-2">
-
-
-                                <label>
-                                    Program
-                                </label>
-
-
-                                <select name="program" id="program_name" class="form-control">
-
-
-                                    <option value="">
-                                        --Select Program--
-                                    </option>
-
-
-                                    @if (request('program'))
-                                        <option selected>
-
-                                            {{ request('program') }}
-
-                                        </option>
-                                    @endif
-
-
-                                </select>
-
-
-                            </div>
-
-
-
-
-
-                            <div class="col-md-3 mb-2">
-
-
-                                <label>
-                                    Opr Last Status Date
-                                </label>
-
-
-                                <input type="date" name="opr_last_date" class="form-control"
-                                    value="{{ request('opr_last_date') }}">
-
-
-                            </div>
-
-
-
-
-
-                            <div class="col-md-3 mb-2">
-
-
-                                <label>
-                                    Counselor Wise
-                                </label>
-
-
-                                <select name="counselor" class="form-control">
-
-
-                                    <option value="">
-                                        Select a Counselor
-                                    </option>
-
-
-
-                                    @foreach ($counselors ?? [] as $counselor)
-                                        <option value="{{ $counselor->id }}"
-                                            {{ request('counselor') == $counselor->id ? 'selected' : '' }}>
-
-
-                                            {{ $counselor->name }}
-
-
-                                        </option>
-                                    @endforeach
-
-
-                                </select>
-
-
-                            </div>
-
-
-
-
-
-                            <div class="col-md-3 mb-2">
-
-
-                                <label>
-                                    Name / Phone / Country / Std Id / Email / File No
-                                </label>
-
-
-                                <input type="text" name="search" class="form-control" placeholder="Search..."
-                                    value="{{ request('search') }}">
-
-
-
-                            </div>
-
-
-
-                        </div>
-
-
-
-
-
-                        <div class="mt-3">
-
-
-                            <button type="submit" class="btn btn-primary">
-
-                                Search
-
-                            </button>
-
-
-
-                            <a href="{{ route('fund.release.status') }}" class="btn btn-secondary">
-
-                                Reset
-
-                            </a>
-
-
-
-                           <button type="submit"
-        formaction="{{ route('fund.release.export') }}"
-        formmethod="GET"
-        class="btn btn-success float-end">
-    Download in Excel
-</button>
-
-
-                        </div>
-
-
-
-                    </form>
-
-
-                </div>
-
-
-            </div>
-
-            {{-- TABLE SECTION --}}
-
-            <div class="card mt-3">
-
-                <div class="card-body table-responsive">
-
-
-                    <table class="table table-bordered table-striped table-hover">
-
-
-                        <thead class="table-dark">
-
-                            <tr>
-
-                                <th>Notes</th>
-
-                                <th>Client Name</th>
-                                <th>Client Number</th>
-                                <th>Country Name</th>
-                                <th>Counselor Name</th>
-                                <th>File Number</th>
-                                <th>Student Status</th>
-                                <th>Email</th>
-                                <th>Province</th>
-                                <th>College</th>
-                                <th>Campus</th>
-                                <th>Program Name</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Enrolled Date</th>
-
-                                <th>Finance Manager</th>
-                                <th>Finance Apnt Date</th>
-                                <th>Finance Apnt Time</th>
-
-                                <th>Opr Last Status Date</th>
-                                <th>Opr Last Remarks</th>
-                                <th>Opr Status Update By</th>
-
-                                <th>Operation Status</th>
-                                <th>Opr Sub Status</th>
-                                <th>CL</th>
-                                <th>Logs</th>
-
-
-                                @if (session('role') != 'counselor')
-                                    <th>
-                                        View
-                                    </th>
-                                @endif
-
-
-                                <th>Email Status</th>
-                                <th>Student Sign</th>
-                                <th>Main Status</th>
-
-
-                                @if (session('role') == 'operation')
-                                    <th>
-                                        Add Student Id
-                                    </th>
-                                @endif
-
-
-                                <th>Student Id</th>
-                                <th>Lead Source</th>
-                                <th>Source Remarks</th>
-                                <th>Finance Status</th>
-
-
-                            </tr>
-
-
-                        </thead>
-
-
-
-                        <tbody>
-
-
-
-                            @forelse($data as $row)
-
-
-
-                                <tr>
-
-
-                                    <td>
-
-
-                                        <button type="button" class="btn btn-success btn-sm open-notes-modal"
-                                            data-file-no="{{ $row->sno ?? '' }}" data-name="{{ $row->sname ?? '' }}">
-
-                                            Notes
-
-                                        </button>
-
-
-                                    </td>
-
-
-
-
-                                    <td>{{ $row->sname ?? '' }}</td>
-
-                                    <td>{{ $row->smobile ?? '' }}</td>
-
-                                    <td>{{ $row->scountry ?? '' }}</td>
-
-                                    <td>{{ $row->assign_name ?? '' }}</td>
-
-                                    <td>{{ $row->file_no ?? '' }}</td>
-
-                                    <td>{{ $row->student_status ?? '' }}</td>
-
-                                    <td>{{ $row->semail ?? '' }}</td>
-
-                                    <td>{{ $row->province_name ?? '' }}</td>
-
-                                    <td>{{ $row->collage_name ?? '' }}</td>
-
-                                    <td>{{ $row->campus_name ?? '' }}</td>
-
-                                    <td>{{ $row->program_name ?? '' }}</td>
-
-                                    <td>{{ $row->start_date ?? '' }}</td>
-
-                                    <td>{{ $row->end_date ?? '' }}</td>
-
-                                    <td>{{ $row->enrolled_date ?? '' }}</td>
-
-
-                                    {{-- <td>{{ $row->finance_mang ?? '' }}</td> --}}
-                                    <td>{{ $row->finance_manager }}</td>
-
-                                    <td>{{ $row->fin_apnt_date ?? '' }}</td>
-
-                                    <td>{{ $row->fin_apnt_time ?? '' }}</td>
-
-
-
-                                    {{-- <td>{{ $row->opr_last_status_date ?? '' }}</td> --}}
-                                    <td>{{ $row->opr_stage_date }}</td>
-
-                                    {{-- <td>{{ $row->remarks ?? '' }}</td> --}}
-                                    <td>{{ $row->opr_stage_remarks }}</td>
-
-                                    <td>{{ $row->stage_update_name ?? '' }}</td>
-
-
-
-
-
-                                    {{-- OPERATION STATUS --}}
-
-                                    <td>
-
-
-                                        <select class="form-control status-select" data-file-no="{{ $row->sno ?? '' }}"
-                                            data-file-name="{{ $row->sname ?? '' }}"
-                                            data-file-email="{{ $row->semail ?? '' }}">
-
-
-                                            <option value="">
-                                                Select
-                                            </option>
-
-
-
-                                            @foreach ($statusList as $status)
-                                                <option value="{{ $status }}"
-                                                    {{ ($row->opr_stage ?? '') == $status ? 'selected' : '' }}>
-
-
-                                                    {{ $status }}
-
-
-                                                </option>
-                                            @endforeach
-
-
-
-                                        </select>
-
-
-                                    </td>
-
-
-
-
-
-                                    <td>
-
-                                        {{ $row->oprStsSend ?? '' }}
-
-                                    </td>
-
-
-
-
-
-                                    <td class="text-success">
-
-
-                                        @if ($row->cl_done ?? false)
-                                            <b>
-                                                Done
-                                            </b>
-                                        @endif
-
-
-                                    </td>
-
-
-
-
-
-
-                                    <td>
-
-
-                                        <button class="btn btn-info btn-sm view-logs-btn"
-                                            data-file-no="{{ $row->sno ?? '' }}" data-name="{{ $row->sname ?? '' }}">
-
-                                            View Logs
-
-                                        </button>
-
-
-                                    </td>
-
-
-
-
-
-
-                                    {{-- VIEW BUTTON --}}
-
-                                    @if (session('role') != 'counselor')
-                                        <td>
-
-
-                                            <a href="{{ route('walking-details', ['smobile' => $row->smobile]) }}"
-                                                class="btn btn-primary btn-sm">
-
-
-                                                View
-
-
-                                            </a>
-
-
-                                        </td>
-                                    @endif
-
-
-
-
-
-
-                                    <td>
-
-
-                                        @if (($row->conset_mail ?? '') == 'Sent')
-                                            <span class="badge bg-success">
-
-                                                Sent
-
-                                            </span>
-                                        @else
-                                            <span class="badge bg-warning text-dark">
-
-                                                Pending
-
-                                            </span>
-                                        @endif
-
-
-                                    </td>
-
-
-
-
-
-
-                                    <td>
-
-
-                                        @if (!empty($row->signature) && !empty($row->signature_submit))
-                                            <span class="badge bg-success">
-
-                                                Done
-
-                                            </span>
-                                        @else
-                                            <span class="badge bg-danger">
-
-                                                Pending
-
-                                            </span>
-                                        @endif
-
-
-
-                                    </td>
-
-
-
-
-
-
-                                    <td>
-
-                                        {{ $row->main_status ?? '' }}
-
-                                    </td>
-
-
-
-
-
-
-                                    @if (session('role') == 'operation')
-                                        <td>
-
-
-                                            <button class="btn btn-secondary btn-sm">
-
-                                                Add Student Id
-
-                                            </button>
-
-
-                                        </td>
-                                    @endif
-
-
-
-
-
-
-                                    <td>
-
-                                        {{ $row->student_id ?? '' }}
-
-                                    </td>
-
-
-
-                                    <td>
-
-                                        {{ $row->ssource ?? '' }}
-
-                                    </td>
-
-
-
-                                    <td>
-
-                                        {{ $row->source_remarks ?? '' }}
-
-                                    </td>
-
-
-
-
-                                    <td>
-
-
-                                        @if (!empty($row->osap_status))
-                                            <button class="btn btn-primary btn-sm">
-
-                                                Osap Status
-
-                                            </button>
-                                        @endif
-
-
-                                    </td>
-
-
-
-
-
-                                </tr>
-
-
-
-                            @empty
-
-
-
-                                <tr>
-
-
-                                    <td colspan="35" class="text-center">
-
-                                        No Records Found
-
-                                    </td>
-
-
-                                </tr>
-
-
-
-                            @endforelse
-
-
-
-                        </tbody>
-
-
-                    </table>
-
-
-
-                    <div class="pagination-wrapper">
-
-
-                        {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
-
-
+                @if (session('success'))
+                    <div class="alert alert-success m-3">
+                        {{ session('success') }}
                     </div>
+                @endif
 
 
+                {{-- ============================= --}}
+                {{-- ERROR MESSAGE --}}
+                {{-- ============================= --}}
 
-                </div>
-
-
-            </div>
-
-            {{-- NOTES MODAL --}}
-
-            <div class="modal fade" id="notesModal" tabindex="-1">
-
-                <div class="modal-dialog modal-lg">
-
-                    <div class="modal-content">
+                @if (session('error'))
+                    <div class="alert alert-danger m-3">
+                        {{ session('error') }}
+                    </div>
+                @endif
 
 
-                        <div class="modal-header bg-success text-white">
+                {{-- ============================= --}}
+                {{-- STATUS LIST --}}
+                {{-- ============================= --}}
+
+                @php
+
+                    $statusList = [
+                        'Not Process',
+                        'VeriFast & Wonderlic',
+                        'Campus Login',
+                        'Contract',
+                        'Orientation',
+                        'FAO Appointment',
+                        'Recvd',
+                        'Given',
+                        'Not Start',
+                        'FR1',
+                        'FR2',
+                        'Drop',
+                        'Graduate',
+                    ];
+
+                @endphp
 
 
-                            <h5 class="modal-title">
+                {{-- ============================= --}}
+                {{-- FILTER SECTION --}}
+                {{-- ============================= --}}
 
-                                Notes For :
-                                <span id="NotesModalName"></span>
+                <div class="card mb-3">
 
-                            </h5>
+                    <div class="card-body">
 
+                        <form method="GET" action="{{ route('fund.release.status') }}">
 
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            {{-- ============================= --}}
+                            {{-- FIRST ROW --}}
+                            {{-- ============================= --}}
 
+                            <div class="row">
 
-                        </div>
-
-
-
-                        <div class="modal-body">
-
-
-                            <form id="addNotesForm">
-
-
-                                @csrf
-
-
-                                <input type="hidden" name="note_id" id="note_id">
-
-
-
-                                <div class="mb-3">
-
+                                {{-- FROM DATE --}}
+                                <div class="col-md-3 mb-2">
 
                                     <label>
-                                        Add Note
+                                        From Start Date
                                     </label>
 
-
-                                    <textarea class="form-control" name="newNote" id="newNote" rows="4" required></textarea>
-
+                                    <input type="date"
+                                        name="FromFltDate"
+                                        class="form-control datepick"
+                                        value="{{ request('FromFltDate') }}">
 
                                 </div>
 
 
-                                <button class="btn btn-success">
+                                {{-- TO DATE --}}
+                                <div class="col-md-3 mb-2">
 
-                                    Save Note
+                                    <label>
+                                        To Start Date
+                                    </label>
+
+                                    <input type="date"
+                                        name="ToFltDate"
+                                        class="form-control datepick"
+                                        value="{{ request('ToFltDate') }}">
+
+                                </div>
+
+
+                                {{-- OPERATION STATUS --}}
+                                <div class="col-md-3 mb-2">
+
+                                    <label>
+                                        Operation Status
+                                    </label>
+
+                                    <select name="operation_status"
+                                        class="form-control">
+
+                                        <option value="">
+                                            Select
+                                        </option>
+
+                                        @foreach ($statusList as $status)
+
+                                            <option value="{{ $status }}"
+                                                {{ request('operation_status') == $status ? 'selected' : '' }}>
+
+                                                {{ $status }}
+
+                                            </option>
+
+                                        @endforeach
+
+                                    </select>
+
+                                </div>
+
+
+                                {{-- STUDENT STATUS --}}
+                                <div class="col-md-3 mb-2">
+
+                                    <label>
+                                        Student Status
+                                    </label>
+
+                                    <select name="student_status"
+                                        class="form-control">
+
+                                        <option value="">
+                                            Select
+                                        </option>
+
+                                        <option value="enrolled"
+                                            {{ request('student_status') == 'enrolled' ? 'selected' : '' }}>
+
+                                            Enrolled
+
+                                        </option>
+
+                                        <option value="Re-enrolled"
+                                            {{ request('student_status') == 'Re-enrolled' ? 'selected' : '' }}>
+
+                                            Re-enrolled
+
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- ============================= --}}
+                            {{-- SECOND ROW --}}
+                            {{-- ============================= --}}
+
+                            <div class="row mt-2">
+
+                                {{-- MAIN STATUS --}}
+                                <div class="col-md-3 mb-2">
+
+                                    <label>
+                                        Main Status
+                                    </label>
+
+                                    <select name="fund_aol_status"
+                                        class="form-control">
+
+                                        <option value="">
+                                            Select
+                                        </option>
+
+                                        @if (request('fund_aol_status'))
+
+                                            <option value="{{ request('fund_aol_status') }}"
+                                                selected>
+
+                                                {{ request('fund_aol_status') }}
+
+                                            </option>
+
+                                        @endif
+
+                                    </select>
+
+                                </div>
+
+
+                                {{-- PROVINCE --}}
+                                <div class="col-md-3 mb-2">
+
+                                    <label>
+                                        Province
+                                    </label>
+
+                                    <select name="province"
+                                        id="province_name"
+                                        class="form-control">
+
+                                        <option value="">
+                                            Select Province
+                                        </option>
+
+                                        <option value="Ontario"
+                                            {{ request('province') == 'Ontario' ? 'selected' : '' }}>
+
+                                            Ontario
+
+                                        </option>
+
+                                        <option value="Alberta"
+                                            {{ request('province') == 'Alberta' ? 'selected' : '' }}>
+
+                                            Alberta
+
+                                        </option>
+
+                                        <option value="British Columbia"
+                                            {{ request('province') == 'British Columbia' ? 'selected' : '' }}>
+
+                                            British Columbia
+
+                                        </option>
+
+                                        <option value="Manitoba"
+                                            {{ request('province') == 'Manitoba' ? 'selected' : '' }}>
+
+                                            Manitoba
+
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                {{-- COLLEGE --}}
+                                <div class="col-md-3 mb-2">
+
+                                    <label>
+                                        College
+                                    </label>
+
+                                    <select name="college"
+                                        id="collage_name"
+                                        class="form-control">
+
+                                        <option value="">
+                                            --Select College--
+                                        </option>
+
+                                        @foreach ($colleges ?? [] as $college)
+
+                                            <option value="{{ $college->clg_name }}"
+                                                {{ request('college') == $college->clg_name ? 'selected' : '' }}>
+
+                                                {{ $college->clg_name }}
+
+                                            </option>
+
+                                        @endforeach
+
+                                    </select>
+
+                                </div>
+
+
+                                {{-- CAMPUS --}}
+                                <div class="col-md-3 mb-2">
+
+                                    <label>
+                                        Campus
+                                    </label>
+
+                                    <select name="campus"
+                                        id="campus"
+                                        class="form-control">
+
+                                        <option value="">
+                                            --Select Campus--
+                                        </option>
+
+                                        @if (request('campus'))
+
+                                            <option value="{{ request('campus') }}"
+                                                selected>
+
+                                                {{ request('campus') }}
+
+                                            </option>
+
+                                        @endif
+
+                                    </select>
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- ============================= --}}
+                            {{-- THIRD ROW --}}
+                            {{-- ============================= --}}
+
+                            <div class="row mt-2">
+
+                                {{-- PROGRAM --}}
+                                <div class="col-md-3 mb-2">
+
+                                    <label>
+                                        Program
+                                    </label>
+
+                                    <select name="program"
+                                        id="program_name"
+                                        class="form-control">
+
+                                        <option value="">
+                                            --Select Program--
+                                        </option>
+
+                                        @if (request('program'))
+
+                                            <option value="{{ request('program') }}"
+                                                selected>
+
+                                                {{ request('program') }}
+
+                                            </option>
+
+                                        @endif
+
+                                    </select>
+
+                                </div>
+
+
+                                {{-- OPERATION LAST STATUS DATE --}}
+                                <div class="col-md-3 mb-2">
+
+                                    <label>
+                                        Opr Last Status Date
+                                    </label>
+
+                                    <input type="date"
+                                        name="opr_last_date"
+                                        class="form-control"
+                                        value="{{ request('opr_last_date') }}">
+
+                                </div>
+
+
+                                {{-- COUNSELOR --}}
+                                <div class="col-md-3 mb-2">
+
+                                    <label>
+                                        Counselor Wise
+                                    </label>
+
+                                    <select name="counselor"
+                                        class="form-control">
+
+                                        <option value="">
+                                            Select a Counselor
+                                        </option>
+
+                                        @foreach ($counselors ?? [] as $counselor)
+
+                                            <option value="{{ $counselor->id }}"
+                                                {{ request('counselor') == $counselor->id ? 'selected' : '' }}>
+
+                                                {{ $counselor->name }}
+
+                                            </option>
+
+                                        @endforeach
+
+                                    </select>
+
+                                </div>
+
+
+                                {{-- SEARCH --}}
+                                <div class="col-md-3 mb-2">
+
+                                    <label>
+                                        Name / Phone / Country / Std Id / Email / File No
+                                    </label>
+
+                                    <input type="text"
+                                        name="search"
+                                        class="form-control"
+                                        placeholder="Search..."
+                                        value="{{ request('search') }}">
+
+                                </div>
+
+                            </div>
+
+
+                            {{-- ============================= --}}
+                            {{-- BUTTONS --}}
+                            {{-- ============================= --}}
+
+                            <div class="mt-3">
+
+                                <button type="submit"
+                                    class="btn btn-primary">
+
+                                    <i class="fa fa-search"></i>
+                                    Search
 
                                 </button>
 
 
-                            </form>
+                                <a href="{{ route('fund.release.status') }}"
+                                    class="btn btn-secondary">
+
+                                    <i class="fa fa-refresh"></i>
+                                    Reset
+
+                                </a>
 
 
+                                <button type="submit"
+                                    formaction="{{ route('fund.release.export') }}"
+                                    formmethod="GET"
+                                    class="btn btn-success float-end">
 
-                            <hr>
+                                    <i class="fa fa-file-excel-o"></i>
+                                    Download in Excel
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
 
 
+                {{-- ============================= --}}
+                {{-- TABLE SECTION --}}
+                {{-- ============================= --}}
 
-                            <table class="table table-bordered">
+                <div class="card mt-3">
 
+                    <div class="card-body">
 
-                                <thead>
+                        <div class="table-responsive table-area">
 
+                            <table class="table table-bordered table-striped table-hover">
+
+                                <thead class="table-dark">
 
                                     <tr>
 
-                                        <th>Sno</th>
-                                        <th>Remarks</th>
-                                        <th>Updated By</th>
-                                        <th>Date</th>
+                                        <th>Notes</th>
+
+                                        <th>Client Name</th>
+                                        <th>Client Number</th>
+                                        <th>Country Name</th>
+                                        <th>Counselor Name</th>
+                                        <th>File Number</th>
+                                        <th>Student Status</th>
+                                        <th>Email</th>
+                                        <th>Province</th>
+                                        <th>College</th>
+                                        <th>Campus</th>
+                                        <th>Program Name</th>
+                                        <th>Start Date</th>
+                                        <th>End Date</th>
+                                        <th>Enrolled Date</th>
+
+                                        <th>Finance Manager</th>
+                                        <th>Finance Apnt Date</th>
+                                        <th>Finance Apnt Time</th>
+
+                                        <th>Opr Last Status Date</th>
+                                        <th>Opr Last Remarks</th>
+                                        <th>Opr Status Update By</th>
+
+                                        <th>Operation Status</th>
+                                        <th>Opr Sub Status</th>
+                                        <th>CL</th>
+                                        <th>Logs</th>
+
+                                        @if (session('role') != 'counselor')
+
+                                            <th>
+                                                View
+                                            </th>
+
+                                        @endif
+
+                                        <th>Email Status</th>
+                                        <th>Student Sign</th>
+                                        <th>Main Status</th>
+
+                                        @if (session('role') == 'operation')
+
+                                            <th>
+                                                Add Student Id
+                                            </th>
+
+                                        @endif
+
+                                        <th>Student Id</th>
+                                        <th>Lead Source</th>
+                                        <th>Source Remarks</th>
+                                        <th>Finance Status</th>
 
                                     </tr>
-
 
                                 </thead>
 
 
+                                <tbody>
 
-                                <tbody id="NotesTableBody">
+                                    @forelse($data as $row)
 
+                                        <tr>
+
+                                            {{-- NOTES --}}
+                                            <td>
+
+                                                <button type="button"
+                                                    class="btn btn-success btn-sm open-notes-modal"
+                                                    data-file-no="{{ $row->sno ?? '' }}"
+                                                    data-name="{{ $row->sname ?? '' }}">
+
+                                                    <i class="fa fa-sticky-note"></i>
+                                                    Notes
+
+                                                </button>
+
+                                            </td>
+
+
+                                            {{-- CLIENT NAME --}}
+                                            <td>
+                                                {{ $row->sname ?? '' }}
+                                            </td>
+
+
+                                            {{-- CLIENT NUMBER --}}
+                                            <td>
+                                                {{ $row->smobile ?? '' }}
+                                            </td>
+
+
+                                            {{-- COUNTRY --}}
+                                            <td>
+                                                {{ $row->scountry ?? '' }}
+                                            </td>
+
+
+                                            {{-- COUNSELOR --}}
+                                            <td>
+                                                {{ $row->assign_name ?? '' }}
+                                            </td>
+
+
+                                            {{-- FILE NUMBER --}}
+                                            <td>
+                                                {{ $row->file_no ?? '' }}
+                                            </td>
+
+
+                                            {{-- STUDENT STATUS --}}
+                                            <td>
+                                                {{ $row->student_status ?? '' }}
+                                            </td>
+
+
+                                            {{-- EMAIL --}}
+                                            <td>
+                                                {{ $row->semail ?? '' }}
+                                            </td>
+
+
+                                            {{-- PROVINCE --}}
+                                            <td>
+                                                {{ $row->province_name ?? '' }}
+                                            </td>
+
+
+                                            {{-- COLLEGE --}}
+                                            <td>
+                                                {{ $row->collage_name ?? '' }}
+                                            </td>
+
+
+                                            {{-- CAMPUS --}}
+                                            <td>
+                                                {{ $row->campus_name ?? '' }}
+                                            </td>
+
+
+                                            {{-- PROGRAM --}}
+                                            <td>
+                                                {{ $row->program_name ?? '' }}
+                                            </td>
+
+
+                                            {{-- START DATE --}}
+                                            <td>
+                                                {{ $row->start_date ?? '' }}
+                                            </td>
+
+
+                                            {{-- END DATE --}}
+                                            <td>
+                                                {{ $row->end_date ?? '' }}
+                                            </td>
+
+
+                                            {{-- ENROLLED DATE --}}
+                                            <td>
+                                                {{ $row->enrolled_date ?? '' }}
+                                            </td>
+
+
+                                            {{-- FINANCE MANAGER --}}
+                                            <td>
+                                                {{ $row->finance_manager ?? '' }}
+                                            </td>
+
+
+                                            {{-- FINANCE APPOINTMENT DATE --}}
+                                            <td>
+                                                {{ $row->fin_apnt_date ?? '' }}
+                                            </td>
+
+
+                                            {{-- FINANCE APPOINTMENT TIME --}}
+                                            <td>
+                                                {{ $row->fin_apnt_time ?? '' }}
+                                            </td>
+
+
+                                            {{-- OPERATION LAST STATUS DATE --}}
+                                            <td>
+                                                {{ $row->opr_stage_date ?? '' }}
+                                            </td>
+
+
+                                            {{-- OPERATION LAST REMARKS --}}
+                                            <td>
+                                                {{ $row->opr_stage_remarks ?? '' }}
+                                            </td>
+
+
+                                            {{-- OPERATION STATUS UPDATED BY --}}
+                                            <td>
+                                                {{ $row->stage_update_name ?? '' }}
+                                            </td>
+
+
+                                            {{-- OPERATION STATUS --}}
+                                            <td>
+
+                                                <select class="form-control status-select"
+
+                                                    data-file-no="{{ $row->sno ?? '' }}"
+
+                                                    data-file-name="{{ $row->sname ?? '' }}"
+
+                                                    data-file-email="{{ $row->semail ?? '' }}"
+
+                                                    data-file-assign-name="{{ $row->assign_name ?? '' }}"
+
+                                                    data-file-smobile="{{ $row->smobile ?? '' }}">
+
+                                                    <option value="">
+                                                        Select
+                                                    </option>
+
+                                                    @foreach ($statusList as $status)
+
+                                                        <option value="{{ $status }}"
+                                                            {{ ($row->opr_stage ?? '') == $status ? 'selected' : '' }}>
+
+                                                            {{ $status }}
+
+                                                        </option>
+
+                                                    @endforeach
+
+                                                </select>
+
+                                            </td>
+
+
+                                            {{-- OPERATION SUB STATUS --}}
+                                            <td>
+                                                {{ $row->oprStsSend ?? '' }}
+                                            </td>
+
+
+                                            {{-- CL --}}
+                                            <td class="text-success">
+
+                                                @if ($row->cl_done ?? false)
+
+                                                    <b>
+                                                        Done
+                                                    </b>
+
+                                                @endif
+
+                                            </td>
+
+
+                                            {{-- LOGS --}}
+                                            <td>
+
+                                                <button type="button"
+                                                    class="btn btn-info btn-sm view-logs-btn"
+
+                                                    data-file-no="{{ $row->sno ?? '' }}"
+
+                                                    data-name="{{ $row->sname ?? '' }}">
+
+                                                    <i class="fa fa-history"></i>
+                                                    View Logs
+
+                                                </button>
+
+                                            </td>
+
+
+                                            {{-- VIEW --}}
+                                            @if (session('role') != 'counselor')
+
+                                                <td>
+
+                                                    <a href="{{ route('walking-details', ['smobile' => $row->smobile]) }}"
+                                                        class="btn btn-primary btn-sm">
+
+                                                        <i class="fa fa-eye"></i>
+                                                        View
+
+                                                    </a>
+
+                                                </td>
+
+                                            @endif
+
+
+                                            {{-- EMAIL STATUS --}}
+                                            <td>
+
+                                                @if (($row->conset_mail ?? '') == 'Sent')
+
+                                                    <span class="badge bg-success">
+                                                        Sent
+                                                    </span>
+
+                                                @else
+
+                                                    <span class="badge bg-warning text-dark">
+                                                        Pending
+                                                    </span>
+
+                                                @endif
+
+                                            </td>
+
+
+                                            {{-- STUDENT SIGN --}}
+                                            <td>
+
+                                                @if (!empty($row->signature) && !empty($row->signature_submit))
+
+                                                    <span class="badge bg-success">
+                                                        Done
+                                                    </span>
+
+                                                @else
+
+                                                    <span class="badge bg-danger">
+                                                        Pending
+                                                    </span>
+
+                                                @endif
+
+                                            </td>
+
+
+                                            {{-- MAIN STATUS --}}
+                                            <td>
+                                                {{ $row->main_status ?? '' }}
+                                            </td>
+
+
+                                            {{-- ADD STUDENT ID --}}
+                                            @if (session('role') == 'operation')
+
+                                                <td>
+
+                                                    <button type="button"
+                                                        class="btn btn-secondary btn-sm">
+
+                                                        <i class="fa fa-plus"></i>
+                                                        Add Student Id
+
+                                                    </button>
+
+                                                </td>
+
+                                            @endif
+
+
+                                            {{-- STUDENT ID --}}
+                                            <td>
+                                                {{ $row->student_id ?? '' }}
+                                            </td>
+
+
+                                            {{-- LEAD SOURCE --}}
+                                            <td>
+                                                {{ $row->ssource ?? '' }}
+                                            </td>
+
+
+                                            {{-- SOURCE REMARKS --}}
+                                            <td>
+                                                {{ $row->source_remarks ?? '' }}
+                                            </td>
+
+
+                                            {{-- FINANCE STATUS --}}
+                                            <td>
+
+                                                @if (!empty($row->osap_status))
+
+                                                    <button type="button"
+                                                        class="btn btn-primary btn-sm">
+
+                                                        Osap Status
+
+                                                    </button>
+
+                                                @endif
+
+                                            </td>
+
+                                        </tr>
+
+                                    @empty
+
+                                        <tr>
+
+                                            <td colspan="35"
+                                                class="text-center">
+
+                                                No Records Found
+
+                                            </td>
+
+                                        </tr>
+
+                                    @endforelse
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+
+                        {{-- ============================= --}}
+                        {{-- PAGINATION --}}
+                        {{-- ============================= --}}
+
+                        <div class="pagination-wrapper">
+
+                            <div>
+
+                                <small>
+
+                                    Showing
+                                    {{ $data->firstItem() ?? 0 }}
+                                    to
+                                    {{ $data->lastItem() ?? 0 }}
+                                    of
+                                    {{ $data->total() }}
+                                    entries
+
+                                </small>
+
+                            </div>
+
+                            <div>
+
+                                {{ $data->appends(request()->query())->links('pagination::bootstrap-4') }}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- ============================= --}}
+                {{-- NOTES MODAL --}}
+                {{-- ============================= --}}
+
+                <div class="modal fade"
+                    id="notesModal"
+                    tabindex="-1"
+                    aria-hidden="true">
+
+                    <div class="modal-dialog modal-lg">
+
+                        <div class="modal-content">
+
+                            <div class="modal-header bg-success text-white">
+
+                                <h5 class="modal-title">
+
+                                    Notes For :
+                                    <span id="NotesModalName"></span>
+
+                                </h5>
+
+                                <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal">
+                                </button>
+
+                            </div>
+
+
+                            <div class="modal-body">
+
+                                <form id="addNotesForm">
+
+                                    @csrf
+
+                                    <input type="hidden"
+                                        name="note_id"
+                                        id="note_id">
+
+
+                                    <div class="mb-3">
+
+                                        <label>
+                                            Add Note
+                                        </label>
+
+                                        <textarea class="form-control"
+                                            name="newNote"
+                                            id="newNote"
+                                            rows="4"
+                                            required></textarea>
+
+                                    </div>
+
+
+                                    <button type="submit"
+                                        class="btn btn-success">
+
+                                        <i class="fa fa-save"></i>
+                                        Save Note
+
+                                    </button>
+
+                                </form>
+
+
+                                <hr>
+
+
+                                <table class="table table-bordered">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th width="60">
+                                                Sno
+                                            </th>
+
+                                            <th>
+                                                Remarks
+                                            </th>
+
+                                            <th>
+                                                Updated By
+                                            </th>
+
+                                            <th>
+                                                Date
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody id="NotesTableBody">
+
+                                        <tr>
+
+                                            <td colspan="4"
+                                                class="text-center">
+
+                                                No Notes Found
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- ============================= --}}
+                {{-- LOGS MODAL --}}
+                {{-- ============================= --}}
+
+                <div class="modal fade"
+                    id="logsModal"
+                    tabindex="-1"
+                    aria-hidden="true">
+
+                    <div class="modal-dialog modal-xl">
+
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+
+                                <h5 class="modal-title"
+                                    id="logsModalLabel">
+
+                                    Status Logs
+
+                                </h5>
+
+                                <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal">
+                                </button>
+
+                            </div>
+
+
+                            <div class="modal-body">
+
+                                <table class="table table-bordered">
+
+                                    <thead>
+
+                                        <tr>
+
+                                            <th>
+                                                Date
+                                            </th>
+
+                                            <th>
+                                                Status
+                                            </th>
+
+                                            <th>
+                                                Remarks
+                                            </th>
+
+                                            <th>
+                                                Updated By
+                                            </th>
+
+                                            <th>
+                                                Date Time
+                                            </th>
+
+                                        </tr>
+
+                                    </thead>
+
+
+                                    <tbody id="logsTableBody">
+
+                                        <tr>
+
+                                            <td colspan="5"
+                                                class="text-center">
+
+                                                No Logs Found
+
+                                            </td>
+
+                                        </tr>
+
+                                    </tbody>
+
+                                </table>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {{-- ============================= --}}
+                {{-- STATUS MODAL --}}
+                {{-- ============================= --}}
+
+                <div class="modal fade"
+                    id="statusModal"
+                    tabindex="-1"
+                    aria-hidden="true">
+
+                    <div class="modal-dialog">
+
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+
+                                <h5 class="modal-title">
+                                    Update Status
+                                </h5>
+
+                                <button type="button"
+                                    class="btn-close"
+                                    data-bs-dismiss="modal">
+                                </button>
+
+                            </div>
+
+
+                            <form id="statusForm"
+                                autocomplete="off">
+
+                                @csrf
+
+                                <input type="hidden"
+                                    name="reg_sno"
+                                    id="file_no">
+
+                                <input type="hidden"
+                                    name="status"
+                                    id="status">
+
+                                <input type="hidden"
+                                    name="file_name"
+                                    id="file_name">
+
+                                <input type="hidden"
+                                    name="file_email"
+                                    id="file_email">
+
+                                <input type="hidden"
+                                    name="assign_name"
+                                    id="assign_name_id">
+
+                                <input type="hidden"
+                                    name="smobile_number"
+                                    id="smobile_number">
+
+                                <input type="hidden"
+                                    name="remarks_type"
+                                    value="Operation Status">
+
+
+                                <div class="modal-body">
+
+                                    {{-- SUB STATUS --}}
+                                    <div class="mb-3"
+                                        id="oprStsSendDiv"
+                                        style="display:none;">
+
+                                        <label class="form-label"
+                                            id="SendLabel">
+                                        </label>
+
+                                        <select class="form-control"
+                                            id="oprStsSend"
+                                            name="oprStsSend">
+                                        </select>
+
+                                    </div>
+
+
+                                    {{-- DATE --}}
+                                    <div class="mb-3">
+
+                                        <label for="date"
+                                            class="form-label">
+
+                                            Date
+
+                                        </label>
+
+                                        <input type="date"
+                                            name="followup_date"
+                                            id="date"
+                                            class="form-control">
+
+                                    </div>
+
+
+                                    {{-- REMARKS --}}
+                                    <div class="mb-3">
+
+                                        <label for="remarks"
+                                            class="form-label">
+
+                                            Remarks
+
+                                        </label>
+
+                                        <textarea name="remarks"
+                                            id="remarks"
+                                            class="form-control"
+                                            rows="4"
+                                            required></textarea>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="modal-footer">
+
+                                    <button type="button"
+                                        class="btn btn-secondary"
+                                        data-bs-dismiss="modal">
+
+                                        Cancel
+
+                                    </button>
+
+                                    <button type="submit"
+                                        class="btn btn-primary">
+
+                                        <i class="fa fa-save"></i>
+                                        Submit
+
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+@endsection
+
+
+@section('scripts')
+
+    <meta name="csrf-token"
+        content="{{ csrf_token() }}">
+
+
+    <script>
+
+        // ==========================================
+        // CSRF
+        // ==========================================
+
+        $.ajaxSetup({
+
+            headers: {
+
+                'X-CSRF-TOKEN':
+                    $('meta[name="csrf-token"]').attr('content')
+
+            }
+
+        });
+
+
+        $(document).ready(function() {
+
+
+            // ==========================================
+            // STATUS CHANGE
+            // ==========================================
+
+            $(document).on('change', '.status-select', function() {
+
+                let fileNo =
+                    $(this).data('file-no');
+
+                let fileName =
+                    $(this).data('file-name');
+
+                let fileEmail =
+                    $(this).data('file-email');
+
+                let assignName =
+                    $(this).data('file-assign-name');
+
+                let smobile =
+                    $(this).data('file-smobile');
+
+                let status =
+                    $(this).val();
+
+
+                if (status == '') {
+
+                    return;
+
+                }
+
+
+                // Hidden fields
+
+                $('#file_no').val(fileNo);
+
+                $('#file_name').val(fileName);
+
+                $('#file_email').val(fileEmail);
+
+                $('#assign_name_id').val(assignName);
+
+                $('#smobile_number').val(smobile);
+
+                $('#status').val(status);
+
+
+                // Reset fields
+
+                $('#remarks').val('');
+
+                $('#date').val('');
+
+                $('#oprStsSend').html('');
+
+                $('#oprStsSendDiv').hide();
+
+                $('#SendLabel').html('');
+
+
+                // ==========================================
+                // SUB STATUS
+                // ==========================================
+
+                if (
+
+                    status == 'VeriFast & Wonderlic' ||
+
+                    status == 'Contract' ||
+
+                    status == 'Orientation' ||
+
+                    status == 'FAO Appointment' ||
+
+                    status == 'Campus Login'
+
+                ) {
+
+
+                    $('#oprStsSendDiv').show();
+
+                    $('#SendLabel').html(
+                        status + ' Send:'
+                    );
+
+
+                    // Orientation
+
+                    if (status == 'Orientation') {
+
+                        $('#oprStsSend').append(
+
+                            '<option value="Sent">Sent</option>' +
+
+                            '<option value="Done">Done</option>'
+
+                        );
+
+                    }
+
+
+                    // Campus Login
+
+                    else if (status == 'Campus Login') {
+
+                        $('#oprStsSend').append(
+
+                            '<option value="Done">Done</option>'
+
+                        );
+
+                    }
+
+
+                    // FAO Appointment
+
+                    else if (status == 'FAO Appointment') {
+
+                        $('#oprStsSend').append(
+
+                            '<option value="Given">Given</option>' +
+
+                            '<option value="Completed">Completed</option>'
+
+                        );
+
+                    }
+
+
+                    // Other
+
+                    else {
+
+                        $('#oprStsSend').append(
+
+                            '<option value="Sent">Sent</option>' +
+
+                            '<option value="Done">Done</option>'
+
+                        );
+
+                    }
+
+                }
+
+
+                // ==========================================
+                // NOT PROCESS
+                // ==========================================
+
+                if (status == 'Not Process') {
+
+                    return;
+
+                }
+
+
+                // ==========================================
+                // OPEN MODAL
+                // ==========================================
+
+                $('#statusModal').modal('show');
+
+            });
+
+
+            // ==========================================
+            // SAVE OPERATION STATUS
+            // ==========================================
+
+            $(document).on(
+                'submit',
+                '#statusForm',
+                function(e) {
+
+                    e.preventDefault();
+
+
+                    let form =
+                        $(this);
+
+                    let btn =
+                        form.find(
+                            'button[type="submit"]'
+                        );
+
+
+                    $.ajax({
+
+                        url:
+                            "{{ route('update-operation-status') }}",
+
+                        type:
+                            "POST",
+
+                        data:
+                            form.serialize(),
+
+
+                        beforeSend:
+                            function() {
+
+                                btn.prop(
+                                    'disabled',
+                                    true
+                                );
+
+                                btn.html(
+                                    'Saving...'
+                                );
+
+                            },
+
+
+                        success:
+                            function(response) {
+
+                                btn.prop(
+                                    'disabled',
+                                    false
+                                );
+
+                                btn.html(
+                                    '<i class="fa fa-save"></i> Submit'
+                                );
+
+
+                                $('#statusModal')
+                                    .modal('hide');
+
+
+                                if (
+                                    typeof Swal !==
+                                    'undefined'
+                                ) {
+
+                                    Swal.fire({
+
+                                        icon:
+                                            'success',
+
+                                        title:
+                                            'Success',
+
+                                        text:
+                                            response.message ||
+                                            'Status Updated Successfully'
+
+                                    }).then(
+                                        function() {
+
+                                            location.reload();
+
+                                        }
+                                    );
+
+                                } else {
+
+                                    location.reload();
+
+                                }
+
+                            },
+
+
+                        error:
+                            function(xhr) {
+
+                                btn.prop(
+                                    'disabled',
+                                    false
+                                );
+
+                                btn.html(
+                                    '<i class="fa fa-save"></i> Submit'
+                                );
+
+
+                                console.log(
+                                    xhr.responseText
+                                );
+
+
+                                let message =
+                                    'Something went wrong';
+
+
+                                if (
+                                    xhr.responseJSON &&
+                                    xhr.responseJSON.message
+                                ) {
+
+                                    message =
+                                        xhr.responseJSON.message;
+
+                                }
+
+
+                                if (
+                                    typeof Swal !==
+                                    'undefined'
+                                ) {
+
+                                    Swal.fire({
+
+                                        icon:
+                                            'error',
+
+                                        title:
+                                            'Error',
+
+                                        text:
+                                            message
+
+                                    });
+
+                                } else {
+
+                                    alert(message);
+
+                                }
+
+                            }
+
+                    });
+
+                }
+            );
+
+
+            // ==========================================
+            // COLLEGE -> CAMPUS
+            // ==========================================
+
+            $('#collage_name').on(
+                'change',
+                function() {
+
+                    let college =
+                        $(this).val();
+
+
+                    $('#campus').html(
+
+                        '<option value="">--Select Campus--</option>'
+
+                    );
+
+
+                    $('#program_name').html(
+
+                        '<option value="">--Select Program--</option>'
+
+                    );
+
+
+                    if (!college) {
+
+                        return;
+
+                    }
+
+
+                    $.ajax({
+
+                        url:
+                            "{{ route('osap.campuses') }}",
+
+                        type:
+                            "POST",
+
+                        data: {
+
+                            college_id:
+                                college,
+
+                            _token:
+                                "{{ csrf_token() }}"
+
+                        },
+
+
+                        success:
+                            function(response) {
+
+                                $('#campus')
+                                    .html(response);
+
+
+                                $('#program_name')
+                                    .html(
+
+                                        '<option value="">--Select Program--</option>'
+
+                                    );
+
+
+                                // Keep selected campus
+
+                                let selectedCampus =
+                                    @json(request('campus'));
+
+
+                                if (
+                                    selectedCampus
+                                ) {
+
+                                    $('#campus')
+                                        .val(
+                                            selectedCampus
+                                        )
+                                        .trigger('change');
+
+                                }
+
+                            },
+
+
+                        error:
+                            function(xhr) {
+
+                                console.log(
+                                    xhr.responseText
+                                );
+
+
+                                $('#campus').html(
+
+                                    '<option value="">--Select Campus--</option>'
+
+                                );
+
+
+                                $('#program_name').html(
+
+                                    '<option value="">--Select Program--</option>'
+
+                                );
+
+                            }
+
+                    });
+
+                }
+            );
+
+
+            // ==========================================
+            // CAMPUS -> PROGRAM
+            // ==========================================
+
+            $('#campus').on(
+                'change',
+                function() {
+
+                    let campus =
+                        $(this).val();
+
+                    let college =
+                        $('#collage_name').val();
+
+
+                    $('#program_name').html(
+
+                        '<option value="">--Select Program--</option>'
+
+                    );
+
+
+                    if (!college || !campus) {
+
+                        return;
+
+                    }
+
+
+                    $.ajax({
+
+                        url:
+                            "{{ route('osap.programs') }}",
+
+                        type:
+                            "POST",
+
+                        data: {
+
+                            college_id:
+                                college,
+
+                            campus_id:
+                                campus,
+
+                            _token:
+                                "{{ csrf_token() }}"
+
+                        },
+
+
+                        success:
+                            function(response) {
+
+                                $('#program_name')
+                                    .html(response);
+
+
+                                // Keep selected program
+
+                                let selectedProgram =
+                                    @json(request('program'));
+
+
+                                if (
+                                    selectedProgram
+                                ) {
+
+                                    $('#program_name')
+                                        .val(
+                                            selectedProgram
+                                        );
+
+                                }
+
+                            },
+
+
+                        error:
+                            function(xhr) {
+
+                                console.log(
+                                    xhr.responseText
+                                );
+
+
+                                $('#program_name').html(
+
+                                    '<option value="">--Select Program--</option>'
+
+                                );
+
+                            }
+
+                    });
+
+                }
+            );
+
+
+            // ==========================================
+            // LOAD CAMPUS / PROGRAM ON PAGE LOAD
+            // ==========================================
+
+            let selectedCollege =
+                $('#collage_name').val();
+
+
+            let selectedCampus =
+                @json(request('campus'));
+
+            let selectedProgram =
+                @json(request('program'));
+
+
+            if (selectedCollege) {
+
+                $.ajax({
+
+                    url:
+                        "{{ route('osap.campuses') }}",
+
+                    type:
+                        "POST",
+
+                    data: {
+
+                        college_id:
+                            selectedCollege,
+
+                        _token:
+                            "{{ csrf_token() }}"
+
+                    },
+
+
+                    success:
+                        function(response) {
+
+                            $('#campus')
+                                .html(response);
+
+
+                            if (selectedCampus) {
+
+                                $('#campus')
+                                    .val(
+                                        selectedCampus
+                                    );
+
+                            }
+
+
+                            if (
+                                selectedCampus
+                            ) {
+
+                                $.ajax({
+
+                                    url:
+                                        "{{ route('osap.programs') }}",
+
+                                    type:
+                                        "POST",
+
+                                    data: {
+
+                                        college_id:
+                                            selectedCollege,
+
+                                        campus_id:
+                                            selectedCampus,
+
+                                        _token:
+                                            "{{ csrf_token() }}"
+
+                                    },
+
+
+                                    success:
+                                        function(response) {
+
+                                            $('#program_name')
+                                                .html(response);
+
+
+                                            if (
+                                                selectedProgram
+                                            ) {
+
+                                                $('#program_name')
+                                                    .val(
+                                                        selectedProgram
+                                                    );
+
+                                            }
+
+                                        }
+
+                                });
+
+                            }
+
+                        }
+
+                });
+
+            }
+
+
+            // ==========================================
+            // OPEN NOTES MODAL
+            // ==========================================
+
+            $(document).on(
+                'click',
+                '.open-notes-modal',
+                function() {
+
+                    let id =
+                        $(this).data('file-no');
+
+                    let name =
+                        $(this).data('name');
+
+
+                    $('#note_id').val(id);
+
+                    $('#NotesModalName')
+                        .text(name);
+
+                    $('#newNote').val('');
+
+
+                    loadNotes(id);
+
+
+                    $('#notesModal')
+                        .modal('show');
+
+                }
+            );
+
+
+            // ==========================================
+            // LOAD NOTES
+            // ==========================================
+
+            function loadNotes(id) {
+
+
+                $('#NotesTableBody').html(`
+
+                    <tr>
+
+                        <td colspan="4"
+                            class="text-center">
+
+                            Loading...
+
+                        </td>
+
+                    </tr>
+
+                `);
+
+
+                $.ajax({
+
+                    url:
+                        "{{ route('notes.get') }}",
+
+                    type:
+                        "POST",
+
+                    data: {
+
+                        note_id:
+                            id,
+
+                        _token:
+                            "{{ csrf_token() }}"
+
+                    },
+
+
+                    success:
+                        function(response) {
+
+
+                            let html =
+                                '';
+
+
+                            if (
+                                response.status &&
+                                response.notes &&
+                                response.notes.length
+                            ) {
+
+
+                                $.each(
+                                    response.notes,
+                                    function(i, note) {
+
+
+                                        html += `
+
+                                            <tr>
+
+                                                <td>
+                                                    ${i + 1}
+                                                </td>
+
+                                                <td>
+                                                    ${note.remarks ?? ''}
+                                                </td>
+
+                                                <td>
+                                                    ${note.updated_by ?? ''}
+                                                </td>
+
+                                                <td>
+                                                    ${note.datetime ?? note.created_datetime ?? ''}
+                                                </td>
+
+                                            </tr>
+
+                                        `;
+
+                                    }
+                                );
+
+
+                            } else {
+
+
+                                html = `
 
                                     <tr>
 
-                                        <td colspan="4" class="text-center">
+                                        <td colspan="4"
+                                            class="text-center">
 
                                             No Notes Found
 
@@ -1166,511 +2337,324 @@ value="{{ request('to_date') }}"> --}}
 
                                     </tr>
 
-
-                                </tbody>
-
-
-                            </table>
-
-
-
-                        </div>
-
-
-                    </div>
-
-
-                </div>
-
-
-            </div>
-
-
-
-
-
-            {{-- LOGS MODAL --}}
-
-
-            <div class="modal fade" id="logsModal">
-
-
-                <div class="modal-dialog modal-xl">
-
-
-                    <div class="modal-content">
-
-
-
-                        <div class="modal-header">
-
-
-                            <h5 class="modal-title" id="logsModalLabel">
-
-                                Status Logs
-
-                            </h5>
-
-
-
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-
-
-
-                        </div>
-
-
-
-
-                        <div class="modal-body">
-
-
-                            <table class="table table-bordered">
-
-
-                                <thead>
-
-                                    <tr>
-
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th>Remarks</th>
-                                        <th>Updated By</th>
-                                        <th>Date Time</th>
-
-                                    </tr>
-
-
-                                </thead>
-
-
-
-                                <tbody id="logsTableBody">
-
-
-                                </tbody>
-
-
-
-                            </table>
-
-
-                        </div>
-
-
-
-                    </div>
-
-
-                </div>
-
-
-            </div>
-
-
-
-
-
-            {{-- STATUS MODAL --}}
-
-
-            <div class="modal fade" id="statusModal">
-
-
-                <div class="modal-dialog">
-
-
-                    <div class="modal-content">
-
-
-
-                        <div class="modal-header">
-
-
-                            <h5 class="modal-title">
-
-                                Update Status
-
-                            </h5>
-
-
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-
-
-                        </div>
-
-
-
-
-                        <form id="statusForm">
-
-
-                            @csrf
-
-
-                            <input type="hidden" name="reg_sno" id="file_no">
-
-
-                            <input type="hidden" name="status" id="status">
-                            <input type="hidden" name="remarks_type" value="Operation Status">
-
-
-
-                            <div class="modal-body">
-
-
-
-                                <div class="mb-3">
-
-
-                                    <label>
-                                        Date
-                                    </label>
-
-
-                                    <input type="date" name="followup_date" id="date" class="form-control">
-
-
-                                </div>
-
-
-
-
-                                <div class="mb-3">
-
-
-                                    <label>
-                                        Remarks
-                                    </label>
-
-
-                                    <textarea name="remarks" id="remarks" class="form-control" required></textarea>
-
-
-                                </div>
-
-
-
-                            </div>
-
-
-
-                            <div class="modal-footer">
-
-
-                                <button type="submit" class="btn btn-primary">
-
-                                    Submit
-
-                                </button>
-
-
-                            </div>
-
-
-                        </form>
-
-
-
-                    </div>
-
-
-                </div>
-
-
-            </div>
-
-
-
-
-
-        @endsection
-
-
-
-
-
-        @section('scripts')
-
-
-            <script>
-                $.ajaxSetup({
-
-                    headers: {
-
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-
-                    }
-
-                });
-
-
-
-
-                $(document).ready(function() {
-
-
-
-
-
-                    // STATUS CHANGE
-
-
-                    $(document).on('change', '.status-select', function() {
-
-
-                        let status = $(this).val();
-
-
-                        if (status == '')
-                            return;
-
-
-
-                        $('#file_no').val($(this).data('file-no'));
-
-                        $('#status').val(status);
-
-                        $('#remarks').val('');
-
-                        $('#date').val('');
-
-
-                        $('#statusModal').modal('show');
-
-
-                    });
-
-
-
-
-
-
-
-                    // UPDATE STATUS
-
-
-                    $('#statusForm').submit(function(e) {
-
-
-                        e.preventDefault();
-
-
-
-                        $.ajax({
-
-
-                            url: "{{ route('operation.updateStatus') }}",
-
-                            type: "POST",
-
-                            data: $(this).serialize(),
-
-
-                            success: function(response) {
-
-
-                                $('#statusModal').modal('hide');
-
-
-                                location.reload();
-
-
-                            },
-
-
-                            error: function() {
-
-                                alert('Something went wrong');
+                                `;
 
                             }
 
 
-                        });
+                            $('#NotesTableBody')
+                                .html(html);
+
+                        },
 
 
+                    error:
+                        function(xhr) {
 
-                    });
+                            console.log(
+                                xhr.responseText
+                            );
 
 
+                            $('#NotesTableBody')
+                                .html(`
 
-                    // Province + College => Campus
+                                    <tr>
 
-                    $('#province_name, #collage_name').change(function() {
+                                        <td colspan="4"
+                                            class="text-danger text-center">
 
-                        let province_name = $('#province_name').val();
-                        let collage_name = $('#collage_name').val();
+                                            Failed to load notes
 
-                        if (province_name && collage_name) {
+                                        </td>
 
-                            $.ajax({
+                                    </tr>
 
-                                url: "{{ route('get.campus') }}",
-                                type: "GET",
-
-                                data: {
-                                    province_name: province_name,
-                                    collage_name: collage_name
-                                },
-
-                                success: function(response) {
-
-                                    $('#campus').html('<option value="">--Select Campus--</option>');
-
-                                    $.each(response, function(index, value) {
-
-                                        $('#campus').append(
-                                            '<option value="' + value.campus_name + '">' +
-                                            value.campus_name +
-                                            '</option>'
-                                        );
-
-                                    });
-
-                                }
-
-                            });
+                                `);
 
                         }
 
-                    });
+                });
+
+            }
 
 
-                    // Campus => Program
+            // ==========================================
+            // SAVE NOTE
+            // ==========================================
 
-                    $('#campus').change(function() {
+            $(document).on(
+                'submit',
+                '#addNotesForm',
+                function(e) {
 
-                        let province_name = $('#province_name').val();
-                        let collage_name = $('#collage_name').val();
-                        let campus_name = $('#campus').val();
-
-                        if (campus_name) {
-
-                            $.ajax({
-
-                                url: "{{ route('get.program') }}",
-                                type: "GET",
-
-                                data: {
-                                    province_name: province_name,
-                                    collage_name: collage_name,
-                                    campus_name: campus_name
-                                },
-
-                                success: function(response) {
-
-                                    $('#program_name').html('<option value="">Select Program</option>');
-
-                                    $.each(response, function(index, value) {
-
-                                        $('#program_name').append(
-                                            '<option value="' + value.prg_name + '">' +
-                                            value.prg_name +
-                                            '</option>'
-                                        );
-
-                                    });
-
-                                }
-
-                            });
-
-                        }
-
-                    });
+                    e.preventDefault();
 
 
+                    let form =
+                        $(this);
+
+                    let btn =
+                        form.find(
+                            'button[type="submit"]'
+                        );
 
 
+                    $.ajax({
+
+                        url:
+                            "{{ route('notes.add') }}",
+
+                        type:
+                            "POST",
+
+                        data:
+                            form.serialize(),
 
 
+                        beforeSend:
+                            function() {
 
-                    // OPEN NOTES
+                                btn.prop(
+                                    'disabled',
+                                    true
+                                );
 
-
-                    $(document).on('click', '.open-notes-modal', function() {
-
-
-                        let id = $(this).data('file-no');
-
-                        let name = $(this).data('name');
-
-
-                        $('#note_id').val(id);
-
-                        $('#NotesModalName').text(name);
-
-
-                        loadNotes(id);
-
-
-                        $('#notesModal').modal('show');
-
-
-
-                    });
-
-
-
-
-
-
-
-                    function loadNotes(id) {
-
-
-                        $.ajax({
-
-
-                            url: "{{ route('notes.get') }}",
-
-                            type: "POST",
-
-                            data: {
-
-
-                                note_id: id,
-
-
-                                _token: "{{ csrf_token() }}"
-
+                                btn.text(
+                                    'Saving...'
+                                );
 
                             },
 
 
-                            success: function(res) {
+                        success:
+                            function(response) {
+
+                                btn.prop(
+                                    'disabled',
+                                    false
+                                );
+
+                                btn.html(
+                                    '<i class="fa fa-save"></i> Save Note'
+                                );
 
 
+                                if (
+                                    response.status
+                                ) {
 
-                                let html = '';
-
-
-                                if (res.notes.length) {
-
-
-
-                                    $.each(res.notes, function(i, n) {
+                                    $('#newNote')
+                                        .val('');
 
 
-                                        html += `
-
-<tr>
-
-<td>${i+1}</td>
-
-<td>${n.remarks ?? ''}</td>
-
-<td>${n.updated_by ?? ''}</td>
-
-<td>${n.datetime ?? ''}</td>
-
-</tr>
+                                    loadNotes(
+                                        $('#note_id')
+                                            .val()
+                                    );
 
 
-`;
+                                    if (
+                                        typeof Swal !==
+                                        'undefined'
+                                    ) {
 
+                                        Swal.fire({
+
+                                            icon:
+                                                'success',
+
+                                            title:
+                                                'Success',
+
+                                            text:
+                                                response.message ||
+                                                'Note saved successfully'
+
+                                        });
+
+                                    }
+
+                                } else {
+
+                                    if (
+                                        typeof Swal !==
+                                        'undefined'
+                                    ) {
+
+                                        Swal.fire({
+
+                                            icon:
+                                                'error',
+
+                                            title:
+                                                'Error',
+
+                                            text:
+                                                response.message ||
+                                                'Unable to save note'
+
+                                        });
+
+                                    }
+
+                                }
+
+                            },
+
+
+                        error:
+                            function(xhr) {
+
+                                btn.prop(
+                                    'disabled',
+                                    false
+                                );
+
+                                btn.html(
+                                    '<i class="fa fa-save"></i> Save Note'
+                                );
+
+
+                                console.log(
+                                    xhr.responseText
+                                );
+
+
+                                if (
+                                    typeof Swal !==
+                                    'undefined'
+                                ) {
+
+                                    Swal.fire({
+
+                                        icon:
+                                            'error',
+
+                                        title:
+                                            'Error',
+
+                                        text:
+                                            'Something went wrong.'
 
                                     });
+
+                                }
+
+                            }
+
+                    });
+
+                }
+            );
+
+
+            // ==========================================
+            // VIEW LOGS
+            // ==========================================
+
+            $(document).on(
+                'click',
+                '.view-logs-btn',
+                function() {
+
+                    let id =
+                        $(this).data('file-no');
+
+                    let name =
+                        $(this).data('name');
+
+
+                    $('#logsModalLabel')
+                        .text(
+                            'Status Logs - ' + name
+                        );
+
+
+                    $('#logsTableBody').html(`
+
+                        <tr>
+
+                            <td colspan="5"
+                                class="text-center">
+
+                                Loading...
+
+                            </td>
+
+                        </tr>
+
+                    `);
+
+
+                    $.ajax({
+
+                        url:
+                            "{{ route('branch.manager.logs') }}",
+
+                        type:
+                            "POST",
+
+                        data: {
+
+                            semi_id:
+                                id,
+
+                            _token:
+                                "{{ csrf_token() }}"
+
+                        },
+
+
+                        success:
+                            function(response) {
+
+
+                                let html =
+                                    '';
+
+
+                                if (
+                                    response.logs &&
+                                    response.logs.length
+                                ) {
+
+
+                                    $.each(
+                                        response.logs,
+                                        function(i, log) {
+
+
+                                            html += `
+
+                                                <tr>
+
+                                                    <td>
+                                                        ${log.stage_date ?? ''}
+                                                    </td>
+
+                                                    <td>
+                                                        ${log.stage ?? ''} ${log.oprStsSend ?? ''}
+                                                    </td>
+
+                                                    <td>
+                                                        ${log.stage_remarks ?? ''}
+                                                    </td>
+
+                                                    <td>
+                                                        ${log.updated_by ?? ''}
+                                                    </td>
+
+                                                    <td>
+                                                        ${log.created_date ?? ''}
+                                                    </td>
+
+                                                </tr>
+
+                                            `;
+
+                                        }
+                                    );
 
 
                                 } else {
@@ -1678,172 +2662,70 @@ value="{{ request('to_date') }}"> --}}
 
                                     html = `
 
-<tr>
+                                        <tr>
 
-<td colspan="4"
-class="text-center">
+                                            <td colspan="5"
+                                                class="text-center">
 
-No Notes Found
+                                                No Logs Found
 
-</td>
+                                            </td>
 
-</tr>
+                                        </tr>
 
-`;
+                                    `;
 
                                 }
 
 
-                                $('#NotesTableBody').html(html);
+                                $('#logsTableBody')
+                                    .html(html);
 
 
-
-                            }
-
-
-
-                        });
-
-
-                    }
-
-
-
-
-
-
-
-                    // SAVE NOTE
-
-
-                    $('#addNotesForm').submit(function(e) {
-
-
-                        e.preventDefault();
-
-
-
-                        $.ajax({
-
-
-                            url: "{{ route('notes.add') }}",
-
-                            type: "POST",
-
-                            data: $(this).serialize(),
-
-
-                            success: function() {
-
-
-                                loadNotes($('#note_id').val());
-
-                                $('#newNote').val('');
-
-
-
-                            }
-
-
-                        });
-
-
-                    });
-
-
-
-
-
-
-
-                    // VIEW LOGS
-
-
-
-                    $(document).on('click', '.view-logs-btn', function() {
-
-
-
-                        let id = $(this).data('file-no');
-
-
-
-                        $.ajax({
-
-
-                            url: "{{ route('branch.manager.logs') }}",
-
-                            type: "POST",
-
-
-                            data: {
-
-
-                                semi_id: id,
-
-                                _token: "{{ csrf_token() }}"
-
+                                $('#logsModal')
+                                    .modal('show');
 
                             },
 
 
-                            success: function(res) {
+                        error:
+                            function(xhr) {
+
+                                console.log(
+                                    xhr.responseText
+                                );
 
 
+                                $('#logsTableBody')
+                                    .html(`
 
-                                let html = '';
+                                        <tr>
 
+                                            <td colspan="5"
+                                                class="text-danger text-center">
 
-                                $.each(res.logs, function(i, l) {
+                                                Unable to load logs.
 
+                                            </td>
 
+                                        </tr>
 
-                                    html += `
-
-<tr>
-
-<td>${l.stage_date ?? ''}</td>
-
-<td>${l.stage ?? ''}</td>
-
-<td>${l.stage_remarks ?? ''}</td>
-
-<td>${l.updated_by ?? ''}</td>
-
-<td>${l.created_date ?? ''}</td>
-
-</tr>
+                                    `);
 
 
-`;
-
-
-                                });
-
-
-
-                                $('#logsTableBody').html(html);
-
-
-                                $('#logsModal').modal('show');
-
-
+                                $('#logsModal')
+                                    .modal('show');
 
                             }
 
-
-                        });
-
-
-
                     });
 
+                }
+            );
 
 
+        });
 
+    </script>
 
-                });
-            </script>
-
-
-        @endsection
+@endsection
