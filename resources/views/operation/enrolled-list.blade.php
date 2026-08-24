@@ -6,8 +6,8 @@
 
     <style>
         /* =========================================================
-                                       PAGE
-                                    ========================================================= */
+                                               PAGE
+                                            ========================================================= */
 
         .enrolled-page {
             width: 100%;
@@ -52,8 +52,8 @@
         }
 
         /* =========================================================
-                                       FILTERS
-                                    ========================================================= */
+                                               FILTERS
+                                            ========================================================= */
 
         .filter-row {
             height: auto !important;
@@ -91,8 +91,8 @@
         }
 
         /* =========================================================
-                                       ENTRIES
-                                    ========================================================= */
+                                               ENTRIES
+                                            ========================================================= */
 
         .entries-row {
             height: auto !important;
@@ -110,8 +110,8 @@
         }
 
         /* =========================================================
-                                       TABLE
-                                    ========================================================= */
+                                               TABLE
+                                            ========================================================= */
 
         .table-wrapper {
             width: 100% !important;
@@ -172,8 +172,8 @@
         }
 
         /* =========================================================
-                                       PAGINATION
-                                    ========================================================= */
+                                               PAGINATION
+                                            ========================================================= */
 
         .pagination-row {
             width: 100% !important;
@@ -303,8 +303,8 @@
         }
 
         /* =========================================================
-                                       MODALS
-                                    ========================================================= */
+                                               MODALS
+                                            ========================================================= */
 
         .modal-header {
             background: #2867e8;
@@ -320,8 +320,8 @@
         }
 
         /* =========================================================
-                                       IMPORTANT - PREVENT LARGE EMPTY AREA
-                                    ========================================================= */
+                                               IMPORTANT - PREVENT LARGE EMPTY AREA
+                                            ========================================================= */
 
         .enrolled-page,
         .enrolled-card,
@@ -338,8 +338,8 @@
         }
 
         /* =========================================================
-                                       MOBILE
-                                    ========================================================= */
+                                               MOBILE
+                                            ========================================================= */
 
         @media (max-width: 767px) {
 
@@ -469,31 +469,41 @@
                         </div>
 
 
-                        {{-- Province --}}
-                        <div class="col-md-2">
+                        <div class="col-md-3 mb-2">
 
-                            <label class="form-label">
+                            <label>
                                 Province
                             </label>
 
-                            {{-- <select name="province_name" class="form-select"> --}}
-                            <select name="province_name" id="province_name" class="form-select">
+                            <select name="province" id="province_name" class="form-control">
 
                                 <option value="">
                                     Select Province
                                 </option>
 
-                                <option value="Alberta" {{ request('province_name') == 'Alberta' ? 'selected' : '' }}>
+                                <option value="Ontario" {{ request('province') == 'Ontario' ? 'selected' : '' }}>
+
+                                    Ontario
+
+                                </option>
+
+                                <option value="Alberta" {{ request('province') == 'Alberta' ? 'selected' : '' }}>
+
                                     Alberta
+
                                 </option>
 
                                 <option value="British Columbia"
-                                    {{ request('province_name') == 'British Columbia' ? 'selected' : '' }}>
+                                    {{ request('province') == 'British Columbia' ? 'selected' : '' }}>
+
                                     British Columbia
+
                                 </option>
 
-                                <option value="Ontario" {{ request('province_name') == 'Ontario' ? 'selected' : '' }}>
-                                    Ontario
+                                <option value="Manitoba" {{ request('province') == 'Manitoba' ? 'selected' : '' }}>
+
+                                    Manitoba
+
                                 </option>
 
                             </select>
@@ -501,22 +511,22 @@
                         </div>
 
 
-                        {{-- College --}}
-                        <div class="col-md-2">
+                        {{-- COLLEGE --}}
+                        <div class="col-md-3 mb-2">
 
-                            <label class="form-label">
+                            <label>
                                 College
                             </label>
 
-                            <select class="form-select" name="collage_name" id="collage_name">
+                            <select name="college" id="collage_name" class="form-control">
 
                                 <option value="">
-                                    Select College
+                                    --Select College--
                                 </option>
 
-                                @foreach ($colleges as $college)
+                                @foreach ($colleges ?? [] as $college)
                                     <option value="{{ $college->clg_name }}"
-                                        {{ request('collage_name') == $college->clg_name ? 'selected' : '' }}>
+                                        {{ request('college') == $college->clg_name ? 'selected' : '' }}>
 
                                         {{ $college->clg_name }}
 
@@ -528,68 +538,64 @@
                         </div>
 
 
-                        {{-- Campus --}}
-                        <div class="col-md-2">
+                        {{-- CAMPUS --}}
+                        <div class="col-md-3 mb-2">
 
-                            <label class="form-label">
+                            <label>
                                 Campus
                             </label>
 
-                            <select class="form-select" name="campus_name" id="campus_name">
+                            <select name="campus" id="campus" class="form-control">
 
                                 <option value="">
-                                    Select Campus
+                                    --Select Campus--
                                 </option>
 
-                                @isset($campuses)
+                                @if (request('campus'))
+                                    <option value="{{ request('campus') }}" selected>
 
-                                    @foreach ($campuses as $campus)
-                                        <option value="{{ $campus->campus_name }}"
-                                            {{ request('campus_name') == $campus->campus_name ? 'selected' : '' }}>
+                                        {{ request('campus') }}
 
-                                            {{ $campus->campus_name }}
-
-                                        </option>
-                                    @endforeach
-
-                                @endisset
+                                    </option>
+                                @endif
 
                             </select>
 
                         </div>
 
+                    </div>
 
-                        {{-- Program --}}
-                        <div class="col-md-2">
 
-                            <label class="form-label">
+                    {{-- ============================= --}}
+                    {{-- THIRD ROW --}}
+                    {{-- ============================= --}}
+
+                    <div class="row mt-2">
+
+                        {{-- PROGRAM --}}
+                        <div class="col-md-3 mb-2">
+
+                            <label>
                                 Program
                             </label>
 
-                            <select class="form-select" name="program_name" id="program_name">
+                            <select name="program" id="program_name" class="form-control">
 
                                 <option value="">
-                                    Select Program
+                                    --Select Program--
                                 </option>
 
-                                @isset($programs)
+                                @if (request('program'))
+                                    <option value="{{ request('program') }}" selected>
 
-                                    @foreach ($programs as $program)
-                                        <option value="{{ $program->prg_name }}"
-                                            {{ request('program_name') == $program->prg_name ? 'selected' : '' }}>
+                                        {{ request('program') }}
 
-                                            {{ $program->prg_name }}
-
-                                        </option>
-                                    @endforeach
-
-                                @endisset
+                                    </option>
+                                @endif
 
                             </select>
 
                         </div>
-
-
                         {{-- Search --}}
                         <div class="col-md-3">
 
@@ -1314,11 +1320,7 @@
         <script>
             $(document).ready(function() {
 
-                /*
-                ============================================================
-                CSRF
-                ============================================================
-                */
+
 
                 $.ajaxSetup({
                     headers: {
@@ -1327,11 +1329,7 @@
                 });
 
 
-                /*
-                ============================================================
-                BOOTSTRAP MODAL HELPER
-                ============================================================
-                */
+
 
                 function showModal(id) {
 
@@ -1362,269 +1360,288 @@
 
 
 
-                /*
-                ============================================================
-                PROVINCE + COLLEGE => CAMPUS
-                ============================================================
-                */
-
-                function loadCampuses(provinceName, collegeName, selectedCampus = '') {
-
-                    let $campus = $('#campus_name');
-                    let $program = $('#program_name');
 
 
-                    $campus.html(
-                        '<option value="">Loading Campus...</option>'
-                    );
+                $('#collage_name').on(
+                    'change',
+                    function() {
 
-                    $program.html(
-                        '<option value="">Select Program</option>'
-                    );
+                        let college =
+                            $(this).val();
 
 
-                    if (!provinceName || !collegeName) {
+                        $('#campus').html(
 
-                        $campus.html(
-                            '<option value="">Select Campus</option>'
+                            '<option value="">--Select Campus--</option>'
+
                         );
 
-                        return;
-                    }
+
+                        $('#program_name').html(
+
+                            '<option value="">--Select Program--</option>'
+
+                        );
 
 
-                    $.ajax({
+                        if (!college) {
 
-                        url: "{{ route('get.campus') }}",
+                            return;
 
-                        type: "GET",
-
-                        data: {
-
-                            province_name: provinceName,
-                            collage_name: collegeName
-
-                        },
-
-                        success: function(response) {
-
-                            $campus.html(
-                                '<option value="">Select Campus</option>'
-                            );
+                        }
 
 
-                            /*
-                            ------------------------------------------------
-                            RESPONSE ARRAY
-                            ------------------------------------------------
-                            */
+                        $.ajax({
 
-                            if (Array.isArray(response)) {
+                            url: "{{ route('osap.campuses') }}",
 
-                                $.each(response, function(index, value) {
+                            type: "POST",
 
-                                    let campusName = '';
+                            data: {
 
-                                    if (typeof value === 'object' && value !== null) {
+                                college_id: college,
 
-                                        campusName = value.campus_name ?? '';
+                                _token: "{{ csrf_token() }}"
 
-                                    } else {
-
-                                        campusName = value;
-
-                                    }
+                            },
 
 
-                                    if (campusName) {
+                            success: function(response) {
 
-                                        let selected =
-                                            campusName == selectedCampus ?
-                                            'selected' :
-                                            '';
-
-                                        $campus.append(
-
-                                            `<option value="${escapeHtml(campusName)}" ${selected}>
-                                    ${escapeHtml(campusName)}
-                                </option>`
-
-                                        );
-
-                                    }
-
-                                });
-
-                            }
+                                $('#campus')
+                                    .html(response);
 
 
-                            /*
-                            ------------------------------------------------
-                            HTML RESPONSE
-                            ------------------------------------------------
-                            */
-                            else if (typeof response === 'string') {
+                                $('#program_name')
+                                    .html(
 
-                                /*
-                                 * If controller already returns <option>
-                                 */
-                                if (response.indexOf('<option') !== -1) {
+                                        '<option value="">--Select Program--</option>'
 
-                                    $campus.html(response);
+                                    );
 
-                                    if (selectedCampus) {
 
-                                        $campus.val(selectedCampus);
 
-                                    }
+                                let selectedCampus =
+                                    @json(request('campus'));
+
+
+                                if (
+                                    selectedCampus
+                                ) {
+
+                                    $('#campus')
+                                        .val(
+                                            selectedCampus
+                                        )
+                                        .trigger('change');
 
                                 }
 
-                            }
+                            },
 
 
-                            /*
-                            ------------------------------------------------
-                            IF CAMPUS WAS ALREADY SELECTED
-                            THEN LOAD PROGRAM
-                            ------------------------------------------------
-                            */
+                            error: function(xhr) {
 
-                            let currentCampus = $campus.val();
+                                console.log(
+                                    xhr.responseText
+                                );
 
-                            if (currentCampus) {
 
-                                loadPrograms(
-                                    provinceName,
-                                    collegeName,
-                                    currentCampus,
-                                    "{{ request('program_name') }}"
+                                $('#campus').html(
+
+                                    '<option value="">--Select Campus--</option>'
+
+                                );
+
+
+                                $('#program_name').html(
+
+                                    '<option value="">--Select Program--</option>'
+
                                 );
 
                             }
 
-                        },
+                        });
 
-                        error: function(xhr) {
+                    }
+                );
 
-                            console.log(
-                                'Campus Error:',
-                                xhr.responseText
-                            );
 
-                            $campus.html(
-                                '<option value="">Unable to load Campus</option>'
-                            );
 
-                            $program.html(
-                                '<option value="">Select Program</option>'
-                            );
+
+                $('#campus').on(
+                    'change',
+                    function() {
+
+                        let campus =
+                            $(this).val();
+
+                        let college =
+                            $('#collage_name').val();
+
+
+                        $('#program_name').html(
+
+                            '<option value="">--Select Program--</option>'
+
+                        );
+
+
+                        if (!college || !campus) {
+
+                            return;
 
                         }
 
-                    });
 
-                }
+                        $.ajax({
 
+                            url: "{{ route('osap.programs') }}",
 
+                            type: "POST",
 
-                /*
-                ============================================================
-                CAMPUS => PROGRAM
-                ============================================================
-                */
+                            data: {
 
-                function loadPrograms(
-                    provinceName,
-                    collegeName,
-                    campusName,
-                    selectedProgram = ''
-                ) {
+                                college_id: college,
 
-                    let $program = $('#program_name');
+                                campus_id: campus,
+
+                                _token: "{{ csrf_token() }}"
+
+                            },
 
 
-                    $program.html(
-                        '<option value="">Loading Program...</option>'
-                    );
+                            success: function(response) {
+
+                                $('#program_name')
+                                    .html(response);
 
 
-                    if (
-                        !provinceName ||
-                        !collegeName ||
-                        !campusName
-                    ) {
 
-                        $program.html(
-                            '<option value="">Select Program</option>'
-                        );
 
-                        return;
+                                let selectedProgram =
+                                    @json(request('program'));
+
+
+                                if (
+                                    selectedProgram
+                                ) {
+
+                                    $('#program_name')
+                                        .val(
+                                            selectedProgram
+                                        );
+
+                                }
+
+                            },
+
+
+                            error: function(xhr) {
+
+                                console.log(
+                                    xhr.responseText
+                                );
+
+
+                                $('#program_name').html(
+
+                                    '<option value="">--Select Program--</option>'
+
+                                );
+
+                            }
+
+                        });
+
                     }
+                );
 
+
+
+
+                let selectedCollege =
+                    $('#collage_name').val();
+
+
+                let selectedCampus =
+                    @json(request('campus'));
+
+                let selectedProgram =
+                    @json(request('program'));
+
+
+                if (selectedCollege) {
 
                     $.ajax({
 
-                        url: "{{ route('get.program') }}",
+                        url: "{{ route('osap.campuses') }}",
 
-                        type: "GET",
+                        type: "POST",
 
                         data: {
 
-                            province_name: provinceName,
-                            collage_name: collegeName,
-                            campus_name: campusName
+                            college_id: selectedCollege,
+
+                            _token: "{{ csrf_token() }}"
 
                         },
 
+
                         success: function(response) {
 
-                            $program.html(
-                                '<option value="">Select Program</option>'
-                            );
+                            $('#campus')
+                                .html(response);
 
 
-                            /*
-                            ------------------------------------------------
-                            RESPONSE ARRAY
-                            ------------------------------------------------
-                            */
+                            if (selectedCampus) {
 
-                            if (Array.isArray(response)) {
+                                $('#campus')
+                                    .val(
+                                        selectedCampus
+                                    );
 
-                                $.each(response, function(index, value) {
-
-                                    let programName = '';
-
-                                    if (
-                                        typeof value === 'object' &&
-                                        value !== null
-                                    ) {
-
-                                        programName =
-                                            value.prg_name ?? '';
-
-                                    } else {
-
-                                        programName = value;
-
-                                    }
+                            }
 
 
-                                    if (programName) {
+                            if (
+                                selectedCampus
+                            ) {
 
-                                        let selected =
-                                            programName == selectedProgram ?
-                                            'selected' :
-                                            '';
+                                $.ajax({
 
-                                        $program.append(
+                                    url: "{{ route('osap.programs') }}",
 
-                                            `<option value="${escapeHtml(programName)}" ${selected}>
-                                    ${escapeHtml(programName)}
-                                </option>`
+                                    type: "POST",
 
-                                        );
+                                    data: {
+
+                                        college_id: selectedCollege,
+
+                                        campus_id: selectedCampus,
+
+                                        _token: "{{ csrf_token() }}"
+
+                                    },
+
+
+                                    success: function(response) {
+
+                                        $('#program_name')
+                                            .html(response);
+
+
+                                        if (
+                                            selectedProgram
+                                        ) {
+
+                                            $('#program_name')
+                                                .val(
+                                                    selectedProgram
+                                                );
+
+                                        }
 
                                     }
 
@@ -1632,41 +1649,6 @@
 
                             }
 
-
-                            /*
-                            ------------------------------------------------
-                            HTML RESPONSE
-                            ------------------------------------------------
-                            */
-                            else if (typeof response === 'string') {
-
-                                if (response.indexOf('<option') !== -1) {
-
-                                    $program.html(response);
-
-                                    if (selectedProgram) {
-
-                                        $program.val(selectedProgram);
-
-                                    }
-
-                                }
-
-                            }
-
-                        },
-
-                        error: function(xhr) {
-
-                            console.log(
-                                'Program Error:',
-                                xhr.responseText
-                            );
-
-                            $program.html(
-                                '<option value="">Unable to load Program</option>'
-                            );
-
                         }
 
                     });
@@ -1675,197 +1657,8 @@
 
 
 
-                /*
-                ============================================================
-                ESCAPE HTML
-                ============================================================
-                */
 
-                function escapeHtml(value) {
 
-                    if (value === null || value === undefined) {
-
-                        return '';
-
-                    }
-
-                    return String(value)
-                        .replace(/&/g, '&amp;')
-                        .replace(/</g, '&lt;')
-                        .replace(/>/g, '&gt;')
-                        .replace(/"/g, '&quot;')
-                        .replace(/'/g, '&#039;');
-
-                }
-
-
-
-                /*
-                ============================================================
-                PROVINCE CHANGE
-                ============================================================
-                */
-
-                $('#province_name').on('change', function() {
-
-                    let provinceName = $(this).val();
-
-                    let collegeName = $('#collage_name').val();
-
-
-                    $('#campus_name').html(
-                        '<option value="">Select Campus</option>'
-                    );
-
-                    $('#program_name').html(
-                        '<option value="">Select Program</option>'
-                    );
-
-
-                    if (provinceName && collegeName) {
-
-                        loadCampuses(
-                            provinceName,
-                            collegeName
-                        );
-
-                    }
-
-                });
-
-
-
-                /*
-                ============================================================
-                COLLEGE CHANGE
-                ============================================================
-                */
-
-                $('#collage_name').on('change', function() {
-
-                    let provinceName = $('#province_name').val();
-
-                    let collegeName = $(this).val();
-
-
-                    $('#campus_name').html(
-                        '<option value="">Select Campus</option>'
-                    );
-
-                    $('#program_name').html(
-                        '<option value="">Select Program</option>'
-                    );
-
-
-                    if (
-                        provinceName &&
-                        collegeName
-                    ) {
-
-                        loadCampuses(
-                            provinceName,
-                            collegeName
-                        );
-
-                    }
-
-                });
-
-
-
-                /*
-                ============================================================
-                CAMPUS CHANGE
-                ============================================================
-                */
-
-                $('#campus_name').on('change', function() {
-
-                    let provinceName =
-                        $('#province_name').val();
-
-                    let collegeName =
-                        $('#collage_name').val();
-
-                    let campusName =
-                        $(this).val();
-
-
-                    $('#program_name').html(
-                        '<option value="">Loading Program...</option>'
-                    );
-
-
-                    if (
-                        provinceName &&
-                        collegeName &&
-                        campusName
-                    ) {
-
-                        loadPrograms(
-                            provinceName,
-                            collegeName,
-                            campusName
-                        );
-
-                    } else {
-
-                        $('#program_name').html(
-                            '<option value="">Select Program</option>'
-                        );
-
-                    }
-
-                });
-
-
-
-                /*
-                ============================================================
-                INITIAL LOAD
-                ============================================================
-                */
-
-                let initialProvince =
-                    $('#province_name').val();
-
-                let initialCollege =
-                    $('#collage_name').val();
-
-                let initialCampus =
-                    "{{ request('campus_name') }}";
-
-                let initialProgram =
-                    "{{ request('program_name') }}";
-
-
-                /*
-                ------------------------------------------------------------
-                IF PROVINCE + COLLEGE ALREADY SELECTED
-                LOAD CAMPUS AUTOMATICALLY
-                ------------------------------------------------------------
-                */
-
-                if (
-                    initialProvince &&
-                    initialCollege
-                ) {
-
-                    loadCampuses(
-                        initialProvince,
-                        initialCollege,
-                        initialCampus
-                    );
-
-                }
-
-
-
-                /*
-                ============================================================
-                NOTES
-                ============================================================
-                */
 
                 $(document).on(
                     'click',

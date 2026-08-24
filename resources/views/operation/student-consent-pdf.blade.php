@@ -2,34 +2,27 @@
 <html>
 
 <head>
-
     <meta charset="UTF-8">
 
     <title>Student Consent and Responsibility Agreement</title>
 
     <style>
-
-        .header {
-            position: fixed;
-            top: -80px;
-            width: 100%;
-            padding: 0px 0px 25px;
-            height: 100px;
-            display: block;
-        }
-
-        footer {
-            position: fixed;
-            bottom: 40px;
-            width: 100%;
-            text-align: left;
-            padding: 0px 25px 0px;
-            height: 25px;
+        @page {
+            margin: 90px 40px 60px 40px;
+            color: #333;
             font-size: 14px;
         }
 
-        footer p {
-            text-align: center;
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: DejaVu Sans, sans-serif;
+            color: #434344;
+            font-size: 14px;
         }
 
         main {
@@ -40,32 +33,66 @@
         .page {
             width: 100%;
             font-size: 14px;
-            margin-top: 10px;
-            margin-bottom: 0px;
-            padding: 0px 0px 0px;
-            page-break-after: always;
-            position: relative;
+            margin: 0;
+            padding: 0;
             line-height: 18px;
         }
 
-        .page:last-child {
-            page-break-after: never;
+        /* =========================================================
+           HEADER
+        ========================================================= */
+
+        .header {
+            width: 100%;
+            margin: 0 0 20px 0;
+            padding: 0;
         }
 
-        @page {
-            margin: 90px 40px 60px;
-            font-weight: 599;
+        .header-table {
             width: 100%;
-            color: #333;
-            font-size: 14px;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
         }
+
+        .header-table td {
+            vertical-align: middle;
+            padding: 4px 5px;
+            font-size: 12px;
+            line-height: 17px;
+            color: #000;
+        }
+
+        .logo-cell {
+            width: 120px;
+            vertical-align: middle;
+        }
+
+        .logo-img {
+            width: 90px;
+            height: auto;
+            display: block;
+        }
+
+        .right-text {
+            text-align: right;
+            vertical-align: middle;
+        }
+
+        .right-text strong {
+            font-size: 12px;
+        }
+
+        /* =========================================================
+           TYPOGRAPHY
+        ========================================================= */
 
         p {
             font-size: 14px;
             line-height: 1.5;
             color: #434344;
             text-align: justify;
-            margin: 8px 0px;
+            margin: 8px 0;
         }
 
         h1 {
@@ -73,6 +100,8 @@
             font-weight: bold;
             margin: 20px 0 10px;
             color: #434344;
+            text-align: center;
+            line-height: 1.3;
         }
 
         .center-page {
@@ -93,73 +122,116 @@
             font-size: 15px;
             font-weight: bold;
             margin-top: 25px;
+            margin-bottom: 10px;
+            color: #434344;
+        }
+
+        .intro-text {
+            font-size: 12px;
+            font-style: italic;
+            text-align: center;
+            margin-top: 5px;
         }
 
         .line {
             border-bottom: 1px solid #aaa;
             margin: 18px 0;
+            height: 1px;
         }
+
+        /* =========================================================
+           LIST
+        ========================================================= */
 
         ul {
             font-size: 14px;
             line-height: 1.6;
-            color: #000;
-            padding-left: 18px;
             color: #434344;
+            padding-left: 20px;
+            margin-top: 8px;
+            margin-bottom: 12px;
         }
 
         ul li {
-            margin-bottom: 4px;
+            margin-bottom: 5px;
             text-align: justify;
             color: #434344;
         }
 
-        table.header-table {
-            position: fixed;
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-        }
+        /* =========================================================
+           STUDENT INFORMATION
+        ========================================================= */
 
-        table.header-table td {
-            vertical-align: middle;
-            padding: 5px;
-            font-size: 14px;
-            line-height: 1.5;
-            color: #000;
-        }
-
-        .logo-img {
-            width: 90px;
-        }
-
-        .right-text {
-            text-align: right;
+        .student-info {
+            margin-top: 10px;
         }
 
         .student-line {
             display: inline-block;
             min-width: 200px;
             border-bottom: 1px solid #000;
+            line-height: 20px;
+            vertical-align: bottom;
         }
 
         .program-line {
             display: inline-block;
             min-width: 250px;
             border-bottom: 1px solid #000;
+            line-height: 20px;
+            vertical-align: bottom;
         }
 
+        .signature-line {
+            display: inline-block;
+            width: 200px;
+            min-height: 45px;
+            border-bottom: 1px solid #000;
+            vertical-align: bottom;
+        }
+
+        .signature-img {
+            width: 120px;
+            height: auto;
+            max-height: 40px;
+            display: inline-block;
+            vertical-align: bottom;
+        }
+
+        /* =========================================================
+           PAGE BREAK
+        ========================================================= */
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        .no-page-break {
+            page-break-inside: avoid;
+        }
+
+        footer {
+            position: fixed;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 11px;
+        }
+
+        footer p {
+            text-align: center;
+            font-size: 11px;
+        }
     </style>
 
 </head>
 
-
 <body>
 
-
-    {{-- ========================================================= --}}
-    {{-- FIRST HEADER --}}
-    {{-- ========================================================= --}}
+    {{-- =========================================================
+         FIRST HEADER
+    ========================================================== --}}
 
     <div class="header">
 
@@ -167,35 +239,32 @@
 
             <tr>
 
-                <td width="120">
+                <td class="logo-cell">
 
-                    @if(!empty($logoSrc))
-
+                    @if (!empty($logoSrc))
                         <img
                             src="{{ $logoSrc }}"
                             class="logo-img"
                             alt="Logo"
                         >
-
                     @endif
 
                 </td>
 
-
                 <td class="right-text">
 
                     <strong>
-                        Phone number – (416)504-5110
+                        Phone number – (416) 504-5110
                     </strong>
 
                     <br>
 
-                    Address - 7015 Tranmere Dr,
+                    Address - 7015 Tranmere Dr,<br>
                     Mississauga, ON L5S 1T7, Canada
 
                     <br>
 
-                    -15315 66 Ave unit 308,
+                    15315 66 Ave Unit 308,<br>
                     Surrey, BC V3S 2A2
 
                 </td>
@@ -207,30 +276,26 @@
     </div>
 
 
-    {{-- ========================================================= --}}
-    {{-- MAIN --}}
-    {{-- ========================================================= --}}
+    {{-- =========================================================
+         MAIN CONTENT
+    ========================================================== --}}
 
     <main class="page">
 
+        {{-- =====================================================
+             TITLE
+        ====================================================== --}}
 
-        <h1 style="text-align:center;">
+        <h1>
 
             STUDENT CONSENT AND RESPONSIBILITY
             <br>
-
             AGREEMENT
 
         </h1>
 
 
-        <p
-            style="
-                font-size:12px;
-                font-style:italic;
-                text-align:center;
-            "
-        >
+        <p class="intro-text">
 
             (For All Students of GPS Education Solutions Inc.)
 
@@ -241,6 +306,10 @@
         <br>
         <br>
 
+
+        {{-- =====================================================
+             INTRODUCTION
+        ====================================================== --}}
 
         <p class="title">
 
@@ -264,6 +333,10 @@
         <div class="line"></div>
 
 
+        {{-- =====================================================
+             SECTION 1
+        ====================================================== --}}
+
         <p class="section-title">
 
             1. Voluntary Decision
@@ -281,7 +354,7 @@
 
             No employee or representative of GPS Education has made
             any guarantee, promise, or assurance of admission,
-            visa approval, or funding outcome
+            visa approval, or funding outcome.
 
             <br>
 
@@ -293,6 +366,10 @@
 
         <div class="line"></div>
 
+
+        {{-- =====================================================
+             SECTION 2
+        ====================================================== --}}
 
         <p class="section-title">
 
@@ -350,55 +427,66 @@
         <div class="line"></div>
 
 
-        {{-- ===================================================== --}}
-        {{-- SECOND HEADER --}}
-        {{-- ===================================================== --}}
+        {{-- =========================================================
+             SECOND PAGE
+        ========================================================== --}}
 
-        <table class="header-table">
-
-            <tr>
-
-                <td width="120">
-
-                    @if(!empty($logoSrc))
-
-                        <img
-                            src="{{ $logoSrc }}"
-                            class="logo-img"
-                            alt="Logo"
-                        >
-
-                    @endif
-
-                </td>
+        <div class="page-break"></div>
 
 
-                <td class="right-text">
+        {{-- =====================================================
+             SECOND HEADER
+        ====================================================== --}}
 
-                    <strong>
-                        Phone number – (416)504-5110
-                    </strong>
+        <div class="header">
 
-                    <br>
+            <table class="header-table">
 
-                    Address - 7015 Tranmere Dr,
-                    Mississauga, ON L5S 1T7, Canada
+                <tr>
 
-                    <br>
+                    <td class="logo-cell">
 
-                    -15315 66 Ave unit 308,
-                    Surrey, BC V3S 2A2
+                        @if (!empty($logoSrc))
+                            <img
+                                src="{{ $logoSrc }}"
+                                class="logo-img"
+                                alt="Logo"
+                            >
+                        @endif
 
-                </td>
+                    </td>
 
-            </tr>
+                    <td class="right-text">
 
-        </table>
+                        <strong>
+                            Phone number – (416) 504-5110
+                        </strong>
+
+                        <br>
+
+                        Address - 7015 Tranmere Dr,<br>
+                        Mississauga, ON L5S 1T7, Canada
+
+                        <br>
+
+                        15315 66 Ave Unit 308,<br>
+                        Surrey, BC V3S 2A2
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+        </div>
 
 
         <br>
-        <br>
 
+
+        {{-- =====================================================
+             SECTION 3
+        ====================================================== --}}
 
         <p class="section-title">
 
@@ -441,6 +529,10 @@
 
         <div class="line"></div>
 
+
+        {{-- =====================================================
+             SECTION 4
+        ====================================================== --}}
 
         <p class="section-title">
 
@@ -489,6 +581,10 @@
         <div class="line"></div>
 
 
+        {{-- =====================================================
+             SECTION 5
+        ====================================================== --}}
+
         <p class="section-title">
 
             5. Confidentiality and Privacy
@@ -520,6 +616,10 @@
 
         <div class="line"></div>
 
+
+        {{-- =====================================================
+             SECTION 6
+        ====================================================== --}}
 
         <p class="section-title">
 
@@ -554,55 +654,66 @@
         <div class="line"></div>
 
 
-        {{-- ===================================================== --}}
-        {{-- THIRD HEADER --}}
-        {{-- ===================================================== --}}
+        {{-- =========================================================
+             THIRD PAGE
+        ========================================================== --}}
 
-        <table class="header-table">
-
-            <tr>
-
-                <td width="120">
-
-                    @if(!empty($logoSrc))
-
-                        <img
-                            src="{{ $logoSrc }}"
-                            class="logo-img"
-                            alt="Logo"
-                        >
-
-                    @endif
-
-                </td>
+        <div class="page-break"></div>
 
 
-                <td class="right-text">
+        {{-- =====================================================
+             THIRD HEADER
+        ====================================================== --}}
 
-                    <strong>
-                        Phone number – (416)504-5110
-                    </strong>
+        <div class="header">
 
-                    <br>
+            <table class="header-table">
 
-                    Address - 7015 Tranmere Dr,
-                    Mississauga, ON L5S 1T7, Canada
+                <tr>
 
-                    <br>
+                    <td class="logo-cell">
 
-                    -15315 66 Ave unit 308,
-                    Surrey, BC V3S 2A2
+                        @if (!empty($logoSrc))
+                            <img
+                                src="{{ $logoSrc }}"
+                                class="logo-img"
+                                alt="Logo"
+                            >
+                        @endif
 
-                </td>
+                    </td>
 
-            </tr>
+                    <td class="right-text">
 
-        </table>
+                        <strong>
+                            Phone number – (416) 504-5110
+                        </strong>
+
+                        <br>
+
+                        Address - 7015 Tranmere Dr,<br>
+                        Mississauga, ON L5S 1T7, Canada
+
+                        <br>
+
+                        15315 66 Ave Unit 308,<br>
+                        Surrey, BC V3S 2A2
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+        </div>
 
 
         <br>
-        <br>
 
+
+        {{-- =====================================================
+             SECTION 7
+        ====================================================== --}}
 
         <p class="section-title">
 
@@ -629,6 +740,10 @@
 
         <div class="line"></div>
 
+
+        {{-- =====================================================
+             SECTION 8
+        ====================================================== --}}
 
         <p class="section-title">
 
@@ -663,6 +778,10 @@
         <div class="line"></div>
 
 
+        {{-- =====================================================
+             SECTION 9
+        ====================================================== --}}
+
         <p class="section-title">
 
             9. Student Acknowledgement
@@ -691,9 +810,9 @@
         <div class="line"></div>
 
 
-        {{-- ===================================================== --}}
-        {{-- STUDENT INFORMATION --}}
-        {{-- ===================================================== --}}
+        {{-- =====================================================
+             STUDENT INFORMATION
+        ====================================================== --}}
 
         <p class="section-title">
 
@@ -702,9 +821,9 @@
         </p>
 
 
-        <p>
+        <p class="student-info">
 
-            Full Name:
+            <strong>Full Name:</strong>
 
             <span class="student-line">
                 &nbsp;{{ $sname }}
@@ -713,7 +832,7 @@
             <br>
 
 
-            Date of Birth:
+            <strong>Date of Birth:</strong>
 
             <span class="student-line">
                 &nbsp;{{ $dob }}
@@ -722,7 +841,7 @@
             <br>
 
 
-            Email:
+            <strong>Email:</strong>
 
             <span class="student-line">
                 &nbsp;{{ $semail }}
@@ -731,7 +850,7 @@
             <br>
 
 
-            Phone Number:
+            <strong>Phone Number:</strong>
 
             <span class="student-line">
                 &nbsp;{{ $smobile }}
@@ -740,7 +859,7 @@
             <br>
 
 
-            Program & College Selected:
+            <strong>Program & College Selected:</strong>
 
             <span class="program-line">
                 &nbsp;{{ $program_name }} / {{ $collage_name }}
@@ -750,15 +869,15 @@
             <br>
 
 
-            Signature of Student:
+            <strong>Signature of Student:</strong>
 
-            <span class="student-line">
+            <span class="signature-line">
 
-                @if(!empty($sign_Src))
+                @if (!empty($sign_Src))
 
                     <img
                         src="{{ $sign_Src }}"
-                        width="120"
+                        class="signature-img"
                         alt="Student Signature"
                     >
 
@@ -769,7 +888,7 @@
             <br>
 
 
-            Date:
+            <strong>Date:</strong>
 
             <span class="student-line">
                 &nbsp;{{ $datsddsfd }}
@@ -779,7 +898,7 @@
             <br>
 
 
-            Witness (GPS Education Representative):
+            <strong>Witness (GPS Education Representative):</strong>
 
             <span class="program-line">
                 &nbsp;
@@ -788,7 +907,7 @@
             <br>
 
 
-            Date:
+            <strong>Date:</strong>
 
             <span class="student-line">
                 &nbsp;{{ $datsddsfd }}
@@ -796,9 +915,18 @@
 
         </p>
 
-
     </main>
 
+
+    {{-- =========================================================
+         FOOTER
+    ========================================================== --}}
+
+    <footer>
+        <p>
+            GPS Education Solutions Inc.
+        </p>
+    </footer>
 
 </body>
 

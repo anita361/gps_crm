@@ -5,16 +5,12 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="{{ asset('images/GPS-Logo.jpg.jpeg') }}" alt="GPS">
 
     <title>@yield('title', 'GPS CRM') | GPS Education CRM</title>
-
-    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Font Awesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
-
-    <!-- DataTables -->
     <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
     @stack('styles')
@@ -26,7 +22,6 @@
             font-size: 14px;
         }
 
-        /* Navbar */
 
         .navbar {
             background: #fff;
@@ -71,8 +66,6 @@
             padding: 12px;
         }
 
-        /* Table */
-
         .table-dark th {
             background: #555 !important;
             color: #fff;
@@ -83,8 +76,6 @@
         .table td {
             vertical-align: middle;
         }
-
-        /* Buttons */
 
         .btn-success,
         .btn-danger {

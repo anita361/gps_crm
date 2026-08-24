@@ -2029,12 +2029,19 @@ class WalkinController extends Controller
 
     public function fundStatusLogs(Request $request)
     {
+        $request->validate([
+            'semi_id' => 'required|integer|min:1',
+        ]);
+
         $logs = DB::table('fund_status_logs')
             ->where('semi_id', $request->semi_id)
-            ->orderBy('id', 'DESC')
+            ->orderByDesc('id')
             ->get();
 
-        return response()->json($logs);
+        return response()->json([
+            'success' => true,
+            'logs'    => $logs,
+        ]);
     }
 
     public function updateNotes(Request $request)
@@ -4808,222 +4815,254 @@ class WalkinController extends Controller
             'programs' => $programs
         ]);
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | UPDATE DROP STATUS
-    |--------------------------------------------------------------------------
-    */
-
+    
     public function updateDropStatus(Request $request)
     {
-        /*
-    |--------------------------------------------------------------------------
-    | Validation
-    |--------------------------------------------------------------------------
-    */
-
         $validated = $request->validate([
-            'semi_id' => 'required|integer|min:1',
-            'status' => 'required|string|max:255',
-            'date' => 'required|date',
-            'remarks' => 'required|string|max:5000',
+            'semi_id'     => 'required|integer|min:1',
+            'fund_status' => 'required|string|max:255',
+            'fund_date'   => 'required|date',
+            'remarks'     => 'required|string|max:5000',
         ]);
 
-
-        /*
-    |--------------------------------------------------------------------------
-    | Get Values
-    |--------------------------------------------------------------------------
-    */
-
-        $id = (int) $validated['semi_id'];
-
-        $status = trim($validated['status']);
-
-        $date = $validated['date'];
-
-        $remarks = trim($validated['remarks']);
-
-
-        /*
-    |--------------------------------------------------------------------------
-    | Get Logged In User
-    |--------------------------------------------------------------------------
-    */
+        $semiId    = (int) $validated['semi_id'];
+        $newStatus = trim($validated['fund_status']);
+        $fundDate  = $validated['fund_date'];
+        $remarks   = trim($validated['remarks']);
 
         $loginId = session('login');
 
-        $updateBy = trim((string) session('name', ''));
+        $user = trim((string) session('name', ''));
 
-
-        if ($updateBy === '' && $loginId) {
-
+        if ($user === '' && $loginId) {
             $loginUser = DB::table('crm_login')
                 ->where('id', $loginId)
                 ->first();
 
-            if ($loginUser) {
-                $updateBy = trim((string) ($loginUser->name ?? ''));
-            }
+            $user = $loginUser?->name ?? '';
         }
 
-
-        /*
-    |--------------------------------------------------------------------------
-    | Check Student
-    |--------------------------------------------------------------------------
-    */
-
         $student = DB::table('seminarpre')
-            ->where('sno', $id)
+            ->where('sno', $semiId)
             ->first();
 
-
         if (!$student) {
-
             return response()->json([
                 'success' => false,
-                'message' => 'Student record not found.',
-                'semi_id' => $id,
+                'message' => 'Student not found.'
             ], 404);
         }
 
+        $oldStatus = $student->fund_aol_status ?? '';
 
-        /*
-    |--------------------------------------------------------------------------
-    | Update seminarpre
-    |--------------------------------------------------------------------------
-    */
-
-        $updated = DB::table('seminarpre')
-            ->where('sno', $id)
-            ->update([
-                'opr_stage' => $status,
-                'opr_stage_date' => $date,
-                'opr_stage_remarks' => $remarks,
-                'stage_update_name' => $updateBy,
+        if ((string) $oldStatus === (string) $newStatus) {
+            return response()->json([
+                'success' => false,
+                'status'  => 'no_change',
+                'message' => 'No changes detected.'
             ]);
+        }
 
+        try {
 
-        /*
-    |--------------------------------------------------------------------------
-    | Check Update Result
-    |--------------------------------------------------------------------------
-    */
-
-        if ($updated === 0) {
-
-            /*
-        |--------------------------------------------------------------------------
-        | Check whether values are already the same
-        |--------------------------------------------------------------------------
-        */
-
-            $current = DB::table('seminarpre')
-                ->where('sno', $id)
-                ->first();
-
-
-            if (
-                $current &&
-                $current->opr_stage === $status &&
-                (string) $current->opr_stage_date === (string) $date &&
-                $current->opr_stage_remarks === $remarks &&
-                $current->stage_update_name === $updateBy
-            ) {
-
-                return response()->json([
-                    'success' => true,
-                    'message' => 'No changes were made because the information is already up to date.',
-                    'data' => [
-                        'sno' => $id,
-                        'status' => $current->opr_stage,
-                        'date' => $current->opr_stage_date,
-                        'remarks' => $current->opr_stage_remarks,
-                        'updated_by' => $current->stage_update_name,
-                    ],
+           
+            $updated = DB::table('seminarpre')
+                ->where('sno', $semiId)
+                ->update([
+                    'fund_aol_status'  => $newStatus,
+                    'action_date'      => $fundDate,
+                    'fund_aol_remarks' => $remarks,
                 ]);
+
+            if ($updated <= 0) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Main status was not updated.'
+                ], 500);
             }
 
+           
+            $logStored = DB::table('fund_status_logs')->insert([
+                'semi_id'    => $semiId,
+                'old_status' => $oldStatus,
+                'new_status' => $newStatus,
+                'remarks'    => $remarks,
+                'changed_by' => $user,
+                'changed_at' => now(),
+            ]);
+
+            if (!$logStored) {
+                Log::error('Fund status log insert failed', [
+                    'semi_id'    => $semiId,
+                    'old_status' => $oldStatus,
+                    'new_status' => $newStatus,
+                    'remarks'    => $remarks,
+                    'changed_by' => $user,
+                ]);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Main status updated, but log could not be stored.'
+                ], 500);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Main Status Updated Successfully!'
+            ]);
+        } catch (\Throwable $e) {
+
+            Log::error('Fund status update failed', [
+                'semi_id' => $semiId,
+                'error'   => $e->getMessage(),
+                'file'    => $e->getFile(),
+                'line'    => $e->getLine(),
+            ]);
 
             return response()->json([
                 'success' => false,
-                'message' => 'The operation status could not be updated.',
-                'semi_id' => $id,
+                'message' => $e->getMessage()
             ], 500);
         }
-
-
-        /*
-    |--------------------------------------------------------------------------
-    | Get Updated Record
-    |--------------------------------------------------------------------------
-    */
-
-        $updatedStudent = DB::table('seminarpre')
-            ->where('sno', $id)
-            ->first();
-
-
-        /*
-    |--------------------------------------------------------------------------
-    | Response
-    |--------------------------------------------------------------------------
-    */
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Operation status updated successfully.',
-
-            'data' => [
-                'sno' => $id,
-                'status' => $updatedStudent->opr_stage ?? $status,
-                'date' => $updatedStudent->opr_stage_date ?? $date,
-                'remarks' => $updatedStudent->opr_stage_remarks ?? $remarks,
-                'updated_by' => $updatedStudent->stage_update_name ?? $updateBy,
-            ],
-        ]);
     }
-    /*
-    |--------------------------------------------------------------------------
-    | OPERATION LOGS
-    |--------------------------------------------------------------------------
-    */
 
-    public function dropLogs(Request $request)
+    public function getsmaintatusLogs(Request $request)
     {
         $request->validate([
-            'semi_id' => 'required|integer',
+            'semi_id' => 'required|integer'
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | IMPORTANT
-        |--------------------------------------------------------------------------
-        | Your operation-log table name and its columns were not included
-        | in the code you provided.
-        |
-        | Do NOT invent/change them.
-        |
-        | Send your existing operation-log SQL/table structure and I will
-        | put the exact query here.
-        |--------------------------------------------------------------------------
-        */
+        $logs = DB::table('fund_status_logs')
+            ->where('semi_id', $request->semi_id)
+            ->orderBy('changed_at', 'desc')
+            ->get([
+                'new_status',
+                'remarks',
+                'changed_by',
+                'changed_at'
+            ]);
+
+        $logs = $logs->values()->map(function ($log, $index) {
+            return [
+                'num'        => $index + 1,
+                'new_status' => $log->new_status,
+                'remarks'    => $log->remarks,
+                'changed_by' => $log->changed_by,
+                'changed_at' => $log->changed_at,
+            ];
+        });
 
         return response()->json([
             'success' => true,
-            'logs' => []
+            'logs' => $logs
         ]);
     }
 
+    // public function dropLogs(Request $request)
+    // {
+    //     $request->validate([
+    //         'semi_id' => 'required|integer',
+    //     ]);
 
-    /*
-    |--------------------------------------------------------------------------
-    | MAIN STATUS / AOL LOGS
-    |--------------------------------------------------------------------------
-    */
+    //     $semi_id = $request->semi_id;
+
+    //     $logs = DB::table('opr_sts_logs')
+    //         ->where('main_id', $semi_id)
+    //         ->orderByDesc('id')
+    //         ->get()
+    //         ->map(function ($row) {
+    //             return [
+    //                 'main_id'       => $row->main_id,
+    //                 'oprStsSend'    => $row->oprStsSend,
+    //                 'stage'         => $row->stage,
+    //                 'stage_date'    => $row->stage_date,
+    //                 'stage_remarks' => $row->stage_remarks,
+    //                 'updated_by'    => $row->created_name,
+    //                 'created_date'  => $row->created_date,
+    //             ];
+    //         });
+
+    //     $notes = DB::table('notes_logs')
+    //         ->where('main_id', $semi_id)
+    //         ->orderByDesc('created_datetime')
+    //         ->get()
+    //         ->map(function ($row) {
+    //             return [
+    //                 'main_id'    => $row->main_id,
+    //                 'remarks'    => $row->notes_remarks,
+    //                 'updated_by' => $row->created_name,
+    //                 'datetime'   => $row->created_datetime
+    //             ];
+    //         });
+
+    //     return response()->json([
+    //         'success' => true,
+    //         'logs'    => $logs,
+    //         'notes'   => $notes,
+    //     ]);
+    // }
+
+   public function dropLogs(Request $request)
+{
+    $request->validate([
+        'semi_id' => 'required|integer',
+    ]);
+
+    $semi_id = $request->semi_id;
+
+    $logs = DB::table('opr_sts_logs')
+        ->where('main_id', $semi_id)
+        ->orderByDesc('id')
+        ->get()
+        ->map(function ($row) {
+
+            return [
+                'main_id' => $row->main_id,
+
+                // STATUS
+                'status' => $row->oprStsSend
+                    ?: $row->stage
+                    ?: '',
+
+                // DATE
+                'date' => $row->stage_date ?? '',
+
+                // REMARKS
+                'remarks' => $row->stage_remarks ?? '',
+
+                // UPDATED BY
+                'updated_by' => $row->created_name ?? '',
+
+                // FULL ACTION DATETIME
+                'action_datetime' => $row->created_datetime ?? '',
+            ];
+        });
+
+
+    $notes = DB::table('notes_logs')
+        ->where('main_id', $semi_id)
+        ->orderByDesc('id')
+        ->get()
+        ->map(function ($row) {
+
+            return [
+                'sno' => $row->id,
+                'main_id' => $row->main_id,
+                'remarks' => $row->notes_remarks ?? '',
+                'updated_by' => $row->created_name ?? '',
+                'action_datetime' => $row->created_datetime ?? '',
+            ];
+        });
+
+
+    return response()->json([
+        'success' => true,
+        'logs' => $logs,
+        'notes' => $notes,
+    ]);
+}
+
+
 
     public function dropAolLogs(Request $request)
     {
@@ -5031,14 +5070,7 @@ class WalkinController extends Controller
             'semi_id' => 'required|integer',
         ]);
 
-        /*
-        |--------------------------------------------------------------------------
-        | IMPORTANT
-        |--------------------------------------------------------------------------
-        | Your Main Status/AOL log table name and columns were not provided.
-        | I will not guess them because that could break your existing SQL.
-        |--------------------------------------------------------------------------
-        */
+
 
         return response()->json([
             'success' => true,
@@ -5047,11 +5079,7 @@ class WalkinController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | NOTES
-    |--------------------------------------------------------------------------
-    */
+
 
     public function dropNotes(Request $request)
     {
@@ -6630,141 +6658,171 @@ class WalkinController extends Controller
     }
 
 
-    public function studentConsentPdf(Request $request)
-    {
+  public function studentConsentPdf(Request $request)
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Get Student ID
+    |--------------------------------------------------------------------------
+    */
+
+    $snoid = $request->query('uid');
+
+    if (empty($snoid)) {
+        return redirect()
+            ->back()
+            ->with('error', 'Student ID is missing.');
+    }
 
 
-        $snoid = $request->query('uid');
+    /*
+    |--------------------------------------------------------------------------
+    | Get Student
+    |--------------------------------------------------------------------------
+    */
 
-        if (empty($snoid)) {
-            return redirect()
-                ->back()
-                ->with('error', 'Student ID is missing.');
-        }
+    $student = DB::table('seminarpre')
+        ->where('sno', $snoid)
+        ->first();
 
-
-
-
-        $student = DB::table('seminarpre')
-            ->where('sno', $snoid)
-            ->first();
-
-
-        if (!$student) {
-            return redirect()
-                ->back()
-                ->with('error', 'Student record not found.');
-        }
+    if (!$student) {
+        return redirect()
+            ->back()
+            ->with('error', 'Student record not found.');
+    }
 
 
+    /*
+    |--------------------------------------------------------------------------
+    | Student Information
+    |--------------------------------------------------------------------------
+    */
 
-        $sname = $student->sname ?? '';
-
-        $dob = $student->dob ?? '';
-
-        $semail = $student->semail ?? '';
-
-        $smobile = $student->smobile ?? '';
-
-        $program_name = $student->program_name ?? '';
-
-        $collage_name = $student->collage_name ?? '';
-
-        $signature = $student->signature ?? '';
+    $sname = $student->sname ?? '';
+    $dob = $student->dob ?? '';
+    $semail = $student->semail ?? '';
+    $smobile = $student->smobile ?? '';
+    $program_name = $student->program_name ?? '';
+    $collage_name = $student->collage_name ?? '';
+    $signature = $student->signature ?? '';
 
 
-        /*
+    /*
     |--------------------------------------------------------------------------
     | Toronto Date
     |--------------------------------------------------------------------------
     */
 
-        $datsddsfd = now('America/Toronto')
-            ->format('Y-m-d');
+    $datsddsfd = now('America/Toronto')->format('Y-m-d');
 
 
-        /*
+    /*
     |--------------------------------------------------------------------------
-    | Logo
+    | GPS Logo
     |--------------------------------------------------------------------------
+    |
+    | Actual file:
+    | public/images/GPS-Logo.jpg.jpeg
+    |
     */
 
-        $logoUrl =
-            'https://gps_crm/images/GPS-Logo.png';
+    $logoPath = public_path('images/GPS-Logo.jpg.jpeg');
 
-        $logoData = @file_get_contents($logoUrl);
+    $logoSrc = '';
 
-        $logoSrc = '';
+    if (file_exists($logoPath)) {
+
+        $logoData = file_get_contents($logoPath);
 
         if ($logoData !== false) {
 
-            $logoBase64 = base64_encode($logoData);
-
             $logoSrc =
-                'data:image/png;base64,' .
-                $logoBase64;
+                'data:image/jpeg;base64,' .
+                base64_encode($logoData);
         }
+    }
 
 
-        /*
+    /*
     |--------------------------------------------------------------------------
     | Student Signature
     |--------------------------------------------------------------------------
+    |
+    | Expected file:
+    | public/Student_Sign/{signature}
+    |
     */
 
-        $sign_Src = '';
+    $sign_Src = '';
 
-        if (!empty($signature)) {
+    if (!empty($signature)) {
 
-            $signatureUrl =
-                'https://gps_crm/Student_Sign/' .
-                $signature;
+        $signaturePath = public_path(
+            'Student_Sign/' . $signature
+        );
+
+        if (file_exists($signaturePath)) {
 
             $signatureData =
-                @file_get_contents($signatureUrl);
+                file_get_contents($signaturePath);
 
             if ($signatureData !== false) {
 
-                $signBase64 =
-                    base64_encode($signatureData);
+                /*
+                 * Most student signatures are PNG.
+                 * If your files are JPG, change image/png
+                 * to image/jpeg.
+                 */
 
                 $sign_Src =
                     'data:image/png;base64,' .
-                    $signBase64;
+                    base64_encode($signatureData);
             }
         }
-
-
-
-
-        $pdf = Pdf::loadView(
-            'operation.student-consent-pdf',
-            [
-                'logoSrc' => $logoSrc,
-                'sname' => $sname,
-                'dob' => $dob,
-                'semail' => $semail,
-                'smobile' => $smobile,
-                'program_name' => $program_name,
-                'collage_name' => $collage_name,
-                'sign_Src' => $sign_Src,
-                'datsddsfd' => $datsddsfd,
-            ]
-        );
-
-
-        $pdf->setPaper(
-            'A4',
-            'portrait'
-        );
-
-
-
-
-        return $pdf->stream(
-            'Student_consent.pdf'
-        );
     }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Generate PDF
+    |--------------------------------------------------------------------------
+    */
+
+    $pdf = Pdf::loadView(
+        'operation.student-consent-pdf',
+        [
+            'logoSrc'       => $logoSrc,
+            'sname'         => $sname,
+            'dob'           => $dob,
+            'semail'        => $semail,
+            'smobile'       => $smobile,
+            'program_name'  => $program_name,
+            'collage_name'  => $collage_name,
+            'sign_Src'      => $sign_Src,
+            'datsddsfd'     => $datsddsfd,
+        ]
+    );
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | A4 Portrait
+    |--------------------------------------------------------------------------
+    */
+
+    $pdf->setPaper('A4', 'portrait');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Stream PDF
+    |--------------------------------------------------------------------------
+    */
+
+    return $pdf->stream(
+        'Student_consent.pdf'
+    );
+}
 
     public function studentOsapConsentPdf($uid)
     {
