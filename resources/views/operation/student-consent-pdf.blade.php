@@ -5,468 +5,1154 @@
 
     <meta charset="UTF-8">
 
-    <title>Student Consent & Responsibility Letter</title>
+    <title>Student Consent and Responsibility Agreement</title>
+
+    @php
+        /*
+        |--------------------------------------------------------------------------
+        | DYNAMIC STUDENT SIGNATURE FONT
+        |--------------------------------------------------------------------------
+        |
+        | seminarpre.signature should contain:
+        | 1 = PaulSignature
+        | 2 = Amadgone
+        | 3 = Heatwood
+        | 4 = MaradonaSignature
+        | 5 = PandemiDemo
+        | 6 = SouthSand
+        |
+        */
+
+        $signatureStyles = [
+            1 => [
+                'family' => 'PaulSignature',
+                'file'   => 'PaulSignature-WEJY.ttf',
+            ],
+
+            2 => [
+                'family' => 'Amadgone',
+                'file'   => 'Amadgone-BW1ax.ttf',
+            ],
+
+            3 => [
+                'family' => 'Heatwood',
+                'file'   => 'Heatwood-GOKPO.ttf',
+            ],
+
+            4 => [
+                'family' => 'MaradonaSignature',
+                'file'   => 'MaradonaSignature-DOMv0.ttf',
+            ],
+
+            5 => [
+                'family' => 'PandemiDemo',
+                'file'   => 'PandemiDemo-6Ygqx.ttf',
+            ],
+
+            6 => [
+                'family' => 'SouthSand',
+                'file'   => 'SouthSand-qZ611.ttf',
+            ],
+        ];
+
+        /*
+        |--------------------------------------------------------------------------
+        | GET STUDENT SIGNATURE ID
+        |--------------------------------------------------------------------------
+        */
+
+        $signatureId = (int) ($student->signature ?? 1);
+
+        /*
+        |--------------------------------------------------------------------------
+        | FALLBACK TO PAUL SIGNATURE
+        |--------------------------------------------------------------------------
+        */
+
+        $selectedSignature = $signatureStyles[$signatureId]
+            ?? $signatureStyles[1];
+
+        $signatureFontFamily = $selectedSignature['family'];
+        $signatureFontFile   = $selectedSignature['file'];
+    @endphp
+
 
     <style>
 
+        /*
+        |--------------------------------------------------------------------------
+        | PAGE SETTINGS
+        |--------------------------------------------------------------------------
+        */
+
         @page {
-            margin: 0;
+            margin: 85px 35px 45px 35px;
         }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SIGNATURE FONT
+        |--------------------------------------------------------------------------
+        */
+
+        @font-face {
+            font-family: '{{ $signatureFontFamily }}';
+
+            src: url('{{ public_path('uploads/' . $signatureFontFile) }}');
+
+            font-weight: normal;
+
+            font-style: normal;
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | GENERAL
+        |--------------------------------------------------------------------------
+        */
 
         * {
             box-sizing: border-box;
         }
+
+
         body {
+
             margin: 0;
-            padding: 45px;
+
+            padding: 0;
 
             font-family: DejaVu Sans, sans-serif;
 
-            font-size: 14px;
+            font-size: 12.5px;
 
-            line-height: 18px;
+            line-height: 16px;
 
             color: #333;
+
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | FIXED HEADER
+        |--------------------------------------------------------------------------
+        */
 
         .header {
+
+            position: fixed;
+
+            top: -68px;
+
+            left: 0;
+
             width: 100%;
-            margin: 0;
-            padding: 0;
+
+            height: 65px;
+
+            display: block;
+
         }
 
-        .logo-cell {
-            width: 38%;
-            vertical-align: top;
+
+        table.header-table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin: 0;
+
+            padding: 0;
+
         }
+
+
+        table.header-table td {
+
+            vertical-align: middle;
+
+            padding: 2px 4px;
+
+            font-size: 10.5px;
+
+            line-height: 1.25;
+
+            color: #000;
+
+        }
+
 
         .logo-img {
-            width: 120px;
+
+            width: 75px;
+
             height: auto;
+
         }
 
-        .company-info {
-            width: 62%;
+
+        .right-text {
+
             text-align: right;
-            vertical-align: top;
 
-            font-size: 12px;
-            line-height: 16px;
         }
 
-        .company-info p {
-            margin: 2px 0;
+
+        /*
+        |--------------------------------------------------------------------------
+        | MAIN CONTENT
+        |--------------------------------------------------------------------------
+        */
+
+        main {
+
+            position: relative;
+
+            width: 100%;
+
+            margin: 0;
+
             padding: 0;
 
-            text-align: right;
-
-            font-size: 12px;
-            line-height: 16px;
         }
 
-        .document-title {
-            text-align: center;
 
-            font-size: 18px;
+        .page {
+
+            width: 100%;
+
+            font-size: 12.5px;
+
+            margin: 0;
+
+            padding: 0;
+
+            position: relative;
+
+            line-height: 16px;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | TITLE
+        |--------------------------------------------------------------------------
+        */
+
+        h1 {
+
+            font-size: 21px;
 
             font-weight: bold;
 
-            padding: 20px 0;
+            margin: 5px 0 6px;
+
+            padding: 0;
+
+            color: #434344;
+
+            text-align: center;
+
+            line-height: 1.25;
+
         }
 
-        p {
+
+        .agreement-subtitle {
+
+            font-size: 10.5px;
+
+            font-style: italic;
+
+            text-align: center;
+
+            margin: 0 0 5px;
+
+            padding: 0;
+
+        }
+
+
+        .title {
+
             font-size: 14px;
 
-            line-height: 18px;
+            font-weight: bold;
 
             margin: 6px 0;
 
             padding: 0;
 
-            text-align: justify;
         }
+
 
         .section-title {
-            font-size: 14px;
+
+            font-size: 13.5px;
 
             font-weight: bold;
 
-            margin-top: 10px;
+            margin-top: 12px;
 
             margin-bottom: 4px;
+
+            padding: 0;
+
+            line-height: 16px;
+
         }
 
-        ul {
-            margin-top: 4px;
 
-            margin-bottom: 8px;
+        /*
+        |--------------------------------------------------------------------------
+        | PARAGRAPHS
+        |--------------------------------------------------------------------------
+        */
 
-            padding-left: 20px;
-        }
+        p {
 
-        ul li {
-            font-size: 14px;
+            font-size: 12.5px;
 
-            line-height: 18px;
+            line-height: 1.35;
 
-            margin-bottom: 4px;
+            color: #434344;
 
             text-align: justify;
+
+            margin: 5px 0;
+
+            padding: 0;
+
         }
 
-        .acknowledgement {
-            margin-top: 18px;
+
+        /*
+        |--------------------------------------------------------------------------
+        | SEPARATOR
+        |--------------------------------------------------------------------------
+        */
+
+        .line {
+
+            border-bottom: 1px solid #aaa;
+
+            margin: 8px 0;
+
+            height: 1px;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LIST
+        |--------------------------------------------------------------------------
+        */
+
+        ul {
+
+            font-size: 12.5px;
+
+            line-height: 1.35;
+
+            padding-left: 17px;
+
+            margin-top: 4px;
+
+            margin-bottom: 7px;
+
+            color: #434344;
+
+        }
+
+
+        ul li {
+
+            margin-bottom: 2px;
+
+            padding-left: 1px;
+
+            text-align: justify;
+
+            color: #434344;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | LAST PAGE
+        |--------------------------------------------------------------------------
+        */
+
+        .last-page {
+
+            page-break-before: always;
 
             page-break-inside: avoid;
+
         }
 
-        .acknowledgement-title {
-            font-size: 16px;
 
-            font-weight: bold;
+        /*
+        |--------------------------------------------------------------------------
+        | CLIENT INFORMATION
+        |--------------------------------------------------------------------------
+        */
 
-            margin-bottom: 5px;
+        .client-information {
+
+            page-break-inside: avoid;
+
+            margin-top: 0;
+
         }
 
-        .sign-table {
-            width: 100%;
 
-            border-collapse: collapse;
+        .student-info {
 
-            margin: 0;
+            font-size: 12.5px;
+
+            line-height: 1.7;
+
+            margin-top: 5px;
+
         }
 
-        .sign-table td {
-            font-size: 14px;
+
+        .student-line {
+
+            display: inline-block;
+
+            min-width: 180px;
+
+            border-bottom: 1px solid #000;
+
+            padding-left: 5px;
 
             vertical-align: bottom;
 
-            height: 27px;
-
-            padding: 2px 0;
         }
 
-        .label {
-            width: 155px;
 
-            font-weight: bold;
+        .program-line {
+
+            display: inline-block;
+
+            min-width: 220px;
+
+            border-bottom: 1px solid #000;
+
+            padding-left: 5px;
+
+            vertical-align: bottom;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | SIGNATURE
+        |--------------------------------------------------------------------------
+        */
+
+        .signature-line {
+
+            display: inline-block;
+
+            min-width: 180px;
+
+            border-bottom: 1px solid #000;
+
+            vertical-align: bottom;
+
+            height: 45px;
+
+            position: relative;
+
+            padding-left: 5px;
+
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | DYNAMIC STUDENT SIGNATURE
+        |--------------------------------------------------------------------------
+        */
+
+        .student-signature {
+
+            font-family: '{{ $signatureFontFamily }}';
+
+            font-size: 32px;
+
+            line-height: 38px;
 
             white-space: nowrap;
-        }
 
-        .value {
-            border-bottom: 1px solid #333;
+            display: inline-block;
+
+            padding-left: 5px;
 
             vertical-align: bottom;
+
         }
 
-        .signature-image {
-            width: 120px;
-
-            max-height: 40px;
-
-            display: block;
-        }
-
-        .footer {
-            text-align: center;
-
-            font-size: 10px;
-
-            margin-top: 15px;
-        }
-
-
-        .footer p {
-            text-align: center;
-
-            font-size: 10px;
-        }
-
-        .section {
-            page-break-inside: avoid;
-        }
 
     </style>
 
 </head>
 
+
 <body>
-    <table class="header">
-        <tr>
-            <td class="logo-cell">
 
-                @if (!empty($logoSrc))
 
-                    <img
-                        src="{{ $logoSrc }}"
-                        class="logo-img"
-                        alt="GPS Education">
+    {{-- =====================================================================
+         FIXED HEADER
+         ===================================================================== --}}
 
-                @endif
+    <div class="header">
 
-            </td>
+        <table class="header-table">
 
-            <td class="company-info">
+            <tr>
 
-                <p>
+                {{-- LOGO --}}
+
+                <td width="120">
+
+                    @if (!empty($logoSrc))
+
+                        <img
+                            src="{{ $logoSrc }}"
+                            class="logo-img"
+                            alt="GPS Education"
+                        >
+
+                    @endif
+
+                </td>
+
+
+                {{-- COMPANY INFORMATION --}}
+
+                <td class="right-text">
+
                     <strong>
-                        GPS Education Solutions Inc.
-                    </strong>
-                </p>
-
-                <p>
-                    <strong>
-                        Surrey Office -
+                        Phone number – (416)504-5110
                     </strong>
 
-                    15315 66 Ave unit 308,
+                    <br>
+
+                    Address - 7015 Tranmere Dr,
+                    Mississauga, ON L5S 1T7, Canada
+
+                    <br>
+
+                    -15315 66 Ave unit 308,
                     Surrey, BC V3S 2A2
 
-                </p>
+                </td>
 
-                <p>
+            </tr>
 
-                    <strong>
-                        Phone number –
-                    </strong>
+        </table>
 
-                    (604) 771-5110
+    </div>
 
-                </p>
 
-                <p>
-                    <strong>
-                        Email Id –
-                    </strong>
-                    www.gpseducation.ca
-                </p>
-            </td>
-        </tr>
+    {{-- =====================================================================
+         MAIN DOCUMENT
+         ===================================================================== --}}
 
-        <tr>
-            <td colspan="2"
-                class="document-title">
-                STUDENT CONSENT & RESPONSIBILITY LETTER
-            </td>
-        </tr>
-    </table>
+    <main class="page">
 
-    <div class="section">
-        <p>
+
+        {{-- =================================================================
+             TITLE
+             ================================================================= --}}
+
+        <h1>
+
+            STUDENT CONSENT AND RESPONSIBILITY
+
+            <br>
+
+            AGREEMENT
+
+        </h1>
+
+
+        <p class="agreement-subtitle">
+
+            (For All Students of GPS Education Solutions Inc.)
+
+        </p>
+
+
+        <br>
+
+
+        {{-- =================================================================
+             INTRODUCTION
+             ================================================================= --}}
+
+        <p class="title">
+
             To Whom It May Concern,
+
         </p>
 
+
         <p>
+
             I, the undersigned student, hereby confirm that
-            GPS Education Solutions Inc. ("GPS Education")
-            has provided me with general guidance and information
-            regarding various academic programs and institutions.
+            GPS Education Solutions Inc. (“GPS Education”) has provided
+            me with general information and guidance regarding academic
+            programs and educational institutions.
 
-            Based on this information, I hereby make the following
-            declarations:
+            Based on this information, I make the following
+            acknowledgements and declarations:
 
         </p>
 
-    </div>
 
-    <div class="section">
+        <div class="line"></div>
+
+
+        {{-- =================================================================
+             SECTION 1
+             ================================================================= --}}
 
         <p class="section-title">
+
             1. Voluntary Decision
+
         </p>
+
+
         <p>
-            I understand and acknowledge that the final decision
-            regarding my choice of program, college, and location
-            has been made solely by me, without any force,
-            misrepresentation, or guarantee of outcome by GPS
-            Education or its representatives.
+
+            I understand and acknowledge that my choice of academic
+            program, educational institution, and study location
+            has been made entirely of my own free will.
+
+            <br>
+
+            No employee or representative of GPS Education has made
+            any guarantee, promise, or assurance of admission,
+            visa approval, or funding outcome.
+
+            <br>
+
+            I confirm that I have reviewed and understood all
+            available information before making my final decision.
 
         </p>
 
-    </div>
 
-    <div class="section">
+        <div class="line"></div>
+
+
+        {{-- =================================================================
+             SECTION 2
+             ================================================================= --}}
+
         <p class="section-title">
-            2. Responsibility for Documents Provided
+
+            2. Student Responsibility for Documentation
+
         </p>
+
+
         <p>
+
             I confirm that:
+
         </p>
 
-        <p>
-            All documents including but not limited to
-            identification, academic records, immigration
-            documents, and certifications submitted to the
-            educational institution have been provided solely
-            by me.
-        </p>
 
-        <p>
-            I take full legal and personal responsibility for
-            the authenticity, accuracy, and validity of the
-            documents submitted.
-        </p>
-        <p>
-            GPS Education shall not be held responsible for any
-            consequences resulting from submission of forged,
-            altered, or invalid documentation.
-        </p>
-    </div>
-
-    <div class="section">
-        <p class="section-title">
-            3. Student Responsibility for Academic Outcome
-        </p>
-        <p>
-            I take full personal responsibility for:
-        </p>
         <ul>
-            <li>
-                Pursuing the program I have selected.
-            </li>
-            <li>
-                Understanding all course requirements and
-                institutional policies.
-            </li>
 
             <li>
-                Maintaining compliance with attendance,
-                conduct, and academic standards as required
-                by the institution.
+
+                All identification, academic, immigration, or
+                supporting documents submitted under my name are
+                authentic, accurate, and personally provided by me.
+
             </li>
+
+
+            <li>
+
+                I take full legal and personal responsibility for
+                the accuracy and validity of these documents.
+
+            </li>
+
+
+            <li>
+
+                I understand that submitting any forged, altered,
+                or invalid documentation may result in immediate
+                withdrawal, loss of funding, or legal consequences.
+
+            </li>
+
+
+            <li>
+
+                GPS Education is not responsible for any consequences
+                arising from my submission of inaccurate or
+                fraudulent documentation.
+
+            </li>
+
         </ul>
-    </div>
 
-    <div class="section">
+
+        <div class="line"></div>
+
+
+        {{-- =================================================================
+             SECTION 3
+             ================================================================= --}}
+
         <p class="section-title">
-            4. Confidentiality and Access
+
+            3. Student Responsibility for Tuition and Funding
+
         </p>
+
 
         <p>
-            I agree not to share my login credentials,
-            student ID, or confidential academic information
-            with any third party, including agents, friends,
-            or family members.
+
+            I understand that I am fully responsible for the payment
+            of my college or institutional tuition fees, whether funded
+            through <strong>provincial or federal student financial
+            assistance programs</strong> (such as OSAP, StudentAid BC,
+            Alberta Student Aid, etc.) or by <strong>self-payment.</strong>
+
+            <br>
+
+            I confirm that I have reviewed and understood my payment
+            schedule and installment plan as provided by the
+            educational institution.
+
+            <br>
+
+            Any errors, omissions, or delays in funding applications
+            remain solely my responsibility.
+
         </p>
 
-        <p>
-            I understand that any breach of this may result
-            in academic or administrative consequences.
-        </p>
-    </div>
 
-    <div class="section">
+        <div class="line"></div>
+
+
+        {{-- =================================================================
+             SECTION 4
+             ================================================================= --}}
+
         <p class="section-title">
-            5. Jurisdiction and Compliance
+
+            4. Academic Conduct and Performance
+
         </p>
+
+
         <p>
-            This agreement shall be governed by the laws of
-            the Province of British Columbia.
 
-            Any dispute arising from this agreement will fall
-            under the jurisdiction of the courts within
-            British Columbia. 
+            I accept full responsibility for:
+
         </p>
-    </div>
 
-    <div class="section">
+
+        <ul>
+
+            <li>
+
+                Attending all required classes and completing all
+                assignments;
+
+            </li>
+
+
+            <li>
+
+                Maintaining satisfactory academic standing and
+                attendance as required by my institution; and
+
+            </li>
+
+
+            <li>
+
+                Understanding and complying with all institutional
+                policies, academic integrity rules, and codes of conduct.
+
+            </li>
+
+        </ul>
+
+
+        <p>
+
+            I acknowledge that failure to meet these requirements
+            may result in academic penalties, withdrawal, or
+            adjustments to my financial aid eligibility.
+
+        </p>
+
+
+        <div class="line"></div>
+
+
+        {{-- =================================================================
+             SECTION 5
+             ================================================================= --}}
+
         <p class="section-title">
-            6. Financial Aid Funding
+
+            5. Confidentiality and Privacy
+
         </p>
+
+
         <p>
-            The information provided for the financial aid
-            submission has been completed based on the details
-            shared by the student, and to the best of our
-            knowledge, it is true and accurate.
 
-            We have only assisted the student in the application
-            submission process.
+            I agree not to share my student login credentials,
+            student ID, or confidential information (such as
+            financial aid or institutional portal access) with
+            any third party, including friends, agents, or family
+            members.
+
+            <br>
+
+            I understand that any breach of confidentiality may
+            result in administrative or academic consequences.
+
+            <br>
+
+            GPS Education will not share my personal information
+            with any third party without my written consent, except
+            where required by law.
+
         </p>
-    </div>
 
-    <div class="acknowledgement">
-        <p class="acknowledgement-title">
-            Student Acknowledgement
+
+        <div class="line"></div>
+
+
+        {{-- =================================================================
+             SECTION 6
+             ================================================================= --}}
+
+        <p class="section-title">
+
+            6. Non-Agency Relationship
+
         </p>
 
-        <table class="sign-table">
-            <tr>
-                <td class="label">
+
+        <p>
+
+            I acknowledge and agree that GPS Education operates
+            solely as an independent educational consulting
+            organization.
+
+            <br>
+
+            GPS Education is <strong>not an agent, affiliate, or
+            representative</strong> of any government funding body.
+
+            All decisions regarding admissions, financial aid, and
+            funding eligibility are made solely by the relevant
+            institutions and authorities.
+
+        </p>
+
+
+        <div class="line"></div>
+
+
+        {{-- =================================================================
+             SECTION 7
+             ================================================================= --}}
+
+        <p class="section-title">
+
+            7. No Fees or Charges
+
+        </p>
+
+
+        <p>
+
+            I confirm that GPS Education has not charged me any
+            service fees for its consultation, advisory, or
+            application assistance services.
+
+            <br>
+
+            I understand that any payments related to tuition,
+            registration, or government applications are made
+            directly to the respective college, university, or
+            government agency — not to GPS Education.
+
+        </p>
+
+
+        <div class="line"></div>
+
+
+        {{-- =================================================================
+             SECTION 8
+             ================================================================= --}}
+
+        <p class="section-title">
+
+            8. Jurisdiction and Governing Law
+
+        </p>
+
+
+        <p>
+
+            This agreement shall be governed by and interpreted
+            in accordance with the <strong>laws of the province
+            or territory in which the student is enrolled.</strong>
+
+            <br>
+
+            Any disputes arising under or in connection with this
+            agreement shall fall under the <strong>exclusive
+            jurisdiction of the courts in that province or
+            territory.</strong>
+
+        </p>
+
+
+        <div class="line"></div>
+
+
+        {{-- =================================================================
+             LAST PAGE
+             ================================================================= --}}
+
+        <div class="last-page">
+
+
+            {{-- =============================================================
+                 SECTION 9
+                 ============================================================= --}}
+
+            <p class="section-title">
+
+                9. Student Acknowledgement
+
+            </p>
+
+
+            <p>
+
+                By signing below, I confirm that I have read,
+                understood, and voluntarily agreed to the terms of
+                this <strong>Student Consent and Responsibility
+                Agreement</strong>.
+
+                <br>
+
+                I acknowledge that this document serves as a legal
+                acknowledgment of my responsibilities and as a
+                protection for both myself and GPS Education.
+
+            </p>
+
+
+            <div class="line"></div>
+
+
+            {{-- =============================================================
+                 CLIENT INFORMATION
+                 ============================================================= --}}
+
+            <div class="client-information">
+
+
+                <p class="section-title">
+
+                    Client Information
+
+                </p>
+
+
+                <div class="student-info">
+
+
+                    {{-- FULL NAME --}}
+
                     Full Name:
-                </td>
-                <td class="value">
-                    &nbsp;{{ $sname }}
-                </td>
-            </tr>
-        </table>
-        <table class="sign-table">
-            <tr>
-                <td class="label">
+
+                    <span class="student-line">
+
+                        {{ $student->sname ?? '' }}
+
+                    </span>
+
+
+                    <br>
+
+
+                    {{-- DATE OF BIRTH --}}
+
                     Date of Birth:
-                </td>
-                <td class="value">
-                    &nbsp;{{ $dob }}
-                </td>
-            </tr>
-        </table>
 
-        <table class="sign-table">
-            <tr>
-                <td class="label">
-                    Email ID:
-                </td>
-                <td class="value">
-                    &nbsp;{{ $semail }}
-                </td>
-            </tr>
-        </table>
+                    <span class="student-line">
 
-        <table class="sign-table">
-            <tr>
-                <td class="label">
+                        @if (!empty($student->dob))
+
+                            {{ \Carbon\Carbon::parse($student->dob)->format('Y-m-d') }}
+
+                        @endif
+
+                    </span>
+
+
+                    <br>
+
+
+                    {{-- EMAIL --}}
+
+                    Email:
+
+                    <span class="student-line">
+
+                        {{ $student->semail ?? '' }}
+
+                    </span>
+
+
+                    <br>
+
+
+                    {{-- PHONE --}}
+
                     Phone Number:
-                </td>
-                <td class="value">
-                    &nbsp;{{ $smobile }}
-                </td>
-            </tr>
-        </table>
-        <table class="sign-table">
-            <tr>
-                <td class="label">Program & College Selected:</td>
-                <td class="value">&nbsp;{{ $program_name }}/{{ $collage_name }}</td>
-            </tr>
-        </table>
 
-        <table class="sign-table">
-            <tr>
-                <td class="label">
+                    <span class="student-line">
+
+                        {{ $student->smobile ?? '' }}
+
+                    </span>
+
+
+                    <br>
+
+
+                    {{-- PROGRAM --}}
+
+                    Program & College Selected:
+
+                    <span class="program-line">
+
+                        {{ $student->program_name ?? '' }}
+
+                        @if (!empty($student->program_name) && !empty($student->collage_name))
+
+                            /
+
+                        @endif
+
+                        {{ $student->collage_name ?? '' }}
+
+                    </span>
+
+
+                    <br>
+
+
+                    {{-- =====================================================
+                         STUDENT SIGNATURE
+                         ===================================================== --}}
+
                     Signature of Student:
-                </td>
 
-                <td class="value">
-                    @if (!empty($sign_Src))
-                        <img src="{{ $sign_Src }}" class="signature-image" alt="Student Signature">
-                    @endif
-                </td>
-            </tr>
-        </table>
-        <table class="sign-table">
-            <tr>
-                <td class="label">
+                    <span class="signature-line">
+
+                        @if (!empty($student->sname))
+
+                            <span class="student-signature">
+
+                                {{ $student->sname }}
+
+                            </span>
+
+                        @endif
+
+                    </span>
+
+
+                    <br>
+
+
+                    {{-- STUDENT DATE --}}
+
                     Date:
-                </td>
 
-                <td class="value">
-                    &nbsp;{{ $datsddsfd }}
-                </td>
-            </tr>
-        </table>
-    </div>
+                    <span class="student-line">
+
+                        {{ now('America/Toronto')->format('Y-m-d') }}
+
+                    </span>
+
+
+                    <br>
+                    <br>
+
+
+                    {{-- WITNESS --}}
+
+                    Witness (GPS Education Representative):
+
+                    <span class="program-line">
+
+                        &nbsp;
+
+                    </span>
+
+
+                    <br>
+
+
+                    {{-- WITNESS DATE --}}
+
+                    Date:
+
+                    <span class="student-line">
+
+                        {{ now('America/Toronto')->format('Y-m-d') }}
+
+                    </span>
+
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
 </body>
+
 </html>

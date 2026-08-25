@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\URL;
 use App\Models\Student;
 
 
+
 use App\Mail\StudentConsentMail;
 
 
@@ -3021,18 +3022,25 @@ class WalkinController extends Controller
         ));
     }
 
-    //     public function studentPdf($id)
+    // public function studentPdf($id)
     // {
     //     $student = DB::table('seminarpre')
     //         ->where('sno', $id)
     //         ->first();
 
     //     if (!$student) {
-    //         abort(404);
+    //         abort(404, 'Student not found.');
     //     }
 
+    //     $pdf = Pdf::loadView('operation.student-consent', [
+    //         'student' => $student,
+    //     ]);
 
+    //     $pdf->setPaper('A4', 'portrait');
+
+    //     return $pdf->stream('Student-Consent.pdf');
     // }
+
 
     public function studentPdf($id)
     {
@@ -3048,9 +3056,15 @@ class WalkinController extends Controller
             'student' => $student,
         ]);
 
+
         $pdf->setPaper('A4', 'portrait');
 
-        return $pdf->stream('Student-Consent.pdf');
+        return $pdf->stream(
+            'STUDENT_CONSENT_' . ($student->sname ?? $id) . '.pdf',
+            [
+                'Attachment' => false
+            ]
+        );
     }
 
     public function operationExport(Request $request)
@@ -6658,7 +6672,9 @@ class WalkinController extends Controller
     }
 
 
-    public function studentConsentPdf(Request $request)
+  
+
+   public function studentConsentPdf(Request $request)
 {
     $snoid = $request->query('uid');
 
@@ -6678,95 +6694,19 @@ class WalkinController extends Controller
             ->with('error', 'Student record not found.');
     }
 
-    $sname        = $student->sname ?? '';
-    $dob          = $student->dob ?? '';
-    $semail       = $student->semail ?? '';
-    $smobile      = $student->smobile ?? '';
-    $program_name = $student->program_name ?? '';
-    $collage_name = $student->collage_name ?? '';
-    $signature    = $student->signature ?? '';
-
-    
-
-    $datsddsfd = now('America/Toronto')->format('Y-m-d');
-
-
-   
-
-    $logoSrc = '';
-
-    $logoPath = public_path('images/GPS-Logo.jpg.jpeg');
-
-    if (file_exists($logoPath)) {
-
-        $logoData = file_get_contents($logoPath);
-
-        if ($logoData !== false) {
-
-            $logoSrc =
-                'data:image/jpeg;base64,' .
-                base64_encode($logoData);
-        }
-    }
-
-
- 
-
-    $sign_Src = '';
-
-    if (!empty($signature)) {
-
-        $signaturePath = public_path(
-            'Student_Sign/' . $signature
-        );
-
-        if (file_exists($signaturePath)) {
-
-            $signatureData =
-                file_get_contents($signaturePath);
-
-            if ($signatureData !== false) {
-
-                $sign_Src =
-                    'data:image/png;base64,' .
-                    base64_encode($signatureData);
-            }
-        }
-    }
-
-
-   
-
-    $pdf = Pdf::loadView(
-        'operation.student-consent-pdf',
-        [
-            'logoSrc'       => $logoSrc,
-            'sname'         => $sname,
-            'dob'           => $dob,
-            'semail'        => $semail,
-            'smobile'       => $smobile,
-            'program_name'  => $program_name,
-            'collage_name'  => $collage_name,
-            'sign_Src'      => $sign_Src,
-            'datsddsfd'     => $datsddsfd,
-        ]
-    );
-
-
-   
-
-    $pdf->setOptions([
-        'isRemoteEnabled'      => true,
-        'isHtml5ParserEnabled' => true,
-        'defaultFont'          => 'Courier',
+    $pdf = Pdf::loadView('operation.student-consent-pdf', [
+        'student' => $student,
     ]);
 
     $pdf->setPaper('A4', 'portrait');
 
-
-    return $pdf->stream('international-student-application.pdf');
+    return $pdf->stream(
+        'STUDENT_CONSENT_' . ($student->sname ?? $snoid) . '.pdf',
+        [
+            'Attachment' => false
+        ]
+    );
 }
-
     public function studentOsapConsentPdf($uid)
     {
         $student = DB::table('students')
@@ -7286,71 +7226,40 @@ class WalkinController extends Controller
         return response($html);
     }
 
-    public function consentForm(Request $request)
-    {
-        $snoid = $request->get('uid');
 
-        if (!$snoid) {
-            abort(404, 'Student ID is required.');
-        }
+public function consentForm(Request $request)
+{
+    $snoid = $request->query('uid');
 
-        $student = DB::table('seminarpre')
-            ->select(
-                'osap_signature',
-                'osap_signature_submit',
-                'sname',
-                'dob',
-                'smobile',
-                'semail',
-                'program_name',
-                'collage_name'
-            )
-            ->where('sno', $snoid)
-            ->first();
-
-        if (!$student) {
-            abort(404, 'Student not found.');
-        }
-
-
-        $osapSignature = '';
-
-        if (!empty($student->osap_signature)) {
-
-            $osapSignature =
-                'http://gps_crm/Student_Sign/osap/' .
-                $student->osap_signature;
-        }
-
-
-
-        $data = [
-            'sname' => $student->sname,
-            'dob' => $student->dob,
-            'program_name' => $student->program_name,
-            'collage_name' => $student->collage_name,
-            'osap_signature' => $osapSignature,
-            'osap_signature_submit' => $student->osap_signature_submit,
-        ];
-
-
-        $pdf = Pdf::loadView(
-            'operation.osap-consent-form',
-            $data
-        );
-
-        $pdf->setPaper('A4', 'portrait');
-
-        return $pdf->stream('osap.pdf');
+    if (empty($snoid)) {
+        return redirect()
+            ->back()
+            ->with('error', 'Student ID is missing.');
     }
 
+    $student = DB::table('seminarpre')
+        ->where('sno', $snoid)
+        ->first();
 
+    if (!$student) {
+        return redirect()
+            ->back()
+            ->with('error', 'Student record not found.');
+    }
 
+    $pdf = Pdf::loadView('operation.osap-consent-form', [
+        'student' => $student,
+    ]);
 
+    $pdf->setPaper('A4', 'portrait');
 
-
-
-
+    return $pdf->stream(
+        'OSAP_CONSENT_' . ($student->sname ?? $snoid) . '.pdf',
+        [
+            'Attachment' => false,
+        ]
+    );
+}
 
     public function dashboardReports(Request $request)
     {

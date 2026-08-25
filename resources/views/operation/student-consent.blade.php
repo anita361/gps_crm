@@ -5,817 +5,653 @@
     <meta charset="utf-8">
 
     <style>
+
         @page {
             margin: 0;
         }
 
+        @font-face {
+            font-family: 'PaulSignature';
+            src: url('{{ public_path('uploads/PaulSignature-WEJY.ttf') }}');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Helvetica;
-            padding: 20px 30px;
+            font-family: Helvetica, Arial, sans-serif;
+            padding: 45px;
+            margin: 0;
+            color: #000;
+            font-size: 14px;
+            line-height: 18px;
         }
 
         p,
         li {
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 18px;
             color: #000;
             text-align: justify;
         }
+
+        p {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* ================= HEADER ================= */
+
+        .header {
+            width: 100%;
+            position: relative;
+            min-height: 80px;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+        }
+
+        .header-logo {
+            width: 120px;
+            height: auto;
+        }
+
+        .company-info {
+            text-align: right;
+            line-height: 1.1;
+            margin: 3px 0;
+            padding: 0;
+            font-size: 13px;
+        }
+
+        .company-name {
+            font-weight: bold;
+        }
+
+        /* ================= TITLE ================= */
+
+        .title {
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .title h4 {
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
+            font-weight: bold;
+            color: #000;
+        }
+
+        /* ================= CONTENT ================= */
+
+        .to-whom {
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        .terms {
+            list-style-type: decimal;
+            padding-left: 22px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .terms li {
+            padding-left: 3px;
+            margin-bottom: 9px;
+        }
+
+        .terms li strong {
+            font-weight: bold;
+        }
+
+        /* ================= PAGE BREAK ================= */
+
+        .page-break {
+            page-break-before: always;
+            break-before: page;
+        }
+
+        /* ================= STUDENT ACKNOWLEDGEMENT ================= */
+
+        .student-heading {
+            margin-top: 15px;
+            margin-bottom: 8px;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: left;
+        }
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+            padding: 0;
+        }
+
+        .student-row {
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+            line-height: 18px;
+        }
+
+        .student-table td {
+            font-size: 14px;
+            line-height: 18px;
+            padding-top: 3px;
+            padding-bottom: 3px;
+            vertical-align: bottom;
+        }
+
+        .student-label {
+            font-weight: bold;
+            white-space: nowrap;
+            vertical-align: bottom;
+        }
+
+        .student-value {
+            border-bottom: 1px solid #333;
+            vertical-align: bottom;
+            height: 24px;
+            padding-left: 5px;
+        }
+
+        /* ================= SIGNATURE ================= */
+
+        .signature-wrapper {
+            margin-top: 5px;
+            margin-bottom: 5px;
+            font-size: 14px;
+            line-height: 18px;
+        }
+
+        .signature-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+        .signature-table td {
+            font-size: 14px;
+            vertical-align: bottom;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #333;
+            height: 45px;
+            vertical-align: bottom;
+            padding-left: 5px;
+        }
+
+        .student-signature {
+            font-family: 'PaulSignature';
+            font-size: 32px;
+            line-height: 38px;
+            white-space: nowrap;
+            display: inline-block;
+            padding-left: 5px;
+            vertical-align: bottom;
+        }
+
     </style>
 
 </head>
 
 <body>
 
-<img src="{{ public_path('images/GPS-Logo.jpg.jpeg') }}" width="110">
+    {{-- ========================================================= --}}
+    {{-- PAGE 1                                                    --}}
+    {{-- ========================================================= --}}
 
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    <b>GPS Education Solutions Inc.</b>
-</p>
+    {{-- ================= HEADER ================= --}}
 
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Surrey Office - 15315 66 Ave Unit 308, Surrey, BC V3S 2A2
-</p>
+    <table width="100%" cellpadding="0" cellspacing="0" class="header-table">
 
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Phone Number - (604) 771-5110
-</p>
+        <tr>
 
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Website - www.gpseducation.ca
-</p>
+            <td width="25%" valign="top">
 
-<h4 style="text-align:center;">
-    STUDENT CONSENT & RESPONSIBILITY LETTER
-</h4>
+                <img
+                    src="{{ public_path('images/GPS-Logo.jpg.jpeg') }}"
+                    alt="GPS Logo"
+                    class="header-logo"
+                >
 
-<p style="margin-top:-15px;">
-    To Whom It May Concern,
-</p>
+            </td>
 
-<p>
-    I, the undersigned student, hereby confirm that GPS Education Solutions Inc.
-    ("GPS Education") has provided me with general guidance and information
-    regarding various academic programs and institutions. Based on this
-    information, I hereby make the following declarations:
-</p>
+            <td width="75%" valign="top">
 
-<ul style="list-style:decimal;padding-left:20px;">
+                <p class="company-info company-name">
+                    GPS Education Solutions Inc.
+                </p>
 
-<li>
-    Voluntary Decision<br>
+                <p class="company-info">
+                    Surrey Office -15315 66 Ave unit 308, Surrey, BC V3S 2A2
+                </p>
 
-    I understand and acknowledge that the final decision regarding my choice of
-    program, college, and location has been made solely by me, without any force,
-    misrepresentation, or guarantee of outcome by GPS Education or its representatives.
-</li>
+                <p class="company-info">
+                    Phone number - (604) 771-5110
+                </p>
 
-<li>
+                <p class="company-info">
+                    Email Id - www.gpseducation.ca
+                </p>
 
-    Responsibility for Documents Provided<br>
+            </td>
 
-    I confirm that:
+        </tr>
 
-    <br>
+    </table>
 
-    All documents (including but not limited to identification, academic records,
-    immigration documents, and certifications) submitted to the educational institution
-    have been provided solely by me.
 
-    <br><br>
+    {{-- ================= TITLE ================= --}}
 
-    I take full legal and personal responsibility for the authenticity,
-    accuracy, and validity of the documents submitted.
+    <div class="title">
 
-    <br><br>
+        <h4>
+            STUDENT CONSENT &amp; RESPONSIBILITY LETTER
+        </h4>
 
-    GPS Education shall not be held responsible for any consequences resulting
-    from submission of forged, altered, or invalid documentation.
+    </div>
 
-</li>
 
-<li>
+    {{-- ================= TO WHOM ================= --}}
 
-    Student Responsibility for Academic Outcome
+    <p class="to-whom">
+        To Whom It May Concern,
+    </p>
 
-    <br>
 
-    I take full personal responsibility for:
+    <p>
+        I, the undersigned student, hereby confirm that GPS Education
+        Solutions Inc. ("GPS Education") has provided me with general
+        guidance and information regarding various academic programs
+        and institutions. Based on this information, I hereby make the
+        following declarations:
+    </p>
 
-    <br>
 
-    Pursuing the program I have selected.
+    {{-- ================= TERMS ================= --}}
 
-    <br>
+    <ol class="terms">
 
-    Understanding all course requirements and institutional policies.
+        <li>
 
-    <br>
+            <strong>Voluntary Decision</strong>
 
-    Maintaining compliance with attendance, conduct,
-    and academic standards as required by the institution.
+            <br>
 
-</li>
+            I understand and acknowledge that the final decision regarding
+            my choice of program, college, and location has been made
+            solely by me, without any force, misrepresentation, or guarantee
+            of outcome by GPS Education or its representatives.
 
-<li>
+        </li>
 
-    Confidentiality and Access
 
-    <br>
+        <li>
 
-    I agree not to share my login credentials, student ID,
-    or confidential academic information with any third party,
-    including agents, friends, or family members.
+            <strong>Responsibility for Documents Provided</strong>
 
-    <br>
+            <br>
 
-    I understand that any breach of this may result in
-    academic or administrative consequences.
+            I confirm that all documents, including but not limited to
+            identification, academic records, immigration documents,
+            and certifications submitted to the educational institution
+            have been provided solely by me.
 
-</li>
+            <br>
 
-<li>
+            I take full legal and personal responsibility for the authenticity,
+            accuracy, and validity of the documents submitted.
 
-    Jurisdiction and Compliance
+            <br>
 
-    <br>
+            GPS Education shall not be held responsible for any consequences
+            resulting from submission of forged, altered, or invalid
+            documentation.
 
-    This agreement shall be governed by the laws of the
-    Province of British Columbia.
+        </li>
 
-    Any dispute arising from this agreement will fall under
-    the jurisdiction of the courts within British Columbia.
 
-</li>
+        <li>
 
-</ul>
+            <strong>Student Responsibility for Academic Outcome</strong>
 
-<p>
-    Student Acknowledgement
-</p>
+            <br>
 
-<p style="margin:5px;">
-    <span>Full Name:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->sname ?? '' }}
-    </span>
-</p>
+            I take full personal responsibility for:
 
-<p style="margin:5px;">
-    <span>Date of Birth:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->dob ?? '' }}
-    </span>
-</p>
+            <br>
 
-<p style="margin:5px;">
-    <span>Email ID:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->semail ?? '' }}
-    </span>
-</p>
+            Pursuing the program I have selected.
 
-<p style="margin:5px;">
-    <span>Phone Number:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->smobile ?? '' }}
-    </span>
-</p>
+            <br>
 
-<p style="margin:5px;">
-    <span>Program & College Selected:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->program_name ?? '' }}
-        {{ $student->collage_name ?? '' }}
-    </span>
-</p>
+            Understanding all course requirements and institutional policies.
 
-<p style="margin:5px;">
-    <span>Signature of Student:</span>
-    <span style="text-decoration: underline;">&nbsp;</span>
-</p>
+            <br>
 
-<p style="margin:5px;">
-    <span>Date:</span>
-    <span style="text-decoration: underline;">
-        {{ now()->format('Y-m-d') }}
-    </span>
-</p>
+            Maintaining compliance with attendance, conduct, and academic
+            standards as required by the institution.
+
+        </li>
+
+
+        <li>
+
+            <strong>Confidentiality and Access</strong>
+
+            <br>
+
+            I agree not to share my login credentials, student ID, or
+            confidential academic information with any third party,
+            including agents, friends, or family members.
+
+            <br>
+
+            I understand that any breach of this may result in academic
+            or administrative consequences.
+
+        </li>
+
+
+        <li>
+
+            <strong>Jurisdiction and Compliance</strong>
+
+            <br>
+
+            This agreement shall be governed by the laws of the
+            Province of Ontario.
+
+            <br>
+
+            Any dispute arising from this agreement will fall under
+            the jurisdiction of the courts within Ontario.
+
+        </li>
+
+
+        <li>
+
+            <strong>Financial Aid Funding</strong>
+
+            <br>
+
+            The information provided for the financial aid submission
+            has been completed based on the details shared by the student,
+            and to the best of our knowledge, it is true and accurate.
+
+            <br>
+
+            We have only assisted the student in the application
+            submission process.
+
+        </li>
+
+    </ol>
+
+
+   
+
+    <div class="page-break"></div>
+
+
+  
+
+    <p class="student-heading">
+        Student Acknowledgement
+    </p>
+
+
+    
+    <table class="student-table">
+
+        <tr>
+
+            <td
+                width="90"
+                class="student-label"
+            >
+                Full Name:
+            </td>
+
+            <td
+                width="450"
+                class="student-value"
+            >
+                &nbsp;{{ $student->sname ?? '' }}&nbsp;
+            </td>
+
+            <td>
+                &nbsp;
+            </td>
+
+        </tr>
+
+    </table>
+
+
+ 
+
+    <table class="student-table">
+
+        <tr>
+
+            <td
+                width="90"
+                class="student-label"
+            >
+                Date of Birth:
+            </td>
+
+            <td
+                width="450"
+                class="student-value"
+            >
+
+                &nbsp;
+
+                {{ !empty($student->dob)
+                    ? \Carbon\Carbon::parse($student->dob)->format('Y-m-d')
+                    : '' }}
+
+                &nbsp;
+
+            </td>
+
+            <td>
+                &nbsp;
+            </td>
+
+        </tr>
+
+    </table>
+
+
+   
+
+    <table class="student-table">
+
+        <tr>
+
+            <td
+                width="90"
+                class="student-label"
+            >
+                Email ID:
+            </td>
+
+            <td
+                width="450"
+                class="student-value"
+            >
+                &nbsp;{{ $student->semail ?? '' }}&nbsp;
+            </td>
+
+            <td>
+                &nbsp;
+            </td>
+
+        </tr>
+
+    </table>
+
+
+  
+
+    <table class="student-table">
+
+        <tr>
+
+            <td
+                width="90"
+                class="student-label"
+            >
+                Phone Number:
+            </td>
+
+            <td
+                width="450"
+                class="student-value"
+            >
+                &nbsp;{{ $student->smobile ?? '' }}&nbsp;
+            </td>
+
+            <td>
+                &nbsp;
+            </td>
+
+        </tr>
+
+    </table>
+
+
+  
+
+    <table class="student-table">
+
+        <tr>
+
+            <td
+                width="155"
+                class="student-label"
+            >
+                Program &amp; College Selected:
+            </td>
+
+            <td
+                width="385"
+                class="student-value"
+            >
+
+                &nbsp;
+
+                {{ $student->program_name ?? '' }}
+
+                @if (!empty($student->program_name) && !empty($student->collage_name))
+                    -
+                @endif
+
+                {{ $student->collage_name ?? '' }}
+
+                &nbsp;
+
+            </td>
+
+            <td>
+                &nbsp;
+            </td>
+
+        </tr>
+
+    </table>
+
+
+  
+    <div class="signature-wrapper">
+
+        <table class="signature-table">
+
+            <tr>
+
+                <td
+                    width="120"
+                    class="student-label"
+                >
+                    Signature of Student:
+                </td>
+
+                <td
+                    width="420"
+                    class="signature-line"
+                >
+
+                    @if (!empty($student->sname))
+
+                        <span class="student-signature">
+                            {{ $student->sname }}
+                        </span>
+
+                    @endif
+
+                </td>
+
+                <td>
+                    &nbsp;
+                </td>
+
+            </tr>
+
+        </table>
+
+    </div>
+
+
+
+
+    <table class="student-table">
+
+        <tr>
+
+            <td
+                width="40"
+                class="student-label"
+            >
+                Date:
+            </td>
+
+            <td
+                width="420"
+                class="student-value"
+            >
+                &nbsp;{{ now()->format('Y-m-d') }}&nbsp;
+            </td>
+
+            <td>
+                &nbsp;
+            </td>
+
+        </tr>
+
+    </table>
+
 
 </body>
-</html><!DOCTYPE html>
-<html>
 
-<head>
-    <meta charset="utf-8">
-
-    <style>
-        @page {
-            margin: 0;
-        }
-
-        body {
-            font-family: Helvetica;
-            padding: 20px 30px;
-        }
-
-        p,
-        li {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #000;
-            text-align: justify;
-        }
-    </style>
-
-</head>
-
-<body>
-
-<img src="{{ public_path('images/GPS-Logo.jpg.jpeg') }}" width="110">
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    <b>GPS Education Solutions Inc.</b>
-</p>
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Surrey Office - 15315 66 Ave Unit 308, Surrey, BC V3S 2A2
-</p>
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Phone Number - (604) 771-5110
-</p>
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Website - www.gpseducation.ca
-</p>
-
-<h4 style="text-align:center;">
-    STUDENT CONSENT & RESPONSIBILITY LETTER
-</h4>
-
-<p style="margin-top:-15px;">
-    To Whom It May Concern,
-</p>
-
-<p>
-    I, the undersigned student, hereby confirm that GPS Education Solutions Inc.
-    ("GPS Education") has provided me with general guidance and information
-    regarding various academic programs and institutions. Based on this
-    information, I hereby make the following declarations:
-</p>
-
-<ul style="list-style:decimal;padding-left:20px;">
-
-<li>
-    Voluntary Decision<br>
-
-    I understand and acknowledge that the final decision regarding my choice of
-    program, college, and location has been made solely by me, without any force,
-    misrepresentation, or guarantee of outcome by GPS Education or its representatives.
-</li>
-
-<li>
-
-    Responsibility for Documents Provided<br>
-
-    I confirm that:
-
-    <br>
-
-    All documents (including but not limited to identification, academic records,
-    immigration documents, and certifications) submitted to the educational institution
-    have been provided solely by me.
-
-    <br><br>
-
-    I take full legal and personal responsibility for the authenticity,
-    accuracy, and validity of the documents submitted.
-
-    <br><br>
-
-    GPS Education shall not be held responsible for any consequences resulting
-    from submission of forged, altered, or invalid documentation.
-
-</li>
-
-<li>
-
-    Student Responsibility for Academic Outcome
-
-    <br>
-
-    I take full personal responsibility for:
-
-    <br>
-
-    Pursuing the program I have selected.
-
-    <br>
-
-    Understanding all course requirements and institutional policies.
-
-    <br>
-
-    Maintaining compliance with attendance, conduct,
-    and academic standards as required by the institution.
-
-</li>
-
-<li>
-
-    Confidentiality and Access
-
-    <br>
-
-    I agree not to share my login credentials, student ID,
-    or confidential academic information with any third party,
-    including agents, friends, or family members.
-
-    <br>
-
-    I understand that any breach of this may result in
-    academic or administrative consequences.
-
-</li>
-
-<li>
-
-    Jurisdiction and Compliance
-
-    <br>
-
-    This agreement shall be governed by the laws of the
-    Province of British Columbia.
-
-    Any dispute arising from this agreement will fall under
-    the jurisdiction of the courts within British Columbia.
-
-</li>
-
-</ul>
-
-<p>
-    Student Acknowledgement
-</p>
-
-<p style="margin:5px;">
-    <span>Full Name:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->sname ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Date of Birth:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->dob ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Email ID:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->semail ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Phone Number:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->smobile ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Program & College Selected:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->program_name ?? '' }}
-        {{ $student->collage_name ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Signature of Student:</span>
-    <span style="text-decoration: underline;">&nbsp;</span>
-</p>
-
-<p style="margin:5px;">
-    <span>Date:</span>
-    <span style="text-decoration: underline;">
-        {{ now()->format('Y-m-d') }}
-    </span>
-</p>
-
-</body>
-</html><!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="utf-8">
-
-    <style>
-        @page {
-            margin: 0;
-        }
-
-        body {
-            font-family: Helvetica;
-            padding: 20px 30px;
-        }
-
-        p,
-        li {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #000;
-            text-align: justify;
-        }
-    </style>
-
-</head>
-
-<body>
-
-<img src="{{ public_path('images/GPS-Logo.jpg.jpeg') }}" width="110">
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    <b>GPS Education Solutions Inc.</b>
-</p>
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Surrey Office - 15315 66 Ave Unit 308, Surrey, BC V3S 2A2
-</p>
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Phone Number - (604) 771-5110
-</p>
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Website - www.gpseducation.ca
-</p>
-
-<h4 style="text-align:center;">
-    STUDENT CONSENT & RESPONSIBILITY LETTER
-</h4>
-
-<p style="margin-top:-15px;">
-    To Whom It May Concern,
-</p>
-
-<p>
-    I, the undersigned student, hereby confirm that GPS Education Solutions Inc.
-    ("GPS Education") has provided me with general guidance and information
-    regarding various academic programs and institutions. Based on this
-    information, I hereby make the following declarations:
-</p>
-
-<ul style="list-style:decimal;padding-left:20px;">
-
-<li>
-    Voluntary Decision<br>
-
-    I understand and acknowledge that the final decision regarding my choice of
-    program, college, and location has been made solely by me, without any force,
-    misrepresentation, or guarantee of outcome by GPS Education or its representatives.
-</li>
-
-<li>
-
-    Responsibility for Documents Provided<br>
-
-    I confirm that:
-
-    <br>
-
-    All documents (including but not limited to identification, academic records,
-    immigration documents, and certifications) submitted to the educational institution
-    have been provided solely by me.
-
-    <br><br>
-
-    I take full legal and personal responsibility for the authenticity,
-    accuracy, and validity of the documents submitted.
-
-    <br><br>
-
-    GPS Education shall not be held responsible for any consequences resulting
-    from submission of forged, altered, or invalid documentation.
-
-</li>
-
-<li>
-
-    Student Responsibility for Academic Outcome
-
-    <br>
-
-    I take full personal responsibility for:
-
-    <br>
-
-    Pursuing the program I have selected.
-
-    <br>
-
-    Understanding all course requirements and institutional policies.
-
-    <br>
-
-    Maintaining compliance with attendance, conduct,
-    and academic standards as required by the institution.
-
-</li>
-
-<li>
-
-    Confidentiality and Access
-
-    <br>
-
-    I agree not to share my login credentials, student ID,
-    or confidential academic information with any third party,
-    including agents, friends, or family members.
-
-    <br>
-
-    I understand that any breach of this may result in
-    academic or administrative consequences.
-
-</li>
-
-<li>
-
-    Jurisdiction and Compliance
-
-    <br>
-
-    This agreement shall be governed by the laws of the
-    Province of British Columbia.
-
-    Any dispute arising from this agreement will fall under
-    the jurisdiction of the courts within British Columbia.
-
-</li>
-
-</ul>
-
-<p>
-    Student Acknowledgement
-</p>
-
-<p style="margin:5px;">
-    <span>Full Name:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->sname ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Date of Birth:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->dob ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Email ID:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->semail ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Phone Number:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->smobile ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Program & College Selected:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->program_name ?? '' }}
-        {{ $student->collage_name ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Signature of Student:</span>
-    <span style="text-decoration: underline;">&nbsp;</span>
-</p>
-
-<p style="margin:5px;">
-    <span>Date:</span>
-    <span style="text-decoration: underline;">
-        {{ now()->format('Y-m-d') }}
-    </span>
-</p>
-
-</body>
-</html><!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="utf-8">
-
-    <style>
-        @page {
-            margin: 0;
-        }
-
-        body {
-            font-family: Helvetica;
-            padding: 20px 30px;
-        }
-
-        p,
-        li {
-            font-size: 14px;
-            line-height: 1.6;
-            color: #000;
-            text-align: justify;
-        }
-    </style>
-
-</head>
-
-<body>
-
-<img src="{{ public_path('images/GPS-Logo.jpg.jpeg') }}" width="110">
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    <b>GPS Education Solutions Inc.</b>
-</p>
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Surrey Office - 15315 66 Ave Unit 308, Surrey, BC V3S 2A2
-</p>
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Phone Number - (604) 771-5110
-</p>
-
-<p style="text-align:right;line-height:1;margin:3px 0;">
-    Website - www.gpseducation.ca
-</p>
-
-<h4 style="text-align:center;">
-    STUDENT CONSENT & RESPONSIBILITY LETTER
-</h4>
-
-<p style="margin-top:-15px;">
-    To Whom It May Concern,
-</p>
-
-<p>
-    I, the undersigned student, hereby confirm that GPS Education Solutions Inc.
-    ("GPS Education") has provided me with general guidance and information
-    regarding various academic programs and institutions. Based on this
-    information, I hereby make the following declarations:
-</p>
-
-<ul style="list-style:decimal;padding-left:20px;">
-
-<li>
-    Voluntary Decision<br>
-
-    I understand and acknowledge that the final decision regarding my choice of
-    program, college, and location has been made solely by me, without any force,
-    misrepresentation, or guarantee of outcome by GPS Education or its representatives.
-</li>
-
-<li>
-
-    Responsibility for Documents Provided<br>
-
-    I confirm that:
-
-    <br>
-
-    All documents (including but not limited to identification, academic records,
-    immigration documents, and certifications) submitted to the educational institution
-    have been provided solely by me.
-
-    <br><br>
-
-    I take full legal and personal responsibility for the authenticity,
-    accuracy, and validity of the documents submitted.
-
-    <br><br>
-
-    GPS Education shall not be held responsible for any consequences resulting
-    from submission of forged, altered, or invalid documentation.
-
-</li>
-
-<li>
-
-    Student Responsibility for Academic Outcome
-
-    <br>
-
-    I take full personal responsibility for:
-
-    <br>
-
-    Pursuing the program I have selected.
-
-    <br>
-
-    Understanding all course requirements and institutional policies.
-
-    <br>
-
-    Maintaining compliance with attendance, conduct,
-    and academic standards as required by the institution.
-
-</li>
-
-<li>
-
-    Confidentiality and Access
-
-    <br>
-
-    I agree not to share my login credentials, student ID,
-    or confidential academic information with any third party,
-    including agents, friends, or family members.
-
-    <br>
-
-    I understand that any breach of this may result in
-    academic or administrative consequences.
-
-</li>
-
-<li>
-
-    Jurisdiction and Compliance
-
-    <br>
-
-    This agreement shall be governed by the laws of the
-    Province of British Columbia.
-
-    Any dispute arising from this agreement will fall under
-    the jurisdiction of the courts within British Columbia.
-
-</li>
-
-</ul>
-
-<p>
-    Student Acknowledgement
-</p>
-
-<p style="margin:5px;">
-    <span>Full Name:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->sname ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Date of Birth:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->dob ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Email ID:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->semail ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Phone Number:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->smobile ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Program & College Selected:</span>
-    <span style="text-decoration: underline;">
-        {{ $student->program_name ?? '' }}
-        {{ $student->collage_name ?? '' }}
-    </span>
-</p>
-
-<p style="margin:5px;">
-    <span>Signature of Student:</span>
-    <span style="text-decoration: underline;">&nbsp;</span>
-</p>
-
-<p style="margin:5px;">
-    <span>Date:</span>
-    <span style="text-decoration: underline;">
-        {{ now()->format('Y-m-d') }}
-    </span>
-</p>
-
-</body>
 </html>
