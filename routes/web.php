@@ -63,15 +63,6 @@ Route::middleware('login')->group(function () {
 
     Route::view('/cmsn', 'cmsn.index')->name('cmsn.dashboard');
 
-
-    // Route::get('/aol-enrolled-status', [OperationController::class, 'aolEnrolledStatus'])
-    //     ->name('operation.dashboard');
-    // Route::get(
-    //     '/operation/export',
-    //     [OperationController::class, 'exportExcel']
-    // )
-    //     ->name('operation.export');
-
     Route::get('/aol-enrolled-status', [OperationController::class, 'aolEnrolledStatus'])
         ->name('operation.dashboard');
 
@@ -358,10 +349,8 @@ Route::middleware('login')->group(function () {
         [WalkinController::class, 'appointmentCompleteExport']
     )->name('appointment.complete.export');
 
-    Route::get(
-        '/student-consent-pdf',
-        [WalkinController::class, 'studentConsentPdf']
-    )->name('student.consent.pdf');
+    Route::get('/student-consent-pdf', [WalkinController::class, 'studentConsentPdf'])->name('student.consent.pdf');
+    
     Route::get('/student/consent/pdf/{uid}', [WalkinController::class, 'studentOsapConsentPdf'])
         ->name('student.consent.pdf');
 

@@ -4815,7 +4815,7 @@ class WalkinController extends Controller
             'programs' => $programs
         ]);
     }
-    
+
     public function updateDropStatus(Request $request)
     {
         $validated = $request->validate([
@@ -4865,7 +4865,7 @@ class WalkinController extends Controller
 
         try {
 
-           
+
             $updated = DB::table('seminarpre')
                 ->where('sno', $semiId)
                 ->update([
@@ -4881,7 +4881,7 @@ class WalkinController extends Controller
                 ], 500);
             }
 
-           
+
             $logStored = DB::table('fund_status_logs')->insert([
                 'semi_id'    => $semiId,
                 'old_status' => $oldStatus,
@@ -5002,65 +5002,65 @@ class WalkinController extends Controller
     //     ]);
     // }
 
-   public function dropLogs(Request $request)
-{
-    $request->validate([
-        'semi_id' => 'required|integer',
-    ]);
+    public function dropLogs(Request $request)
+    {
+        $request->validate([
+            'semi_id' => 'required|integer',
+        ]);
 
-    $semi_id = $request->semi_id;
+        $semi_id = $request->semi_id;
 
-    $logs = DB::table('opr_sts_logs')
-        ->where('main_id', $semi_id)
-        ->orderByDesc('id')
-        ->get()
-        ->map(function ($row) {
+        $logs = DB::table('opr_sts_logs')
+            ->where('main_id', $semi_id)
+            ->orderByDesc('id')
+            ->get()
+            ->map(function ($row) {
 
-            return [
-                'main_id' => $row->main_id,
+                return [
+                    'main_id' => $row->main_id,
 
-                // STATUS
-                'status' => $row->oprStsSend
-                    ?: $row->stage
-                    ?: '',
+                    // STATUS
+                    'status' => $row->oprStsSend
+                        ?: $row->stage
+                        ?: '',
 
-                // DATE
-                'date' => $row->stage_date ?? '',
+                    // DATE
+                    'date' => $row->stage_date ?? '',
 
-                // REMARKS
-                'remarks' => $row->stage_remarks ?? '',
+                    // REMARKS
+                    'remarks' => $row->stage_remarks ?? '',
 
-                // UPDATED BY
-                'updated_by' => $row->created_name ?? '',
+                    // UPDATED BY
+                    'updated_by' => $row->created_name ?? '',
 
-                // FULL ACTION DATETIME
-                'action_datetime' => $row->created_datetime ?? '',
-            ];
-        });
-
-
-    $notes = DB::table('notes_logs')
-        ->where('main_id', $semi_id)
-        ->orderByDesc('id')
-        ->get()
-        ->map(function ($row) {
-
-            return [
-                'sno' => $row->id,
-                'main_id' => $row->main_id,
-                'remarks' => $row->notes_remarks ?? '',
-                'updated_by' => $row->created_name ?? '',
-                'action_datetime' => $row->created_datetime ?? '',
-            ];
-        });
+                    // FULL ACTION DATETIME
+                    'action_datetime' => $row->created_datetime ?? '',
+                ];
+            });
 
 
-    return response()->json([
-        'success' => true,
-        'logs' => $logs,
-        'notes' => $notes,
-    ]);
-}
+        $notes = DB::table('notes_logs')
+            ->where('main_id', $semi_id)
+            ->orderByDesc('id')
+            ->get()
+            ->map(function ($row) {
+
+                return [
+                    'sno' => $row->id,
+                    'main_id' => $row->main_id,
+                    'remarks' => $row->notes_remarks ?? '',
+                    'updated_by' => $row->created_name ?? '',
+                    'action_datetime' => $row->created_datetime ?? '',
+                ];
+            });
+
+
+        return response()->json([
+            'success' => true,
+            'logs' => $logs,
+            'notes' => $notes,
+        ]);
+    }
 
 
 
@@ -6658,14 +6658,8 @@ class WalkinController extends Controller
     }
 
 
-  public function studentConsentPdf(Request $request)
+    public function studentConsentPdf(Request $request)
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Get Student ID
-    |--------------------------------------------------------------------------
-    */
-
     $snoid = $request->query('uid');
 
     if (empty($snoid)) {
@@ -6673,13 +6667,6 @@ class WalkinController extends Controller
             ->back()
             ->with('error', 'Student ID is missing.');
     }
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Get Student
-    |--------------------------------------------------------------------------
-    */
 
     $student = DB::table('seminarpre')
         ->where('sno', $snoid)
@@ -6691,44 +6678,24 @@ class WalkinController extends Controller
             ->with('error', 'Student record not found.');
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Student Information
-    |--------------------------------------------------------------------------
-    */
-
-    $sname = $student->sname ?? '';
-    $dob = $student->dob ?? '';
-    $semail = $student->semail ?? '';
-    $smobile = $student->smobile ?? '';
+    $sname        = $student->sname ?? '';
+    $dob          = $student->dob ?? '';
+    $semail       = $student->semail ?? '';
+    $smobile      = $student->smobile ?? '';
     $program_name = $student->program_name ?? '';
     $collage_name = $student->collage_name ?? '';
-    $signature = $student->signature ?? '';
+    $signature    = $student->signature ?? '';
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Toronto Date
-    |--------------------------------------------------------------------------
-    */
+    
 
     $datsddsfd = now('America/Toronto')->format('Y-m-d');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | GPS Logo
-    |--------------------------------------------------------------------------
-    |
-    | Actual file:
-    | public/images/GPS-Logo.jpg.jpeg
-    |
-    */
-
-    $logoPath = public_path('images/GPS-Logo.jpg.jpeg');
+   
 
     $logoSrc = '';
+
+    $logoPath = public_path('images/GPS-Logo.jpg.jpeg');
 
     if (file_exists($logoPath)) {
 
@@ -6743,15 +6710,7 @@ class WalkinController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Student Signature
-    |--------------------------------------------------------------------------
-    |
-    | Expected file:
-    | public/Student_Sign/{signature}
-    |
-    */
+ 
 
     $sign_Src = '';
 
@@ -6768,12 +6727,6 @@ class WalkinController extends Controller
 
             if ($signatureData !== false) {
 
-                /*
-                 * Most student signatures are PNG.
-                 * If your files are JPG, change image/png
-                 * to image/jpeg.
-                 */
-
                 $sign_Src =
                     'data:image/png;base64,' .
                     base64_encode($signatureData);
@@ -6782,11 +6735,7 @@ class WalkinController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Generate PDF
-    |--------------------------------------------------------------------------
-    */
+   
 
     $pdf = Pdf::loadView(
         'operation.student-consent-pdf',
@@ -6804,24 +6753,18 @@ class WalkinController extends Controller
     );
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | A4 Portrait
-    |--------------------------------------------------------------------------
-    */
+   
+
+    $pdf->setOptions([
+        'isRemoteEnabled'      => true,
+        'isHtml5ParserEnabled' => true,
+        'defaultFont'          => 'Courier',
+    ]);
 
     $pdf->setPaper('A4', 'portrait');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Stream PDF
-    |--------------------------------------------------------------------------
-    */
-
-    return $pdf->stream(
-        'Student_consent.pdf'
-    );
+    return $pdf->stream('international-student-application.pdf');
 }
 
     public function studentOsapConsentPdf($uid)
