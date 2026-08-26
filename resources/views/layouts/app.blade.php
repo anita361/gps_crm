@@ -198,17 +198,7 @@
                         </ul>
 
                     </li>
-                    {{-- <li class="nav-item">
 
-                        <a class="nav-link" href="#">
-
-                            <i class="fa fa-chart-line"></i>
-
-                            Reports
-
-                        </a>
-
-                    </li> --}}
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
                             <i class="fa fa-chart-line"></i> Reports
@@ -259,17 +249,7 @@
 
                     </li>
 
-                    {{-- <li class="nav-item">
 
-                        <a class="nav-link" href="#">
-
-                            <i class="fa fa-table"></i>
-
-                            Dashboard Report
-
-                        </a>
-
-                    </li> --}}
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
@@ -290,9 +270,10 @@
                             </li>
 
                             <li>
-                                <a class="dropdown-item {{ request()->routeIs('daily.activity.reports') ? 'active' : '' }}"
-                                    href="{{ route('daily.activity.reports') }}">
-                                    <i class="fa fa-calendar-day"></i> Daily Activity Reports
+                                <a class="dropdown-item {{ request()->routeIs('reports.daily-sales') ? 'active' : '' }}"
+                                    href="{{ route('reports.daily-sales') }}">
+                                    <i class="fa fa-chart-line"></i>
+                                    Daily Sales Report
                                 </a>
                             </li>
 
@@ -309,10 +290,8 @@
                             <li>
                                 <a class="dropdown-item {{ request()->routeIs('all.lead.list') ? 'active' : '' }}"
                                     href="{{ route('all.lead.list') }}">
-
                                     <i class="fa fa-users"></i>
                                     All Lead List
-
                                 </a>
                             </li>
                         </ul>
