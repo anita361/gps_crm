@@ -1722,6 +1722,8 @@ class WalkinController extends Controller
             'id'      => $student->sno,
         ]);
     }
+
+    
     public function studentConsentSuccess($id)
     {
         $student = DB::table('seminarpre')
@@ -6693,6 +6695,7 @@ class WalkinController extends Controller
             ->back()
             ->with('error', 'Student record not found.');
     }
+    
 
     $pdf = Pdf::loadView('operation.student-consent-pdf', [
         'student' => $student,

@@ -26,32 +26,32 @@
         $signatureStyles = [
             1 => [
                 'family' => 'PaulSignature',
-                'file'   => 'PaulSignature-WEJY.ttf',
+                'file' => 'PaulSignature-WEJY.ttf',
             ],
 
             2 => [
                 'family' => 'Amadgone',
-                'file'   => 'Amadgone-BW1ax.ttf',
+                'file' => 'Amadgone-BW1ax.ttf',
             ],
 
             3 => [
                 'family' => 'Heatwood',
-                'file'   => 'Heatwood-GOKPO.ttf',
+                'file' => 'Heatwood-GOKPO.ttf',
             ],
 
             4 => [
                 'family' => 'MaradonaSignature',
-                'file'   => 'MaradonaSignature-DOMv0.ttf',
+                'file' => 'MaradonaSignature-DOMv0.ttf',
             ],
 
             5 => [
                 'family' => 'PandemiDemo',
-                'file'   => 'PandemiDemo-6Ygqx.ttf',
+                'file' => 'PandemiDemo-6Ygqx.ttf',
             ],
 
             6 => [
                 'family' => 'SouthSand',
-                'file'   => 'SouthSand-qZ611.ttf',
+                'file' => 'SouthSand-qZ611.ttf',
             ],
         ];
 
@@ -69,16 +69,14 @@
         |--------------------------------------------------------------------------
         */
 
-        $selectedSignature = $signatureStyles[$signatureId]
-            ?? $signatureStyles[1];
+        $selectedSignature = $signatureStyles[$signatureId] ?? $signatureStyles[1];
 
         $signatureFontFamily = $selectedSignature['family'];
-        $signatureFontFile   = $selectedSignature['file'];
+        $signatureFontFile = $selectedSignature['file'];
     @endphp
 
 
     <style>
-
         /*
         |--------------------------------------------------------------------------
         | PAGE SETTINGS
@@ -503,8 +501,6 @@
             vertical-align: bottom;
 
         }
-
-
     </style>
 
 </head>
@@ -527,14 +523,18 @@
 
                 <td width="120">
 
+                    @php
+                        $logoPath = public_path('images/GPS-Logo.jpg.jpeg');
+
+                        $logoSrc = '';
+
+                        if (file_exists($logoPath)) {
+                            $logoSrc = 'data:image/jpeg;base64,' . base64_encode(file_get_contents($logoPath));
+                        }
+                    @endphp
+
                     @if (!empty($logoSrc))
-
-                        <img
-                            src="{{ $logoSrc }}"
-                            class="logo-img"
-                            alt="GPS Education"
-                        >
-
+                        <img src="{{ $logoSrc }}" class="logo-img" alt="GPS Education">
                     @endif
 
                 </td>
@@ -736,7 +736,7 @@
             I understand that I am fully responsible for the payment
             of my college or institutional tuition fees, whether funded
             through <strong>provincial or federal student financial
-            assistance programs</strong> (such as OSAP, StudentAid BC,
+                assistance programs</strong> (such as OSAP, StudentAid BC,
             Alberta Student Aid, etc.) or by <strong>self-payment.</strong>
 
             <br>
@@ -870,7 +870,7 @@
             <br>
 
             GPS Education is <strong>not an agent, affiliate, or
-            representative</strong> of any government funding body.
+                representative</strong> of any government funding body.
 
             All decisions regarding admissions, financial aid, and
             funding eligibility are made solely by the relevant
@@ -927,14 +927,14 @@
 
             This agreement shall be governed by and interpreted
             in accordance with the <strong>laws of the province
-            or territory in which the student is enrolled.</strong>
+                or territory in which the student is enrolled.</strong>
 
             <br>
 
             Any disputes arising under or in connection with this
             agreement shall fall under the <strong>exclusive
-            jurisdiction of the courts in that province or
-            territory.</strong>
+                jurisdiction of the courts in that province or
+                territory.</strong>
 
         </p>
 
@@ -965,7 +965,7 @@
                 By signing below, I confirm that I have read,
                 understood, and voluntarily agreed to the terms of
                 this <strong>Student Consent and Responsibility
-                Agreement</strong>.
+                    Agreement</strong>.
 
                 <br>
 
@@ -1017,9 +1017,7 @@
                     <span class="student-line">
 
                         @if (!empty($student->dob))
-
                             {{ \Carbon\Carbon::parse($student->dob)->format('Y-m-d') }}
-
                         @endif
 
                     </span>
@@ -1065,9 +1063,7 @@
                         {{ $student->program_name ?? '' }}
 
                         @if (!empty($student->program_name) && !empty($student->collage_name))
-
                             /
-
                         @endif
 
                         {{ $student->collage_name ?? '' }}
@@ -1087,13 +1083,11 @@
                     <span class="signature-line">
 
                         @if (!empty($student->sname))
-
                             <span class="student-signature">
 
                                 {{ $student->sname }}
 
                             </span>
-
                         @endif
 
                     </span>
