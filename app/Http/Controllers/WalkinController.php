@@ -135,11 +135,7 @@ class WalkinController extends Controller
 
     public function show($smobile)
     {
-        /*
-    |--------------------------------------------------------------------------
-    | GET STUDENT
-    |--------------------------------------------------------------------------
-    */
+
 
         $student = DB::table('seminarpre')
             ->leftJoin(
@@ -152,7 +148,7 @@ class WalkinController extends Controller
             ->select(
                 'seminarpre.*',
 
-                // Keep both province columns separate
+
                 'seminarpre.province_name as seminar_province_name',
                 'lead_appointed.province_name as lead_province_name'
             )
@@ -163,11 +159,7 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | LOGIN USER
-    |--------------------------------------------------------------------------
-    */
+
 
         $login_id = session('login');
 
@@ -178,11 +170,7 @@ class WalkinController extends Controller
         $sess_username = $user->username ?? '';
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | PROVINCES
-    |--------------------------------------------------------------------------
-    */
+
 
         if (
             $sess_username == 'jk@prises' ||
@@ -205,11 +193,7 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | STATUS HISTORY
-    |--------------------------------------------------------------------------
-    */
+
 
         $statusHistory = DB::table('opr_sts_logs')
             ->where('main_id', $student->sno)
@@ -217,24 +201,7 @@ class WalkinController extends Controller
             ->get();
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | MAP DATABASE VALUES TO BLADE VALUES
-    |--------------------------------------------------------------------------
-    */
 
-        /*
-    |--------------------------------------------------------------------------
-    | PROVINCE
-    |--------------------------------------------------------------------------
-    |
-    | First:
-    | seminarpre.province_name
-    |
-    | If empty:
-    | lead_appointed.province_name
-    |
-    */
 
         $student->province = '';
 
@@ -251,12 +218,6 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | COLLEGE
-    |--------------------------------------------------------------------------
-    */
-
         $student->college = '';
 
         if (!empty($student->collage_name)) {
@@ -267,11 +228,7 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | CAMPUS
-    |--------------------------------------------------------------------------
-    */
+
 
         $student->campus = '';
 
@@ -283,11 +240,7 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | PROGRAM
-    |--------------------------------------------------------------------------
-    */
+
 
         $student->program = '';
 
@@ -299,11 +252,7 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | FINANCE USER
-    |--------------------------------------------------------------------------
-    */
+
 
         $student->finance_user = '';
 
@@ -314,15 +263,7 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | FALLBACK PROVINCE FROM COLLEGE
-    |--------------------------------------------------------------------------
-    |
-    | If old records don't have province_name but have college,
-    | find province using college_list.
-    |
-    */
+
 
         if (
             empty($student->province) &&
@@ -348,11 +289,7 @@ class WalkinController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | GET COLLEGES
-    |--------------------------------------------------------------------------
-    */
+
 
         $colleges = DB::table('college_list')
             ->select(
@@ -366,11 +303,7 @@ class WalkinController extends Controller
             ->get();
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | GET FINANCE USERS
-    |--------------------------------------------------------------------------
-    */
+
 
         $financeUsers = DB::table('crm_login')
             ->select(
@@ -384,11 +317,7 @@ class WalkinController extends Controller
             ->get();
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | NOTES
-    |--------------------------------------------------------------------------
-    */
+
 
         $notes = DB::table('notes_logs')
             ->where(
@@ -402,11 +331,7 @@ class WalkinController extends Controller
             ->get();
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | EMAIL TEMPLATES
-    |--------------------------------------------------------------------------
-    */
+
 
         $templates = DB::table('email_temp')
             ->where(
@@ -420,11 +345,6 @@ class WalkinController extends Controller
             ->get();
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | RETURN VIEW
-    |--------------------------------------------------------------------------
-    */
 
         return view(
             'branch_manager.walking_details',
@@ -763,7 +683,7 @@ class WalkinController extends Controller
         );
     }
 
-   
+
 
     public function updateOperationStatus(Request $request)
     {
@@ -1047,7 +967,7 @@ class WalkinController extends Controller
 
 
 
-       
+
 
         $updateData = [
 
@@ -1995,59 +1915,135 @@ class WalkinController extends Controller
         $from = $request->from_date . ' 00:00:00';
         $to   = $request->to_date . ' 23:59:59';
 
+
+
+
         $users = DB::table('crm_login')
             ->whereIn('role', ['branch_manager', 'counselor'])
             ->get();
 
+
+
+
         $leadStats = DB::table('lead_appointed')
             ->select(
                 'assign_id',
-                DB::raw("SUM(CASE WHEN created_by='callcenter' THEN 1 ELSE 0 END) as calling"),
-                DB::raw("SUM(CASE WHEN created_by='website' THEN 1 ELSE 0 END) as website"),
-                DB::raw("SUM(CASE WHEN LOWER(created_by)='facebook' THEN 1 ELSE 0 END) as facebook"),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN created_by = 'callcenter'
+                        THEN 1 ELSE 0
+                    END
+                ) as calling
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN created_by = 'website'
+                        THEN 1 ELSE 0
+                    END
+                ) as website
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN LOWER(created_by) = 'facebook'
+                        THEN 1 ELSE 0
+                    END
+                ) as facebook
+            "),
+
                 DB::raw("COUNT(*) as total"),
-                DB::raw("COUNT(DISTINCT callerno) as unique_leads"),
-                DB::raw("SUM(CASE WHEN walkin_status=1 THEN 1 ELSE 0 END) as walkin"),
-                DB::raw("SUM(CASE WHEN action_taken='yes' THEN 1 ELSE 0 END) as action_taken")
+
+                DB::raw("
+                COUNT(DISTINCT callerno) as unique_leads
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN walkin_status = 1
+                        THEN 1 ELSE 0
+                    END
+                ) as walkin
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN action_taken = 'yes'
+                        THEN 1 ELSE 0
+                    END
+                ) as action_taken
+            ")
             )
             ->whereBetween('created_date', [$from, $to])
             ->groupBy('assign_id')
             ->get()
             ->keyBy('assign_id');
 
+
+
+
         $seminarStats = DB::table('seminarpre')
             ->select(
                 'assign_id',
-                DB::raw("SUM(CASE WHEN student_status='Call Follow-Up' THEN 1 ELSE 0 END) as followup"),
-                DB::raw("SUM(CASE WHEN student_status IN (
-                'Call Not Eligible',
-                'Call Not Interested',
-                'Call Do Not Follow-Up'
-            ) THEN 1 ELSE 0 END) as dropped")
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status = 'Call Follow-Up'
+                        THEN 1 ELSE 0
+                    END
+                ) as followup
+            "),
+
+                DB::raw("
+                SUM(
+                    CASE
+                        WHEN student_status IN (
+                            'Call Not Eligible',
+                            'Call Not Interested',
+                            'Call Do Not Follow-Up'
+                        )
+                        THEN 1 ELSE 0
+                    END
+                ) as dropped
+            ")
             )
             ->whereBetween('reg_date', [$from, $to])
             ->groupBy('assign_id')
             ->get()
             ->keyBy('assign_id');
 
+
+
+
         $rows = '';
 
+
         $totals = [
-            'calling' => 0,
-            'website' => 0,
+            'calling'  => 0,
+            'website'  => 0,
             'facebook' => 0,
-            'total' => 0,
-            'unique' => 0,
-            'walkin' => 0,
+            'total'    => 0,
+            'unique'   => 0,
+            'walkin'   => 0,
             'followup' => 0,
-            'drop' => 0,
-            'action' => 0
+            'drop'     => 0,
+            'action'   => 0
         ];
+
 
         foreach ($users as $u) {
 
             $lead = $leadStats[$u->id] ?? null;
+
             $sem = $seminarStats[$u->id] ?? null;
+
 
             $calling  = $lead->calling ?? 0;
             $website  = $lead->website ?? 0;
@@ -2060,102 +2056,230 @@ class WalkinController extends Controller
             $followup = $sem->followup ?? 0;
             $drop     = $sem->dropped ?? 0;
 
+
             $rows .= "
         <tr>
-            <td>{$u->username}</td>
+            <td>" . e($u->username ?? '-') . "</td>
+
             <td>{$calling}</td>
+
             <td>{$website}</td>
+
             <td>{$facebook}</td>
+
             <td>{$total}</td>
+
             <td>{$unique}</td>
+
             <td>{$walkin}</td>
+
             <td>{$followup}</td>
+
             <td>{$drop}</td>
+
             <td>{$action}</td>
         </tr>";
 
-            $totals['calling'] += $calling;
-            $totals['website'] += $website;
+
+            $totals['calling']  += $calling;
+            $totals['website']  += $website;
             $totals['facebook'] += $facebook;
-            $totals['total'] += $total;
-            $totals['unique'] += $unique;
-            $totals['walkin'] += $walkin;
+            $totals['total']    += $total;
+            $totals['unique']   += $unique;
+            $totals['walkin']   += $walkin;
             $totals['followup'] += $followup;
-            $totals['drop'] += $drop;
-            $totals['action'] += $action;
+            $totals['drop']     += $drop;
+            $totals['action']   += $action;
         }
+
+
 
         $totalRow = "
     <tr class='total-row'>
-        <td><b>Total</b></td>
+
+        <td>
+            <b>Total</b>
+        </td>
+
         <td>{$totals['calling']}</td>
+
         <td>{$totals['website']}</td>
+
         <td>{$totals['facebook']}</td>
+
         <td>{$totals['total']}</td>
+
         <td>{$totals['unique']}</td>
+
         <td>{$totals['walkin']}</td>
+
         <td>{$totals['followup']}</td>
+
         <td>{$totals['drop']}</td>
+
         <td>{$totals['action']}</td>
+
     </tr>";
 
 
 
         $leadUsers = DB::table('lead_appointed as l')
-            ->leftJoin('seminarpre as s', 's.smobile', '=', 'l.callerno')
-            ->whereBetween('l.created_date', [$from, $to])
+
+            ->leftJoin(
+                'seminarpre as s',
+                's.sno',
+                '=',
+                'l.seminar_id'
+            )
+
+            ->whereBetween(
+                'l.created_date',
+                [$from, $to]
+            )
+
             ->select(
+
                 'l.*',
+
+
+                's.smobile as smobile',
+
                 's.scountry',
+
                 's.svisa',
+
                 's.student_status',
+
                 's.file_no'
             )
+
             ->orderByDesc('l.id')
+
             ->get();
+
+
+
 
         $details = '';
 
+
         foreach ($leadUsers as $lead) {
+
+
+
+
+            $viewButton = '-';
+
+
+            if (!empty($lead->smobile)) {
+
+                $viewUrl = route(
+                    'walking-details',
+                    [
+                        'smobile' => $lead->smobile
+                    ]
+                );
+
+
+                $viewButton = "
+                <a href='" . e($viewUrl) . "'
+                   class='btn btn-primary btn-sm'>
+                    View
+                </a>
+            ";
+            }
+
+
+
 
             $details .= "
         <tr>
-            <td>{$lead->applicant_name}</td>
-            <td>{$lead->callerno}</td>
-            <td>" . ($lead->scountry ?? '-') . "</td>
-            <td>" . ($lead->svisa ?? '-') . "</td>
-            <td>{$lead->lead_from}</td>
-            <td>{$lead->walkedin_date}</td>
-            <td>{$lead->created_by}</td>
-            <td>{$lead->created_date}</td>
-            <td>{$lead->assign_name}</td>
-            <td>" . ($lead->student_status ?? '-') . "</td>
-            <td>" . ($lead->file_no ?? '-') . "</td>
+
+            <td>" .
+                e($lead->applicant_name ?? '-') .
+                "</td>
+
+            <td>" .
+                e($lead->smobile ?? '-') .
+                "</td>
+
+            <td>" .
+                e($lead->scountry ?? '-') .
+                "</td>
+
+            <td>" .
+                e($lead->svisa ?? '-') .
+                "</td>
+
+            <td>" .
+                e($lead->lead_from ?? '-') .
+                "</td>
+
+            <td>" .
+                e($lead->walkedin_date ?? '-') .
+                "</td>
+
+            <td>" .
+                e($lead->created_by ?? '-') .
+                "</td>
+
+            <td>" .
+                e($lead->created_date ?? '-') .
+                "</td>
+
+            <td>" .
+                e($lead->assign_name ?? '-') .
+                "</td>
+
+            <td>" .
+                e($lead->student_status ?? '-') .
+                "</td>
+
+            <td>" .
+                e($lead->file_no ?? '-') .
+                "</td>
+
             <td>
-                 <a href='" . route('walking-details', ['smobile' => $lead->callerno]) . "' class='btn btn-primary btn-sm'>
-            View
-        </a>
+                {$viewButton}
             </td>
-            <td>{$lead->action_taken}</td>
+
+            <td>" .
+                e($lead->action_taken ?? '-') .
+                "</td>
+
         </tr>";
         }
 
-        if ($details == '') {
+
+
+        if ($details === '') {
+
             $details = "
         <tr>
-            <td colspan='13' class='text-center'>
+
+            <td
+                colspan='13'
+                class='text-center'
+            >
                 No Record Found
             </td>
+
         </tr>";
         }
 
+
+
+
         return response()->json([
-            'rows' => $rows,
-            'total' => $totalRow,
+
+            'rows'    => $rows,
+
+            'total'   => $totalRow,
+
             'details' => $details
+
         ]);
     }
-
 
 
     public function sourceReport(Request $request)
@@ -2334,66 +2458,66 @@ class WalkinController extends Controller
     // }
 
     public function dailySalesReport(Request $request)
-{
-    $query = DB::table('seminarpre')
-        ->whereIn('student_status', ['enrolled', 'Re-enrolled'])
-        ->where(function ($q) {
-            $q->whereNull('opr_stage')
-              ->orWhere('opr_stage', '!=', 'Drop');
-        });
+    {
+        $query = DB::table('seminarpre')
+            ->whereIn('student_status', ['enrolled', 'Re-enrolled'])
+            ->where(function ($q) {
+                $q->whereNull('opr_stage')
+                    ->orWhere('opr_stage', '!=', 'Drop');
+            });
 
-    if ($request->filled('from_date')) {
-        $query->whereDate('enrolled_date', '>=', $request->from_date);
-    }
-
-    if ($request->filled('to_date')) {
-        $query->whereDate('enrolled_date', '<=', $request->to_date);
-    }
-
-    if ($request->filled('province')) {
-        $query->where('province_name', $request->province);
-    }
-
-    if ($request->filled('college')) {
-        $query->where('collage_name', $request->college);
-    }
-
-    if ($request->filled('counselor')) {
-
-        $counselors = (array) $request->counselor;
-
-        if (!in_array('All', $counselors)) {
-            $query->whereIn('assign_id', $counselors);
+        if ($request->filled('from_date')) {
+            $query->whereDate('enrolled_date', '>=', $request->from_date);
         }
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('enrolled_date', '<=', $request->to_date);
+        }
+
+        if ($request->filled('province')) {
+            $query->where('province_name', $request->province);
+        }
+
+        if ($request->filled('college')) {
+            $query->where('collage_name', $request->college);
+        }
+
+        if ($request->filled('counselor')) {
+
+            $counselors = (array) $request->counselor;
+
+            if (!in_array('All', $counselors)) {
+                $query->whereIn('assign_id', $counselors);
+            }
+        }
+
+        $students = $query
+            ->orderByDesc('enrolled_date')
+            ->get();
+
+        $colleges = DB::table('college_list')
+            ->select('clg_name')
+            ->whereNotNull('clg_name')
+            ->where('clg_name', '!=', '')
+            ->groupBy('clg_name')
+            ->orderBy('clg_name')
+            ->get();
+
+        $counselors = DB::table('crm_login')
+            ->select('id', 'name')
+            ->whereIn('role', ['counselor', 'Counselor'])
+            ->orderBy('name')
+            ->get();
+
+        return view(
+            'branch_manager.daily_sales_report',
+            compact(
+                'students',
+                'colleges',
+                'counselors'
+            )
+        );
     }
-
-    $students = $query
-        ->orderByDesc('enrolled_date')
-        ->get();
-
-    $colleges = DB::table('college_list')
-        ->select('clg_name')
-        ->whereNotNull('clg_name')
-        ->where('clg_name', '!=', '')
-        ->groupBy('clg_name')
-        ->orderBy('clg_name')
-        ->get();
-
-    $counselors = DB::table('crm_login')
-        ->select('id', 'name')
-        ->whereIn('role', ['counselor', 'Counselor'])
-        ->orderBy('name')
-        ->get();
-
-    return view(
-        'branch_manager.daily_sales_report',
-        compact(
-            'students',
-            'colleges',
-            'counselors'
-        )
-    );
-}
 
     public function feedbackDetails()
     {
@@ -2503,7 +2627,7 @@ class WalkinController extends Controller
         ]);
     }
 
-   
+
     public function operationGetColleges(Request $request)
     {
         $provinceName = $request->province_name;
@@ -2519,7 +2643,7 @@ class WalkinController extends Controller
             ->select('clg_name')
             ->where('province', $provinceName);
 
-       
+
 
         $sessUsername = session('username');
 
@@ -2550,7 +2674,7 @@ class WalkinController extends Controller
         ]);
     }
 
-    
+
     public function operationGetCampuses(Request $request)
     {
         $collegeId = $request->college_id;
@@ -2587,7 +2711,7 @@ class WalkinController extends Controller
         ]);
     }
 
-    
+
     public function operationGetPrograms(Request $request)
     {
         $campusId = $request->campus_id;
@@ -2798,7 +2922,7 @@ class WalkinController extends Controller
         ));
     }
 
-   
+
 
 
     public function studentPdf($id)
@@ -8652,7 +8776,7 @@ class WalkinController extends Controller
         ));
     }
 
-    
+
     // public function allLeadList(Request $request)
     // {
 
@@ -8807,111 +8931,111 @@ class WalkinController extends Controller
 
 
     public function allLeadList(Request $request)
-{
-    $colleges = DB::table('college_list')
-        ->select('clg_name')
-        ->whereNotNull('clg_name')
-        ->where('clg_name', '!=', '')
-        ->groupBy('clg_name')
-        ->orderBy('clg_name')
-        ->get();
+    {
+        $colleges = DB::table('college_list')
+            ->select('clg_name')
+            ->whereNotNull('clg_name')
+            ->where('clg_name', '!=', '')
+            ->groupBy('clg_name')
+            ->orderBy('clg_name')
+            ->get();
 
-    $operations = DB::table('crm_login')
-        ->select('id', 'name')
-        ->whereIn('role', ['operation', 'Operation'])
-        ->orderBy('name')
-        ->get();
+        $operations = DB::table('crm_login')
+            ->select('id', 'name')
+            ->whereIn('role', ['operation', 'Operation'])
+            ->orderBy('name')
+            ->get();
 
-    $provinces = DB::table('college_list')
-        ->select('province')
-        ->whereNotNull('province')
-        ->where('province', '!=', '')
-        ->groupBy('province')
-        ->orderBy('province')
-        ->get();
+        $provinces = DB::table('college_list')
+            ->select('province')
+            ->whereNotNull('province')
+            ->where('province', '!=', '')
+            ->groupBy('province')
+            ->orderBy('province')
+            ->get();
 
-    $query = DB::table('seminarpre');
+        $query = DB::table('seminarpre');
 
-    if ($request->filled('ssource')) {
-        $query->where('ssource', $request->ssource);
-    }
+        if ($request->filled('ssource')) {
+            $query->where('ssource', $request->ssource);
+        }
 
-    if ($request->filled('student_status')) {
-        $query->where('student_status', $request->student_status);
-    }
+        if ($request->filled('student_status')) {
+            $query->where('student_status', $request->student_status);
+        }
 
-    if ($request->filled('substatus')) {
-        $query->where('status', $request->substatus);
-    } elseif ($request->filled('status')) {
-        $query->where('status', $request->status);
-    }
+        if ($request->filled('substatus')) {
+            $query->where('status', $request->substatus);
+        } elseif ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
 
-    if ($request->filled('student_name')) {
+        if ($request->filled('student_name')) {
 
-        $name = trim($request->student_name);
+            $name = trim($request->student_name);
 
-        $query->where(function ($q) use ($name) {
-            $q->where('sname', 'LIKE', "%{$name}%")
-                ->orWhere('fname', 'LIKE', "%{$name}%")
-                ->orWhere('lname', 'LIKE', "%{$name}%");
-        });
-    }
+            $query->where(function ($q) use ($name) {
+                $q->where('sname', 'LIKE', "%{$name}%")
+                    ->orWhere('fname', 'LIKE', "%{$name}%")
+                    ->orWhere('lname', 'LIKE', "%{$name}%");
+            });
+        }
 
-    if ($request->filled('search')) {
+        if ($request->filled('search')) {
 
-        $search = trim($request->search);
+            $search = trim($request->search);
 
-        $query->where(function ($q) use ($search) {
-            $q->where('sname', 'LIKE', "%{$search}%")
-                ->orWhere('fname', 'LIKE', "%{$search}%")
-                ->orWhere('lname', 'LIKE', "%{$search}%")
-                ->orWhere('smobile', 'LIKE', "%{$search}%")
-                ->orWhere('semail', 'LIKE', "%{$search}%")
-                ->orWhere('file_no', 'LIKE', "%{$search}%");
-        });
-    }
+            $query->where(function ($q) use ($search) {
+                $q->where('sname', 'LIKE', "%{$search}%")
+                    ->orWhere('fname', 'LIKE', "%{$search}%")
+                    ->orWhere('lname', 'LIKE', "%{$search}%")
+                    ->orWhere('smobile', 'LIKE', "%{$search}%")
+                    ->orWhere('semail', 'LIKE', "%{$search}%")
+                    ->orWhere('file_no', 'LIKE', "%{$search}%");
+            });
+        }
 
-    if ($request->filled('province_name')) {
-        $query->where('province_name', $request->province_name);
-    }
+        if ($request->filled('province_name')) {
+            $query->where('province_name', $request->province_name);
+        }
 
-    if ($request->filled('collage_name')) {
-        $query->where('collage_name', $request->collage_name);
-    }
+        if ($request->filled('collage_name')) {
+            $query->where('collage_name', $request->collage_name);
+        }
 
-    if ($request->filled('campus_name')) {
-        $query->where('campus_name', $request->campus_name);
-    }
+        if ($request->filled('campus_name')) {
+            $query->where('campus_name', $request->campus_name);
+        }
 
-    if ($request->filled('program_name')) {
-        $query->where(
-            'program_name',
-            'LIKE',
-            '%' . trim($request->program_name) . '%'
+        if ($request->filled('program_name')) {
+            $query->where(
+                'program_name',
+                'LIKE',
+                '%' . trim($request->program_name) . '%'
+            );
+        }
+
+        $perPage = (int) $request->get('per_page', 25);
+
+        if (!in_array($perPage, [10, 25, 50, 100])) {
+            $perPage = 25;
+        }
+
+        $students = $query
+            ->orderByDesc('sno')
+            ->paginate($perPage)
+            ->withQueryString();
+
+        return view(
+            'dashboard.all_lead_list',
+            compact(
+                'students',
+                'colleges',
+                'operations',
+                'provinces'
+            )
         );
     }
-
-    $perPage = (int) $request->get('per_page', 25);
-
-    if (!in_array($perPage, [10, 25, 50, 100])) {
-        $perPage = 25;
-    }
-
-    $students = $query
-        ->orderByDesc('sno')
-        ->paginate($perPage)
-        ->withQueryString();
-
-    return view(
-        'dashboard.all_lead_list',
-        compact(
-            'students',
-            'colleges',
-            'operations',
-            'provinces'
-        )
-    );
-}
 
     public function addallNote(Request $request)
     {
