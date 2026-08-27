@@ -800,6 +800,7 @@ class WalkinController extends Controller
             ], 500);
         }
     }
+    
     public function updateStatus(Request $request)
     {
 
@@ -6204,10 +6205,7 @@ class WalkinController extends Controller
             'updated' => $updated,
         ]);
     }
-    // public function osapDoneEnrolled()
-    // {
-    //     return view('operation.osap-done-enrolled');
-    // }
+
     public function osapDoneEnrolled(Request $request)
     {
 
@@ -7776,22 +7774,7 @@ class WalkinController extends Controller
         ) {
             $query->where('assign_name', '!=', '');
 
-            /*
-        |--------------------------------------------------------------------------
-        | Date filtering
-        |
-        | IMPORTANT:
-        | We DO NOT apply date here.
-        | Enrolled uses enrolled_date.
-        | Other statuses use action_date.
-        |--------------------------------------------------------------------------
-        */
 
-            /*
-        |--------------------------------------------------------------------------
-        | Province restriction for prabjot / navjot
-        |--------------------------------------------------------------------------
-        */
             if (
                 in_array($username, ['prabjot', 'navjot']) &&
                 !empty($allowedProvinces)
@@ -7838,21 +7821,12 @@ class WalkinController extends Controller
         };
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Get representatives statistics
-    |--------------------------------------------------------------------------
-    */
+
         $query = DB::table('seminarpre');
 
         $applyCommonFilters($query);
 
-        /*
-    |--------------------------------------------------------------------------
-    | Enrolled
-    | enrolled_date
-    |--------------------------------------------------------------------------
-    */
+
         if (!empty($GetFltDatestart) && !empty($GetFltDateend)) {
             $query->where(function ($q) use (
                 $GetFltDatestart,
@@ -7872,13 +7846,7 @@ class WalkinController extends Controller
                         ]);
                 })
 
-                    /*
-            |--------------------------------------------------------------------------
-            | Re-enrolled
-            | If you want Re-enrolled to behave like enrolled,
-            | use enrolled_date here as well.
-            |--------------------------------------------------------------------------
-            */
+
                     ->orWhere(function ($q2) use (
                         $GetFltDatestart,
                         $GetFltDateend
@@ -8131,16 +8099,7 @@ class WalkinController extends Controller
             ->get();
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | TOTAL
-    |--------------------------------------------------------------------------
-    |
-    | Instead of creating another complicated query, calculate totals
-    | from the representative results.
-    |
-    |--------------------------------------------------------------------------
-    */
+
 
         $total = (object) [
             'Enrolled'          => $students->sum('Enrolled'),
@@ -8155,11 +8114,7 @@ class WalkinController extends Controller
         ];
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Add Total row
-    |--------------------------------------------------------------------------
-    */
+
         $students->push((object) [
             'Rep_Name'          => 'Total',
             'Enrolled'          => $total->Enrolled,

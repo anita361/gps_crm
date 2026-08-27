@@ -945,7 +945,7 @@
                     </div>
                 </div>
 
-                <div class="tab-pane fade" id="status_info">
+                {{-- <div class="tab-pane fade" id="status_info">
 
                     <div class="card shadow">
 
@@ -1003,16 +1003,22 @@
                                                 Call Follow-Up
                                             </option>
 
-                                            <option value="Appointment Booked"
-                                                {{ $currentStatus == 'Appointment Booked' ? 'selected' : '' }}>
+                                            <option value="Appointed"
+                                                {{ $currentStatus == 'Appointed' ? 'selected' : '' }}>
                                                 Appointment Booked
                                             </option>
 
-                                            <option value="Enrolled" {{ $currentStatus == 'Enrolled' ? 'selected' : '' }}>
+                                            <option value="enrolled" {{ $currentStatus == 'enrolled' ? 'selected' : '' }}>
                                                 Enrolled/Osap Booking
+                                            </option>
+                                            <option value="Re-enrolled"
+                                                {{ $currentStatus == 'Re-enrolled' ? 'selected' : '' }}>
+                                                Re-Enrolled/Osap Booking
                                             </option>
                                         </select>
                                     </div>
+
+
 
                                     <div class="col-md-3" id="main_date_box">
 
@@ -1406,9 +1412,650 @@
 
                         </div>
                     </div>
+                </div> --}}
+                <div class="tab-pane fade" id="status_info">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-primary text-white">
+            Change Status Information
+        </div>
+
+        <div class="card-body">
+
+            <form action="{{ route('status.update') }}" method="POST">
+                @csrf
+
+                <input type="hidden" name="reg_sno" value="{{ $student->sno }}">
+
+                @php
+                    $currentStatus = old('status', $student->status ?? '');
+                    $currentRemarkType = old('remarks_type', $student->remark_type ?? '');
+                    $currentCountryStatus = old('country_status', $student->country_status ?? '');
+
+                    $remarkTypes = [
+                        'Calling' => 'Calling',
+                        'Call' => 'Call',
+                        'WhatsApp' => 'WhatsApp',
+                        'Email' => 'Email',
+                        'Visit' => 'Visit',
+                        'Meeting' => 'Meeting',
+                    ];
+                @endphp
+
+
+                {{-- =========================================================
+                    MAIN STATUS SECTION
+                ========================================================== --}}
+
+                <div class="row status-main-row">
+
+                    {{-- STATUS --}}
+                    <div class="col-md-3">
+                        <label class="fw-bold">Status</label>
+
+                        <select name="status" id="status" class="form-select">
+
+                            <option value="">Select Status</option>
+
+                            <option value="Not Eligible"
+                                {{ $currentStatus == 'Not Eligible' ? 'selected' : '' }}>
+                                Not Eligible
+                            </option>
+
+                            <option value="Not Interested"
+                                {{ $currentStatus == 'Not Interested' ? 'selected' : '' }}>
+                                Not Interested
+                            </option>
+
+                            <option value="Not Answered"
+                                {{ $currentStatus == 'Not Answered' ? 'selected' : '' }}>
+                                Not Answered
+                            </option>
+
+                            <option value="Call Follow-Up"
+                                {{ $currentStatus == 'Call Follow-Up' ? 'selected' : '' }}>
+                                Call Follow-Up
+                            </option>
+
+                            <option value="Appointed"
+                                {{ $currentStatus == 'Appointed' ? 'selected' : '' }}>
+                                Appointment Booked
+                            </option>
+
+                            <option value="enrolled"
+                                {{ $currentStatus == 'enrolled' ? 'selected' : '' }}>
+                                Enrolled/Osap Booking
+                            </option>
+
+                            <option value="Re-enrolled"
+                                {{ $currentStatus == 'Re-enrolled' ? 'selected' : '' }}>
+                                Re-Enrolled/Osap Booking
+                            </option>
+
+                        </select>
+                    </div>
+
+
+                    {{-- FOLLOW-UP / APPOINTMENT DATE --}}
+                    <div class="col-md-3" id="main_date_box">
+
+                        <label class="fw-bold" id="main_date_label">
+                            Follow-Up Date
+                        </label>
+
+                        <input type="date"
+                            name="appointment_date"
+                            id="appointment_date"
+                            class="form-control"
+                            value="{{ old('appointment_date', !empty($student->follow_date) ? substr($student->follow_date, 0, 10) : '') }}">
+
+                        <input type="date"
+                            name="followup_date"
+                            id="followup_date"
+                            class="form-control"
+                            value="{{ old('followup_date', $student->follow_date ?? '') }}"
+                            style="display:none;">
+
+                    </div>
+
+
+                    {{-- REMARK TYPE --}}
+                    <div class="col-md-3" id="main_remarks_type_box">
+
+                        <label class="fw-bold" id="main_remarks_type_label">
+                            Remarks Type
+                        </label>
+
+                        <select name="appointment_remarks_type"
+                            id="appointment_remarks_type"
+                            class="form-select">
+
+                            <option value="">Select Remark Type</option>
+
+                            @foreach ($remarkTypes as $value => $label)
+
+                                <option value="{{ $value }}"
+                                    {{ old('appointment_remarks_type', $student->remark_type ?? '') == $value ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+
+                        <select name="remarks_type"
+                            id="remarks_type"
+                            class="form-select"
+                            style="display:none;">
+
+                            <option value="">Select Remark Type</option>
+
+                            @foreach ($remarkTypes as $value => $label)
+
+                                <option value="{{ $value }}"
+                                    {{ $currentRemarkType == $value ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- REMARKS --}}
+                    <div class="col-md-3" id="main_remarks_box">
+
+                        <label class="fw-bold" id="main_remarks_label">
+                            Remarks
+                        </label>
+
+                        <textarea name="appointment_remarks"
+                            id="appointment_remarks"
+                            rows="1"
+                            class="form-control"
+                            style="height:38px;">{{ old('appointment_remarks', $student->student_remark ?? '') }}</textarea>
+
+                        <textarea name="remarks"
+                            id="remarks"
+                            rows="1"
+                            class="form-control"
+                            style="height:38px; display:none;">{{ old('remarks', $student->student_remark ?? '') }}</textarea>
+
+                    </div>
+
                 </div>
 
 
+                {{-- =========================================================
+                    COUNTRY STATUS
+                ========================================================== --}}
+
+                <div class="row status-country-row">
+
+                    <div class="col-md-3">
+
+                        <label class="fw-bold">
+                            Country Status
+                        </label>
+
+                        <select name="appointment_country_status"
+                            id="country_status"
+                            class="form-select">
+
+                            <option value="">
+                                -- Select Status --
+                            </option>
+
+                            <option value="Permanent Resident"
+                                {{ $currentCountryStatus == 'Permanent Resident' ? 'selected' : '' }}>
+                                Permanent Resident
+                            </option>
+
+                            <option value="Citizen"
+                                {{ $currentCountryStatus == 'Citizen' ? 'selected' : '' }}>
+                                Citizen
+                            </option>
+
+                            <option value="Approved Refused"
+                                {{ $currentCountryStatus == 'Approved Refused' ? 'selected' : '' }}>
+                                Approved Refused
+                            </option>
+
+                        </select>
+
+                        <span class="error-messages-country-status text-danger"
+                            id="error-country-status"></span>
+
+                    </div>
+
+                </div>
+
+
+                {{-- =========================================================
+                    ENROLLED SECTION
+                ========================================================== --}}
+
+                <div id="enrolled_section"
+                    class="row mt-3"
+                    style="display:none;">
+
+                    {{-- PROVINCE --}}
+                    <div class="col-md-4 mb-3">
+
+                        <label class="fw-bold">
+                            Province <span class="text-danger">*</span>
+                        </label>
+
+                        <select name="province"
+                            id="status_province"
+                            class="form-select">
+
+                            <option value="">
+                                Select Province
+                            </option>
+
+                            <option value="Alberta"
+                                {{ old('province', $student->province ?? '') == 'Alberta' ? 'selected' : '' }}>
+                                Alberta
+                            </option>
+
+                            <option value="British Columbia"
+                                {{ old('province', $student->province ?? '') == 'British Columbia' ? 'selected' : '' }}>
+                                British Columbia
+                            </option>
+
+                            <option value="Ontario"
+                                {{ old('province', $student->province ?? '') == 'Ontario' ? 'selected' : '' }}>
+                                Ontario
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- COLLEGE --}}
+                    <div class="col-md-4 mb-3">
+
+                        <label class="fw-bold">
+                            College <span class="text-danger">*</span>
+                        </label>
+
+                        <select name="college"
+                            id="status_college"
+                            class="form-select">
+
+                            <option value="">
+                                Select College
+                            </option>
+
+                            @foreach ($colleges ?? [] as $college)
+
+                                @php
+                                    $collegeName =
+                                        $college->clg_name ??
+                                        ($college->collage_name ??
+                                        ($college->college_name ?? ''));
+                                @endphp
+
+                                @if ($collegeName)
+
+                                    <option value="{{ $collegeName }}"
+                                        {{ old('college', $student->college ?? ($student->collage_name ?? '')) == $collegeName ? 'selected' : '' }}>
+                                        {{ $collegeName }}
+                                    </option>
+
+                                @endif
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- CAMPUS --}}
+                    <div class="col-md-4 mb-3">
+
+                        <label class="fw-bold">
+                            Campus <span class="text-danger">*</span>
+                        </label>
+
+                        <select name="campus"
+                            id="status_campus"
+                            class="form-select">
+
+                            <option value="">
+                                Select Campus
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- PROGRAM --}}
+                    <div class="col-md-4 mb-3">
+
+                        <label class="fw-bold">
+                            Program <span class="text-danger">*</span>
+                        </label>
+
+                        <select name="program"
+                            id="status_program"
+                            class="form-select">
+
+                            <option value="">
+                                Select Program
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- START DATE --}}
+                    <div class="col-md-4 mb-3">
+
+                        <label class="fw-bold">
+                            Start Date
+                        </label>
+
+                        <input type="date"
+                            name="start_date"
+                            class="form-control"
+                            value="{{ old('start_date', $student->start_date ?? '') }}">
+
+                    </div>
+
+
+                    {{-- END DATE --}}
+                    <div class="col-md-4 mb-3">
+
+                        <label class="fw-bold">
+                            End Date
+                        </label>
+
+                        <input type="date"
+                            name="end_date"
+                            class="form-control"
+                            value="{{ old('end_date', $student->end_date ?? '') }}">
+
+                    </div>
+
+
+                    {{-- REP SUPPORTED FILE --}}
+                    <div class="col-md-4 mb-3">
+
+                        <label class="fw-bold">
+                            Rep Supported File
+                        </label>
+
+                        <select name="rep_file_status"
+                            id="rep_file_status"
+                            class="form-select">
+
+                            <option value="">
+                                Select Status
+                            </option>
+
+                            <option value="Yes"
+                                {{ old('rep_file_status', $student->rep_file_status ?? '') == 'Yes' ? 'selected' : '' }}>
+                                Yes
+                            </option>
+
+                            <option value="No"
+                                {{ old('rep_file_status', $student->rep_file_status ?? '') == 'No' ? 'selected' : '' }}>
+                                No
+                            </option>
+
+                        </select>
+
+                        <span class="error-messages-file-no text-danger"
+                            id="error-rep-file-status"></span>
+
+                    </div>
+
+
+                    {{-- FINANCE DETAILS --}}
+                    <div class="col-md-12">
+
+                        <div id="RepFileDetails"
+                            class="row"
+                            style="display:none;">
+
+                            {{-- FINANCE APPOINTMENT DATE --}}
+                            <div class="col-md-4 mb-3">
+
+                                <label class="fw-bold">
+                                    Finance Appointment Date
+                                </label>
+
+                                <input type="date"
+                                    class="form-control"
+                                    name="fin_apnt_date"
+                                    id="fin_apnt_date"
+                                    value="{{ old('fin_apnt_date', $student->fin_apnt_date ?? '') }}">
+
+                            </div>
+
+
+                            {{-- FINANCE APPOINTMENT TIME --}}
+                            <div class="col-md-4 mb-3">
+
+                                <label class="fw-bold">
+                                    Finance Appointment Time
+                                </label>
+
+                                <select class="form-select"
+                                    name="fin_apnt_time"
+                                    id="fin_apnt_time">
+
+                                    <option value="">
+                                        --Select Time--
+                                    </option>
+
+                                    @php
+                                        $selectedFinanceTime = old(
+                                            'fin_apnt_time',
+                                            $student->fin_apnt_time ?? '',
+                                        );
+
+                                        $startTime = strtotime('10:00 AM');
+                                        $endTime = strtotime('8:00 PM');
+                                        $cutoffTime = strtotime('4:45 PM');
+                                    @endphp
+
+                                    @while ($startTime <= $endTime)
+
+                                        @php
+                                            $timeSlot = date('h:i A', $startTime);
+                                        @endphp
+
+                                        @if ($startTime <= $cutoffTime || $selectedFinanceTime === $timeSlot)
+
+                                            <option value="{{ $timeSlot }}"
+                                                {{ $selectedFinanceTime === $timeSlot ? 'selected' : '' }}>
+                                                {{ $timeSlot }}
+                                            </option>
+
+                                        @endif
+
+                                        @php
+                                            $startTime = strtotime('+45 minutes', $startTime);
+                                        @endphp
+
+                                    @endwhile
+
+                                </select>
+
+                            </div>
+
+
+                            {{-- FINANCE USER --}}
+                            <div class="col-md-4 mb-3">
+
+                                <label class="fw-bold">
+                                    Finance User
+                                </label>
+
+                                <select class="form-select"
+                                    name="finance_user"
+                                    id="finance_user">
+
+                                    <option value="">
+                                        Select Finance User
+                                    </option>
+
+                                    @foreach ($financeUsers ?? [] as $financeUser)
+
+                                        <option value="{{ $financeUser->id }}"
+                                            {{ old('finance_user', $student->finance_user ?? '') == $financeUser->id ? 'selected' : '' }}>
+
+                                            {{ $financeUser->name }}
+
+                                        </option>
+
+                                    @endforeach
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    {{-- ENROLLED REMARK TYPE --}}
+                    <div class="col-md-4 mb-3">
+
+                        <label class="fw-bold">
+                            Remarks Type
+                        </label>
+
+                        <select name="enrolled_remarks_type"
+                            class="form-select">
+
+                            <option value="">
+                                Select Remark Type
+                            </option>
+
+                            @foreach ($remarkTypes as $value => $label)
+
+                                <option value="{{ $value }}"
+                                    {{ old('enrolled_remarks_type', $student->remark_type ?? '') == $value ? 'selected' : '' }}>
+                                    {{ $label }}
+                                </option>
+
+                            @endforeach
+
+                        </select>
+
+                    </div>
+
+
+                    {{-- ENROLLED REMARKS --}}
+                    <div class="col-md-4 mb-3">
+
+                        <label class="fw-bold">
+                            Remarks
+                        </label>
+
+                        <textarea name="enrolled_remarks"
+                            rows="1"
+                            class="form-control">{{ old('enrolled_remarks', $student->enrolled_remarks ?? ($student->student_remark ?? '')) }}</textarea>
+
+                    </div>
+
+
+                    {{-- ENROLLED COUNTRY STATUS --}}
+                    <div class="col-md-4 mb-3">
+
+                        <label class="fw-bold">
+                            Country Status
+                        </label>
+
+                        <select name="enrolled_country_status"
+                            id="enrolled_country_status"
+                            class="form-select">
+
+                            <option value="">
+                                -- Select Status --
+                            </option>
+
+                            <option value="Permanent Resident"
+                                {{ old('enrolled_country_status', $student->country_status ?? '') == 'Permanent Resident' ? 'selected' : '' }}>
+                                Permanent Resident
+                            </option>
+
+                            <option value="Citizen"
+                                {{ old('enrolled_country_status', $student->country_status ?? '') == 'Citizen' ? 'selected' : '' }}>
+                                Citizen
+                            </option>
+
+                            <option value="Approved Refused"
+                                {{ old('enrolled_country_status', $student->country_status ?? '') == 'Approved Refused' ? 'selected' : '' }}>
+                                Approved Refused
+                            </option>
+
+                        </select>
+
+                        <span class="error-messages-country-status text-danger"
+                            id="error-enrolled-country-status"></span>
+
+                    </div>
+
+
+                    {{-- SEND MAIL --}}
+                    <div class="col-md-12 mb-3 text-end">
+
+                        <button type="button"
+                            id="send_enrolled_mail"
+                            class="btn btn-success">
+
+                            <i class="fa fa-envelope"></i>
+
+                            {{ ($student->conset_mail ?? '') == 'Sent'
+                                ? 'ReSend Email'
+                                : 'Send Mail' }}
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                {{-- =========================================================
+                    UPDATE BUTTON
+                ========================================================== --}}
+
+                <div class="text-end mt-3"
+                    id="update_button_box">
+
+                    <button type="submit"
+                        class="btn btn-dark"
+                        id="update_button">
+
+                        <i class="fa fa-save"></i>
+                        Update
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
 
                 <div class="tab-pane fade" id="message_info">
                     <div class="card shadow">
@@ -1669,7 +2316,10 @@
 
             loadNotes(fileNo);
 
-            $('#notesModal').modal('show');
+            // $('#notesModal').modal('show');
+            const modalElement = document.getElementById('notesModal');
+            const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+            modal.show();
         });
 
 
@@ -2018,7 +2668,7 @@
 
 
 
-                if (status === 'Appointment Booked') {
+                if (status === 'Appointed') {
 
                     $('#main_date_box').show();
 
@@ -2058,7 +2708,7 @@
 
 
 
-                if (status === 'Enrolled') {
+                if (status === 'enrolled') {
 
 
                     $('#main_date_box').hide();
@@ -2079,6 +2729,25 @@
 
                     return;
                 }
+
+
+
+
+                if (status === 'Re-enrolled') {
+
+                    $('#main_date_box').hide();
+                    $('#main_remarks_type_box').hide();
+                    $('#main_remarks_box').hide();
+
+                    $('.status-country-row').hide();
+
+                    $('#enrolled_section').css('display', 'flex');
+
+                    $('#update_button_box').hide();
+
+                    return;
+                }
+
 
 
 
@@ -2108,93 +2777,7 @@
         });
     </script>
 
-    {{-- <script>
-        $(document).ready(function() {
 
-            
-            function checkFinanceDateTime() {
-
-                let financeDate = $('#fin_apnt_date').val();
-                let financeTime = $('#fin_apnt_time').val();
-
-                console.log('Finance Date:', financeDate);
-                console.log('Finance Time:', financeTime);
-
-                
-                if (financeDate !== '' && financeTime !== '') {
-
-                    
-                    $('#finance_user').prop('disabled', false);
-
-                } else {
-
-                    
-                    $('#finance_user').prop('disabled', true);
-
-                  
-                    $('#finance_user').val('');
-                }
-            }
-
-
-
-            function checkRepFileStatus() {
-
-                let value = $('#rep_file_status').val();
-
-                $('#error-rep-file-status').text('');
-
-                if (value === 'No') {
-
-
-                    $('#RepFileDetails').show();
-
-                    
-                    checkFinanceDateTime();
-
-                } else {
-
-
-                    $('#RepFileDetails').hide();
-
-
-                    $('#finance_user').prop('disabled', true);
-
-
-                    $('#finance_user').val('');
-                }
-            }
-
-
-
-            $('#rep_file_status').on('change', function() {
-
-                checkRepFileStatus();
-
-            });
-
-
-
-            $('#fin_apnt_date').on('change', function() {
-
-                checkFinanceDateTime();
-
-            });
-
-
-
-            $('#fin_apnt_time').on('change', function() {
-
-                checkFinanceDateTime();
-
-            });
-
-
-
-            checkRepFileStatus();
-
-        });
-    </script> --}}
     <script>
         $(document).ready(function() {
 
@@ -2847,7 +3430,7 @@
 
             function toggleEnrolledSection() {
 
-                if (status.value === 'Enrolled') {
+                if (status.value === 'enrolled') {
 
 
                     enrolledSection.style.display = 'flex';
@@ -3362,11 +3945,7 @@
             console.log('Email Update JS Loaded');
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | OPEN EMAIL MODAL
-            |--------------------------------------------------------------------------
-            */
+
 
             document.querySelectorAll('.update-email-btn').forEach(function(button) {
 
@@ -3375,11 +3954,6 @@
                     console.log('Update Email button clicked');
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Get data from button
-                    |--------------------------------------------------------------------------
-                    */
 
                     const semiId =
                         this.getAttribute('data-semi-id') || '';
@@ -3396,11 +3970,7 @@
                     console.log('Old Email:', oldEmail);
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Put values into modal
-                    |--------------------------------------------------------------------------
-                    */
+
 
                     document.getElementById('semi_id').value =
                         semiId;
@@ -3415,11 +3985,7 @@
                         oldEmail;
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Clear old error
-                    |--------------------------------------------------------------------------
-                    */
+
 
                     document.querySelector(
                         '.error-messages-email'
@@ -3430,11 +3996,7 @@
             });
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | EMAIL FORM SUBMIT
-            |--------------------------------------------------------------------------
-            */
+
 
             const form =
                 document.getElementById('update_email_form');
@@ -3463,11 +4025,7 @@
                 );
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Get values
-                |--------------------------------------------------------------------------
-                */
+
 
                 const newEmail =
                     document.getElementById('new_email')
@@ -3496,20 +4054,12 @@
                     );
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Clear error
-                |--------------------------------------------------------------------------
-                */
+
 
                 errorMessage.textContent = '';
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | DEBUG
-                |--------------------------------------------------------------------------
-                */
+
 
                 console.log('==========================');
                 console.log('NEW EMAIL:', newEmail);
@@ -3519,11 +4069,7 @@
                 console.log('==========================');
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Validate email
-                |--------------------------------------------------------------------------
-                */
+
 
                 if (newEmail === '') {
 
@@ -3538,11 +4084,6 @@
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Validate email format
-                |--------------------------------------------------------------------------
-                */
 
                 const emailPattern =
                     /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -3561,11 +4102,7 @@
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Check same email
-                |--------------------------------------------------------------------------
-                */
+
 
                 if (
                     oldEmail !== '' &&
@@ -3584,11 +4121,6 @@
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Mobile validation
-                |--------------------------------------------------------------------------
-                */
 
                 if (mobileNo === '') {
 
@@ -3600,11 +4132,7 @@
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Student ID validation
-                |--------------------------------------------------------------------------
-                */
+
 
                 if (semiId === '') {
 
@@ -3616,11 +4144,7 @@
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Confirmation
-                |--------------------------------------------------------------------------
-                */
+
 
                 const confirmUpdate = confirm(
                     'Are you sure you want to update email ID?'
@@ -3632,11 +4156,7 @@
                 }
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Disable button
-                |--------------------------------------------------------------------------
-                */
+
 
                 button.disabled = true;
 
@@ -3644,21 +4164,12 @@
                     'Updating...';
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | FormData
-                |--------------------------------------------------------------------------
-                */
 
                 const formData =
                     new FormData(form);
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Make sure values are included
-                |--------------------------------------------------------------------------
-                */
+
 
                 formData.set(
                     'new_email',
@@ -3681,11 +4192,6 @@
                 );
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | AJAX REQUEST
-                |--------------------------------------------------------------------------
-                */
 
                 fetch(form.action, {
 
@@ -3704,11 +4210,7 @@
                     })
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Response
-                    |--------------------------------------------------------------------------
-                    */
+
 
                     .then(async function(response) {
 
@@ -3743,11 +4245,7 @@
                     })
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Success
-                    |--------------------------------------------------------------------------
-                    */
+
 
                     .then(function(response) {
 
@@ -3765,11 +4263,7 @@
                             );
 
 
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Bootstrap 5 Modal Close
-                            |--------------------------------------------------------------------------
-                            */
+
 
                             const modalElement =
                                 document.getElementById(
@@ -3798,11 +4292,6 @@
                             }
 
 
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Reload page
-                            |--------------------------------------------------------------------------
-                            */
 
                             setTimeout(function() {
 
@@ -3828,11 +4317,7 @@
                     })
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | Error
-                    |--------------------------------------------------------------------------
-                    */
+
 
                     .catch(function(error) {
 
@@ -3848,11 +4333,7 @@
                             'Update';
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Laravel validation error
-                        |--------------------------------------------------------------------------
-                        */
+
 
                         if (
                             error.status === 422 &&
@@ -3902,11 +4383,7 @@
                         }
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | General error
-                        |--------------------------------------------------------------------------
-                        */
+
 
                         let message =
                             'Something went wrong while updating email.';
@@ -3929,11 +4406,7 @@
             });
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Clear error when typing
-            |--------------------------------------------------------------------------
-            */
+
 
             const emailInput =
                 document.getElementById(
@@ -3959,5 +4432,68 @@
         });
     </script>
 
+ <script>
+document.addEventListener('DOMContentLoaded', function () {
 
+    const status = document.getElementById('status');
+    const enrolledSection = document.getElementById('enrolled_section');
+    const updateButtonBox = document.getElementById('update_button_box');
+
+    if (!status || !enrolledSection || !updateButtonBox) {
+        return;
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Student status from Laravel
+    |--------------------------------------------------------------------------
+    */
+
+    const studentStatus = @json($student->student_status ?? $student->status ?? '');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | If student is enrolled
+    |--------------------------------------------------------------------------
+    */
+
+    if (studentStatus === 'enrolled') {
+
+        // Clear all Status options
+        status.innerHTML = '';
+
+        // Select Status
+        const defaultOption = document.createElement('option');
+
+        defaultOption.value = '';
+        defaultOption.textContent = 'Select Status';
+
+        status.appendChild(defaultOption);
+
+
+        // Enrolled/Osap Booking
+        const enrolledOption = document.createElement('option');
+
+        enrolledOption.value = 'enrolled';
+        enrolledOption.textContent = 'Enrolled/Osap Booking';
+
+        status.appendChild(enrolledOption);
+
+
+        // Automatically select enrolled
+        status.value = 'enrolled';
+
+
+        // Show enrolled section
+        enrolledSection.style.display = 'flex';
+
+
+        // Hide normal Update button
+        updateButtonBox.style.display = 'none';
+
+    }
+
+});
+</script>
 @endsection
