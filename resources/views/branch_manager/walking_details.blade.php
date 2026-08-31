@@ -1230,6 +1230,38 @@
                                         </select>
 
                                     </div>
+
+
+                                    <div class="col-md-12 mb-3">
+                                        <div id="OnidDeatils" class="row"
+                                            style="{{ old('province', $student->province ?? '') == 'Ontario' ? '' : 'display:none;' }}">
+
+                                            <div class="col-md-4 mb-3">
+                                                <label class="fw-bold">
+                                                    ONID User Name
+                                                </label>
+
+                                                <input type="text" name="onid_user_name" id="onid_user_name"
+                                                    class="form-control"
+                                                    value="{{ old('onid_user_name', $student->onid_user_name ?? '') }}">
+                                            </div>
+
+                                            <div class="col-md-4 mb-3">
+                                                <label class="fw-bold">
+                                                    ONID Password
+                                                </label>
+
+                                                <input type="password" name="onid_user_pass" id="onid_user_pass"
+                                                    class="form-control"
+                                                    value="{{ old('onid_user_pass', $student->onid_user_pass ?? '') }}">
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+
+
                                     <div class="col-md-4 mb-3">
 
                                         <label class="fw-bold">
@@ -2921,7 +2953,7 @@
                     return;
                 }
 
-                // Prevent multiple clicks
+
                 button.prop('disabled', true);
 
                 let originalHtml = button.html();
@@ -2983,6 +3015,134 @@
 
         });
     </script>
+    <script>
+        $(document).ready(function() {
+
+            /*
+            |--------------------------------------------------------------------------
+            | STATUS -> ENROLLED SECTION
+            |--------------------------------------------------------------------------
+            */
+
+            function toggleEnrolledSection() {
+
+                let status = $('#status').val();
+
+                if (status === 'enrolled' || status === 'Re-enrolled') {
+
+                    $('#enrolled_section').slideDown();
+
+                } else {
+
+                    $('#enrolled_section').slideUp();
+
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PROVINCE -> ONID DETAILS
+            |--------------------------------------------------------------------------
+            */
+
+            function toggleOnidDetails() {
+
+                let province = $('#status_province').val();
+
+                if (province === 'Ontario') {
+
+                    $('#OnidDeatils').slideDown();
+
+                } else {
+
+                    $('#OnidDeatils').slideUp();
+
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | REP SUPPORTED FILE -> FINANCE DETAILS
+            |--------------------------------------------------------------------------
+            */
+
+            function toggleRepFileDetails() {
+
+                let repFileStatus = $('#rep_file_status').val();
+
+                if (repFileStatus === 'No') {
+
+                    $('#RepFileDetails').slideDown();
+
+                } else {
+
+                    $('#RepFileDetails').slideUp();
+
+                }
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | STATUS CHANGE
+            |--------------------------------------------------------------------------
+            */
+
+            $('#status').on('change', function() {
+
+                toggleEnrolledSection();
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | PROVINCE CHANGE
+            |--------------------------------------------------------------------------
+            */
+
+            $('#status_province').on('change', function() {
+
+                toggleOnidDetails();
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | REP FILE STATUS CHANGE
+            |--------------------------------------------------------------------------
+            */
+
+            $('#rep_file_status').on('change', function() {
+
+                toggleRepFileDetails();
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | RUN ON PAGE LOAD
+            |--------------------------------------------------------------------------
+            */
+
+            toggleEnrolledSection();
+
+            toggleOnidDetails();
+
+            toggleRepFileDetails();
+
+        });
+    </script>
+
+
+
+
+
+
 
     <script>
         $(document).on('click', '#update_mobile', function(e) {
@@ -3890,6 +4050,33 @@
 
             status.addEventListener('change', function() {
                 toggleStatusSection();
+            });
+
+        });
+    </script>
+
+    <script>
+        $(document).ready(function() {
+
+            function toggleOnidDetails() {
+
+                let province = $('#status_province').val();
+
+                if (province === 'Ontario') {
+                    $('#OnidDeatils').show();
+                } else {
+                    $('#OnidDeatils').hide();
+
+
+                }
+            }
+
+
+            toggleOnidDetails();
+
+
+            $('#status_province').on('change', function() {
+                toggleOnidDetails();
             });
 
         });

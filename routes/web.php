@@ -146,6 +146,8 @@ Route::middleware('login')->group(function () {
     Route::post('/documents/update', [WalkinController::class, 'updateDocuments'])->name('documents.update');
 
     Route::post('/status/update', [WalkinController::class, 'updateStatus'])->name('status.update');
+    Route::post('/enrollment/send-mail', [WalkinController::class, 'sendEnrollmentMail'])
+        ->name('enrollment.sendMail');
 
     Route::post('/notes/update', [WalkinController::class, 'updateNotes'])->name('notes.update');
 
@@ -282,7 +284,7 @@ Route::middleware('login')->group(function () {
         ->name('fund.release.status');
     Route::post('/get-colleges', [WalkinController::class, 'getColleges'])->name('get.colleges');
 
-   Route::get('/fund-release-export', [WalkinController::class, 'fundReleaseExport'])
+    Route::get('/fund-release-export', [WalkinController::class, 'fundReleaseExport'])
         ->name('fund.release.export');
 
     Route::get('/commission-enrollment-list', [WalkinController::class, 'commissionEnrollmentList'])
@@ -319,8 +321,8 @@ Route::middleware('login')->group(function () {
 
     Route::post('/drop/update-status', [WalkinController::class, 'updateDropStatus'])
         ->name('drop.update-status');
-        Route::post('/fund-status-logs', [WalkinController::class, 'getsmaintatusLogs'])
-    ->name('fund.status.logs');
+    Route::post('/fund-status-logs', [WalkinController::class, 'getsmaintatusLogs'])
+        ->name('fund.status.logs');
 
     Route::post('/drop/logs', [WalkinController::class, 'dropLogs'])
         ->name('drop.logs');
@@ -350,7 +352,7 @@ Route::middleware('login')->group(function () {
     )->name('appointment.complete.export');
 
     Route::get('/student-consent-pdf', [WalkinController::class, 'studentConsentPdf'])->name('student.consent.pdf');
-    
+
     Route::get('/student/consent/pdf/{uid}', [WalkinController::class, 'studentOsapConsentPdf'])
         ->name('student.consent.pdf');
 

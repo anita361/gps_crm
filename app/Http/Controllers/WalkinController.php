@@ -1041,6 +1041,70 @@ class WalkinController extends Controller
                 $request->reg_sno
             )
             ->update($updateData);
+       
+
+        if (
+            $request->status === 'enrolled' ||
+            $request->status === 'Re-enrolled'
+        ) {
+
+            $studentForMail = DB::table('seminarpre')
+                ->where('sno', $request->reg_sno)
+                ->first();
+
+            if (
+                $studentForMail &&
+                !empty($studentForMail->semail)
+            ) {
+
+                try {
+
+                    Mail::send(
+                        'emails.enrollment-confirmation',
+                        [
+                            'studentName' => $studentForMail->sname ?? 'Student',
+                            'fileNo'      => $studentForMail->file_no ?? '',
+                            'college'     => $studentForMail->collage_name ?? '',
+                            'campus'      => $studentForMail->campus_name ?? '',
+                            'program'     => $studentForMail->program_name ?? '',
+                            'startDate'   => $studentForMail->start_date ?? '',
+                            'endDate'    => $studentForMail->end_date ?? '',
+                        ],
+                        function ($message) use ($studentForMail) {
+
+                            $message->from(
+                                config('mail.from.address'),
+                                config('mail.from.name')
+                            );
+
+                            $message->to(
+                                $studentForMail->semail,
+                                $studentForMail->sname ?? 'Student'
+                            );
+
+                            $message->bcc('virendra@opulencedigitech.com');
+
+                            $message->bcc('ajaypal@opulencedigitech.com');
+
+                            $message->subject(
+                                'Enrollment Confirmation'
+                            );
+                        }
+                    );
+                } catch (\Throwable $e) {
+
+                    \Log::error(
+                        'Enrollment confirmation email failed',
+                        [
+                            'student_id' => $studentForMail->sno,
+                            'email' => $studentForMail->semail,
+                            'status' => $request->status,
+                            'error' => $e->getMessage(),
+                        ]
+                    );
+                }
+            }
+        }
 
 
 
@@ -1130,6 +1194,125 @@ class WalkinController extends Controller
                 'error'      => $e->getMessage(),
                 'file'       => $e->getFile(),
                 'line'       => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function sendEnrollmentMail(Request $request)
+    {
+        $request->validate([
+            'reg_sno' => 'required',
+        ]);
+
+        $student = DB::table('seminarpre')
+            ->where('sno', $request->reg_sno)
+            ->first();
+
+        if (!$student) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student record not found.'
+            ], 404);
+        }
+
+        if (empty($student->semail)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student email address not found.'
+            ], 422);
+        }
+
+        /*
+    |--------------------------------------------------------------------------
+    | Only send enrollment email for enrolled / Re-enrolled
+    |--------------------------------------------------------------------------
+    */
+
+        if (
+            $student->student_status !== 'enrolled' &&
+            $student->student_status !== 'Re-enrolled'
+        ) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Student is not enrolled.'
+            ], 422);
+        }
+
+        $studentName = $student->sname ?? 'Student';
+
+        $fileNo = $student->file_no ?? '';
+
+        $college = $student->collage_name ?? '';
+
+        $campus = $student->campus_name ?? '';
+
+        $program = $student->program_name ?? '';
+
+        $startDate = $student->start_date ?? '';
+
+        $endDate = $student->end_date ?? '';
+
+        try {
+
+            Mail::send(
+                'emails.enrollment-confirmation',
+                [
+                    'studentName' => $studentName,
+                    'fileNo'      => $fileNo,
+                    'college'     => $college,
+                    'campus'      => $campus,
+                    'program'     => $program,
+                    'startDate'   => $startDate,
+                    'endDate'     => $endDate,
+                ],
+                function ($message) use ($student, $studentName) {
+
+                    $message->from(
+                        config('mail.from.address'),
+                        config('mail.from.name')
+                    );
+
+                    $message->to(
+                        $student->semail,
+                        $studentName
+                    );
+
+                    $message->bcc('virendra@opulencedigitech.com');
+
+                    $message->bcc('ajaypal@opulencedigitech.com');
+
+                    $message->subject(
+                        'Enrollment Confirmation'
+                    );
+                }
+            );
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Enrollment confirmation email sent successfully.'
+            ]);
+        } catch (\Throwable $e) {
+
+            \Log::error('Enrollment confirmation email failed', [
+
+                'student_id' => $student->sno,
+
+                'email' => $student->semail,
+
+                'status' => $student->student_status,
+
+                'error' => $e->getMessage(),
+
+                'file' => $e->getFile(),
+
+                'line' => $e->getLine(),
+
             ]);
 
             return response()->json([
