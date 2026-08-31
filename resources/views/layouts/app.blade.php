@@ -514,57 +514,31 @@
 
         });
 
-        $(document).ready(function() {
+        // $(document).ready(function() {
 
-            $('.datatable').DataTable({
+        //     $('.datatable').DataTable({
 
-                pageLength: 50,
+        //         pageLength: 50,
 
-                responsive: true,
+        //         responsive: true,
 
-                ordering: true,
+        //         ordering: true,
 
-                autoWidth: false
+        //         autoWidth: false
 
+        //     });
+
+        // });
+
+        if (!$.fn.DataTable.isDataTable('#reportTable')) {
+            $('#reportTable').DataTable({
+                paging: true,
+                pageLength: 10,
+                searching: true,
+                ordering: false,
+                scrollX: true
             });
-
-        });
-        // $(document).on('click', '.show-notes', function(e) {
-
-        //     e.preventDefault();
-
-        //     $('#notesBody').html('Loading...');
-
-        //     var modal = new bootstrap.Modal(document.getElementById('notesModal'));
-
-        //     modal.show();
-
-        //     $.get($(this).attr('href'), function(response) {
-
-        //         $('#notesBody').html(response);
-
-        //     });
-
-        // });
-
-
-        // $(document).on('click', '.show-logs', function(e) {
-
-        //     e.preventDefault();
-
-        //     $('#callLogsBody').html('Loading...');
-
-        //     var modal = new bootstrap.Modal(document.getElementById('callLogsModal'));
-
-        //     modal.show();
-
-        //     $.get($(this).attr('href'), function(response) {
-
-        //         $('#callLogsBody').html(response);
-
-        //     });
-
-        // });
+        }
     </script>
 
 

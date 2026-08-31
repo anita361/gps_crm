@@ -1041,7 +1041,7 @@ class WalkinController extends Controller
                 $request->reg_sno
             )
             ->update($updateData);
-       
+
 
         if (
             $request->status === 'enrolled' ||
@@ -2595,6 +2595,225 @@ class WalkinController extends Controller
                 'counselors'
             )
         );
+    }
+
+
+
+    public function dailySalesExcel(Request $request)
+    {
+        $query = DB::table('seminarpre')
+            ->whereIn('student_status', ['enrolled', 'Re-enrolled'])
+            ->where(function ($q) {
+                $q->whereNull('opr_stage')
+                    ->orWhere('opr_stage', '!=', 'Drop');
+            });
+
+
+        if ($request->filled('from_date')) {
+            $query->whereDate('enrolled_date', '>=', $request->from_date);
+        }
+
+
+        if ($request->filled('to_date')) {
+            $query->whereDate('enrolled_date', '<=', $request->to_date);
+        }
+
+
+        if ($request->filled('province')) {
+            $query->where('province_name', $request->province);
+        }
+
+
+        if ($request->filled('college')) {
+            $query->where('collage_name', $request->college);
+        }
+
+
+        if ($request->filled('counselor')) {
+
+            $counselors = (array) $request->counselor;
+
+            if (!in_array('All', $counselors)) {
+                $query->whereIn('assign_id', $counselors);
+            }
+        }
+
+        $students = $query
+            ->orderByDesc('enrolled_date')
+            ->get();
+
+
+
+
+        $headers = [
+            'Client Name',
+            'Client Number',
+            'Country Name',
+            'Sales Date',
+            'Counselor Name',
+            'File Number',
+            'Email',
+            'Province',
+            'College',
+            'Campus',
+            'Program Name',
+            'Start Date',
+            'End Date',
+            'Opr Last Status Date',
+            'Opr Last Remarks',
+            'Opr Status Update By',
+            'Operation Status',
+        ];
+
+
+
+
+        $html = '<html>';
+        $html .= '<head>';
+        $html .= '<meta charset="UTF-8">';
+        $html .= '</head>';
+        $html .= '<body>';
+
+        $html .= '<table border="1" cellpadding="5" cellspacing="0">';
+
+
+        $html .= '<tr>';
+
+        $html .= '<th colspan="' . count($headers) . '" 
+                    style="background:#2d63dc;color:#ffffff;font-size:16px;">
+                    Daily Sales Report
+              </th>';
+
+        $html .= '</tr>';
+
+
+
+        $html .= '<tr>';
+
+        foreach ($headers as $header) {
+
+            $html .= '<th style="background:#4b4b4b;color:#ffffff;font-weight:bold;">';
+
+            $html .= htmlspecialchars($header);
+
+            $html .= '</th>';
+        }
+
+        $html .= '</tr>';
+
+
+
+        foreach ($students as $student) {
+
+            $html .= '<tr>';
+
+
+            $html .= '<td>' . htmlspecialchars($student->sname ?? '') . '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars($student->smobile ?? '') . '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars($student->scountry ?? '') . '</td>';
+
+
+            $html .= '<td>';
+
+            if (!empty($student->enrolled_date)) {
+                $html .= \Carbon\Carbon::parse($student->enrolled_date)
+                    ->format('d-m-Y');
+            }
+
+            $html .= '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars($student->assign_name ?? '') . '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars($student->file_no ?? '') . '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars($student->semail ?? '') . '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars($student->province_name ?? '') . '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars($student->collage_name ?? '') . '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars($student->campus_name ?? '') . '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars($student->program_name ?? '') . '</td>';
+
+
+            $html .= '<td>';
+
+            if (!empty($student->start_date)) {
+                $html .= \Carbon\Carbon::parse($student->start_date)
+                    ->format('d-m-Y');
+            }
+
+            $html .= '</td>';
+
+
+            $html .= '<td>';
+
+            if (!empty($student->end_date)) {
+                $html .= \Carbon\Carbon::parse($student->end_date)
+                    ->format('d-m-Y');
+            }
+
+            $html .= '</td>';
+
+
+            $html .= '<td>';
+
+            if (!empty($student->opr_stage_date)) {
+                $html .= \Carbon\Carbon::parse($student->opr_stage_date)
+                    ->format('d-m-Y');
+            }
+
+            $html .= '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars(
+                $student->opr_stage_remarks ?? ''
+            ) . '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars(
+                $student->stage_update_name ?? ''
+            ) . '</td>';
+
+
+            $html .= '<td>' . htmlspecialchars(
+                $student->opr_stage ?? ''
+            ) . '</td>';
+
+            $html .= '</tr>';
+        }
+
+        $html .= '</table>';
+
+        $html .= '</body>';
+        $html .= '</html>';
+
+
+
+
+        $filename = 'Daily_Sales_Report_' . date('Y-m-d_H-i-s') . '.xls';
+
+        return response($html)
+            ->header(
+                'Content-Type',
+                'application/vnd.ms-excel; charset=UTF-8'
+            )
+            ->header(
+                'Content-Disposition',
+                'attachment; filename="' . $filename . '"'
+            );
     }
 
     public function feedbackDetails()

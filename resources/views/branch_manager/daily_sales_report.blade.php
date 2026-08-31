@@ -206,6 +206,9 @@
             </form>
 
             <hr>
+            <div class="col-md-12 mb-3 clearfix"> <a href="{{ route('reports.daily-sales.excel', request()->query()) }}"
+                    class="btn btn-primary btn-sm" style="float:right;"> <i class="fa fa-file-excel-o"></i> Download In
+                    Excel </a> </div>
             <div class="table-responsive">
 
                 <table id="reportTable" class="table table-bordered table-striped table-hover">
@@ -260,133 +263,80 @@
 
                     <tbody>
 
-                        @forelse($students as $student)
+                        @foreach ($students as $student)
                             <tr>
 
-                                {{-- Notes --}}
                                 <td class="text-center">
-
                                     <button type="button" class="btn btn-success btn-sm open-notes-modal"
                                         data-file-no="{{ $student->sno }}" data-name="{{ $student->sname }}">
-
                                         Notes
-
                                     </button>
-
                                 </td>
 
-                                {{-- Client Name --}}
                                 <td>{{ $student->sname }}</td>
 
-                                {{-- Client Number --}}
                                 <td>{{ $student->smobile }}</td>
 
-                                {{-- Country --}}
                                 <td>{{ $student->scountry }}</td>
 
-                                {{-- Sales Date --}}
                                 <td>
                                     {{ $student->enrolled_date ? \Carbon\Carbon::parse($student->enrolled_date)->format('d-m-Y') : '' }}
                                 </td>
 
-                                {{-- Counselor --}}
                                 <td>{{ $student->assign_name }}</td>
 
-                                {{-- File Number --}}
                                 <td>{{ $student->file_no }}</td>
 
-                                {{-- Email --}}
                                 <td>{{ $student->semail }}</td>
 
-                                {{-- Province --}}
                                 <td>{{ $student->province_name }}</td>
 
-                                {{-- College --}}
                                 <td>{{ $student->collage_name }}</td>
 
-                                {{-- Campus --}}
                                 <td>{{ $student->campus_name }}</td>
 
-                                {{-- Program --}}
                                 <td>{{ $student->program_name }}</td>
 
-                                {{-- Start Date --}}
                                 <td>
                                     {{ $student->start_date ? \Carbon\Carbon::parse($student->start_date)->format('d-m-Y') : '' }}
                                 </td>
 
-                                {{-- End Date --}}
                                 <td>
                                     {{ $student->end_date ? \Carbon\Carbon::parse($student->end_date)->format('d-m-Y') : '' }}
                                 </td>
 
-                                {{-- Last Status Date --}}
                                 <td>
                                     {{ $student->opr_stage_date ? \Carbon\Carbon::parse($student->opr_stage_date)->format('d-m-Y') : '' }}
                                 </td>
 
-                                {{-- Remarks --}}
                                 <td>{{ $student->opr_stage_remarks }}</td>
 
-                                {{-- Updated By --}}
                                 <td>{{ $student->stage_update_name }}</td>
 
-                                {{-- Operation Status --}}
                                 <td>
-
                                     <select class="form-control form-control-sm" disabled>
-
-                                        <option>
-
-                                            {{ $student->opr_stage }}
-
-                                        </option>
-
+                                        <option>{{ $student->opr_stage }}</option>
                                     </select>
-
                                 </td>
 
-                                {{-- Logs --}}
                                 <td class="text-center">
-
                                     <button type="button" class="btn btn-info btn-sm view-logs-btn"
                                         data-file-no="{{ $student->sno }}" data-name="{{ $student->sname }}">
-
                                         Logs
-
                                     </button>
-
                                 </td>
 
-                                {{-- View --}}
                                 <td class="text-center">
-
                                     <a href="{{ route('walking-details', ['smobile' => $student->smobile]) }}"
                                         class="btn btn-primary btn-sm">
-
                                         View
-
                                     </a>
-
                                 </td>
 
                             </tr>
-
-                        @empty
-
-                            <tr>
-
-                                <td colspan="20" class="text-center">
-
-                                    No Records Found
-
-                                </td>
-
-                            </tr>
-                        @endforelse
+                        @endforeach
 
                     </tbody>
-
                 </table>
 
             </div>
@@ -400,8 +350,8 @@
                 </div>
             @endif
             <!-- ==========================================
-                        NOTES MODAL START
-                =========================================== -->
+                                NOTES MODAL START
+                        =========================================== -->
             <div class="modal fade" id="notesModal" tabindex="-1">
 
                 <div class="modal-dialog modal-lg">
@@ -492,11 +442,11 @@
 
             </div>
             <!-- ==========================================
-                        NOTES MODAL END
-                =========================================== -->
+                                NOTES MODAL END
+                        =========================================== -->
             <!-- ==========================================
-                    LOGS MODAL START
-            =========================================== -->
+                            LOGS MODAL START
+                    =========================================== -->
 
             <div class="modal fade" id="logsModal" tabindex="-1">
 
@@ -682,7 +632,7 @@
             </div>
 
 
-          
+
         @endsection
 
         @push('scripts')

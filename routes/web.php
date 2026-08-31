@@ -243,6 +243,11 @@ Route::middleware('login')->group(function () {
     Route::get('/daily-sales-report', [WalkinController::class, 'dailySalesReport'])
         ->name('reports.daily-sales');
 
+    Route::get('/reports/daily-sales/excel', [WalkinController::class, 'dailySalesExcel'])
+        ->name('reports.daily-sales.excel');
+
+
+
 
     Route::get('/feedback-details', [WalkinController::class, 'feedbackDetails'])
         ->name('reports.feedback');
