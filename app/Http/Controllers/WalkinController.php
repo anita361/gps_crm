@@ -27,112 +27,6 @@ use App\Mail\StudentConsentMail;
 
 class WalkinController extends Controller
 {
-
-
-
-    // public function show($smobile)
-    // {
-    //     $student = DB::table('seminarpre')
-    //         ->leftJoin(
-    //             'lead_appointed',
-    //             'seminarpre.sno',
-    //             '=',
-    //             'lead_appointed.seminar_id'
-    //         )
-    //         ->where('seminarpre.smobile', $smobile)
-    //         ->select(
-    //             'seminarpre.*',
-    //             'lead_appointed.province_name'
-    //         )
-    //         ->first();
-
-    //     if (!$student) {
-    //         abort(404, 'Student not found');
-    //     }
-
-
-    //     $login_id = session('login');
-
-    //     $user = DB::table('crm_login')
-    //         ->where('id', $login_id)
-    //         ->first();
-
-    //     $sess_username = $user->username ?? '';
-
-
-    //     if ($sess_username == 'jk@prises' || $sess_username == 'jk_careers') {
-
-    //         $provinces = DB::table('college_list')
-    //             ->select('province')
-    //             ->where('clg_name', 'AOL')
-    //             ->groupBy('province')
-    //             ->orderBy('province', 'ASC')
-    //             ->get();
-    //     } else {
-
-    //         $provinces = DB::table('college_list')
-    //             ->select('province')
-    //             ->groupBy('province')
-    //             ->orderBy('province', 'ASC')
-    //             ->get();
-    //     }
-
-    //     $statusHistory = DB::table('opr_sts_logs')
-    //         ->where('main_id', $student->sno)
-    //         ->orderBy('id', 'DESC')
-    //         ->get();
-    //     // =====================================================
-    //     // MAP DATABASE COLUMN NAMES TO BLADE FIELD NAMES
-    //     // =====================================================
-    //     $student->province = $student->province_name ?? '';
-    //     $student->college = $student->collage_name ?? '';
-    //     $student->campus = $student->campus_name ?? '';
-    //     $student->program = $student->program_name ?? '';
-    //     $student->finance_user = $student->finance_id ?? '';
-
-
-    //     // =====================================================
-    //     // GET COLLEGES
-    //     // =====================================================
-    //     $colleges = DB::table('college_list')
-    //         ->select('clg_name', 'province')
-    //         ->orderBy('clg_name', 'ASC')
-    //         ->get();
-
-
-    //     // =====================================================
-    //     // GET FINANCE USERS
-    //     // =====================================================
-    //     $financeUsers = DB::table('crm_login')
-    //         ->select('id', 'name')
-    //         ->orderBy('name', 'ASC')
-    //         ->get();
-
-    //     $notes = DB::table('notes_logs')
-    //         ->where('main_id', $student->sno)
-    //         ->orderBy('id', 'DESC')
-    //         ->get();
-
-
-    //     $templates = DB::table('email_temp')
-    //         ->where('act_status', 1)
-    //         ->orderBy('temp_name', 'ASC')
-    //         ->get();
-
-    //     return view(
-    //         'branch_manager.walking_details',
-    //         compact(
-    //             'student',
-    //             'provinces',
-    //             'statusHistory',
-    //             'notes',
-    //             'templates',
-    //             'colleges',
-    //             'financeUsers'
-    //         )
-    //     );
-    // }
-
     public function show($smobile)
     {
 
@@ -800,7 +694,7 @@ class WalkinController extends Controller
             ], 500);
         }
     }
-    
+
     public function updateStatus(Request $request)
     {
 
