@@ -41,8 +41,6 @@ class WalkinController extends Controller
             ->where('seminarpre.smobile', $smobile)
             ->select(
                 'seminarpre.*',
-
-
                 'seminarpre.province_name as seminar_province_name',
                 'lead_appointed.province_name as lead_province_name'
             )
@@ -51,9 +49,6 @@ class WalkinController extends Controller
         if (!$student) {
             abort(404, 'Student not found');
         }
-
-
-
 
         $login_id = session('login');
 
@@ -6362,6 +6357,7 @@ class WalkinController extends Controller
             ]
         );
     }
+
     public function studentOsapConsentPdf($uid)
     {
         $student = DB::table('students')
