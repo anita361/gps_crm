@@ -15,6 +15,7 @@ use App\Http\Controllers\LeadFollowupController;
 use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\FinanceExportController;
 use App\Http\Controllers\CsvUploadController;
+use App\Http\Controllers\CounselorDashboardController;
 
 
 
@@ -45,8 +46,9 @@ Route::middleware('login')->group(function () {
 
 
 
-    Route::view('/counselor-dashboard', 'counselor.dashboard')->name('counselor.dashboard');
-
+    Route::get('/counselor-dashboard', [CounselorDashboardController::class, 'index'])->name('counselor.dashboard');
+    Route::get('/eligible-details', [CounselorDashboardController::class, 'eligibleDetails'])->name('eligible.details');
+    Route::get('/aus-eligible-details', [CounselorDashboardController::class, 'ausEligibleDetails'])->name('aus.eligible.details');
 
     Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
         ->name('admin.branch.report');
@@ -214,8 +216,9 @@ Route::middleware('login')->group(function () {
     Route::post(
         '/lead-followup/notes/save',
         [LeadFollowupController::class, 'saveNote']
-    )
-        ->name('lead.followup.notes.save');
+    )->name('lead.followup.notes.save');
+    Route::get('/lead-followup/missed', [LeadFollowupController::class, 'missed'])
+        ->name('lead.followup.missed');
 
     Route::get('/upload-csv', [CsvUploadController::class, 'showForm'])->name('csv.form');
     Route::post('/upload-csv', [CsvUploadController::class, 'upload'])->name('csv.upload');
@@ -540,17 +543,16 @@ Route::middleware('login')->group(function () {
 
     Route::post('/get-finance-user', [WalkinController::class, 'getFinanceUser'])
         ->name('get.finance.user');
-
-
-    Route::post('/enrolled/send-mail', [WalkinController::class, 'sendMail'])
-        ->name('enrolled.sendMail');
-
-    Route::get('/student-consent', [WalkinController::class, 'studentConsent'])
-        ->name('student-consent');
-
-    Route::post('/student-consent/signature', [WalkinController::class, 'saveStudentSignature'])
-        ->name('student-consent.signature');
-
-    Route::get('/student-consent/success/{id}', [WalkinController::class, 'studentConsentSuccess'])
-        ->name('student-consent.success');
 });
+Route::post('/enrolled/send-mail', [WalkinController::class, 'sendMail'])
+    ->name('enrolled.sendMail');
+
+Route::get('/student-consent', [WalkinController::class, 'studentConsent'])
+    ->name('student-consent');
+
+
+Route::post('/student-consent/signature', [WalkinController::class, 'saveStudentSignature'])
+    ->name('student-consent.signature');
+
+Route::get('/student-consent/success/{id}', [WalkinController::class, 'studentConsentSuccess'])
+    ->name('student-consent.success');

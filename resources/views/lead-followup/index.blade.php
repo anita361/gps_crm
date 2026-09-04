@@ -12,7 +12,7 @@
             <div class="card-header bg-primary text-white text-center">
                 <h4 class="mb-0">
                     <i class="fa fa-desktop"></i>
-                    Lead Followup
+                    Lead  CallFollowup
                 </h4>
             </div>
 

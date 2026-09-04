@@ -367,81 +367,91 @@
                                 <a class="dropdown-item" href="{{ route('lead.followup.today') }}">
                                     Today Lead Followup
                                 </a>
+
+                                @if (session('role') === 'counselor' ||
+                                        session('role') === 'branch_manager' ||
+                                        in_array(session('username'), ['prabjot', 'navjot']))
+                            <li>
+                                <a class="dropdown-item" href="{{ route('lead.followup.missed') }}">
+                                    Missed Followup
+                                </a>
                             </li>
-
-                        </ul>
-
+                            @endif
                     </li>
 
-                    <!-- User Management -->
+                </ul>
 
-                    <li class="nav-item dropdown">
+                </li>
 
-                        <a class="nav-link dropdown-toggle
+                <!-- User Management -->
+
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link dropdown-toggle
                     {{ request()->routeIs('users.*') ? 'active' : '' }}"
-                            href="#" role="button" data-bs-toggle="dropdown">
+                        href="#" role="button" data-bs-toggle="dropdown">
 
-                            <i class="fa fa-users"></i>
+                        <i class="fa fa-users"></i>
 
-                            User Management
+                        User Management
 
-                        </a>
+                    </a>
 
-                        <ul class="dropdown-menu">
+                    <ul class="dropdown-menu">
 
-                            <li>
+                        <li>
 
-                                <a class="dropdown-item" href="{{ route('users.index') }}">
+                            <a class="dropdown-item" href="{{ route('users.index') }}">
 
-                                    User Details
+                                User Details
 
-                                </a>
+                            </a>
 
-                            </li>
+                        </li>
 
-                            <li>
+                        <li>
 
-                                <a class="dropdown-item" href="{{ route('users.create') }}">
+                            <a class="dropdown-item" href="{{ route('users.create') }}">
 
-                                    Add New User
+                                Add New User
 
-                                </a>
+                            </a>
 
-                            </li>
+                        </li>
 
-                        </ul>
+                    </ul>
 
-                    </li>
+                </li>
 
-                    <li class="nav-item">
+                <li class="nav-item">
 
-                        <span class="nav-link">
+                    <span class="nav-link">
 
-                            <i class="fa fa-user-circle"></i>
+                        <i class="fa fa-user-circle"></i>
 
-                            {{ session('role') }}
+                        {{ session('role') }}
 
-                        </span>
+                    </span>
 
-                    </li>
+                </li>
 
-                    <li class="nav-item ms-2">
+                <li class="nav-item ms-2">
 
-                        <form method="POST" action="{{ route('logout') }}">
+                    <form method="POST" action="{{ route('logout') }}">
 
-                            @csrf
+                        @csrf
 
-                            <button class="btn btn-danger btn-sm">
+                        <button class="btn btn-danger btn-sm">
 
-                                <i class="fa fa-sign-out-alt"></i>
+                            <i class="fa fa-sign-out-alt"></i>
 
-                                Logout
+                            Logout
 
-                            </button>
+                        </button>
 
-                        </form>
+                    </form>
 
-                    </li>
+                </li>
 
                 </ul>
 

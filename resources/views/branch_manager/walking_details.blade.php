@@ -1464,30 +1464,35 @@
                                             id="error-enrolled-country-status"></span>
 
                                     </div>
-                                    <div class="col-md-12 mb-3 text-end">
+
+                                   <div class="col-md-12 mb-3 text-end">
 
                                         <button type="button" id="send_enrolled_mail" class="btn btn-success">
-
                                             <i class="fa fa-envelope"></i>
-
                                             {{ ($student->conset_mail ?? '') == 'Sent' ? 'ReSend Email' : 'Send Mail' }}
-
                                         </button>
+
+                                        <a href="{{ route('student.consent.pdf', ['uid' => $student->sno]) }}"
+                                            target="_blank" class="btn btn-outline-primary ms-2">
+                                            <i class="fa fa-file-pdf"></i>
+                                           
+                                        </a>
 
                                     </div>
 
                                 </div>
-                                
+
                                 <div class="text-end mt-3" id="update_button_box">
 
                                     <button type="submit" class="btn btn-dark" id="update_button">
-
                                         <i class="fa fa-save"></i>
                                         Update
-
                                     </button>
 
                                 </div>
+
+                                  
+                                    
 
                             </form>
 
@@ -2841,43 +2846,6 @@
 
 
 
-    {{-- <script>
-        document.addEventListener('DOMContentLoaded', function() {
-
-            const status = document.getElementById('status');
-            const enrolledSection = document.getElementById('enrolled_section');
-            const updateButtonBox = document.getElementById('update_button_box');
-
-            function toggleEnrolledSection() {
-
-                if (status.value === 'enrolled') {
-
-
-                    enrolledSection.style.display = 'flex';
-
-
-                    updateButtonBox.style.display = 'none';
-
-                } else {
-
-
-                    enrolledSection.style.display = 'none';
-
-
-                    updateButtonBox.style.display = 'block';
-                }
-            }
-
-
-            toggleEnrolledSection();
-
-
-            status.addEventListener('change', function() {
-                toggleEnrolledSection();
-            });
-
-        });
-    </script> --}}
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -3019,7 +2987,7 @@
     <script>
         $(document).ready(function() {
 
-          
+
 
             function toggleEnrolledSection() {
 
@@ -3037,7 +3005,7 @@
             }
 
 
-           
+
 
             function toggleOnidDetails() {
 
@@ -3055,7 +3023,7 @@
             }
 
 
-           
+
             function toggleRepFileDetails() {
 
                 let repFileStatus = $('#rep_file_status').val();
@@ -3072,7 +3040,7 @@
             }
 
 
-            
+
             $('#status').on('change', function() {
 
                 toggleEnrolledSection();
@@ -3080,7 +3048,7 @@
             });
 
 
-           
+
 
             $('#status_province').on('change', function() {
 
@@ -3089,7 +3057,7 @@
             });
 
 
-          
+
 
             $('#rep_file_status').on('change', function() {
 
@@ -3098,7 +3066,7 @@
             });
 
 
-          
+
             toggleEnrolledSection();
 
             toggleOnidDetails();

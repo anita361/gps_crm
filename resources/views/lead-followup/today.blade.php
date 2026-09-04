@@ -6,13 +6,13 @@
 
 <div class="container-fluid mt-3">
 
-    <!-- Search Card -->
+  
     <div class="card mb-3">
 
         <div class="card-header bg-primary text-white text-center">
             <h4 class="mb-0">
                 <i class="fa fa-desktop"></i>
-                Lead Followup
+              Lead Followup Today
             </h4>
         </div>
 
@@ -66,7 +66,7 @@
 
     <div class="row">
 
-        <!-- Followup List -->
+      
         <div class="col-lg-8">
 
             <div class="card">
@@ -148,10 +148,10 @@
 
 </div>
 
-{{-- Notes Modal --}}
+
 @include('partials.notes')
 
-{{-- Call Logs Modal --}}
+
 <div class="modal fade"
      id="callLogsModal"
      tabindex="-1"
@@ -173,100 +173,7 @@
 
 @section('scripts')
 
-{{-- <script>
 
-$(document).ready(function(){
-
-   
-
-    $(document).on('click','.callLogsBtn',function(e){
-
-        e.preventDefault();
-
-        let id=$(this).data('id');
-
-        $('#callLogsContent').html(
-            `<div class="modal-body text-center p-5">
-                <i class="fa fa-spinner fa-spin fa-3x"></i>
-                <br><br>
-                Loading...
-            </div>`
-        );
-
-        $('#callLogsModal').modal('show');
-
-        $.ajax({
-
-            url:"{{ url('/lead-followup/logs') }}/"+id,
-
-            type:"GET",
-
-            success:function(response){
-
-                $('#callLogsContent').html(response);
-
-            },
-
-            error:function(){
-
-                $('#callLogsContent').html(
-                    `<div class="modal-body text-center">
-
-                        <h5 class="text-danger">
-
-                            Unable to load Call Logs.
-
-                        </h5>
-
-                    </div>`
-                );
-
-            }
-
-        });
-
-    });
-
-
-   
-
-    $(document).on('click','.notesBtn',function(e){
-
-        e.preventDefault();
-
-        let url=$(this).attr('href');
-
-        $('#notesBody').html("Loading...");
-
-        $('#notesModal').modal('show');
-
-        $.ajax({
-
-            url:url,
-
-            type:"GET",
-
-            success:function(response){
-
-                $('#notesBody').html(response.notes);
-
-            },
-
-            error:function(){
-
-                $('#notesBody').html(
-                    "<p class='text-danger'>Unable to load notes.</p>"
-                );
-
-            }
-
-        });
-
-    });
-
-});
-
-</script> --}}
 <script>
         $(function() {
 

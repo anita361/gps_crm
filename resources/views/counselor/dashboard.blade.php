@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Branch Manager Dashboard')
+@section('title', 'Counselor Dashboard')
 
 @section('content')
 
@@ -41,7 +41,16 @@
         label {
             font-weight: 600;
         }
+
+        .pagination {
+            margin-bottom: 0;
+        }
     </style>
+
+
+    {{-- =========================================================
+     SEARCH
+========================================================= --}}
 
     <section class="crm-Lead-Summary">
 
@@ -51,77 +60,80 @@
 
                 <h2>
                     <i class="fa fa-desktop"></i>
-                    Branch Manager Dashboard
+                    Counselor Dashboard
                 </h2>
 
-                <div class="row align-items-end">
+                <form method="GET" action="{{ route('counselor.dashboard') }}" autocomplete="off">
 
-                    <div class="col-md-4">
+                    <div class="row align-items-end">
 
-                        <label class="mb-2">
-                            Search By Name, Number and Email
-                        </label>
+                        <div class="col-md-4">
 
-                        <select class="form-select" id="search_type" onchange="showSearchField()">
+                            <label class="mb-2">
+                                Search By Name, Number, Email & File No
+                            </label>
 
-                            <option value="">Search Using</option>
-                            <option value="mobile">Search Mobile</option>
-                            <option value="email">Search Email</option>
-                            <option value="student_name">Search Student Name</option>
+                            <select name="search_type" id="search_type" class="form-select" onchange="showSearchField()">
 
-                        </select>
+                                <option value="">
+                                    Search Using
+                                </option>
 
-                    </div>
+                                <option value="mobile" {{ request('search_type') == 'mobile' ? 'selected' : '' }}>
+                                    Search Mobile
+                                </option>
 
-                    <div class="col-md-5" id="mobile_div" style="display:none;">
+                                <option value="email" {{ request('search_type') == 'email' ? 'selected' : '' }}>
+                                    Search Email
+                                </option>
 
-                        <label class="mb-2">Mobile Number</label>
+                                <option value="student_name"
+                                    {{ request('search_type') == 'student_name' ? 'selected' : '' }}>
+                                    Search Student Name
+                                </option>
 
-                        <div class="input-group">
+                                <option value="file_no" {{ request('search_type') == 'file_no' ? 'selected' : '' }}>
+                                    Search File Number
+                                </option>
 
-                            <input type="text" class="form-control" placeholder="Enter Mobile Number">
+                            </select>
 
-                            <button class="btn btn-primary">
-                                <i class="fa fa-search"></i> Search
-                            </button>
+                        </div>
+
+
+                        <div class="col-md-5">
+
+                            <label class="mb-2" id="searchLabel">
+                                Search Value
+                            </label>
+
+                            <div class="input-group">
+
+                                <input type="text" name="search_value" id="search_value" class="form-control"
+                                    value="{{ request('search_value') }}" placeholder="Enter search value">
+
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa fa-search"></i>
+                                    Search
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="col-md-2">
+
+                            <a href="{{ route('counselor.dashboard') }}" class="btn btn-secondary">
+                                <i class="fa fa-refresh"></i>
+                                Reset
+                            </a>
 
                         </div>
 
                     </div>
 
-                    <div class="col-md-5" id="email_div" style="display:none;">
-
-                        <label class="mb-2">Email Address</label>
-
-                        <div class="input-group">
-
-                            <input type="email" class="form-control" placeholder="Enter Email Address">
-
-                            <button class="btn btn-primary">
-                                <i class="fa fa-search"></i> Search
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    <div class="col-md-5" id="student_name_div" style="display:none;">
-
-                        <label class="mb-2">Student Name</label>
-
-                        <div class="input-group">
-
-                            <input type="text" class="form-control" placeholder="Enter Student Name">
-
-                            <button class="btn btn-primary">
-                                <i class="fa fa-search"></i> Search
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </div>
+                </form>
 
             </div>
 
@@ -129,11 +141,15 @@
 
     </section>
 
+
+
     <section class="crm-Lead-Summary">
 
         <div class="container-fluid">
 
             <div class="row">
+
+
 
                 <div class="col-lg-8">
 
@@ -144,30 +160,41 @@
                             Today Walk-in Report
                         </h2>
 
-                        <div class="row mb-3">
 
-                            <div class="col-md-6">
 
-                                <label>Show Entries</label>
+                        <div class="d-flex justify-content-between align-items-center mb-3">
 
-                                <select class="form-select form-select-sm w-auto">
-                                    <option>10</option>
-                                    <option>25</option>
-                                    <option>50</option>
-                                    <option>100</option>
+                            <div>
+
+                                <label class="me-2">
+                                    Show Entries
+                                </label>
+
+                                <select id="limitSelect" class="form-select form-select-sm d-inline-block"
+                                    style="width:auto;">
+
+                                    @foreach ([10, 25, 50, 100] as $option)
+                                        <option value="{{ $option }}" {{ $limit == $option ? 'selected' : '' }}>
+                                            {{ $option }}
+                                        </option>
+                                    @endforeach
+
                                 </select>
 
                             </div>
 
-                            <div class="col-md-6 text-end">
+                            <div>
 
-                                <label>Search</label>
-
-                                <input type="text" class="form-control d-inline-block w-50" placeholder="Search">
+                                <strong>
+                                    Total:
+                                    {{ $walkins->total() }}
+                                </strong>
 
                             </div>
 
                         </div>
+
+
 
                         <div class="table-responsive">
 
@@ -192,15 +219,161 @@
 
                                 </thead>
 
+
                                 <tbody>
 
-                                    <tr>
+                                    @forelse($walkins as $row)
+                                        @php
 
-                                        <td colspan="10" class="text-center">
-                                            No data available in table
-                                        </td>
+                                            /*
+                                             * Created Via
+                                             */
+                                            if (
+                                                $row->created_by == 'callcenter_admin' ||
+                                                $row->created_by == 'callcenter'
+                                            ) {
+                                                $createVia = 'Call Centre';
+                                            } elseif ($row->created_by == 'branch') {
+                                                $createVia = 'Branch';
+                                            } elseif ($row->created_by == 'counselor') {
+                                                $createVia = 'Counselor';
+                                            } elseif ($row->created_by == 'branch_manager') {
+                                                $createVia = 'Branch Manager';
+                                            } elseif ($row->created_by == 'Facebook') {
+                                                $createVia = 'Facebook';
+                                            } elseif ($row->lead_from == 'Websites') {
+                                                $createVia = 'Website';
+                                            } elseif ($row->lead_from == 'CSV') {
+                                                $createVia = 'CSV';
+                                            } elseif ($row->lead_from == 'Seminar 30 March') {
+                                                $createVia = 'Seminar 30 March';
+                                            } else {
+                                                $createVia = $row->lead_from ?: $row->created_by;
+                                            }
 
-                                    </tr>
+                                            /*
+                                             * Walkin / Lead
+                                             */
+                                            $walkinType = $row->walkin_status == '0' ? 'Walkin' : 'Lead';
+
+                                        @endphp
+
+
+                                        <tr>
+
+                                            {{-- Client Name --}}
+                                            <td>
+                                                {{ $row->applicant_name }}
+                                            </td>
+
+
+                                            {{-- Number --}}
+                                            <td>
+                                                {{ $row->callerno }}
+                                            </td>
+
+
+                                            {{-- Lead From --}}
+                                            <td>
+                                                {{ $createVia }}
+                                            </td>
+
+
+                                            {{-- Appointment --}}
+                                            <td>
+
+                                                {{ $row->apnt_date }}
+
+                                                @if ($row->apnt_time)
+                                                    <br>
+                                                    {{ $row->apnt_time }}
+                                                @endif
+
+                                            </td>
+
+
+                                            {{-- Calculator Country --}}
+                                            <td>
+                                                {{ $row->tab_name ?? '' }}
+                                            </td>
+
+
+                                            {{-- Eligibility --}}
+                                            <td>
+                                                {{ $row->eligible_status ?? '' }}
+                                            </td>
+
+
+                                            {{-- View Score --}}
+                                            <td>
+
+                                                @if ($row->tab_name == 'Canada Calculator')
+                                                    <a href="{{ route('eligible.details', ['smobile' => $row->callerno]) }}"
+                                                        class="btn btn-sm btn-primary">
+                                                        View Profile
+                                                    </a>
+                                                @elseif($row->tab_name == 'Australia Calculator')
+                                                    <a href="{{ route('aus.eligible.details', ['smobile' => $row->callerno]) }}"
+                                                        class="btn btn-sm btn-primary">
+                                                        View Profile
+                                                    </a>
+                                                @endif
+
+                                            </td>
+
+
+                                            {{-- Lead / Walkin --}}
+                                            <td>
+
+                                                <span class="badge bg-secondary">
+                                                    {{ $walkinType }}
+                                                </span>
+
+                                            </td>
+
+
+                                            {{-- Counselor Seen --}}
+                                            <td class="text-center">
+
+                                                @if ($row->cons_seen == '1')
+                                                    <input type="checkbox"
+                                                        onclick="CounselorSeen(
+                                                        0,
+                                                        {{ $row->id }},
+                                                        '{{ addslashes($row->callerno) }}'
+                                                    )">
+                                                @else
+                                                    <input type="checkbox" checked disabled>
+                                                @endif
+
+                                            </td>
+
+
+                                            {{-- View --}}
+                                            <td>
+
+                                                @if ($row->cons_seen == '0')
+                                                    <a href="{{ route('walking-details', ['smobile' => $row->callerno]) }}"
+                                                        class="btn btn-sm btn-primary">
+                                                        View
+                                                    </a>
+                                                @endif
+
+                                            </td>
+
+                                        </tr>
+
+
+                                    @empty
+
+                                        <tr>
+
+                                            <td colspan="10" class="text-center">
+                                                No data available in table
+                                            </td>
+
+                                        </tr>
+                                    @endforelse
 
                                 </tbody>
 
@@ -208,9 +381,41 @@
 
                         </div>
 
+
+
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+
+                            <div>
+
+                                @if ($walkins->total() > 0)
+                                    Showing
+                                    {{ $walkins->firstItem() }}
+                                    to
+                                    {{ $walkins->lastItem() }}
+                                    of
+                                    {{ $walkins->total() }}
+                                    entries
+                                @else
+                                    Showing 0 to 0 of 0 entries
+                                @endif
+
+                            </div>
+
+
+                            <div>
+
+                                {{ $walkins->links() }}
+
+                            </div>
+
+                        </div>
+
                     </div>
 
                 </div>
+
+
+
 
                 <div class="col-lg-4">
 
@@ -221,9 +426,10 @@
                             Today Follow-up Report
                         </h2>
 
+
                         <div class="table-responsive">
 
-                            <table class="table table-bordered">
+                            <table class="table table-bordered table-striped">
 
                                 <thead>
 
@@ -236,15 +442,58 @@
 
                                 </thead>
 
+
                                 <tbody>
 
-                                    <tr>
+                                    @forelse($followups as $followup)
 
-                                        <td colspan="2" class="text-center">
-                                            No Data
-                                        </td>
+                                        <tr>
 
-                                    </tr>
+                                            <td>
+
+                                                @if ($followup->created_date)
+                                                    {{ $followup->created_date }}
+
+                                                    @if ($followup->created_time)
+                                                        {{ $followup->created_time }}
+                                                    @endif
+                                                @else
+                                                    {{ $followup->follow_date }}
+                                                @endif
+
+                                            </td>
+
+
+                                            <td>
+
+                                                @if ($followup->mobileno)
+                                                    {{-- <a
+                                                        href="{{ route('walking-details', ['smobile' => $followup->mobileno]) }}">
+                                                        {{ $followup->sname }}
+                                                    </a> --}}
+                                                    <a
+                                                        href="{{ route('walking-details', ['smobile' => $followup->smobile]) }}">
+                                                        {{ $followup->sname }}
+                                                    </a>
+                                                @else
+                                                    {{ $followup->sname }}
+                                                @endif
+
+                                            </td>
+
+                                        </tr>
+
+                                    @empty
+
+                                        <tr>
+
+                                            <td colspan="2" class="text-center">
+                                                No Data
+                                            </td>
+
+                                        </tr>
+
+                                    @endforelse
 
                                 </tbody>
 
@@ -262,23 +511,163 @@
 
     </section>
 
+
+
     <script>
         function showSearchField() {
 
-            document.getElementById('mobile_div').style.display = 'none';
-            document.getElementById('email_div').style.display = 'none';
-            document.getElementById('student_name_div').style.display = 'none';
+            const type = document.getElementById('search_type').value;
 
-            let type = document.getElementById('search_type').value;
+            const label = document.getElementById('searchLabel');
+
+            const input = document.getElementById('search_value');
+
 
             if (type === 'mobile') {
-                document.getElementById('mobile_div').style.display = 'block';
+
+                label.innerText = 'Mobile Number';
+
+                input.placeholder = 'Enter Mobile Number';
+
+                input.type = 'text';
+
             } else if (type === 'email') {
-                document.getElementById('email_div').style.display = 'block';
+
+                label.innerText = 'Email Address';
+
+                input.placeholder = 'Enter Email Address';
+
+                input.type = 'email';
+
             } else if (type === 'student_name') {
-                document.getElementById('student_name_div').style.display = 'block';
+
+                label.innerText = 'Student Name';
+
+                input.placeholder = 'Enter Student Name';
+
+                input.type = 'text';
+
+            } else {
+
+                label.innerText = 'Search Value';
+
+                input.placeholder = 'Enter search value';
+
+                input.type = 'text';
+
+            }
+
+        }
+
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+
+            showSearchField();
+
+        });
+
+
+
+        document.getElementById('limitSelect').addEventListener('change', function() {
+
+            const url = new URL(window.location.href);
+
+            url.searchParams.set('limit', this.value);
+
+            url.searchParams.set('page', 1);
+
+            window.location.href = url.toString();
+
+        });
+
+
+
+        function CounselorSeen(status, id, mobile) {
+
+            if (!confirm('Are you sure you want to update Counselor Seen status?')) {
+                return;
+            }
+
+            $.ajax({
+
+                type: 'POST',
+
+                url: "{{ route('counselor.seen') }}",
+
+                data: {
+                    status: status,
+                    id: id,
+                    _token: "{{ csrf_token() }}"
+                },
+
+                success: function(response) {
+
+                    if (response == 1) {
+
+                        alert('Status updated successfully.');
+
+                        location.reload();
+
+                    } else {
+
+                        alert('Failed: ' + response);
+
+                    }
+
+                },
+
+                error: function() {
+
+                    alert('Something went wrong.');
+
+                }
+
+            });
+
+        }
+    </script>
+    <script>
+        function showSearchField() {
+            const type = document.getElementById('search_type').value;
+            const label = document.getElementById('searchLabel');
+            const input = document.getElementById('search_value');
+
+            if (type === 'mobile') {
+
+                label.innerText = 'Mobile Number';
+                input.placeholder = 'Enter Mobile Number';
+                input.type = 'text';
+
+            } else if (type === 'email') {
+
+                label.innerText = 'Email Address';
+                input.placeholder = 'Enter Email Address';
+                input.type = 'email';
+
+            } else if (type === 'student_name') {
+
+                label.innerText = 'Student Name';
+                input.placeholder = 'Enter Student Name';
+                input.type = 'text';
+
+            } else if (type === 'file_no') {
+
+                label.innerText = 'File Number';
+                input.placeholder = 'Enter File Number';
+                input.type = 'text';
+
+            } else {
+
+                label.innerText = 'Search Value';
+                input.placeholder = 'Enter search value';
+                input.type = 'text';
             }
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            showSearchField();
+        });
     </script>
 
 @endsection
