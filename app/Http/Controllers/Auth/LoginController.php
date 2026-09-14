@@ -31,7 +31,7 @@ class LoginController extends Controller
         $user = CrmLogin::where('username', $request->username)
             ->where('password', md5($request->password))
             ->first();
-            
+
 
         if (!$user) {
             return back()
@@ -41,6 +41,8 @@ class LoginController extends Controller
 
         Session::put('login', $user->id);
         Session::put('role', $user->role);
+        Session::put('username', $user->username);
+        Session::put('name', $user->name);
 
         return $this->redirectByRole($user->role);
     }
@@ -52,8 +54,8 @@ class LoginController extends Controller
 
         return redirect()->route('login');
     }
-    
-      private function redirectByRole($role)
+
+    private function redirectByRole($role)
     {
         switch ($role) {
 

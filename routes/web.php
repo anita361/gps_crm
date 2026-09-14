@@ -47,6 +47,32 @@ Route::middleware('login')->group(function () {
 
 
     Route::get('/counselor-dashboard', [CounselorDashboardController::class, 'index'])->name('counselor.dashboard');
+    Route::get('/counselor-dashboard-report', [CounselorDashboardController::class, 'counslrdashboardReport'])->name('counselor.dashboard.report');
+    Route::get('/counselor-dashboard-report/download', [CounselorDashboardController::class, 'downloadOprList'])->name('counselor.dashboard.report.download');
+    Route::get('/counselor/full-report', [CounselorDashboardController::class, 'fullReport'])->name('counselor.full.report');
+    Route::get('/counselor/full-report/excel',[CounselorDashboardController::class, 'counselorExcelReport'])->name('counselor.full.report.excel');
+
+    Route::post('/counselor/drop-details',[CounselorDashboardController::class, 'dropDetails'])->name('counselor.drop.details');
+
+
+    Route::post('/counselor/call-logs',[CounselorDashboardController::class, 'counselorcallLogs'])->name('counselor.call.logs');
+
+
+    Route::post('/counselor/notes/get',[CounselorDashboardController::class, 'counselorgetNotes'] )->name('counselor.notes.get');
+
+
+    Route::post('/counselor/notes/add',[CounselorDashboardController::class, 'counseloraddNote'] )->name('counselor.notes.add');
+    Route::get('/counselor/email-templates',[CounselorDashboardController::class, 'emailTemplates'])->name('counselor.email.templates');
+
+   Route::get('/counselor/email-template/create', [CounselorDashboardController::class, 'createEmailTemplate'])->name('counselor.email.template.create');
+
+
+Route::post('/counselor/email-template/store', [CounselorDashboardController::class, 'storeEmailTemplate'])->name('counselor.email.template.store');
+
+
+
+
+
     Route::get('/eligible-details', [CounselorDashboardController::class, 'eligibleDetails'])->name('eligible.details');
     Route::get('/aus-eligible-details', [CounselorDashboardController::class, 'ausEligibleDetails'])->name('aus.eligible.details');
 
