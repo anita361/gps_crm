@@ -1,37 +1,81 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
+
     <meta charset="UTF-8">
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="{{ asset('images/GPS-Logo.jpg.jpeg') }}" alt="GPS">
+
+    <link rel="shortcut icon"
+        href="{{ asset('images/GPS-Logo.jpg.jpeg') }}"
+        alt="GPS">
 
     <title>@yield('title', 'GPS CRM') | GPS Education CRM</title>
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
+    {{-- Bootstrap --}}
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
 
-    <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
-    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.css" rel="stylesheet">
+    {{-- Font Awesome --}}
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        rel="stylesheet">
 
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- DataTables --}}
+    <link
+        href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css"
+        rel="stylesheet">
 
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {{-- Summernote --}}
+    <link
+        href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.css"
+        rel="stylesheet">
+
+
+    {{-- =========================================================
+     BOOTSTRAP DATEPICKER CSS
+========================================================== --}}
+    <link
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css"
+        rel="stylesheet">
+
+
+    {{-- jQuery --}}
+    <script
+        src="https://code.jquery.com/jquery-3.7.1.min.js">
+    </script>
+
+
+    {{-- Bootstrap JS --}}
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    {{-- SweetAlert --}}
+    <script
+        src="https://cdn.jsdelivr.net/npm/sweetalert2@11">
+    </script>
+
 
     @stack('styles')
 
-    <style>
 
+    <style>
         body {
             background: #eef1f7;
             font-family: Arial, Helvetica, sans-serif;
             font-size: 14px;
         }
+
 
         .navbar {
             background: #fff;
@@ -39,9 +83,11 @@
             padding: 10px 20px;
         }
 
+
         .navbar-brand img {
             height: 60px;
         }
+
 
         .navbar-nav .nav-link {
             color: #222;
@@ -49,14 +95,17 @@
             margin-left: 10px;
         }
 
+
         .navbar-nav .nav-link:hover {
             color: #0d6efd;
         }
+
 
         .navbar-nav .nav-link.active {
             color: #0d6efd;
             font-weight: bold;
         }
+
 
         .card {
             border: none;
@@ -64,6 +113,7 @@
             overflow: hidden;
             box-shadow: 0 2px 12px rgba(0, 0, 0, .15);
         }
+
 
         .card-header {
             background: #2f64e7 !important;
@@ -74,6 +124,7 @@
             padding: 12px;
         }
 
+
         .table-dark th {
             background: #555 !important;
             color: #fff;
@@ -81,14 +132,17 @@
             vertical-align: middle;
         }
 
+
         .table td {
             vertical-align: middle;
         }
+
 
         .btn-success,
         .btn-danger {
             min-width: 95px;
         }
+
 
         footer {
             margin-top: 50px;
@@ -97,27 +151,48 @@
             color: #666;
         }
 
+
         .dropdown-menu {
             border-radius: 0;
         }
 
+
+        /* =========================================================
+       BOOTSTRAP DATEPICKER
+    ========================================================== */
+
+        .datepicker {
+            z-index: 9999 !important;
+        }
     </style>
+
 
 </head>
 
 <body>
 
+
+    {{-- =========================================================
+     NAVBAR
+========================================================== --}}
+
     <nav class="navbar navbar-expand-lg">
 
         <div class="container-fluid">
 
-            <a class="navbar-brand" href="{{ route('branch.dashboard') }}">
 
-                <img src="{{ asset('images/GPS-Logo.jpg.jpeg') }}" alt="GPS">
+            <a class="navbar-brand"
+                href="{{ route('branch.dashboard') }}">
+
+                <img
+                    src="{{ asset('images/GPS-Logo.jpg.jpeg') }}"
+                    alt="GPS">
 
             </a>
 
-            <button class="navbar-toggler"
+
+            <button
+                class="navbar-toggler"
                 type="button"
                 data-bs-toggle="collapse"
                 data-bs-target="#navbarMenu">
@@ -127,1036 +202,507 @@
             </button>
 
 
-            <div class="collapse navbar-collapse" id="navbarMenu">
+            <div
+                class="collapse navbar-collapse"
+                id="navbarMenu">
+
 
                 @php
-                    $role = session('role');
-                    $username = session('username');
+
+                $role = session('role');
+
+                $username = session('username');
+
                 @endphp
 
 
                 {{-- =========================================================
-                     BRANCH
-                ========================================================== --}}
+                 BRANCH
+            ========================================================== --}}
 
                 @if ($role === 'branch')
 
-                    <ul class="navbar-nav ms-auto align-items-center">
-
-                        <li class="nav-item">
-
-                            <a class="nav-link {{ request()->routeIs('branch.dashboard') ? 'active' : '' }}"
-                                href="{{ route('branch.dashboard') }}">
-
-                                <i class="fa fa-desktop"></i>
-
-                                Dashboard
-
-                            </a>
-
-                        </li>
+                <ul class="navbar-nav ms-auto align-items-center">
 
 
-                        <li class="nav-item">
+                    <li class="nav-item">
 
-                            <a class="nav-link {{ request()->routeIs('reports.branch') ? 'active' : '' }}"
-                                href="{{ route('reports.branch') }}">
+                        <a
+                            class="nav-link {{ request()->routeIs('branch.dashboard') ? 'active' : '' }}"
+                            href="{{ route('branch.dashboard') }}">
 
-                                <i class="fa fa-list-alt"></i>
+                            <i class="fa fa-desktop"></i>
 
-                                Reports
+                            Dashboard
 
-                            </a>
+                        </a>
 
-                        </li>
-
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                                href="{{ route('dashboard.reports') }}">
-
-                                <i class="fa fa-list-alt"></i>
-
-                                Reception Dashboard Reports
-
-                            </a>
-
-                        </li>
+                    </li>
 
 
-                        <li class="nav-item">
+                    <li class="nav-item">
 
-                            <a class="nav-link {{ request()->routeIs('lead.create') ? 'active' : '' }}"
-                                href="{{ route('lead.create') }}">
+                        <a
+                            class="nav-link {{ request()->routeIs('branch.reports') ? 'active' : '' }}"
+                            href="{{ route('branch.reports') }}">
 
-                                <i class="fa fa-pencil-square-o"></i>
+                            <i class="fa fa-list-alt"></i>
 
-                                New Lead
+                            Reports
 
-                            </a>
+                        </a>
 
-                        </li>
+                    </li>
 
-                    </ul>
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link {{ request()->routeIs('branch.reception.dashboard.reports*') ? 'active' : '' }}"
+                            href="{{ route('branch.reception.dashboard.reports') }}">
+
+                            <i class="fa fa-list-alt"></i>
+
+                            Reception Dashboard Reports
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link {{ request()->routeIs('lead.create') ? 'active' : '' }}"
+                            href="{{ route('lead.create') }}">
+
+                            <i class="fa fa-pencil-square-o"></i>
+
+                            New Lead
+
+                        </a>
+
+                    </li>
+
+                </ul>
 
 
                 {{-- =========================================================
-                     COMMISSION
-                ========================================================== --}}
+                 COMMISSION
+            ========================================================== --}}
 
                 @elseif ($role === 'commission')
 
-                    <ul class="navbar-nav ms-auto align-items-center">
+                <ul class="navbar-nav ms-auto align-items-center">
 
-                        <li class="nav-item">
 
-                            <a class="nav-link {{ request()->routeIs('commission.enrollment.list') ? 'active' : '' }}"
-                                href="{{ route('commission.enrollment.list') }}">
+                    <li class="nav-item">
 
-                                <i class="fa fa-user"></i>
+                        <a
+                            class="nav-link {{ request()->routeIs('commission.enrollment.list') ? 'active' : '' }}"
+                            href="{{ route('commission.enrollment.list') }}">
 
-                                Commission Enrollment List
+                            <i class="fa fa-user"></i>
 
-                            </a>
+                            Commission Enrollment List
 
-                        </li>
+                        </a>
 
-                    </ul>
+                    </li>
+
+                </ul>
 
 
                 {{-- =========================================================
-                     BRANCH MANAGER
-                     PRABJOT
-                     NAVJOT
-                ========================================================== --}}
+                 BRANCH MANAGER
+                 PRABJOT
+                 NAVJOT
+            ========================================================== --}}
 
                 @elseif (
-                    $role === 'branch_manager' ||
-                    $username === 'prabjot' ||
-                    $username === 'navjot'
+                $role === 'branch_manager' ||
+                $username === 'prabjot' ||
+                $username === 'navjot'
                 )
 
-                    <ul class="navbar-nav ms-auto align-items-center">
+                <ul class="navbar-nav ms-auto align-items-center">
 
-                        {{-- Dashboard --}}
 
-                        <li class="nav-item">
+                    {{-- Dashboard --}}
 
-                            <a class="nav-link {{ request()->routeIs('branch.dashboard') ? 'active' : '' }}"
-                                href="{{ route('branch.dashboard') }}">
+                    <li class="nav-item">
 
-                                <i class="fa fa-desktop"></i>
+                        <a
+                            class="nav-link {{ request()->routeIs('branch.dashboard') ? 'active' : '' }}"
+                            href="{{ route('branch.dashboard') }}">
 
-                                Dashboard
+                            <i class="fa fa-desktop"></i>
 
-                            </a>
+                            Dashboard
 
-                        </li>
+                        </a>
 
+                    </li>
 
-                        {{-- Finance Dashboard --}}
 
-                        <li class="nav-item">
+                    {{-- Finance Dashboard --}}
 
-                            <a class="nav-link {{ request()->routeIs('finance.dashboard.report') ? 'active' : '' }}"
-                                href="{{ route('finance.dashboard.report') }}">
+                    <li class="nav-item">
 
-                                <i class="fa fa-chart-line"></i>
+                        <a
+                            class="nav-link {{ request()->routeIs('finance.dashboard.report') ? 'active' : '' }}"
+                            href="{{ route('finance.dashboard.report') }}">
 
-                                Finance Dashboard
+                            <i class="fa fa-chart-line"></i>
 
-                            </a>
+                            Finance Dashboard
 
-                        </li>
+                        </a>
 
+                    </li>
 
-                        {{-- Dashboard Report --}}
 
-                        <li class="nav-item dropdown">
+                    {{-- Dashboard Report --}}
 
-                            <a class="nav-link dropdown-toggle"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown">
+                    <li class="nav-item dropdown">
 
-                                <i class="fa fa-table"></i>
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown">
 
-                                Dashboard Report
+                            <i class="fa fa-table"></i>
 
-                            </a>
+                            Dashboard Report
 
-                            <ul class="dropdown-menu">
+                        </a>
 
-                                <li>
 
-                                    <a class="dropdown-item"
-                                        href="{{ route('dashboard.reports') }}">
+                        <ul class="dropdown-menu">
 
-                                        <i class="fa fa-table"></i>
 
-                                        Dashboard Reports
+                            <li>
 
-                                    </a>
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('dashboard.reports') }}">
 
-                                </li>
+                                    <i class="fa fa-table"></i>
 
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.date.dashboard') }}">
-
-                                        <i class="fa fa-calendar"></i>
-
-                                        Lead Date Dashboard
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item {{ request()->routeIs('reports.daily-sales') ? 'active' : '' }}"
-                                        href="{{ route('reports.daily-sales') }}">
-
-                                        <i class="fa fa-chart-line"></i>
-
-                                        Daily Sales Report
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item {{ request()->routeIs('stitching.reports') ? 'active' : '' }}"
-                                        href="{{ route('stitching.reports') }}">
-
-                                        <i class="fa fa-link"></i>
-
-                                        Stitching Reports
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item {{ request()->routeIs('all.lead.list') ? 'active' : '' }}"
-                                        href="{{ route('all.lead.list') }}">
-
-                                        <i class="fa fa-users"></i>
-
-                                        All Lead List
-
-                                    </a>
-
-                                </li>
-
-                            </ul>
-
-                        </li>
-
-
-                        {{-- Lead List --}}
-
-                        <li class="nav-item dropdown">
-
-                            <a class="nav-link dropdown-toggle
-                                {{ request()->routeIs('lead.list*') ? 'active' : '' }}"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false">
-
-                                <i class="fa fa-list"></i>
-
-                                Lead List
-
-                            </a>
-
-                            <ul class="dropdown-menu">
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('csv.form') }}">
-
-                                        <i class="fa fa-upload"></i>
-
-                                        Upload CSV
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.list') }}">
-
-                                        <i class="fa fa-users"></i>
-
-                                        Lead List
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('seminar.list') }}">
-
-                                        <i class="fa fa-user-graduate"></i>
-
-                                        Seminar Lead List
-
-                                    </a>
-
-                                </li>
-
-                            </ul>
-
-                        </li>
-
-
-                        {{-- Followup --}}
-
-                        <li class="nav-item dropdown">
-
-                            <a class="nav-link dropdown-toggle
-                                {{ request()->routeIs('lead.followup*') ? 'active' : '' }}"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown"
-                                aria-expanded="false">
-
-                                <i class="fa fa-phone"></i>
-
-                                Followup
-
-                            </a>
-
-                            <ul class="dropdown-menu">
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.followup') }}">
-
-                                        <i class="fa fa-phone"></i>
-
-                                        Call Followup
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.followup.today') }}">
-
-                                        <i class="fa fa-calendar-day"></i>
-
-                                        Today Lead Followup
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.followup.missed') }}">
-
-                                        <i class="fa fa-calendar-xmark"></i>
-
-                                        Missed Followup
-
-                                    </a>
-
-                                </li>
-
-                            </ul>
-
-                        </li>
-
-
-                        {{-- Enrolled --}}
-
-                        <li class="nav-item dropdown">
-
-                            <a class="nav-link dropdown-toggle"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown">
-
-                                <i class="fa fa-user-graduate"></i>
-
-                                Enrolled
-
-                            </a>
-
-                            <ul class="dropdown-menu">
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('operation.status') }}">
-
-                                        <i class="fa fa-tasks me-2"></i>
-
-                                        Operation Status
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('fund.release.status') }}">
-
-                                        <i class="fa fa-money-bill-wave me-2"></i>
-
-                                        Fund Release Status
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('commission.enrollment.list') }}">
-
-                                        <i class="fa fa-list me-2"></i>
-
-                                        Commission Enrollment List
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('commission.list') }}">
-
-                                        <i class="fa fa-file-invoice-dollar me-2"></i>
-
-                                        Commission List
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('enrolled.list') }}">
-
-                                        <i class="fa fa-user-check me-2"></i>
-
-                                        Enrolled List
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('drop.list') }}">
-
-                                        <i class="fa fa-user-times me-2"></i>
-
-                                        Drop List
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('appointment.complete') }}">
-
-                                        <i class="fa fa-calendar-check me-2"></i>
-
-                                        Appointment Complete
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('osap.done.enrolled') }}">
-
-                                        <i class="fa fa-check-circle me-2"></i>
-
-                                        OSAP Done Enrolled
-
-                                    </a>
-
-                                </li>
-
-                            </ul>
-
-                        </li>
-
-
-                        {{-- Reports --}}
-
-                        <li class="nav-item dropdown">
-
-                            <a class="nav-link dropdown-toggle"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown">
-
-                                <i class="fa fa-chart-line"></i>
-
-                                Reports
-
-                            </a>
-
-                            <ul class="dropdown-menu">
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('reports.branch') }}">
-
-                                        <i class="fa fa-building"></i>
-
-                                        Full Branch Report
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('reports.lead') }}">
-
-                                        <i class="fa fa-user"></i>
-
-                                        Lead Report
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('reports.source') }}">
-
-                                        <i class="fa fa-filter"></i>
-
-                                        Source Report
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('reports.daily-sales') }}">
-
-                                        <i class="fa fa-chart-line"></i>
-
-                                        Daily Sales Report
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('reports.feedback') }}">
-
-                                        <i class="fa fa-comment"></i>
-
-                                        Feedback Details
-
-                                    </a>
-
-                                </li>
-
-                            </ul>
-
-                        </li>
-
-
-                        {{-- User Management --}}
-
-                        <li class="nav-item dropdown">
-
-                            <a class="nav-link dropdown-toggle
-                                {{ request()->routeIs('users.*') ? 'active' : '' }}"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown">
-
-                                <i class="fa fa-users"></i>
-
-                                User Management
-
-                            </a>
-
-                            <ul class="dropdown-menu">
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('users.index') }}">
-
-                                        User Details
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('users.create') }}">
-
-                                        Add New User
-
-                                    </a>
-
-                                </li>
-
-                            </ul>
-
-                        </li>
-
-
-                        {{-- New Lead --}}
-
-                        <li class="nav-item">
-
-                            <a class="nav-link {{ request()->routeIs('lead.create') ? 'active' : '' }}"
-                                href="{{ route('lead.create') }}">
-
-                                <i class="fa fa-user-plus"></i>
-
-                                New Lead
-
-                            </a>
-
-                        </li>
-
-                    </ul>
-
-
-                {{-- =========================================================
-                     COUNSELOR
-                     EXCEPT PRABJOT / NAVJOT
-                ========================================================== --}}
-
-                @elseif (
-                    $role === 'counselor' &&
-                    $username !== 'prabjot' &&
-                    $username !== 'navjot'
-                )
-
-                    <ul class="navbar-nav ms-auto align-items-center">
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                                href="{{ route('counselor.dashboard') }}">
-
-                                <i class="fa fa-desktop"></i>
-
-                                Dashboard
-
-                            </a>
-
-                        </li>
-
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                                href="{{ route('counselor.dashboard.report') }}">
-
-                                <i class="fa fa-list-alt"></i>
-
-                                Dashboard Reports
-
-                            </a>
-
-                        </li>
-
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                                href="{{ route('all.lead.list') }}">
-
-                                <i class="fa fa-list-alt"></i>
-
-                                All Lead List
-
-                            </a>
-
-                        </li>
-
-
-                        {{-- Followup --}}
-
-                        <li class="nav-item dropdown">
-
-                            <a class="nav-link dropdown-toggle
-                                {{ request()->routeIs('lead.followup*') ? 'active' : '' }}"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown">
-
-                                <i class="fa fa-phone"></i>
-
-                                Followup
-
-                            </a>
-
-                            <ul class="dropdown-menu">
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.followup') }}">
-
-                                        Call Followup
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.followup.today') }}">
-
-                                        Today Lead Followup
-
-                                    </a>
-
-                                </li>
-
-
-                                {{-- Counselor can access Missed Followup --}}
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.followup.missed') }}">
-
-                                        Missed Followup
-
-                                    </a>
-
-                                </li>
-
-                            </ul>
-
-                        </li>
-
-
-                        {{-- Reports --}}
-
-                        <li class="nav-item dropdown">
-
-                            <a class="nav-link dropdown-toggle"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown">
-
-                                <i class="fa fa-chart-line"></i>
-
-                                Reports
-
-                            </a>
-
-                            <ul class="dropdown-menu">
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('counselor.full.report') }}">
-
-                                        My Full Report
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('reports.lead') }}">
-
-                                        Lead Report
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('reports.source') }}">
-
-                                        Source Report
-
-                                    </a>
-
-                                </li>
-
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('reports.daily-sales') }}">
-
-                                        Daily Sales Report
-
-                                    </a>
-
-                                </li>
-
-                            </ul>
-
-                        </li>
-
-
-                        {{-- Operation Status --}}
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                                href="{{ route('operation.status') }}">
-
-                                <i class="fa fa-user"></i>
-
-                                Operation Status
-
-                            </a>
-
-                        </li>
-
-
-                        {{-- Enrolled --}}
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                                href="{{ route('enrolled.list') }}">
-
-                                <i class="fa fa-user-check"></i>
-
-                                Enrolled List
-
-                            </a>
-
-                        </li>
-
-
-                        {{-- Fund Release --}}
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                                href="{{ route('fund.release.status') }}">
-
-                                <i class="fa fa-money-bill"></i>
-
-                                Fund Release Status
-
-                            </a>
-
-                        </li>
-
-
-                        {{-- Email --}}
-
-                        <li class="nav-item dropdown">
-
-                            <a class="nav-link dropdown-toggle"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown">
-
-                                <i class="fa fa-desktop"></i>
-
-                                Email
-
-                            </a>
-
-                            <ul class="dropdown-menu">
-
-                                <li>
-
-                                    <a class="dropdown-item"
-                                        href="{{ route('counselor.email.templates') }}">
-
-                                        Email Template
-
-                                    </a>
-
-                                </li>
-
-                            </ul>
-
-                        </li>
-
-
-                        {{-- Zainab_admin --}}
-
-                        @if ($username === 'Zainab_admin')
-
-                            <li class="nav-item">
-
-                                <a class="nav-link"
-                                    href="{{ route('appointment.pending') }}">
-
-                                    <i class="fa fa-user"></i>
-
-                                    Appointment Pending
+                                    Dashboard Reports
 
                                 </a>
 
                             </li>
 
 
-                            <li class="nav-item">
+                            <li>
 
-                                <a class="nav-link"
-                                    href="{{ route('appointment.complete') }}">
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.date.dashboard') }}">
 
-                                    <i class="fa fa-user"></i>
+                                    <i class="fa fa-calendar"></i>
 
-                                    Appointment Completed
+                                    Lead Date Dashboard
 
                                 </a>
 
                             </li>
 
-                        @endif
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item {{ request()->routeIs('reports.daily-sales') ? 'active' : '' }}"
+                                    href="{{ route('reports.daily-sales') }}">
+
+                                    <i class="fa fa-chart-line"></i>
+
+                                    Daily Sales Report
+
+                                </a>
+
+                            </li>
 
 
-                        {{-- New Lead --}}
+                            <li>
 
-                        <li class="nav-item">
+                                <a
+                                    class="dropdown-item {{ request()->routeIs('stitching.reports') ? 'active' : '' }}"
+                                    href="{{ route('stitching.reports') }}">
 
-                            <a class="nav-link"
-                                href="{{ route('lead.create') }}">
+                                    <i class="fa fa-link"></i>
 
-                                <i class="fa fa-user-plus"></i>
+                                    Stitching Reports
 
-                                New Lead
+                                </a>
 
-                            </a>
-
-                        </li>
-
-                    </ul>
+                            </li>
 
 
-                {{-- =========================================================
-                     OPERATION
-                ========================================================== --}}
+                            <li>
 
-                @elseif ($role === 'operation')
+                                <a
+                                    class="dropdown-item {{ request()->routeIs('all.lead.list') ? 'active' : '' }}"
+                                    href="{{ route('all.lead.list') }}">
 
-                    <ul class="navbar-nav ms-auto align-items-center">
+                                    <i class="fa fa-users"></i>
 
-                        <li class="nav-item">
+                                    All Lead List
 
-                            <a class="nav-link"
-                                href="{{ route('dashboard.reports') }}">
+                                </a>
 
-                                <i class="fa fa-list-alt"></i>
+                            </li>
 
-                                Dashboard Reports
+                        </ul>
 
-                            </a>
-
-                        </li>
+                    </li>
 
 
-                        <li class="nav-item">
+                    {{-- Lead List --}}
 
-                            <a class="nav-link"
-                                href="{{ route('drop.list') }}">
+                    <li class="nav-item dropdown">
 
-                                <i class="fa fa-user"></i>
+                        <a
+                            class="nav-link dropdown-toggle {{ request()->routeIs('lead.list*') ? 'active' : '' }}"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
 
-                                Drop List
+                            <i class="fa fa-list"></i>
 
-                            </a>
+                            Lead List
 
-                        </li>
+                        </a>
 
 
-                        {{-- Accounts --}}
+                        <ul class="dropdown-menu">
 
-                        @if ($username === 'Accounts')
 
-                            <li class="nav-item">
+                            <li>
 
-                                <a class="nav-link"
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('csv.form') }}">
+
+                                    <i class="fa fa-upload"></i>
+
+                                    Upload CSV
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.list') }}">
+
+                                    <i class="fa fa-users"></i>
+
+                                    Lead List
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('seminar.list') }}">
+
+                                    <i class="fa fa-user-graduate"></i>
+
+                                    Seminar Lead List
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+
+                    {{-- Followup --}}
+
+                    <li class="nav-item dropdown">
+
+                        <a
+                            class="nav-link dropdown-toggle {{ request()->routeIs('lead.followup*') ? 'active' : '' }}"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+
+                            <i class="fa fa-phone"></i>
+
+                            Followup
+
+                        </a>
+
+
+                        <ul class="dropdown-menu">
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.followup') }}">
+
+                                    <i class="fa fa-phone"></i>
+
+                                    Call Followup
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.followup.today') }}">
+
+                                    <i class="fa fa-calendar-day"></i>
+
+                                    Today Lead Followup
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.followup.missed') }}">
+
+                                    <i class="fa fa-calendar-xmark"></i>
+
+                                    Missed Followup
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+
+                    {{-- Enrolled --}}
+
+                    <li class="nav-item dropdown">
+
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown">
+
+                            <i class="fa fa-user-graduate"></i>
+
+                            Enrolled
+
+                        </a>
+
+
+                        <ul class="dropdown-menu">
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('operation.status') }}">
+
+                                    <i class="fa fa-tasks me-2"></i>
+
+                                    Operation Status
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('fund.release.status') }}">
+
+                                    <i class="fa fa-money-bill-wave me-2"></i>
+
+                                    Fund Release Status
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('commission.enrollment.list') }}">
+
+                                    <i class="fa fa-list me-2"></i>
+
+                                    Commission Enrollment List
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
                                     href="{{ route('commission.list') }}">
 
-                                    <i class="fa fa-user"></i>
+                                    <i class="fa fa-file-invoice-dollar me-2"></i>
 
-                                    Commission Listing
+                                    Commission List
 
                                 </a>
 
                             </li>
 
 
-                            <li class="nav-item">
+                            <li>
 
-                                <a class="nav-link"
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('enrolled.list') }}">
+
+                                    <i class="fa fa-user-check me-2"></i>
+
+                                    Enrolled List
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
                                     href="{{ route('drop.list') }}">
 
-                                    <i class="fa fa-user"></i>
+                                    <i class="fa fa-user-times me-2"></i>
 
                                     Drop List
 
@@ -1165,367 +711,1015 @@
                             </li>
 
 
-                            <li class="nav-item">
+                            <li>
 
-                                <a class="nav-link"
-                                    href="{{ route('tuition.fee.update') }}">
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('appointment.complete') }}">
 
-                                    <i class="fa fa-money-bill"></i>
+                                    <i class="fa fa-calendar-check me-2"></i>
 
-                                    Tution Fee Update
+                                    Appointment Complete
 
                                 </a>
 
                             </li>
 
-                        @endif
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('osap.done.enrolled') }}">
+
+                                    <i class="fa fa-check-circle me-2"></i>
+
+                                    OSAP Done Enrolled
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
 
 
-                        <li class="nav-item">
+                    {{-- Reports --}}
 
-                            <a class="nav-link"
-                                href="{{ route('fund.release.status') }}">
+                    <li class="nav-item dropdown">
 
-                                <i class="fa fa-user"></i>
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown">
 
-                                Fund Release
+                            <i class="fa fa-chart-line"></i>
 
-                            </a>
+                            Reports
 
-                        </li>
+                        </a>
 
-                    </ul>
+
+                        <ul class="dropdown-menu">
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('reports.branch') }}">
+
+                                    <i class="fa fa-building"></i>
+
+                                    Full Branch Report
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('reports.lead') }}">
+
+                                    <i class="fa fa-user"></i>
+
+                                    Lead Report
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('reports.source') }}">
+
+                                    <i class="fa fa-filter"></i>
+
+                                    Source Report
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('reports.daily-sales') }}">
+
+                                    <i class="fa fa-chart-line"></i>
+
+                                    Daily Sales Report
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('reports.feedback') }}">
+
+                                    <i class="fa fa-comment"></i>
+
+                                    Feedback Details
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+
+                    {{-- User Management --}}
+
+                    <li class="nav-item dropdown">
+
+                        <a
+                            class="nav-link dropdown-toggle {{ request()->routeIs('users.*') ? 'active' : '' }}"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown">
+
+                            <i class="fa fa-users"></i>
+
+                            User Management
+
+                        </a>
+
+
+                        <ul class="dropdown-menu">
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('users.index') }}">
+
+                                    User Details
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('users.create') }}">
+
+                                    Add New User
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+
+                    {{-- New Lead --}}
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link {{ request()->routeIs('lead.create') ? 'active' : '' }}"
+                            href="{{ route('lead.create') }}">
+
+                            <i class="fa fa-user-plus"></i>
+
+                            New Lead
+
+                        </a>
+
+                    </li>
+
+                </ul>
 
 
                 {{-- =========================================================
-                     SUPER ADMIN
-                ========================================================== --}}
+                 COUNSELOR
+                 EXCEPT PRABJOT / NAVJOT
+            ========================================================== --}}
+
+                @elseif (
+                $role === 'counselor' &&
+                $username !== 'prabjot' &&
+                $username !== 'navjot'
+                )
+
+                <ul class="navbar-nav ms-auto align-items-center">
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('counselor.dashboard') }}">
+
+                            <i class="fa fa-desktop"></i>
+
+                            Dashboard
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('counselor.dashboard.report') }}">
+
+                            <i class="fa fa-list-alt"></i>
+
+                            Dashboard Reports
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('all.lead.list') }}">
+
+                            <i class="fa fa-list-alt"></i>
+
+                            All Lead List
+
+                        </a>
+
+                    </li>
+
+
+                    {{-- Followup --}}
+
+                    <li class="nav-item dropdown">
+
+                        <a
+                            class="nav-link dropdown-toggle {{ request()->routeIs('lead.followup*') ? 'active' : '' }}"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown">
+
+                            <i class="fa fa-phone"></i>
+
+                            Followup
+
+                        </a>
+
+
+                        <ul class="dropdown-menu">
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.followup') }}">
+
+                                    Call Followup
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.followup.today') }}">
+
+                                    Today Lead Followup
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.followup.missed') }}">
+
+                                    Missed Followup
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+
+                    {{-- Reports --}}
+
+                    <li class="nav-item dropdown">
+
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown">
+
+                            <i class="fa fa-chart-line"></i>
+
+                            Reports
+
+                        </a>
+
+
+                        <ul class="dropdown-menu">
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('counselor.full.report') }}">
+
+                                    My Full Report
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('reports.lead') }}">
+
+                                    Lead Report
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('reports.source') }}">
+
+                                    Source Report
+
+                                </a>
+
+                            </li>
+
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('reports.daily-sales') }}">
+
+                                    Daily Sales Report
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+
+                    {{-- Operation Status --}}
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('operation.status') }}">
+
+                            <i class="fa fa-user"></i>
+
+                            Operation Status
+
+                        </a>
+
+                    </li>
+
+
+                    {{-- Enrolled --}}
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('enrolled.list') }}">
+
+                            <i class="fa fa-user-check"></i>
+
+                            Enrolled List
+
+                        </a>
+
+                    </li>
+
+
+                    {{-- Fund Release --}}
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('fund.release.status') }}">
+
+                            <i class="fa fa-money-bill"></i>
+
+                            Fund Release Status
+
+                        </a>
+
+                    </li>
+
+
+                    {{-- Email --}}
+
+                    <li class="nav-item dropdown">
+
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown">
+
+                            <i class="fa fa-desktop"></i>
+
+                            Email
+
+                        </a>
+
+
+                        <ul class="dropdown-menu">
+
+                            <li>
+
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('counselor.email.templates') }}">
+
+                                    Email Template
+
+                                </a>
+
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+
+                    {{-- Zainab_admin --}}
+
+                    @if ($username === 'Zainab_admin')
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('appointment.pending') }}">
+
+                            <i class="fa fa-user"></i>
+
+                            Appointment Pending
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('appointment.complete') }}">
+
+                            <i class="fa fa-user"></i>
+
+                            Appointment Completed
+
+                        </a>
+
+                    </li>
+
+                    @endif
+
+
+                    {{-- New Lead --}}
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('lead.create') }}">
+
+                            <i class="fa fa-user-plus"></i>
+
+                            New Lead
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+
+                {{-- =========================================================
+                 OPERATION
+            ========================================================== --}}
+
+                @elseif ($role === 'operation')
+
+                <ul class="navbar-nav ms-auto align-items-center">
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('dashboard.reports') }}">
+
+                            <i class="fa fa-list-alt"></i>
+
+                            Dashboard Reports
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('drop.list') }}">
+
+                            <i class="fa fa-user"></i>
+
+                            Drop List
+
+                        </a>
+
+                    </li>
+
+
+                    {{-- Accounts --}}
+
+                    @if ($username === 'Accounts')
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('commission.list') }}">
+
+                            <i class="fa fa-user"></i>
+
+                            Commission Listing
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('drop.list') }}">
+
+                            <i class="fa fa-user"></i>
+
+                            Drop List
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('tuition.fee.update') }}">
+
+                            <i class="fa fa-money-bill"></i>
+
+                            Tution Fee Update
+
+                        </a>
+
+                    </li>
+
+                    @endif
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('fund.release.status') }}">
+
+                            <i class="fa fa-user"></i>
+
+                            Fund Release
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+
+                {{-- =========================================================
+                 SUPER ADMIN
+            ========================================================== --}}
 
                 @elseif ($role === 'super_admin')
 
-                    <ul class="navbar-nav ms-auto align-items-center">
+                <ul class="navbar-nav ms-auto align-items-center">
 
-                        {{-- Branch Dashboard --}}
 
-                        <li class="nav-item dropdown">
+                    {{-- Branch Dashboard --}}
 
-                            <a class="nav-link dropdown-toggle"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown">
+                    <li class="nav-item dropdown">
 
-                                <i class="fa fa-desktop"></i>
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown">
 
-                                Branch Dashboard
+                            <i class="fa fa-desktop"></i>
 
-                            </a>
+                            Branch Dashboard
 
-                            <ul class="dropdown-menu">
+                        </a>
 
-                                <li>
 
-                                    <a class="dropdown-item"
-                                        href="{{ route('reports.branch') }}">
+                        <ul class="dropdown-menu">
 
-                                        Branch Report
 
-                                    </a>
+                            <li>
 
-                                </li>
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('reports.branch') }}">
 
+                                    Branch Report
 
-                                <li>
+                                </a>
 
-                                    <a class="dropdown-item"
-                                        href="{{ route('admin.branch.report') }}">
+                            </li>
 
-                                        Walk in Report
 
-                                    </a>
+                            <li>
 
-                                </li>
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('admin.branch.report') }}">
 
-                            </ul>
+                                    Walk in Report
 
-                        </li>
+                                </a>
 
+                            </li>
 
-                        {{-- Operation Status --}}
+                        </ul>
 
-                        <li class="nav-item">
+                    </li>
 
-                            <a class="nav-link"
-                                href="{{ route('operation.status') }}">
 
-                                <i class="fa fa-user"></i>
+                    {{-- Operation Status --}}
 
-                                Operation Status
+                    <li class="nav-item">
 
-                            </a>
+                        <a
+                            class="nav-link"
+                            href="{{ route('operation.status') }}">
 
-                        </li>
+                            <i class="fa fa-user"></i>
 
+                            Operation Status
 
-                        {{-- Enrolled --}}
+                        </a>
 
-                        <li class="nav-item">
+                    </li>
 
-                            <a class="nav-link"
-                                href="{{ route('enrolled.list') }}">
 
-                                <i class="fa fa-user"></i>
+                    {{-- Enrolled --}}
 
-                                Enrolled List
+                    <li class="nav-item">
 
-                            </a>
+                        <a
+                            class="nav-link"
+                            href="{{ route('enrolled.list') }}">
 
-                        </li>
+                            <i class="fa fa-user"></i>
 
+                            Enrolled List
 
-                        {{-- Counselor Dashboard --}}
+                        </a>
 
-                        <li class="nav-item dropdown">
+                    </li>
 
-                            <a class="nav-link dropdown-toggle"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown">
 
-                                <i class="fa fa-desktop"></i>
+                    {{-- Counselor Dashboard --}}
 
-                                Counsellor Dashboard
+                    <li class="nav-item dropdown">
 
-                            </a>
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown">
 
-                            <ul class="dropdown-menu">
+                            <i class="fa fa-desktop"></i>
 
-                                <li>
+                            Counsellor Dashboard
 
-                                    <a class="dropdown-item"
-                                        href="{{ route('counselor.report.admin') }}">
+                        </a>
 
-                                        Counselor Report
 
-                                    </a>
+                        <ul class="dropdown-menu">
 
-                                </li>
 
+                            <li>
 
-                                <li>
+                                <a
+                                    class="dropdown-item"
+                                    href="#">
 
-                                    <a class="dropdown-item"
-                                        href="{{ route('counselor.walk.report') }}">
+                                    Counselor Report
 
-                                        Walk in Report
+                                </a>
 
-                                    </a>
+                            </li>
 
-                                </li>
 
-                            </ul>
+                            <li>
 
-                        </li>
+                                <a
+                                    class="dropdown-item"
+                                    href="#">
 
+                                    Walk in Report
 
-                        {{-- Followup --}}
+                                </a>
 
-                        <li class="nav-item dropdown">
+                            </li>
 
-                            <a class="nav-link dropdown-toggle"
-                                href="#"
-                                role="button"
-                                data-bs-toggle="dropdown">
+                        </ul>
 
-                                <i class="fa fa-user-circle"></i>
+                    </li>
 
-                                Followup
 
-                            </a>
+                    {{-- Followup --}}
 
-                            <ul class="dropdown-menu">
+                    <li class="nav-item dropdown">
 
-                                <li>
+                        <a
+                            class="nav-link dropdown-toggle"
+                            href="#"
+                            role="button"
+                            data-bs-toggle="dropdown">
 
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.followup') }}">
+                            <i class="fa fa-user-circle"></i>
 
-                                        Call Followup
+                            Followup
 
-                                    </a>
+                        </a>
 
-                                </li>
 
+                        <ul class="dropdown-menu">
 
-                                <li>
 
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.followup.today') }}">
+                            <li>
 
-                                        Today Lead Followup
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.followup') }}">
 
-                                    </a>
+                                    Call Followup
 
-                                </li>
+                                </a>
 
+                            </li>
 
-                                <li>
 
-                                    <a class="dropdown-item"
-                                        href="{{ route('lead.followup.missed') }}">
+                            <li>
 
-                                        Missed Followup
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.followup.today') }}">
 
-                                    </a>
+                                    Today Lead Followup
 
-                                </li>
+                                </a>
 
-                            </ul>
+                            </li>
 
-                        </li>
 
+                            <li>
 
-                        {{-- Source Report --}}
+                                <a
+                                    class="dropdown-item"
+                                    href="{{ route('lead.followup.missed') }}">
 
-                        <li class="nav-item">
+                                    Missed Followup
 
-                            <a class="nav-link"
-                                href="{{ route('reports.source') }}">
+                                </a>
 
-                                <i class="fa fa-user"></i>
+                            </li>
 
-                                Source Report
+                        </ul>
 
-                            </a>
+                    </li>
 
-                        </li>
 
-                    </ul>
+                    {{-- Source Report --}}
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('reports.source') }}">
+
+                            <i class="fa fa-user"></i>
+
+                            Source Report
+
+                        </a>
+
+                    </li>
+
+                </ul>
 
 
                 {{-- =========================================================
-                     FINANCE
-                ========================================================== --}}
+                 FINANCE
+            ========================================================== --}}
 
                 @elseif ($role === 'finance')
 
-                    <ul class="navbar-nav ms-auto align-items-center">
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                                href="{{ route('finance.dashboard.report') }}">
-
-                                <i class="fa fa-user"></i>
-
-                                Dashboard
-
-                            </a>
-
-                        </li>
+                <ul class="navbar-nav ms-auto align-items-center">
 
 
-                        <li class="nav-item">
+                    <li class="nav-item">
 
-                            <a class="nav-link"
-                                href="{{ route('drop.list') }}">
+                        <a
+                            class="nav-link"
+                            href="{{ route('finance.dashboard.report') }}">
 
-                                <i class="fa fa-user"></i>
+                            <i class="fa fa-user"></i>
 
-                                Drop List
+                            Dashboard
 
-                            </a>
+                        </a>
 
-                        </li>
-
-
-                        <li class="nav-item">
-
-                            <a class="nav-link"
-                                href="{{ route('enrolled.list') }}">
-
-                                <i class="fa fa-user"></i>
-
-                                All Enrolled Files
-
-                            </a>
-
-                        </li>
+                    </li>
 
 
-                        <li class="nav-item">
+                    <li class="nav-item">
 
-                            <a class="nav-link"
-                                href="{{ route('appointment.pending') }}">
+                        <a
+                            class="nav-link"
+                            href="{{ route('drop.list') }}">
 
-                                <i class="fa fa-user"></i>
+                            <i class="fa fa-user"></i>
 
-                                Appointment Pending
+                            Drop List
 
-                            </a>
+                        </a>
 
-                        </li>
+                    </li>
 
 
-                        <li class="nav-item">
+                    <li class="nav-item">
 
-                            <a class="nav-link"
-                                href="{{ route('appointment.complete') }}">
+                        <a
+                            class="nav-link"
+                            href="{{ route('enrolled.list') }}">
 
-                                <i class="fa fa-user"></i>
+                            <i class="fa fa-user"></i>
 
-                                Appointment Completed
+                            All Enrolled Files
 
-                            </a>
+                        </a>
 
-                        </li>
+                    </li>
 
-                    </ul>
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('appointment.pending') }}">
+
+                            <i class="fa fa-user"></i>
+
+                            Appointment Pending
+
+                        </a>
+
+                    </li>
+
+
+                    <li class="nav-item">
+
+                        <a
+                            class="nav-link"
+                            href="{{ route('appointment.complete') }}">
+
+                            <i class="fa fa-user"></i>
+
+                            Appointment Completed
+
+                        </a>
+
+                    </li>
+
+                </ul>
 
                 @endif
 
 
-               
+                {{-- =========================================================
+                 USER / LOGOUT
+            ========================================================== --}}
 
                 @if ($role)
 
-                    <ul class="navbar-nav align-items-center">
-
-                        <li class="nav-item">
-
-                            <span class="nav-link">
-
-                                <i class="fa fa-user-circle"></i>
-
-                               {{ session('name') }}
+                <ul class="navbar-nav align-items-center">
 
 
-                            </span>
+                    <li class="nav-item">
 
-                        </li>
+                        <span class="nav-link">
+
+                            <i class="fa fa-user-circle"></i>
+
+                            {{ session('name') }}
+
+                        </span>
+
+                    </li>
 
 
-                        <li class="nav-item ms-2">
+                    <li class="nav-item ms-2">
 
-                            <form method="POST"
-                                action="{{ route('logout') }}">
+                        <form
+                            method="POST"
+                            action="{{ route('logout') }}">
 
-                                @csrf
+                            @csrf
 
-                                <button class="btn btn-danger btn-sm">
+                            <button
+                                class="btn btn-danger btn-sm">
 
-                                    <i class="fa fa-sign-out-alt"></i>
+                                <i class="fa fa-sign-out-alt"></i>
 
-                                    Logout
+                                Logout
 
-                                </button>
+                            </button>
 
-                            </form>
+                        </form>
 
-                        </li>
+                    </li>
 
-                    </ul>
+                </ul>
 
                 @endif
+
 
             </div>
 
@@ -1534,53 +1728,63 @@
     </nav>
 
 
+    {{-- =========================================================
+     MAIN CONTENT
+========================================================== --}}
+
     <div class="container-fluid mt-3">
+
 
         @if (session('success'))
 
-            <div class="alert alert-success">
+        <div class="alert alert-success">
 
-                {{ session('success') }}
+            {{ session('success') }}
 
-            </div>
+        </div>
 
         @endif
 
 
         @if (session('error'))
 
-            <div class="alert alert-danger">
+        <div class="alert alert-danger">
 
-                {{ session('error') }}
+            {{ session('error') }}
 
-            </div>
+        </div>
 
         @endif
 
 
         @if ($errors->any())
 
-            <div class="alert alert-danger">
+        <div class="alert alert-danger">
 
-                <ul class="mb-0">
+            <ul class="mb-0">
 
-                    @foreach ($errors->all() as $error)
+                @foreach ($errors->all() as $error)
 
-                        <li>{{ $error }}</li>
+                <li>{{ $error }}</li>
 
-                    @endforeach
+                @endforeach
 
-                </ul>
+            </ul>
 
-            </div>
+        </div>
 
         @endif
 
 
         @yield('content')
 
+
     </div>
 
+
+    {{-- =========================================================
+     FOOTER
+========================================================== --}}
 
     <footer>
 
@@ -1589,13 +1793,35 @@
     </footer>
 
 
-    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    {{-- =========================================================
+     DATATABLES
+========================================================== --}}
 
-    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+    <script
+        src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js">
+    </script>
 
+
+    <script
+        src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js">
+    </script>
+
+
+    {{-- =========================================================
+     BOOTSTRAP DATEPICKER JS
+     IMPORTANT: Must load before @stack('scripts')
+========================================================== --}}
+
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js">
+    </script>
+
+
+    {{-- =========================================================
+     AJAX CSRF + DEFAULT DATATABLE
+========================================================== --}}
 
     <script>
-
         $.ajaxSetup({
 
             headers: {
@@ -1624,11 +1850,15 @@
             });
 
         }
-
     </script>
 
 
+    {{-- =========================================================
+     PAGE SCRIPTS
+========================================================== --}}
+
     @stack('scripts')
+
 
     @yield('scripts')
 
@@ -1636,4 +1866,3 @@
 </body>
 
 </html>
-

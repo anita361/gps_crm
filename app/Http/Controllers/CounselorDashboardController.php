@@ -4,16 +4,14 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+
 
 class CounselorDashboardController extends Controller
 {
     public function index(Request $request)
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Check Login
-        |--------------------------------------------------------------------------
-        */
+
         if (!session()->has('login')) {
             return redirect()->route('login');
         }
@@ -21,15 +19,7 @@ class CounselorDashboardController extends Controller
         $sessionId = session('login');
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Counselor Seen Status Update
-        |--------------------------------------------------------------------------
-        |
-        | AJAX request:
-        | /counselor-dashboard?status=0&id=123
-        |
-        */
+
         if ($request->has('status') && $request->has('id')) {
 
             $id = (int) $request->get('id');
@@ -40,7 +30,7 @@ class CounselorDashboardController extends Controller
                 return response('0', 400);
             }
 
-            // Check that this lead belongs to the logged-in counselor
+
             $lead = DB::table('lead_appointed')
                 ->where('id', $id)
                 ->where('assign_id', $sessionId)
@@ -50,7 +40,7 @@ class CounselorDashboardController extends Controller
                 return response('0', 404);
             }
 
-            // Update Counselor Seen status
+
             DB::table('lead_appointed')
                 ->where('id', $id)
                 ->where('assign_id', $sessionId)
@@ -62,11 +52,7 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Pagination
-        |--------------------------------------------------------------------------
-        */
+
         $limit = (int) $request->get('limit', 10);
 
         if (!in_array($limit, [10, 25, 50, 100])) {
@@ -74,11 +60,7 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Search
-        |--------------------------------------------------------------------------
-        */
+
         $searchType = $request->get('search_type');
 
         $searchValue = trim(
@@ -86,11 +68,7 @@ class CounselorDashboardController extends Controller
         );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Walkins Query
-        |--------------------------------------------------------------------------
-        */
+
         $walkinsQuery = DB::table('lead_appointed as l')
             ->leftJoin('counslor_status as c', function ($join) {
 
@@ -130,11 +108,7 @@ class CounselorDashboardController extends Controller
             ]);
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Search Filter
-        |--------------------------------------------------------------------------
-        */
+
         if ($searchValue !== '') {
 
             if ($searchType === 'mobile') {
@@ -169,22 +143,14 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Get Walkins
-        |--------------------------------------------------------------------------
-        */
+
         $walkins = $walkinsQuery
             ->orderByDesc('l.id')
             ->paginate($limit)
             ->withQueryString();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Followups
-        |--------------------------------------------------------------------------
-        */
+
         $followups = DB::table('seminarpre as s')
             ->leftJoin(
                 'counslor_status as c',
@@ -217,11 +183,7 @@ class CounselorDashboardController extends Controller
             ->get();
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Dashboard View
-        |--------------------------------------------------------------------------
-        */
+
         return view('counselor.dashboard', [
             'walkins'     => $walkins,
             'followups'   => $followups,
@@ -234,21 +196,13 @@ class CounselorDashboardController extends Controller
 
     public function counslrdashboardReport(Request $request)
     {
-        /*
-    |--------------------------------------------------------------------------
-    | Check Login
-    |--------------------------------------------------------------------------
-    */
+
 
         if (!session()->has('login')) {
             return redirect()->route('login');
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Session Values
-    |--------------------------------------------------------------------------
-    */
+
 
         $role        = session('role');
         $username    = session('username');
@@ -256,11 +210,7 @@ class CounselorDashboardController extends Controller
         $sessionName = session('name');
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Allowed Roles
-    |--------------------------------------------------------------------------
-    */
+
 
         $allowedRoles = [
             'operation',
@@ -278,21 +228,12 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Date Filters
-    |--------------------------------------------------------------------------
-    */
+
 
         $fromDate = $request->get('StartDate');
         $toDate   = $request->get('EndDate');
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Main Report Query
-    |--------------------------------------------------------------------------
-    */
 
         $query = DB::table('seminarpre')
             ->select(
@@ -325,9 +266,7 @@ class CounselorDashboardController extends Controller
                 ) AS not_process
             "),
 
-                /*
-            | Campus Login - Done
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -339,9 +278,7 @@ class CounselorDashboardController extends Controller
                 ) AS wonderlic_sent_count
             "),
 
-                /*
-            | VeriFast & Wonderlic - Sent
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -353,9 +290,7 @@ class CounselorDashboardController extends Controller
                 ) AS verifast_sent_count
             "),
 
-                /*
-            | VeriFast & Wonderlic - Done
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -367,9 +302,7 @@ class CounselorDashboardController extends Controller
                 ) AS verifast_done_count
             "),
 
-                /*
-            | Contract - Sent
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -381,9 +314,7 @@ class CounselorDashboardController extends Controller
                 ) AS contract_sent_count
             "),
 
-                /*
-            | Contract - Done
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -395,9 +326,7 @@ class CounselorDashboardController extends Controller
                 ) AS contract_done_count
             "),
 
-                /*
-            | Orientation - Sent
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -409,9 +338,7 @@ class CounselorDashboardController extends Controller
                 ) AS orientation_sent_count
             "),
 
-                /*
-            | Orientation - Done
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -423,9 +350,7 @@ class CounselorDashboardController extends Controller
                 ) AS orientation_done_count
             "),
 
-                /*
-            | FAO Appointment - Given
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -437,9 +362,7 @@ class CounselorDashboardController extends Controller
                 ) AS fao_given_count
             "),
 
-                /*
-            | FAO Appointment - Completed
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -451,9 +374,7 @@ class CounselorDashboardController extends Controller
                 ) AS fao_completed_count
             "),
 
-                /*
-            | Start
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -464,9 +385,7 @@ class CounselorDashboardController extends Controller
                 ) AS start_count
             "),
 
-                /*
-            | FR1
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -477,9 +396,6 @@ class CounselorDashboardController extends Controller
                 ) AS fr1_count
             "),
 
-                /*
-            | FR2
-            */
 
                 DB::raw("
                 COUNT(
@@ -490,9 +406,7 @@ class CounselorDashboardController extends Controller
                 ) AS fr2_count
             "),
 
-                /*
-            | Cancel
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -503,9 +417,7 @@ class CounselorDashboardController extends Controller
                 ) AS cancel_count
             "),
 
-                /*
-            | Withdrawal
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -516,9 +428,7 @@ class CounselorDashboardController extends Controller
                 ) AS withdrawal_count
             "),
 
-                /*
-            | Not Started
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -529,9 +439,7 @@ class CounselorDashboardController extends Controller
                 ) AS not_started_count
             "),
 
-                /*
-            | Graduate
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -544,11 +452,7 @@ class CounselorDashboardController extends Controller
 
             )
 
-            /*
-        |--------------------------------------------------------------------------
-        | Student Status
-        |--------------------------------------------------------------------------
-        */
+
 
             ->whereIn(
                 'student_status',
@@ -558,11 +462,7 @@ class CounselorDashboardController extends Controller
                 ]
             )
 
-            /*
-        |--------------------------------------------------------------------------
-        | Assignment Name
-        |--------------------------------------------------------------------------
-        */
+
 
             ->where(
                 'assign_name',
@@ -571,11 +471,6 @@ class CounselorDashboardController extends Controller
             );
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Date Filter
-    |--------------------------------------------------------------------------
-    */
 
         if (!empty($fromDate) && !empty($toDate)) {
 
@@ -603,11 +498,6 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Counselor / Branch
-    |--------------------------------------------------------------------------
-    */
 
         if (
             $role === 'counselor' ||
@@ -621,11 +511,6 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Group By
-    |--------------------------------------------------------------------------
-    */
 
         $reports = $query
             ->groupBy('assign_name')
@@ -636,11 +521,6 @@ class CounselorDashboardController extends Controller
             ->get();
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Drop Query
-    |--------------------------------------------------------------------------
-    */
 
         $dropQuery = DB::table('seminarpre')
             ->select(
@@ -665,11 +545,7 @@ class CounselorDashboardController extends Controller
             );
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Drop Date Filter
-    |--------------------------------------------------------------------------
-    */
+
 
         if (!empty($fromDate) && !empty($toDate)) {
 
@@ -697,11 +573,7 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Counselor / Branch Drop Filter
-    |--------------------------------------------------------------------------
-    */
+
 
         if (
             $role === 'counselor' ||
@@ -715,11 +587,7 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Drop Data
-    |--------------------------------------------------------------------------
-    */
+
 
         $dropData = $dropQuery
             ->groupBy('assign_name')
@@ -729,11 +597,6 @@ class CounselorDashboardController extends Controller
             );
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Calculate Individual Total
-    |--------------------------------------------------------------------------
-    */
 
         foreach ($reports as $report) {
 
@@ -759,11 +622,7 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Footer Totals
-    |--------------------------------------------------------------------------
-    */
+
 
         $totals = [
 
@@ -790,11 +649,7 @@ class CounselorDashboardController extends Controller
         ];
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Calculate Footer
-    |--------------------------------------------------------------------------
-    */
+
 
         foreach ($reports as $report) {
 
@@ -860,11 +715,7 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | Return Blade
-    |--------------------------------------------------------------------------
-    */
+
 
         return view(
             'counselor.dashboard-report',
@@ -880,20 +731,20 @@ class CounselorDashboardController extends Controller
 
 
     public function downloadOprList(Request $request)
-    { /* |-------------------------------------------------------------------------- | Check Login |-------------------------------------------------------------------------- */
+    {
         if (!session()->has('login')) {
             return redirect()->route('login');
-        } /* |-------------------------------------------------------------------------- | Session Data |-------------------------------------------------------------------------- */
+        }
         $role = session('role');
-        $sessionName = session('name'); /* |-------------------------------------------------------------------------- | Allowed Roles |-------------------------------------------------------------------------- */
+        $sessionName = session('name');
         $allowedRoles = ['operation', 'counselor', 'super_admin', 'branch_manager', 'branch'];
         if (!in_array($role, $allowedRoles)) {
             session()->flush();
             return redirect()->route('login');
-        } /* |-------------------------------------------------------------------------- | Get Filters |-------------------------------------------------------------------------- */
+        }
         $fromDate = $request->get('StartDate');
         $toDate = $request->get('EndDate');
-        $assignName = $request->get('assign_name'); /* |-------------------------------------------------------------------------- | Main Query | | Same fields as old opr_listing_excel.php |-------------------------------------------------------------------------- */
+        $assignName = $request->get('assign_name');
         $query = DB::table('seminarpre as s')->leftJoin('crm_login as c', 'c.id', '=', 's.finance_id')->select('s.sname', 's.smobile', 's.scountry', 's.assign_name', 's.file_no', 's.student_status', 's.ssource', 's.source_remarks', 's.enrolled_date', 'c.name as finance_manager', 's.semail', 's.province_name', 's.collage_name', 's.campus_name', 's.program_name', 's.start_date', 's.end_date', 's.opr_stage_date', 's.opr_stage', 's.oprStsSend', 's.onid_user_name', 's.onid_user_pass') /* |-------------------------------------------------------------------------- | IMPORTANT: | Old PHP download used: | | WHERE student_status ='enrolled' |-------------------------------------------------------------------------- */->where('s.student_status', 'enrolled'); /* |-------------------------------------------------------------------------- | Date Filter | | Old PHP: | | AND DATE(start_date) BETWEEN '$from_date' AND '$to_date' |-------------------------------------------------------------------------- */
         if (!empty($fromDate) && !empty($toDate)) {
             $query->whereBetween(DB::raw('DATE(s.start_date)'), [$fromDate, $toDate]);
@@ -901,16 +752,16 @@ class CounselorDashboardController extends Controller
             $query->whereDate('s.start_date', '>=', $fromDate);
         } elseif (!empty($toDate)) {
             $query->whereDate('s.start_date', '<=', $toDate);
-        } /* |-------------------------------------------------------------------------- | Counselor / Branch Restriction | | Same behavior as Dashboard Report |-------------------------------------------------------------------------- */
+        }
         if ($role === 'counselor' || $role === 'branch') {
             $query->where('s.assign_name', $sessionName);
-        } /* |-------------------------------------------------------------------------- | Specific Counselor | | Used when clicking a particular counselor's total. |-------------------------------------------------------------------------- */
+        }
         if (!empty($assignName)) {
             $query->where('s.assign_name', $assignName);
-        } /* |-------------------------------------------------------------------------- | Old PHP: | | ORDER BY enrolled_date DESC |-------------------------------------------------------------------------- */
-        $query->orderBy('s.enrolled_date', 'DESC'); /* |-------------------------------------------------------------------------- | CSV Filename |-------------------------------------------------------------------------- */
-        $filename = 'opr_list_' . date('Y-m-d_H-i-s') . '.csv'; /* |-------------------------------------------------------------------------- | Stream CSV Download |-------------------------------------------------------------------------- */
-        return response()->streamDownload(function () use ($query) { /* |-------------------------------------------------------------------------- | Open Output |-------------------------------------------------------------------------- */
+        }
+        $query->orderBy('s.enrolled_date', 'DESC');
+        $filename = 'opr_list_' . date('Y-m-d_H-i-s') . '.csv';
+        return response()->streamDownload(function () use ($query) {
             $output = fopen('php://output', 'w'); /* |-------------------------------------------------------------------------- | UTF-8 BOM | | This helps Excel display UTF-8 characters correctly. |-------------------------------------------------------------------------- */
             echo "\xEF\xBB\xBF"; /* |-------------------------------------------------------------------------- | CSV Header | | Same as old opr_listing_excel.php |-------------------------------------------------------------------------- */
             fputcsv($output, ['Client Name', 'Client Number', 'Country Name', 'Counselor Name', 'File Number', 'Student Status', 'Source', 'Source Remarks', 'Enrolled Date', 'Finance Manager', 'Email', 'Provinence Name', 'College', 'Campus', 'Program Name', 'Start Date', 'End Date', 'Opr Last Status Date', 'Operation Status', 'Opr Last Status', 'ONID User Name', 'ONID Password']); /* |-------------------------------------------------------------------------- | Process Records in Chunks | | Prevents loading thousands of records into memory. |-------------------------------------------------------------------------- */
@@ -1282,11 +1133,6 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | CALL LOGS
-    |--------------------------------------------------------------------------
-    */
 
         $callLogs = DB::table('counslor_status')
             ->where('seminar_id', $id)
@@ -1294,11 +1140,7 @@ class CounselorDashboardController extends Controller
             ->get();
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | NOTES
-    |--------------------------------------------------------------------------
-    */
+
 
         $notes = DB::table('notes_logs')
             ->where('main_id', $id)
@@ -1306,11 +1148,6 @@ class CounselorDashboardController extends Controller
             ->get();
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | CALL LOG HTML
-    |--------------------------------------------------------------------------
-    */
 
         $callLogsHtml = '';
 
@@ -1318,16 +1155,7 @@ class CounselorDashboardController extends Controller
 
             foreach ($callLogs as $log) {
 
-                /*
-             * Same fields as OLD PHP:
-             *
-             * created_date
-             * created_time
-             * status_counsalar
-             * cre_time_date
-             * remark
-             * counslor_name
-             */
+
 
                 $callTime = trim(
                     ($log->created_date ?? '') . ' ' .
@@ -1336,27 +1164,26 @@ class CounselorDashboardController extends Controller
 
                 $callLogsHtml .= '<tr>';
 
-                // Call Time
+
                 $callLogsHtml .= '<td>'
                     . e($callTime)
                     . '</td>';
 
-                // Status
+
                 $callLogsHtml .= '<td>'
                     . e($log->status_counsalar ?? '')
                     . '</td>';
 
-                // Followup / Enrolled / Drop date
+
                 $callLogsHtml .= '<td>'
                     . e($log->cre_time_date ?? '')
                     . '</td>';
 
-                // Remarks
                 $callLogsHtml .= '<td>'
                     . e($log->remark ?? '')
                     . '</td>';
 
-                // Counsellor Name
+
                 $callLogsHtml .= '<td>'
                     . e($log->counslor_name ?? '')
                     . '</td>';
@@ -1375,11 +1202,7 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | NOTES HTML
-    |--------------------------------------------------------------------------
-    */
+
 
         $notesHtml = '';
 
@@ -1419,11 +1242,7 @@ class CounselorDashboardController extends Controller
         }
 
 
-        /*
-    |--------------------------------------------------------------------------
-    | RESPONSE
-    |--------------------------------------------------------------------------
-    */
+
 
         return response()->json([
             'success'   => true,
@@ -1528,154 +1347,150 @@ class CounselorDashboardController extends Controller
     }
 
     public function emailTemplates()
-{
-    $templates = DB::table('email_temp')
-        ->where('temp_name', '!=', '')
-        ->orderBy('id', 'DESC')
-        ->paginate(50);
-
-
-    return view('counselor.email_templates', compact('templates'));
-}
-public function createEmailTemplate()
-{
-    return view('counselor.create_email_template');
-}
-
-
-   
-
-public function storeEmailTemplate(Request $request)
-{
-
-    $request->validate([
-        'temp_name'=>'required',
-        'templates'=>'required'
-    ]);
-
-
-    $templates = htmlentities(
-        str_replace(
-            "'",
-            "&#x2019;",
-            $request->templates
-        )
-    );
-
-
-    $date = Carbon::now();
-
-
-    if(!empty($request->snoid))
     {
-
-        DB::table('email_temp')
-        ->where('id',$request->snoid)
-        ->update([
-
-            'temp_name'=>$request->temp_name,
-
-            'templates'=>$templates,
-
-            'created_by'=>auth()->user()->name,
-
-            'created_date'=>$date,
-
-            'act_status'=>1
-
-        ]);
+        $templates = DB::table('email_temp')
+            ->where('temp_name', '!=', '')
+            ->orderBy('id', 'DESC')
+            ->paginate(50);
 
 
-        $template_id = $request->snoid;
-
-
+        return view('counselor.email_templates', compact('templates'));
     }
-    else
+    public function createEmailTemplate()
     {
-
-
-        $template_id = DB::table('email_temp')
-        ->insertGetId([
-
-            'temp_name'=>$request->temp_name,
-
-            'templates'=>$templates,
-
-            'created_by'=>auth()->user()->name,
-
-            'created_date'=>$date,
-
-            'act_status'=>1
-
-        ]);
-
+        return view('counselor.create_email_template');
     }
 
 
 
-    // File Upload
 
-    if($request->hasFile('files_data'))
+    public function storeEmailTemplate(Request $request)
     {
 
-
-        foreach($request->file('files_data') as $key=>$file)
-        {
-
-
-            $extension = $file->getClientOriginalExtension();
+        $request->validate([
+            'temp_name' => 'required',
+            'templates' => 'required'
+        ]);
 
 
-            $filename = $key.'_'.date('is').'.'.$extension;
+        $templates = htmlentities(
+            str_replace(
+                "'",
+                "&#x2019;",
+                $request->templates
+            )
+        );
 
 
-            $file->move(
-                public_path('email/temp_docs'),
-                $filename
-            );
+        $date = Carbon::now();
 
+
+        // Get logged in user from session
+        $role = session('role');
+        $username = session('username');
+        $createdBy = session('name') ?? $username ?? 'Admin';
+
+
+
+        if (!empty($request->snoid)) {
 
             DB::table('email_temp')
-            ->where('id',$template_id)
-            ->update([
-                'file_name'=>'yes'
-            ]);
+                ->where('id', $request->snoid)
+                ->update([
+
+                    'temp_name' => $request->temp_name,
+
+                    'templates' => $templates,
+
+                    'created_by' => $createdBy,
+
+                    'created_date' => $date,
+
+                    'act_status' => 1
+
+                ]);
 
 
-
-            DB::table('temp_docs')
-            ->insert([
-
-                'temp_id'=>$template_id,
-
-                'file_data'=>$filename
-
-            ]);
+            $template_id = $request->snoid;
+        } else {
 
 
+            $template_id = DB::table('email_temp')
+                ->insertGetId([
+
+                    'temp_name' => $request->temp_name,
+
+                    'templates' => $templates,
+
+                    'created_by' => $createdBy,
+
+                    'created_date' => $date,
+
+                    'act_status' => 1
+
+                ]);
         }
 
+
+
+        // File Upload
+
+        if ($request->hasFile('files_data')) {
+
+
+            $uploadedFiles = [];
+
+
+            foreach ($request->file('files_data') as $key => $file) {
+
+
+                $extension = $file->getClientOriginalExtension();
+
+
+                $filename = $key . '_' . date('His') . '.' . $extension;
+
+
+
+                $file->move(
+                    public_path('email/temp_docs'),
+                    $filename
+                );
+
+
+                $uploadedFiles[] = $filename;
+
+
+
+                DB::table('temp_docs')
+                    ->insert([
+
+                        'temp_id' => $template_id,
+
+                        'file_data' => $filename
+
+                    ]);
+            }
+
+
+
+           
+            DB::table('email_temp')
+                ->where('id', $template_id)
+                ->update([
+
+                    'file_name' => implode(',', $uploadedFiles)
+
+                ]);
+        }
+
+
+
+        return redirect()
+            ->route('counselor.email.templates')
+            ->with('success', 'Template saved successfully');
     }
 
 
-
-    return redirect()
-        ->route('counselor.email.templates')
-        ->with('success','Template saved successfully');
-
-}
-
-
-
-
-
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Australia Eligibility Details
-    |--------------------------------------------------------------------------
-    */
     public function ausEligibleDetails(Request $request)
     {
         $clientId = $request->get('id');
