@@ -767,21 +767,12 @@ class BranchManagerController extends Controller
 
   public function receptionDashboardReports(Request $request)
     {
-        /*
-        |--------------------------------------------------------------------------
-        | Session
-        |--------------------------------------------------------------------------
-        */
+
 
         $sessRole     = session('role');
         $sessUsername = session('username');
         $sessUserid   = session('sessionid');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Allowed Roles
-        |--------------------------------------------------------------------------
-        */
 
         $allowedRoles = [
             'operation',
@@ -792,11 +783,7 @@ class BranchManagerController extends Controller
             'branch'
         ];
 
-        /*
-        |--------------------------------------------------------------------------
-        | Role Check
-        |--------------------------------------------------------------------------
-        */
+
 
         if (
             !in_array($sessRole, $allowedRoles, true) &&
@@ -807,20 +794,12 @@ class BranchManagerController extends Controller
                 ->with('error', 'You are not authorized to access this report.');
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Date Filter
-        |--------------------------------------------------------------------------
-        */
+
 
         $getFltDate   = $request->get('GetFltDate');
         $getFltToDate = $request->get('GetFltToDate');
 
-        /*
-        |--------------------------------------------------------------------------
-        | If dates are provided
-        |--------------------------------------------------------------------------
-        */
+
 
         if (!empty($getFltDate) && !empty($getFltToDate)) {
 
@@ -836,11 +815,7 @@ class BranchManagerController extends Controller
 
         } else {
 
-            /*
-            |--------------------------------------------------------------------------
-            | Default = Today
-            |--------------------------------------------------------------------------
-            */
+
 
             $fromDate = date('Y-m-d');
             $toDate   = date('Y-m-d');
@@ -849,11 +824,7 @@ class BranchManagerController extends Controller
             $getFltToDate = $toDate;
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Main Report Query
-        |--------------------------------------------------------------------------
-        */
+
 
         $query = DB::table('lead_appointed')
             ->selectRaw("
@@ -912,15 +883,7 @@ class BranchManagerController extends Controller
             ->whereDate('created_date', '>=', $fromDate)
             ->whereDate('created_date', '<=', $toDate);
 
-        /*
-        |--------------------------------------------------------------------------
-        | Counselor Restriction
-        |--------------------------------------------------------------------------
-        |
-        | Counselor can only see their assigned leads.
-        | sahil_arora is excluded as in your original logic.
-        |
-        */
+
 
         if (
             $sessRole === 'counselor' &&
@@ -932,19 +895,11 @@ class BranchManagerController extends Controller
             );
         }
 
-        /*
-        |--------------------------------------------------------------------------
-        | Get Report
-        |--------------------------------------------------------------------------
-        */
+
 
         $report = $query->first();
 
-        /*
-        |--------------------------------------------------------------------------
-        | Return View
-        |--------------------------------------------------------------------------
-        */
+
 
         return view(
             'branch.reception_dashboard_reports',
@@ -962,22 +917,14 @@ class BranchManagerController extends Controller
   
    public function receptionDashboardReportExport(Request $request)
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Session
-    |--------------------------------------------------------------------------
-    */
+
 
     $sessRole     = session('role');
     $sessUsername = session('username');
     $sessUserid   = session('sessionid');
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Allowed Roles
-    |--------------------------------------------------------------------------
-    */
+
 
     $allowedRoles = [
         'operation',
@@ -989,11 +936,6 @@ class BranchManagerController extends Controller
     ];
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Authorization
-    |--------------------------------------------------------------------------
-    */
 
     if (
         !in_array($sessRole, $allowedRoles, true) &&
@@ -1008,26 +950,11 @@ class BranchManagerController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | User ID
-    |--------------------------------------------------------------------------
-    */
+
 
     $assignId = $request->get('userid', $sessUserid);
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Date Filter
-    |--------------------------------------------------------------------------
-    |
-    | Dashboard sends:
-    |
-    | GetFltDate
-    | GetFltToDate
-    |
-    */
 
     $getFltDate   = $request->get('GetFltDate');
     $getFltToDate = $request->get('GetFltToDate');
@@ -1058,14 +985,6 @@ class BranchManagerController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Main Query
-    |--------------------------------------------------------------------------
-    |
-    | Same fields as old PHP file.
-    |
-    */
 
     $query = DB::table('lead_appointed')
         ->select([
@@ -1101,14 +1020,6 @@ class BranchManagerController extends Controller
         );
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Counselor Restriction
-    |--------------------------------------------------------------------------
-    |
-    | Same as old dashboard PHP.
-    |
-    */
 
     if (
         $sessRole === 'counselor' &&
@@ -1122,18 +1033,8 @@ class BranchManagerController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Report Type
-    |--------------------------------------------------------------------------
-    */
 
 
-    /*
-    | Lead
-    | Old PHP:
-    | walkin_status = 3
-    */
 
     if ($request->has('leads')) {
 
@@ -1145,11 +1046,6 @@ class BranchManagerController extends Controller
         $reportName = 'lead';
 
 
-    /*
-    | Enrolled Walkin
-    | Old PHP:
-    | walkin_status = 2
-    */
 
     } elseif ($request->has('enrolled_walking')) {
 
@@ -1178,11 +1074,7 @@ class BranchManagerController extends Controller
         $reportName = 'assigned_leads';
 
 
-    /*
-    | Not Assign Lead
-    | Old PHP:
-    | assign_id = ''
-    */
+
 
     } elseif ($request->has('assign_lead_not')) {
 
@@ -1194,11 +1086,7 @@ class BranchManagerController extends Controller
         $reportName = 'not_assigned_leads';
 
 
-    /*
-    | Walkin
-    | Old PHP:
-    | walkin_status = 0
-    */
+
 
     } elseif ($request->has('walkin_status')) {
 
@@ -1216,11 +1104,7 @@ class BranchManagerController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Get Records
-    |--------------------------------------------------------------------------
-    */
+
 
     $records = $query
         ->orderBy(
@@ -1230,11 +1114,7 @@ class BranchManagerController extends Controller
         ->get();
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | No Records
-    |--------------------------------------------------------------------------
-    */
+
 
     if ($records->isEmpty()) {
 
@@ -1253,16 +1133,6 @@ class BranchManagerController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | CSV Filename
-    |--------------------------------------------------------------------------
-    |
-    | Same style as old PHP:
-    |
-    | lead_appointed_report_1.csv
-    |
-    */
 
     $filename =
         'lead_appointed_report_' .
@@ -1276,11 +1146,6 @@ class BranchManagerController extends Controller
         '.csv';
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | CSV Headers
-    |--------------------------------------------------------------------------
-    */
 
     $headers = [
 
@@ -1303,14 +1168,7 @@ class BranchManagerController extends Controller
     ];
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | CSV Column Names
-    |--------------------------------------------------------------------------
-    |
-    | EXACTLY same order as old PHP.
-    |
-    */
+
 
     $columns = [
 
@@ -1334,11 +1192,7 @@ class BranchManagerController extends Controller
     ];
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Generate CSV
-    |--------------------------------------------------------------------------
-    */
+
 
     return response()->stream(
 
@@ -1353,11 +1207,7 @@ class BranchManagerController extends Controller
             );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | UTF-8 BOM
-            |--------------------------------------------------------------------------
-            */
+
 
             fwrite(
                 $output,
@@ -1365,11 +1215,7 @@ class BranchManagerController extends Controller
             );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | CSV Header
-            |--------------------------------------------------------------------------
-            */
+
 
             fputcsv(
                 $output,
@@ -1377,11 +1223,6 @@ class BranchManagerController extends Controller
             );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | CSV Rows
-            |--------------------------------------------------------------------------
-            */
 
             foreach ($records as $row) {
 
@@ -1427,11 +1268,6 @@ class BranchManagerController extends Controller
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Close Output
-            |--------------------------------------------------------------------------
-            */
 
             fclose($output);
 
@@ -1529,11 +1365,7 @@ class BranchManagerController extends Controller
 
         try {
 
-            /*
-        |--------------------------------------------------------------------------
-        | Logged In User
-        |--------------------------------------------------------------------------
-        */
+
             $user = DB::table('crm_login')
                 ->where('id', session('login'))
                 ->first();
@@ -1548,21 +1380,13 @@ class BranchManagerController extends Controller
             $user_id   = $user->id;
             $user_role = $user->role;
 
-            /*
-        |--------------------------------------------------------------------------
-        | Request Data
-        |--------------------------------------------------------------------------
-        */
+
             $mobile      = str_replace(' ', '', $request->mobile);
             $counselorId = $request->assign;
             $appntId     = $request->appntid;
             $category    = $request->category;
 
-            /*
-        |--------------------------------------------------------------------------
-        | Get Counselor
-        |--------------------------------------------------------------------------
-        */
+
             $counselor = DB::table('crm_login')
                 ->where('id', $counselorId)
                 ->whereIn('role', ['counselor', 'branch_manager'])
@@ -1577,11 +1401,7 @@ class BranchManagerController extends Controller
 
             $counselorName = $counselor->name;
 
-            /*
-        |--------------------------------------------------------------------------
-        | Get Seminar Data
-        |--------------------------------------------------------------------------
-        */
+
             $seminar = DB::table('seminarpre')
                 ->where('smobile', $mobile)
                 ->first();
@@ -1596,19 +1416,10 @@ class BranchManagerController extends Controller
             $seminarId = $seminar->sno;
             $leadSno   = $seminar->lead_sno;
 
-            /*
-        |--------------------------------------------------------------------------
-        | Date / Time
-        |--------------------------------------------------------------------------
-        */
+
             $date = now()->format('Y-m-d');
             $time = now()->format('H:i:s');
 
-            /*
-        |--------------------------------------------------------------------------
-        | Update seminarpre
-        |--------------------------------------------------------------------------
-        */
             DB::table('seminarpre')
                 ->where('smobile', $mobile)
                 ->update([
@@ -1618,11 +1429,6 @@ class BranchManagerController extends Controller
                     'assign_date' => $date,
                 ]);
 
-            /*
-        |--------------------------------------------------------------------------
-        | Update lead_appointed
-        |--------------------------------------------------------------------------
-        */
             DB::table('lead_appointed')
                 ->where('id', $appntId)
                 ->update([
@@ -1632,11 +1438,7 @@ class BranchManagerController extends Controller
                     'assign_date' => $date,
                 ]);
 
-            /*
-        |--------------------------------------------------------------------------
-        | Insert assign_status
-        |--------------------------------------------------------------------------
-        */
+
             DB::table('assign_status')->insert([
                 'seminar_id'       => $seminarId,
                 'lead_sno'         => $leadSno,
@@ -1648,11 +1450,7 @@ class BranchManagerController extends Controller
                 'created_time'     => $time,
             ]);
 
-            /*
-        |--------------------------------------------------------------------------
-        | Notification Type
-        |--------------------------------------------------------------------------
-        */
+
             if ($user_role == 'branch_manager') {
                 $assinType = 'brancmanager_assign';
             } elseif ($user_role == 'counselor') {
@@ -1665,11 +1463,7 @@ class BranchManagerController extends Controller
                 $assinType = '';
             }
 
-            /*
-        |--------------------------------------------------------------------------
-        | Insert Notification
-        |--------------------------------------------------------------------------
-        */
+
             DB::table('noifications')->insert([
                 'phone_no'   => $mobile,
                 'noti_type'  => $assinType,
@@ -1679,11 +1473,7 @@ class BranchManagerController extends Controller
                 'created_date' => $date,
             ]);
 
-            /*
-        |--------------------------------------------------------------------------
-        | Counselor Status Log
-        |--------------------------------------------------------------------------
-        */
+
             DB::table('counslor_status')->insert([
                 'seminar_id'      => $seminarId,
                 'counslor_id'     => $counselorId,

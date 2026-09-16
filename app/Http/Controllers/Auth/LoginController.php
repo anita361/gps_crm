@@ -99,7 +99,7 @@ class LoginController extends Controller
                 return redirect()->route('finance.dashboard');
 
             case 'commission':
-                return redirect()->route('commission.dashboard');
+                return redirect()->route('operation.commission-enrollment-list');
 
             default:
                 Session::flush();

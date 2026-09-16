@@ -144,9 +144,25 @@ Route::middleware('login')->group(function () {
 
     Route::get('/finance/export', [FinanceAppointmentController::class, 'export'])->name('finance.export');
 
+    Route::get('/finance-appointment-pending', [FinanceAppointmentController::class, 'financeAppointmentPending'])->name('finance.appointment.pending');
+
+    Route::get('/finance/colleges', [FinanceAppointmentController::class, 'colleges'])->name('finance.colleges');
+    Route::get('/finance/campuses', [FinanceAppointmentController::class, 'campuses'])->name('finance.campuses');
+    Route::get('/finance/programs', [FinanceAppointmentController::class, 'programs'])->name('finance.programs');
+    Route::get('/finance/sub-status', [FinanceAppointmentController::class, 'subStatus'])->name('finance.sub.status');
+    // Route::get('/finance/osap-status', [FinanceAppointmentController::class, 'getOsapStatus'])->name('finance.osap.status');
+    // Route::post('/finance/osap-status', [FinanceAppointmentController::class, 'saveOsapStatus'])->name('finance.osap.status');
+
+
+
+
     Route::get('/finance-dashboard-report', [FinanceDashboardController::class, 'index'])->name('finance.dashboard.report');
 
     Route::get('/finance-dashboard-report/export', [FinanceExportController::class, 'export'])->name('finance.dashboard.report.export');
+
+
+
+
 
     Route::view('/commission-enrolled-list', 'commission.list')->name('commission.dashboard');
 
@@ -323,6 +339,11 @@ Route::middleware('login')->group(function () {
     Route::get('/get-program', [WalkinController::class, 'getProgram'])->name('get.program');
     Route::get('/fund-release-status', [WalkinController::class, 'fundReleaseStatus'])
         ->name('fund.release.status');
+
+        Route::post(
+    '/operation/student-id/update',
+    [WalkinController::class, 'updateStudentId']
+)->name('operation.student-id.update');
     Route::post('/get-colleges', [WalkinController::class, 'getColleges'])->name('get.colleges');
 
     Route::get('/fund-release-export', [WalkinController::class, 'fundReleaseExport'])
@@ -345,20 +366,31 @@ Route::middleware('login')->group(function () {
         ->name('download.commission.excel');
 
 
-    Route::get('/enrolled-list', [WalkinController::class, 'enrolledList'])
-        ->name('enrolled.list');
+    Route::get('/enrolled-list', [WalkinController::class, 'enrolledList'])->name('enrolled.list');
+    Route::get('/drop-list', [WalkinController::class, 'dropList'])->name('drop.list');
+
+    //      Route::get('/finance-appointment-pending', [WalkinController::class, 'financeAppointmentPending'])->name('finance.appointment.pending');
 
 
-    Route::get('/drop-list', [WalkinController::class, 'dropList'])
-        ->name('drop.list');
-    // Route::post('/drop/colleges', [WalkinController::class, 'dropColleges'])
-    //     ->name('drop.colleges');
 
-    // Route::post('/drop/campuses', [WalkinController::class, 'dropCampuses'])
-    //     ->name('drop.campuses');
+    //      Route::get('/finance/colleges',
+    //     [WalkinController::class, 'financeColleges']
+    // )->name('finance.colleges');
 
-    // Route::post('/drop/programs', [WalkinController::class, 'dropPrograms'])
-    //     ->name('drop.programs');
+
+    // Route::get('/finance/campuses',
+    //     [WalkinController::class, 'financeCampuses']
+    // )->name('finance.campuses');
+
+
+    // Route::get('/finance/programs',
+    //     [WalkinController::class, 'financePrograms']
+    // )->name('finance.programs');
+
+
+    // Route::post('/finance/osap-status',
+    //     [WalkinController::class, 'financeOsapStatus']
+    // )->name('finance.osap.status');
 
     Route::post('/drop/update-status', [WalkinController::class, 'updateDropStatus'])
         ->name('drop.update-status');

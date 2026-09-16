@@ -1640,16 +1640,11 @@
 
 
                     <li class="nav-item">
-
-                        <a
-                            class="nav-link"
-                            href="{{ route('appointment.pending') }}">
-
+                        <a class="nav-link" href="{{ route('finance.appointment.pending') }}">
                             <i class="fa fa-user"></i>
-
-                            Appointment Pending
-
+                            Finance Appointment Pending
                         </a>
+                    </li>
 
                     </li>
 
