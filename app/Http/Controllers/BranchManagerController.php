@@ -1352,6 +1352,160 @@ class BranchManagerController extends Controller
         ]);
     }
 
+public function adminwalknReport(Request $request)
+{
+    /*
+    |--------------------------------------------------------------------------
+    | Branch Summary
+    |--------------------------------------------------------------------------
+    */
+
+    $branchReports = [];
+
+    $walkin_total = 0;
+    $followup_total = 0;
+    $enrolled_total = 0;
+    $droped_total = 0;
+
+    // FIX:
+    // Old PHP:
+    // SELECT * FROM crm_login WHERE role='counselor' GROUP BY branch
+    //
+    // Laravel/MySQL ONLY_FULL_GROUP_BY does not allow SELECT * with GROUP BY branch.
+    // We only need the branch, so select only branch.
+
+    $counsellors = DB::table('crm_login')
+        ->select('branch')
+        ->where('role', 'counselor')
+        ->whereNotNull('branch')
+        ->groupBy('branch')
+        ->get();
+
+
+    foreach ($counsellors as $counsellor) {
+
+        $branch = $counsellor->branch;
+
+
+        // Walk-in
+        $walkin = DB::table('seminarpre')
+            ->where('branch', $branch)
+            ->count();
+
+
+        // Follow-up
+        $followup = DB::table('seminarpre')
+            ->where('branch', $branch)
+            ->where('student_status', 'follow-up')
+            ->count();
+
+
+        // Enrolled
+        $enrolled = DB::table('seminarpre')
+            ->where('branch', $branch)
+            ->where('student_status', 'enrolled')
+            ->count();
+
+
+        // Drop
+        $droped = DB::table('seminarpre')
+            ->where('branch', $branch)
+            ->where('student_status', 'drop')
+            ->count();
+
+
+        // Totals
+        $walkin_total += $walkin;
+        $followup_total += $followup;
+        $enrolled_total += $enrolled;
+        $droped_total += $droped;
+
+
+        // Percentage
+        if ($enrolled >= 1 && $walkin >= 1) {
+
+            $percentage = ($enrolled * 100) / $walkin;
+
+        } else {
+
+            $percentage = 0;
+
+        }
+
+
+        $branchReports[] = [
+            'branch'     => $branch,
+            'walkin'     => $walkin,
+            'followup'   => $followup,
+            'enrolled'   => $enrolled,
+            'droped'     => $droped,
+            'percentage' => round($percentage, 2),
+        ];
+    }
+
+
+    // Total percentage
+    if ($enrolled_total >= 1 && $walkin_total >= 1) {
+
+        $percentage_total = ($enrolled_total * 100) / $walkin_total;
+
+    } else {
+
+        $percentage_total = 0;
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Details
+    |--------------------------------------------------------------------------
+    */
+
+    $userReports = DB::table('seminarpre')
+        ->join(
+            'lead_appointed',
+            'seminarpre.smobile',
+            '=',
+            'lead_appointed.callerno'
+        )
+        ->select(
+            'seminarpre.sno',
+            'seminarpre.sname',
+            'seminarpre.smobile',
+            'seminarpre.branch',
+            'seminarpre.svisa',
+            'seminarpre.scode',
+            'seminarpre.student_status',
+            'seminarpre.file_no',
+            'seminarpre.scountry',
+            'seminarpre.assign_name',
+            'lead_appointed.id',
+            'lead_appointed.walkedin_date'
+        )
+        ->where('seminarpre.assign_id', '!=', '')
+        ->get();
+
+
+    return view('admin.admin_walkn_report', compact(
+        'branchReports',
+        'walkin_total',
+        'followup_total',
+        'enrolled_total',
+        'droped_total',
+        'percentage_total',
+        'userReports'
+    ));
+}
+
+
+
+
+
+
+
+
+
     public function assignCounselor(Request $request)
     {
         $request->validate([

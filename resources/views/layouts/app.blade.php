@@ -1393,7 +1393,7 @@
 
                                 <a
                                     class="dropdown-item"
-                                    href="{{ route('reports.branch') }}">
+                                    href="{{ route('admin.walkn.report') }}">
 
                                     Branch Report
 
@@ -1549,7 +1549,7 @@
                             </li>
 
 
-                            <li>
+                            <!-- <li>
 
                                 <a
                                     class="dropdown-item"
@@ -1559,7 +1559,7 @@
 
                                 </a>
 
-                            </li>
+                            </li> -->
 
                         </ul>
 
@@ -1816,7 +1816,7 @@
      AJAX CSRF + DEFAULT DATATABLE
 ========================================================== --}}
 
-    <script>
+    <!-- <script>
         $.ajaxSetup({
 
             headers: {
@@ -1845,7 +1845,15 @@
             });
 
         }
-    </script>
+    </script> -->
+
+    <script>
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        }
+    });
+</script>
 
 
     {{-- =========================================================

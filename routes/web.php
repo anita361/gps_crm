@@ -85,6 +85,11 @@ Route::middleware('login')->group(function () {
 
     Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
         ->name('admin.branch.report');
+
+Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknReport'])
+    ->name('admin.walkn.report');
+
+
     Route::post('/fetch-city', [BranchManagerController::class, 'fetchCity']);
     Route::post('/fetch-all-city', [BranchManagerController::class, 'fetchAllCity']);
 
@@ -146,12 +151,16 @@ Route::middleware('login')->group(function () {
 
     Route::get('/finance-appointment-pending', [FinanceAppointmentController::class, 'financeAppointmentPending'])->name('finance.appointment.pending');
 
-    Route::get('/finance/colleges', [FinanceAppointmentController::class, 'colleges'])->name('finance.colleges');
+    Route::get('/finance/colleges', [FinanceAppointmentController::class, 'getColleges'])->name('finance.colleges');
     Route::get('/finance/campuses', [FinanceAppointmentController::class, 'campuses'])->name('finance.campuses');
     Route::get('/finance/programs', [FinanceAppointmentController::class, 'programs'])->name('finance.programs');
-    Route::get('/finance/sub-status', [FinanceAppointmentController::class, 'subStatus'])->name('finance.sub.status');
+    Route::get('/finance/sub-status', [FinanceAppointmentController::class, 'getSubStatus'])->name('finance.sub.status');
     // Route::get('/finance/osap-status', [FinanceAppointmentController::class, 'getOsapStatus'])->name('finance.osap.status');
     // Route::post('/finance/osap-status', [FinanceAppointmentController::class, 'saveOsapStatus'])->name('finance.osap.status');
+    Route::get(
+    '/finance/sub-statuses',
+    [FinanceAppointmentController::class, 'financeSubStatuses']
+)->name('finance.sub-statuses');
 
 
 

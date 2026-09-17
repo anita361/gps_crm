@@ -157,57 +157,36 @@
                 {{-- STATUS --}}
                 <div class="col-md-3">
 
-                    <div class="form-group">
+                   <label for="osap_status_flt" class="form-label">
+                        Status
+                    </label>
 
-                        <label>Status</label>
+                    <select name="osap_status_flt"
+                        id="osap_status_flt"
+                        class="form-select">
+                        <option value="">-- Select Status --</option>
 
-                        <select name="osap_status_flt"
-                            id="osap_status_flt"
-                            class="form-control">
-
-                            <option value="">
-                                -- Select Status --
-                            </option>
-
-                            @foreach($statuses as $status)
-
-                            <option value="{{ $status->status }}"
-                                {{ ($osap_status_flt ?? '') == $status->status ? 'selected' : '' }}>
-
-                                {{ $status->status }}
-
-                            </option>
-
-                            @endforeach
-
-                        </select>
-
-                    </div>
-
+                        @foreach($statuses as $status)
+                        <option value="{{ $status->status }}"
+                            {{ ($osap_status_flt ?? '') == $status->status ? 'selected' : '' }}>
+                            {{ $status->status }}
+                        </option>
+                        @endforeach
+                    </select>
                 </div>
 
 
                 {{-- SUB STATUS --}}
                 <div class="col-md-3">
+                    <label for="sub_status_flt" class="form-label">
+                        Sub Status
+                    </label>
 
-                    <div class="form-group">
-
-                        <label>Sub Status</label>
-
-                        <select name="sub_status_flt"
-                            id="sub_status_flt"
-                            class="form-control">
-
-                            <option value="">
-                                -- Select Sub Status --
-                            </option>
-
-                            {{-- Loaded through AJAX --}}
-
-                        </select>
-
-                    </div>
-
+                    <select name="sub_status_flt"
+                        id="sub_status_flt"
+                        class="form-select">
+                        <option value="">-- Select Sub Status --</option>
+                    </select>
                 </div>
 
 
@@ -509,11 +488,7 @@
 
                         $province = $row->province_name ?? '';
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | EMAIL STATUS
-                        |--------------------------------------------------------------------------
-                        */
+
 
                         if ($province === 'Ontario') {
 
@@ -559,11 +534,7 @@
                         }
 
 
-                        /*
-                        |--------------------------------------------------------------------------
-                        | SIGNATURE
-                        |--------------------------------------------------------------------------
-                        */
+
 
                         $signatureDone =
                         !empty($row->osap_signature);
@@ -713,64 +684,19 @@
 
 
                             {{-- SIGNATURE --}}
-                            <!-- <td>
-
-                                @if($signatureDone)
-
-                                <span class="signature-done">
-                                    Done
-                                </span>
-
-                                @else
-
-                                <span class="signature-pending">
-                                    Pending
-                                </span>
-
-                                @endif
-
-
-                                @if(
-                                !empty($row->osap_signature_submit) &&
-                                $province === 'Ontario'
-                                )
-
-                                <br>
-
-                                <a href="{{ url('docsign/osap_Consent_form_gps.php') }}?uid={{ $row->sno }}"
-                                    class="btn btn-primary btn-xs mt-1"
-                                    target="_blank">
-
-                                    {{ $signatureDone ? 'Done' : 'Pending' }}
-
-                                    <i class="fa fa-download"></i>
-
-                                </a>
-
-                                @endif
-
-                            </td>
- -->
-
                             <td>
-
                                 {{ $row->osap_signature_submit ? 'Done' : 'Pending' }}
 
                                 @if($row->osap_signature_submit && $province === 'Ontario')
-
                                 <br>
 
-                                <a href="{{ url('docsign/osap_Consent_form_gps.php') }}?uid={{ $row->sno }}"
+                                <a href="{{ route('osap.consent.form', ['uid' => $row->sno]) }}"
                                     class="btn btn-primary btn-sm mt-1"
                                     target="_blank">
-
                                     Download
                                     <i class="fa fa-download"></i>
-
                                 </a>
-
                                 @endif
-
                             </td>
 
 
@@ -791,34 +717,22 @@
 
 
                             {{-- ACTION --}}
-                            <td>
+                            <td style="text-align: center;">
 
-                                @if($signatureDone)
+                                @if(!empty($row->osap_signature_submit))
 
                                 <button type="button"
-                                    class="btn btn-primary btn-xs statuslogsdata"
+                                    class="btn btn-primary btn-sm actionStatusLogs"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#actionStatusModal"
                                     data-id="{{ $row->sno }}"
                                     data-name="{{ $row->sname ?? '' }}"
-                                    data-toggle="modal"
-                                    data-target="#statusLogsModal">
-
+                                    data-status="{{ $row->osap_status ?? '' }}"
+                                    data-sub-status="{{ $row->osap_sub_status ?? '' }}"
+                                    data-college="{{ $row->osap_collage_name ?? '' }}"
+                                    data-followup="{{ $row->osap_followup_date ?? '' }}"
+                                    data-remarks="{{ $row->osap_sts_remarks ?? '' }}">
                                     Osap Status
-
-                                </button>
-
-                                @endif
-
-
-                                @if($showEmailButton)
-
-                                <button type="button"
-                                    class="btn btn-info btn-xs send-email-btn mt-1"
-                                    data-id="{{ $row->sno }}"
-                                    data-name="{{ $row->sname ?? '' }}"
-                                    data-email="{{ $row->semail ?? '' }}">
-
-                                    {{ $emailButtonText }}
-
                                 </button>
 
                                 @endif
@@ -856,154 +770,172 @@
 
 
 {{-- ========================================================= --}}
-{{-- STATUS / LOGS MODAL --}}
+{{-- OSAP STATUS / LOGS MODAL --}}
 {{-- ========================================================= --}}
 
 <div class="modal fade"
-    id="statusLogsModal"
+    id="actionStatusModal"
     tabindex="-1"
-    role="dialog">
+    aria-labelledby="actionStatusModalLabel"
+    aria-hidden="true">
 
-    <div class="modal-dialog modal-lg"
-        role="document">
-
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
+            {{-- HEADER --}}
             <div class="modal-header">
-
-                <h5 class="modal-title">
-
+                <h5 class="modal-title" id="actionStatusModalLabel">
                     Status Update & Logs
-
                     <b>
-                        <span id="Snam"></span>
+                        <span id="actionStatusStudentName"></span>
                     </b>
-
                 </h5>
 
                 <button type="button"
-                    class="close"
-                    data-dismiss="modal">
-
-                    &times;
-
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
                 </button>
-
             </div>
 
 
+            {{-- BODY --}}
             <div class="modal-body">
 
-                <form id="statusForm">
+                <form id="actionStatusForm">
 
                     @csrf
 
                     <input type="hidden"
-                        id="logId"
+                        id="actionLogId"
                         name="log_id">
 
 
                     {{-- STATUS --}}
-                    <div class="form-group">
-
-                        <label>
-                            Status
+                    <div class="form-group mb-2">
+                        <label for="action_status">
+                            Status:
                         </label>
 
-                        <select id="osap_status"
+                        <select id="action_status"
                             name="osap_status"
                             class="form-control"
                             required>
 
                             <option value="">
-                                Select Status
+                                -- Select Status --
                             </option>
 
-                            @foreach($statuses as $status)
-
+                            @foreach ($statuses as $status)
                             <option value="{{ $status->status }}">
                                 {{ $status->status }}
                             </option>
-
                             @endforeach
 
                         </select>
-
                     </div>
 
 
                     {{-- SUB STATUS --}}
-                    <div class="form-group">
-
-                        <label>
-                            Sub Status
+                    <div class="form-group mb-2">
+                        <label for="action_sub_status">
+                            Sub Status:
                         </label>
 
-                        <select id="osap_sub_status"
-                            name="osap_sub_status"
-                            class="form-control">
+                        <select id="action_sub_status"
+                            name="sub_status"
+                            class="form-control"
+                            required>
 
                             <option value="">
-                                Select Sub Status
+                                -- Select Sub Status --
                             </option>
+                            @foreach ($subStatuses as $subStatus)
+                            <option value="{{ $subStatus->osap_sub_status }}">
+                                {{ $subStatus->osap_sub_status }}
+                            </option>
+                            @endforeach
 
                         </select>
-
                     </div>
 
 
-                    {{-- FOLLOWUP --}}
-                    <div class="form-group">
+                    {{-- COLLEGE --}}
+                    <div class="form-group mb-2">
+                        <label for="action_college">
+                            College:
+                        </label>
 
-                        <label>
-                            Followup Date
+                        <select id="action_college"
+                            name="osap_collage_name"
+                            class="form-control">
+
+                            <option value="">
+                                -- Select College --
+                            </option>
+
+                            @foreach ($colleges as $college)
+                            <option value="{{ $college->clg_name }}">
+                                {{ $college->clg_name }}
+                            </option>
+                            @endforeach
+
+                        </select>
+                    </div>
+
+
+                    {{-- DATE & TIME --}}
+                    <div class="form-group mb-2">
+                        <label for="action_datetime">
+                            Date & Time:
                         </label>
 
                         <input type="datetime-local"
-                            id="osap_followup_date"
+                            id="action_datetime"
                             name="osap_followup_date"
-                            class="form-control">
-
+                            class="form-control"
+                            required>
                     </div>
 
 
                     {{-- REMARKS --}}
-                    <div class="form-group">
-
-                        <label>
-                            Remarks
+                    <div class="form-group mb-2">
+                        <label for="action_remarks">
+                            Remarks:
                         </label>
 
-                        <textarea id="osap_sts_remarks"
+                        <textarea id="action_remarks"
                             name="osap_sts_remarks"
                             rows="3"
-                            class="form-control"></textarea>
-
+                            class="form-control"
+                            required></textarea>
                     </div>
 
 
+                    {{-- SUBMIT --}}
                     <button type="button"
-                        id="submitStatus"
-                        class="btn btn-primary">
-
+                        id="submitActionStatus"
+                        class="btn btn-primary btn-sm">
                         Submit
-
                     </button>
 
                 </form>
 
 
-                <hr>
+                {{-- LOGS --}}
+                <div id="actionLogsSection" class="mt-3">
 
+                    <h5 class="finance-logs-title">
+                        Status Logs
+                    </h5>
 
-                <h5>
-                    Status Logs
-                </h5>
+                    <div id="actionStatusLogs"
+                        class="table-responsive">
 
-                <div id="StatusLogs">
+                        <div class="text-center p-3">
+                            No logs found.
+                        </div>
 
-                    <div class="text-center">
-                        Loading...
                     </div>
 
                 </div>
@@ -1011,11 +943,8 @@
             </div>
 
         </div>
-
     </div>
-
 </div>
-
 
 <script>
     $(document).ready(function() {
@@ -1250,7 +1179,259 @@
         }
 
     });
+
+    $(document).on('click', '.actionStatusLogs', function() {
+        let id = $(this).data('id');
+        let name = $(this).data('name');
+        let status = $(this).data('status');
+        let subStatus = $(this).data('sub-status');
+        let college = $(this).data('college');
+        let followup = $(this).data('followup');
+        let remarks = $(this).data('remarks');
+        $('#actionLogId').val(id);
+        $('#actionStatusStudentName').text(name);
+        $('#action_status').val(status);
+        $('#action_sub_status').val(subStatus);
+        $('#action_college').val(college);
+        $('#action_remarks').val(remarks); /* * Convert existing date to datetime-local */
+        if (followup) {
+            let date = new Date(followup);
+            if (!isNaN(date.getTime())) {
+                let year = date.getFullYear();
+                let month = String(date.getMonth() + 1).padStart(2, '0');
+                let day = String(date.getDate()).padStart(2, '0');
+                let hours = String(date.getHours()).padStart(2, '0');
+                let minutes = String(date.getMinutes()).padStart(2, '0');
+                $('#action_datetime').val(year + '-' + month + '-' + day + 'T' + hours + ':' + minutes);
+            } else {
+                $('#action_datetime').val('');
+            }
+        } else {
+            $('#action_datetime').val('');
+        } /* * Load status logs */
+        loadActionStatusLogs(id);
+    }); /* * ========================================== * LOAD ACTION STATUS LOGS * ========================================== */
+    function loadActionStatusLogs(id) {
+        $('#actionStatusLogs').html(` <div class="text-center p-3"> Loading logs... </div> `);
+        $.ajax({
+            url: "{{ route('appointment.complete.finance-status-logs') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                id: id
+            },
+            success: function(response) {
+                if (!response.success || !response.logs || response.logs.length === 0) {
+                    $('#actionStatusLogs').html(` <div class="text-center p-3"> No logs found. </div> `);
+                    return;
+                }
+                let html = ` <table class="table table-bordered table-sm mb-0"> <thead> <tr> <th>Status</th> <th>Sub Status</th> <th>College</th> <th>Followup Date</th> <th>Remarks</th> <th>Added By</th> <th>Created Date</th> </tr> </thead> <tbody> `;
+                $.each(response.logs, function(index, log) {
+                    html += ` <tr> <td> ${log.osap_status ?? '-'} </td> <td> ${log.sub_status ?? '-'} </td> <td> ${log.osap_college ?? '-'} </td> <td> ${log.osap_followup_date ?? '-'} </td> <td> ${log.osap_sts_remarks ?? '-'} </td> <td> ${log.added_by ?? '-'} </td> <td> ${log.created_datetime ?? '-'} </td> </tr> `;
+                });
+                html += ` </tbody> </table> `;
+                $('#actionStatusLogs').html(html);
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                $('#actionStatusLogs').html(` <div class="text-center text-danger p-3"> Failed to load logs. </div> `);
+            }
+        });
+    } /* * ========================================== * ACTION STATUS UPDATE * ========================================== */
+    $(document).on('click', '#submitActionStatus', function() {
+        let button = $(this);
+        let logId = $('#actionLogId').val();
+        let status = $('#action_status').val();
+        let subStatus = $('#action_sub_status').val();
+        let college = $('#action_college').val();
+        let followupDate = $('#action_datetime').val();
+        let remarks = $('#action_remarks').val(); /* * Validation */
+        if (!logId) {
+            alert('Invalid student ID.');
+            return;
+        }
+        if (!status) {
+            alert('Please select Status.');
+            return;
+        }
+        if (!subStatus) {
+            alert('Please select Sub Status.');
+            return;
+        }
+        if (!followupDate) {
+            alert('Please select Date & Time.');
+            return;
+        }
+        if (!remarks) {
+            alert('Please enter Remarks.');
+            return;
+        }
+        button.prop('disabled', true).text('Saving...');
+        $.ajax({
+            url: "{{ route('appointment.complete.finance-status-update') }}",
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}",
+                log_id: logId,
+                osap_status: status,
+                sub_status: subStatus,
+                osap_collage_name: college,
+                osap_followup_date: followupDate,
+                osap_sts_remarks: remarks
+            },
+            success: function(response) {
+                if (response.success) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Updated!',
+                            text: response.message,
+                            timer: 1200,
+                            showConfirmButton: false
+                        });
+                    } else {
+                        alert(response.message);
+                    } /* * Reload logs */
+                    loadActionStatusLogs(logId); /* * Update ACTION button text */
+                    $('.actionStatusLogs[data-id="' + logId + '"]').text(status); /* * Also update Finance Status button * if it exists on the same row */
+                    $('.statuslogsdata[data-id="' + logId + '"]').text(status);
+                } else {
+                    alert(response.message || 'Failed to update status.');
+                }
+            },
+            error: function(xhr) {
+                console.error(xhr.responseText);
+                let message = 'Failed to update status.';
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    message = xhr.responseJSON.message;
+                }
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: message
+                    });
+                } else {
+                    alert(message);
+                }
+            },
+            complete: function() {
+                button.prop('disabled', false).text('Submit');
+            }
+        });
+    });
 </script>
+<script>
+    $(document).ready(function() {
+
+        const selectedStatus = @json($osap_status_flt ?? '');
+        const selectedSubStatus = @json($sub_status_flt ?? '');
+
+        function loadSubStatuses(status, selectedSubStatus = '') {
+
+            const $subStatus = $('#sub_status_flt');
+
+            $subStatus.html(
+                '<option value="">-- Select Sub Status --</option>'
+            );
+
+            if (status === '') {
+                return;
+            }
+
+            $subStatus.html(
+                '<option value="">Loading...</option>'
+            );
+
+            $.ajax({
+                url: "{{ route('finance.sub-statuses') }}",
+                type: "GET",
+                data: {
+                    status: status
+                },
+                dataType: "json",
+
+                success: function(response) {
+
+                    $subStatus.html(
+                        '<option value="">-- Select Sub Status --</option>'
+                    );
+
+                    if (
+                        response.success &&
+                        response.subStatuses &&
+                        response.subStatuses.length > 0
+                    ) {
+
+                        $.each(response.subStatuses, function(index, item) {
+
+                            const option = $('<option>', {
+                                value: item.sub_status,
+                                text: item.sub_status
+                            });
+
+                            if (
+                                selectedSubStatus !== '' &&
+                                item.sub_status == selectedSubStatus
+                            ) {
+                                option.prop('selected', true);
+                            }
+
+                            $subStatus.append(option);
+                        });
+
+                    } else {
+
+                        $subStatus.append(
+                            $('<option>', {
+                                value: '',
+                                text: 'No Sub Status Found',
+                                disabled: true
+                            })
+                        );
+                    }
+                },
+
+                error: function(xhr) {
+
+                    console.error(
+                        'Sub Status AJAX Error:',
+                        xhr.status,
+                        xhr.responseText
+                    );
+
+                    $subStatus.html(
+                        '<option value="">Unable to load Sub Status</option>'
+                    );
+                }
+            });
+        }
+
+
+        // When Status changes
+        $('#osap_status_flt').on('change', function() {
+
+            const status = $(this).val();
+
+            // Clear previous sub-status when user manually changes status
+            loadSubStatuses(status, '');
+        });
+
+
+        // Load Sub Status automatically when page loads
+        if (selectedStatus !== '') {
+
+            $('#osap_status_flt').val(selectedStatus);
+
+            loadSubStatuses(
+                selectedStatus,
+                selectedSubStatus
+            );
+        }
+
+    });
+</script>
+
 
 
 @endsection

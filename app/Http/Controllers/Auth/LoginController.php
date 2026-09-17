@@ -75,7 +75,7 @@ class LoginController extends Controller
                 return redirect()->route('counselor.dashboard');
 
             case 'super_admin':
-                return redirect()->route('admin.branch.report');
+                return redirect()->route('admin.walkn.report');
 
             case 'Status_FI':
                 return redirect()->route('status.fi');

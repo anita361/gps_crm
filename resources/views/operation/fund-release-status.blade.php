@@ -1100,14 +1100,10 @@
                                      <td>
 
                                         @if (!empty($row->signature) && !empty($row->signature_submit) && $signatureSubmitDate >= '2025-11-25')
-                                            <a href="{{ route('student.consent.pdf', [
-                                                'uid' => $row->sno,
-                                            ]) }}"
-                                                target="_blank" class="download-icon" title="Download Student Consent">
-
-                                                <i class="fa fa-download"></i>
-
-                                            </a>
+                                            <a href="{{ route('student.consent.pdf', ['uid' => $row->sno]) }}"
+                                       class="btn btn-primary btn-sm" target="_blank">
+                                       <i class="fa fa-download"></i>
+                                    </a>
                                         @else
                                             <span class="pending">
                                                 Pending
