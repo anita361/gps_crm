@@ -83,11 +83,40 @@ Route::middleware('login')->group(function () {
     Route::get('/eligible-details', [CounselorDashboardController::class, 'eligibleDetails'])->name('eligible.details');
     Route::get('/aus-eligible-details', [CounselorDashboardController::class, 'ausEligibleDetails'])->name('aus.eligible.details');
 
+    // Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
+    //     ->name('admin.branch.report');
+
+    // Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknReport'])
+    //     ->name('admin.walkn.report');
+
+    // Route::post('/admin/walkn-report/export', [BranchManagerController::class, 'adminwalknReportExport'])
+    //     ->name('admin.walkn.report.export');
+
+
     Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
         ->name('admin.branch.report');
 
-Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknReport'])
-    ->name('admin.walkn.report');
+    Route::post('/admin-branch-report/data', [BranchManagerController::class, 'adminBranchReportData'])
+        ->name('admin.branch.report.data');
+
+
+    Route::post('/admin-branch-report/details', [BranchManagerController::class, 'adminBranchReportDetails'])
+        ->name('admin.branch.report.details');
+
+        Route::post('/admin-branch-report/users', [BranchManagerController::class, 'adminBranchReportUserData'])
+    ->name('admin.branch.report.users');
+
+
+    Route::post('/admin/branch-report/export', [BranchManagerController::class, 'exportBranchReport'])->name('admin.branch.report.export');
+
+    Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknReport'])
+        ->name('admin.walkn.report');
+
+    Route::post('/admin/walkn-report/export', [BranchManagerController::class, 'adminwalknReportExport'])
+        ->name('admin.walkn.report.export');
+
+
+
 
 
     Route::post('/fetch-city', [BranchManagerController::class, 'fetchCity']);
@@ -158,9 +187,9 @@ Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknRe
     // Route::get('/finance/osap-status', [FinanceAppointmentController::class, 'getOsapStatus'])->name('finance.osap.status');
     // Route::post('/finance/osap-status', [FinanceAppointmentController::class, 'saveOsapStatus'])->name('finance.osap.status');
     Route::get(
-    '/finance/sub-statuses',
-    [FinanceAppointmentController::class, 'financeSubStatuses']
-)->name('finance.sub-statuses');
+        '/finance/sub-statuses',
+        [FinanceAppointmentController::class, 'financeSubStatuses']
+    )->name('finance.sub-statuses');
 
 
 
@@ -349,10 +378,10 @@ Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknRe
     Route::get('/fund-release-status', [WalkinController::class, 'fundReleaseStatus'])
         ->name('fund.release.status');
 
-        Route::post(
-    '/operation/student-id/update',
-    [WalkinController::class, 'updateStudentId']
-)->name('operation.student-id.update');
+    Route::post(
+        '/operation/student-id/update',
+        [WalkinController::class, 'updateStudentId']
+    )->name('operation.student-id.update');
     Route::post('/get-colleges', [WalkinController::class, 'getColleges'])->name('get.colleges');
 
     Route::get('/fund-release-export', [WalkinController::class, 'fundReleaseExport'])

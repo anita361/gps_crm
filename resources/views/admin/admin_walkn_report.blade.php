@@ -1,313 +1,88 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Walk-in Report')
+@section('title', 'Branch Dashboard')
 
 @section('content')
 
-<div class="container-fluid mt-4">
+<section class="crm-Lead-Summary linkidtainer-fluid">
 
-    {{-- =========================================================
-         BRANCH REPORT
-    ========================================================== --}}
+    <div class="container-fluid main-crm" style="margin-top:100px;">
 
-    <div class="card shadow border-0 mb-4">
-
-        <div class="card-header bg-primary text-white">
-            <h4 class="mb-0">
-                <i class="fa fa-desktop"></i>
-                Branch Report Admin
-            </h4>
+        <div id="imgloader"
+             class="imgloader"
+             style="display:none;">
         </div>
 
-        <div class="card-body">
+        <div class="manage_file">
 
-            <div class="table-responsive">
+            <h2>
+                <i class="fa fa-desktop"></i>
+                Branch Dashboard
+            </h2>
 
-                <table class="table dashboard-tbl spacing-table table-bordered"
-                       cellpadding="5"
-                       cellspacing="5"
-                       width="100%">
+            <div class="row">
 
-                    <thead>
-                        <tr>
-                            <th>Branch</th>
-                            <th>Walk-in</th>
-                            <th>Follow-up</th>
-                            <th>Enrolled</th>
-                            <th>Drop</th>
-                            <th>Percentage(%)</th>
-                        </tr>
-                    </thead>
+                <div class="col-sm-12 col-padding">
+                    <p class="search_input">
+                        <strong>Search By Date</strong>
+                    </p>
+                </div>
 
-                    <tbody>
+                <div class="col-sm-3 col-padding">
+                    <input
+                        type="text"
+                        id="post_at"
+                        placeholder="From Date"
+                        class="input-control form-control"
+                        autocomplete="off">
+                </div>
 
-                        @forelse($branchReports as $report)
+                <div class="col-sm-3 col-padding">
+                    <input
+                        type="text"
+                        id="post_at_to_date"
+                        placeholder="To Date"
+                        class="input-control form-control"
+                        autocomplete="off">
+                </div>
 
-                            <tr>
+                <div class="col-sm-2 col-padding">
+                    <button
+                        type="button"
+                        class="search-button"
+                        id="search">
+                        Search
+                    </button>
+                </div>
 
-                                <td>
-                                    {{ $report['branch'] }}
-                                </td>
+            </div>
 
-                                <td
-                                    data-toggle="modal"
-                                    data-target="#data_summery"
-                                    class="data_summery"
-                                    data-id="{{ $report['branch'] }}"
-                                    style="cursor:pointer;"
-                                >
-                                    <a href="javascript:void(0);">
-                                        {{ $report['walkin'] }}
-                                    </a>
-                                </td>
+            <hr>
 
-                                <td>
-                                    {{ $report['followup'] }}
-                                </td>
+            <div id="alldatacount">
 
-                                <td>
-                                    {{ $report['enrolled'] }}
-                                </td>
-
-                                <td>
-                                    {{ $report['droped'] }}
-                                </td>
-
-                                <td>
-                                    {{ $report['percentage'] }}
-                                </td>
-
-                            </tr>
-
-                        @empty
-
-                            <tr>
-                                <td colspan="6" class="text-center">
-                                    No branch records found.
-                                </td>
-                            </tr>
-
-                        @endforelse
-
-
-                        {{-- TOTAL --}}
-
-                        <tr>
-
-                            <td>
-                                <strong>Total</strong>
-                            </td>
-
-                            <td>
-                                <div
-                                    data-toggle="modal"
-                                    data-target="#total_data_summery"
-                                    class="totale_data_summery"
-                                    style="cursor:pointer;"
-                                >
-                                    <a href="javascript:void(0);">
-                                        {{ $walkin_total }}
-                                    </a>
-                                </div>
-                            </td>
-
-                            <td>
-                                {{ $followup_total }}
-                            </td>
-
-                            <td>
-                                {{ $enrolled_total }}
-                            </td>
-
-                            <td>
-                                {{ $droped_total }}
-                            </td>
-
-                            <td>
-                                {{ round($percentage_total, 2) }}
-                            </td>
-
-                        </tr>
-
-                    </tbody>
-
-                </table>
+                <div class="alert alert-info">
+                    Please select From Date and To Date and click Search.
+                </div>
 
             </div>
 
         </div>
 
-    </div>
 
+        {{-- User Details --}}
 
-    {{-- =========================================================
-         USER DETAILS
-    ========================================================== --}}
+        <div class="manage_file">
 
-    <div class="card shadow border-0">
-
-        <div class="card-header bg-primary text-white">
-
-            <h4 class="mb-0">
+            <h2>
                 <i class="fa fa-user"></i>
                 User Details
-            </h4>
-
-        </div>
-
-        <div class="card-body">
+            </h2>
 
             <div id="alldata">
 
-                <br>
-
-                <div class="text-center mb-3">
-
-                    <form
-                        method="POST"
-                        action="{{ route('admin.walkn.report.export') }}"
-                        autocomplete="off"
-                    >
-
-                        @csrf
-
-                        <button type="submit"
-                                class="btn crm-login-button1">
-
-                            Export to Excel
-
-                        </button>
-
-                    </form>
-
-                </div>
-
-
-                <div class="table-responsive">
-
-                    <table id="appointment_data"
-                           class="table file-table1 responsive table-striped"
-                           width="100%">
-
-                        <thead>
-
-                            <tr>
-
-                                <th>Client Name</th>
-                                <th>Client Number</th>
-                                <th>Country Name</th>
-                                <th>Visa Type</th>
-                                <th>Branch Name</th>
-                                <th>Counselor Name</th>
-                                <th>Walk-In Date</th>
-                                <th>File Status</th>
-                                <th>File Number</th>
-                                <th>Call Logs</th>
-                                <th>View Details</th>
-
-                            </tr>
-
-                        </thead>
-
-                        <tbody>
-
-                            @forelse($userReports as $row)
-
-                                <tr>
-
-                                    <td>
-                                        {{ $row->sname }}
-                                    </td>
-
-                                    <td>
-                                        {{ $row->smobile }}
-                                    </td>
-
-                                    <td>
-                                        {{ $row->scountry }}
-                                    </td>
-
-                                    <td>
-                                        {{ $row->svisa }}
-                                    </td>
-
-                                    <td>
-                                        {{ $row->branch }}
-                                    </td>
-
-                                    <td>
-                                        {{ $row->assign_name }}
-                                    </td>
-
-                                    <td>
-                                        {{ $row->walkedin_date }}
-                                    </td>
-
-                                    <td>
-                                        {{ $row->student_status }}
-                                    </td>
-
-                                    <td>
-
-                                        @if($row->student_status == 'enrolled')
-
-                                            {{ $row->file_no }}
-
-                                        @endif
-
-                                    </td>
-
-                                    <td>
-
-                                        <button
-                                            type="button"
-                                            data-toggle="modal"
-                                            data-target="#Calllogs"
-                                            class="calllogsdata btn btn-link p-0"
-                                            data-id="{{ $row->sno }}"
-                                        >
-
-                                            <img
-                                                src="{{ asset('images/call-log1.png') }}"
-                                                width="20"
-                                                alt="Call Logs"
-                                            >
-
-                                            Call Logs
-
-                                        </button>
-
-                                    </td>
-
-                                    <td class="view-tbl-btn">
-
-                                        <a href="{{ url('walkindetails.php?smobile=' . $row->smobile) }}">
-                                            View
-                                        </a>
-
-                                    </td>
-
-                                </tr>
-
-                            @empty
-
-                                <tr>
-
-                                    <td colspan="11"
-                                        class="text-center">
-
-                                        No records found.
-
-                                    </td>
-
-                                </tr>
-
-                            @endforelse
-
-                        </tbody>
-
-                    </table>
-
+                <div class="alert alert-info">
+                    Select date range above to load user details.
                 </div>
 
             </div>
@@ -316,12 +91,10 @@
 
     </div>
 
-</div>
+</section>
 
 
-{{-- =========================================================
-     BRANCH DATA SUMMARY MODAL
-========================================================== --}}
+{{-- Branch Summary Modal --}}
 
 <div class="modal fade"
      id="data_summery"
@@ -335,12 +108,11 @@
 
             <div class="modal-header">
 
-                <button type="button"
-                        class="close"
-                        data-dismiss="modal">
-
+                <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal">
                     &times;
-
                 </button>
 
                 <h3 class="modal-title">
@@ -351,14 +123,7 @@
 
             <div class="modal-body">
 
-                <div class="row">
-
-                    <div id="fetch_data_summery"
-                         class="col-12">
-
-                    </div>
-
-                </div>
+                <div id="fetch_data_summery"></div>
 
             </div>
 
@@ -369,9 +134,7 @@
 </div>
 
 
-{{-- =========================================================
-     TOTAL DATA SUMMARY MODAL
-========================================================== --}}
+{{-- Total Summary Modal --}}
 
 <div class="modal fade"
      id="total_data_summery"
@@ -385,30 +148,22 @@
 
             <div class="modal-header">
 
-                <button type="button"
-                        class="close"
-                        data-dismiss="modal">
-
+                <button
+                    type="button"
+                    class="close"
+                    data-dismiss="modal">
                     &times;
-
                 </button>
 
                 <h3 class="modal-title">
-                    Walk In Reports
+                    Total Walk In Reports
                 </h3>
 
             </div>
 
             <div class="modal-body">
 
-                <div class="row">
-
-                    <div id="fetch_total_data_summery"
-                         class="col-12">
-
-                    </div>
-
-                </div>
+                <div id="fetch_total_data_summery"></div>
 
             </div>
 
@@ -417,252 +172,572 @@
     </div>
 
 </div>
-
-
-{{-- =========================================================
-     CALL LOG MODAL
-========================================================== --}}
-
-<div class="modal fade Call-Details-modal"
-     id="Calllogs"
-     tabindex="-1"
-     role="dialog">
-
-    <div class="modal-dialog modal-lg"
-         role="document">
-
-        <div class="modal-content">
-
-            <div class="modal-header">
-
-                <button type="button"
-                        class="close"
-                        data-dismiss="modal">
-
-                    &times;
-
-                </button>
-
-                <h3 class="modal-title">
-
-                    <img
-                        src="{{ asset('images/call-log.png') }}"
-                        width="25"
-                        alt="Call Logs"
-                    >
-
-                    Call Logs
-
-                </h3>
-
-            </div>
-
-            <div class="modal-body">
-
-                <div class="row">
-
-                    <div class="table-responsive">
-
-                        <table class="table dashboard-tbl spacing-table"
-                               width="100%"
-                               cellpadding="5"
-                               cellspacing="5">
-
-                            <thead>
-
-                                <tr>
-
-                                    <th>Call Time</th>
-
-                                    <th>Status</th>
-
-                                    <th>
-                                        Followup/Enrolled/Drop date
-                                    </th>
-
-                                    <th>Remark</th>
-
-                                    <th>Counsellor Name</th>
-
-                                </tr>
-
-                            </thead>
-
-                            <tbody id="ldld">
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="modal-footer">
-
-                <button type="button"
-                        class="btn btn-default"
-                        data-dismiss="modal">
-
-                    Close
-
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-</div>
-
 
 @endsection
 
 
-@section('scripts')
+@push('scripts')
 
 <script>
 
 $(document).ready(function () {
 
-    $('#appointment_data').DataTable({
-        pageLength: 10
-    });
+    /*
+    |--------------------------------------------------------------------------
+    | Datepicker
+    |--------------------------------------------------------------------------
+    */
 
-    setTimeout(function () {
+    if ($.fn.datepicker) {
 
-        $('body').addClass('loaded');
+        $('#post_at').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true
+        });
 
-    }, 1000);
+        $('#post_at_to_date').datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true
+        });
+    }
 
-});
 
+    /*
+    |--------------------------------------------------------------------------
+    | Search
+    |--------------------------------------------------------------------------
+    */
 
-/*
-|--------------------------------------------------------------------------
-| Call Logs
-|--------------------------------------------------------------------------
-*/
+    $('#search').on('click', function () {
 
-$(document).on('click', '.calllogsdata', function () {
+        let fromDate = $('#post_at').val();
+        let toDate = $('#post_at_to_date').val();
 
-    var ssss = $(this).attr('data-id');
+        if (fromDate === '' || toDate === '') {
 
-    $.ajax({
+            alert('Please Select Date');
 
-        url: "{{ url('/fetchdata') }}",
-
-        type: "POST",
-
-        data: {
-            tag: 'fetch',
-            idno: ssss,
-            _token: "{{ csrf_token() }}"
-        },
-
-        success: function (data) {
-
-            $('#ldld').html(data);
-
-        },
-
-        error: function (xhr) {
-
-            console.log(xhr.responseText);
-
+            return;
         }
 
+        $('#imgloader').show();
+
+        $.ajax({
+
+            url: "{{ route('admin.branch.report.data') }}",
+
+            method: "POST",
+
+            data: {
+                _token: "{{ csrf_token() }}",
+                from_date: fromDate,
+                to_date: toDate
+            },
+
+            success: function (response) {
+
+                if (response.status !== 'success') {
+                    return;
+                }
+
+                let html = '';
+
+                html += '<div class="table-responsive">';
+
+                html += '<h4>';
+                html += 'Branch Wise Report ';
+                html += '(From Date: ' + response.from_date;
+                html += ' to Date: ' + response.to_date + ')';
+                html += '</h4>';
+
+                html += '<table class="table dashboard-tbl spacing-table table-bordered">';
+
+                html += '<thead>';
+                html += '<tr>';
+
+                html += '<th>Branch</th>';
+                html += '<th>Fresh Call Center Walk-in</th>';
+                html += '<th>Old Call Center Walk-in</th>';
+                html += '<th>Fresh Branch Walk-in</th>';
+                html += '<th>Old Branch Walk-in</th>';
+                html += '<th>Enrolled Walk-in</th>';
+                html += '<th>Total Walk-in</th>';
+                html += '<th>Enrolled</th>';
+
+                html += '</tr>';
+                html += '</thead>';
+
+                html += '<tbody>';
+
+
+                $.each(response.branches, function (index, row) {
+
+                    html += '<tr>';
+
+                    html += '<td>' +
+                        escapeHtml(row.branch) +
+                        '</td>';
+
+                    html += '<td>' +
+                        row.fresh_call_center +
+                        '</td>';
+
+                    html += '<td>' +
+                        row.old_call_center +
+                        '</td>';
+
+                    html += '<td>' +
+                        row.fresh_branch +
+                        '</td>';
+
+                    html += '<td>' +
+                        row.old_branch +
+                        '</td>';
+
+                    html += '<td>' +
+                        row.enrolled_walkin +
+                        '</td>';
+
+                    html += '<td>';
+
+                    html += '<a href="#" ';
+                    html += 'class="data_summery" ';
+                    html += 'data-toggle="modal" ';
+                    html += 'data-target="#data_summery" ';
+                    html += 'data-branch="' +
+                        escapeHtml(row.branch) +
+                        '">';
+
+                    html += row.total_walkin;
+
+                    html += '</a>';
+
+                    html += '</td>';
+
+                    html += '<td>' +
+                        row.enrolled +
+                        '</td>';
+
+                    html += '</tr>';
+
+                });
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Total Row
+                |--------------------------------------------------------------------------
+                */
+
+                let total = response.totals;
+
+                html += '<tr>';
+
+                html += '<th>Total</th>';
+
+                html += '<th>' +
+                    total.fresh_call_center +
+                    '</th>';
+
+                html += '<th>' +
+                    total.old_call_center +
+                    '</th>';
+
+                html += '<th>' +
+                    total.fresh_branch +
+                    '</th>';
+
+                html += '<th>' +
+                    total.old_branch +
+                    '</th>';
+
+                html += '<th>' +
+                    total.enrolled_walkin +
+                    '</th>';
+
+                html += '<th>';
+
+                html += '<a href="#" ';
+                html += 'class="totale_data_summery" ';
+                html += 'data-toggle="modal" ';
+                html += 'data-target="#total_data_summery">';
+
+                html += total.total_walkin;
+
+                html += '</a>';
+
+                html += '</th>';
+
+                html += '<th>' +
+                    total.enrolled +
+                    '</th>';
+
+                html += '</tr>';
+
+                html += '</tbody>';
+
+                html += '</table>';
+
+                html += '</div>';
+
+                $('#alldatacount').html(html);
+
+                /*
+                |--------------------------------------------------------------------------
+                | Load User Details
+                |--------------------------------------------------------------------------
+                */
+
+                loadUserDetails(
+                    fromDate,
+                    toDate
+                );
+
+            },
+
+            error: function (xhr) {
+
+                if (xhr.status === 401) {
+
+                    window.location.href =
+                        "{{ route('login') }}";
+
+                    return;
+                }
+
+                alert('Unable to load branch report.');
+
+            },
+
+            complete: function () {
+
+                $('#imgloader').hide();
+
+            }
+
+        });
+
     });
 
-});
 
+    /*
+    |--------------------------------------------------------------------------
+    | Branch Modal
+    |--------------------------------------------------------------------------
+    */
 
-/*
-|--------------------------------------------------------------------------
-| Branch Summary
-|--------------------------------------------------------------------------
-*/
+    $(document).on(
+        'click',
+        '.data_summery',
+        function (e) {
 
-$(document).on('click', '.data_summery', function () {
+            e.preventDefault();
 
-    var branchname = $(this).attr('data-id');
+            let branch = $(this).data('branch');
 
-    $.ajax({
-
-        url: "{{ url('/fetchdata') }}",
-
-        type: "POST",
-
-        data: {
-
-            tag: 'fetchcity',
-
-            branch: branchname,
-
-            _token: "{{ csrf_token() }}"
-
-        },
-
-        success: function (data) {
-
-            $('#fetch_data_summery').html(data);
-
-        },
-
-        error: function (xhr) {
-
-            console.log(xhr.responseText);
+            loadSummary(
+                branch
+            );
 
         }
-
-    });
-
-});
+    );
 
 
-/*
-|--------------------------------------------------------------------------
-| Total Summary
-|--------------------------------------------------------------------------
-*/
+    /*
+    |--------------------------------------------------------------------------
+    | Total Modal
+    |--------------------------------------------------------------------------
+    */
 
-$(document).on('click', '.totale_data_summery', function () {
+    $(document).on(
+        'click',
+        '.totale_data_summery',
+        function (e) {
 
-    $.ajax({
+            e.preventDefault();
 
-        url: "{{ url('/fetchdata') }}",
-
-        type: "POST",
-
-        data: {
-
-            tag: 'allfetchcity',
-
-            branch: 'all',
-
-            _token: "{{ csrf_token() }}"
-
-        },
-
-        success: function (data) {
-
-            $('#fetch_total_data_summery').html(data);
-
-        },
-
-        error: function (xhr) {
-
-            console.log(xhr.responseText);
+            loadSummary('all');
 
         }
+    );
 
-    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Escape HTML
+    |--------------------------------------------------------------------------
+    */
+
+    function escapeHtml(value) {
+
+        if (value === null || value === undefined) {
+            return '';
+        }
+
+        return $('<div>')
+            .text(value)
+            .html();
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Load Branch / Total Summary
+    |--------------------------------------------------------------------------
+    */
+
+    function loadSummary(branch) {
+
+        let fromDate =
+            $('#post_at').val();
+
+        let toDate =
+            $('#post_at_to_date').val();
+
+        if (fromDate === '' || toDate === '') {
+
+            alert('Please select date range first.');
+
+            return;
+        }
+
+        let target =
+            branch === 'all'
+                ? '#fetch_total_data_summery'
+                : '#fetch_data_summery';
+
+        $(target).html(
+            '<div class="text-center">Loading...</div>'
+        );
+
+        $.ajax({
+
+            url: "{{ route('admin.branch.report.details') }}",
+
+            method: "POST",
+
+            data: {
+
+                _token:
+                    "{{ csrf_token() }}",
+
+                from_date:
+                    fromDate,
+
+                to_date:
+                    toDate,
+
+                branch:
+                    branch
+
+            },
+
+            success: function (response) {
+
+                let html = '';
+
+                /*
+                |--------------------------------------------------------------------------
+                | Country Report
+                |--------------------------------------------------------------------------
+                */
+
+                html += '<h4>Country Wise Report</h4>';
+
+                html += '<div class="table-responsive">';
+
+                html += '<table class="table table-bordered">';
+
+                html += '<thead>';
+                html += '<tr>';
+                html += '<th>Country</th>';
+                html += '<th>Walk-in</th>';
+                html += '<th>Follow-up</th>';
+                html += '<th>Enrolled</th>';
+                html += '<th>Drop</th>';
+                html += '</tr>';
+                html += '</thead>';
+
+                html += '<tbody>';
+
+                $.each(
+                    response.countryReports,
+                    function (index, row) {
+
+                        html += '<tr>';
+
+                        html += '<td>' +
+                            escapeHtml(row.country) +
+                            '</td>';
+
+                        html += '<td>' +
+                            row.walkin +
+                            '</td>';
+
+                        html += '<td>' +
+                            row.followup +
+                            '</td>';
+
+                        html += '<td>' +
+                            row.enrolled +
+                            '</td>';
+
+                        html += '<td>' +
+                            row.drop +
+                            '</td>';
+
+                        html += '</tr>';
+
+                    }
+                );
+
+                html += '</tbody>';
+                html += '</table>';
+                html += '</div>';
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Visa Report
+                |--------------------------------------------------------------------------
+                */
+
+                html += '<h4 class="mt-4">Visa Wise Report</h4>';
+
+                html += '<div class="table-responsive">';
+
+                html += '<table class="table table-bordered">';
+
+                html += '<thead>';
+                html += '<tr>';
+                html += '<th>Visa / Category</th>';
+                html += '<th>Walk-in</th>';
+                html += '<th>Follow-up</th>';
+                html += '<th>Enrolled</th>';
+                html += '<th>Drop</th>';
+                html += '</tr>';
+                html += '</thead>';
+
+                html += '<tbody>';
+
+                $.each(
+                    response.visaReports,
+                    function (index, row) {
+
+                        html += '<tr>';
+
+                        html += '<td>' +
+                            escapeHtml(row.visa) +
+                            '</td>';
+
+                        html += '<td>' +
+                            row.walkin +
+                            '</td>';
+
+                        html += '<td>' +
+                            row.followup +
+                            '</td>';
+
+                        html += '<td>' +
+                            row.enrolled +
+                            '</td>';
+
+                        html += '<td>' +
+                            row.drop +
+                            '</td>';
+
+                        html += '</tr>';
+
+                    }
+                );
+
+                html += '</tbody>';
+                html += '</table>';
+                html += '</div>';
+
+                $(target).html(html);
+
+            },
+
+            error: function () {
+
+                $(target).html(
+                    '<div class="alert alert-danger">' +
+                    'Unable to load report details.' +
+                    '</div>'
+                );
+
+            }
+
+        });
+
+    }
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | User Details
+    |--------------------------------------------------------------------------
+    */
+
+    function loadUserDetails(
+        fromDate,
+        toDate
+    ) {
+
+        /*
+         * User details will be loaded from the
+         * walk-in report page.
+         *
+         * The existing admin_walkn_report.blade.php
+         * handles the complete user list.
+         */
+
+        $('#alldata').html(
+            '<div class="alert alert-info">' +
+            'Branch report loaded successfully. ' +
+            'Use the Branch Report Admin page for user details.' +
+            '</div>'
+        );
+    }
 
 });
 
 </script>
 
-@endsection
+
+<style>
+
+.imgloader {
+
+    background:
+        url("{{ asset('images/loader.gif') }}")
+        no-repeat
+        center center;
+
+    background-color:
+        rgba(150, 150, 150, .5);
+
+    width: 100%;
+    height: 100%;
+
+    z-index: 100 !important;
+
+    position: fixed !important;
+
+    top: 0;
+    left: 0;
+}
+
+.search-button {
+
+    padding: 8px 20px;
+
+    border: 0;
+
+    cursor: pointer;
+}
+
+</style>
+
+@endpush

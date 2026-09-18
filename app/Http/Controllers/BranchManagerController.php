@@ -765,7 +765,7 @@ class BranchManagerController extends Controller
 
 
 
-  public function receptionDashboardReports(Request $request)
+    public function receptionDashboardReports(Request $request)
     {
 
 
@@ -812,7 +812,6 @@ class BranchManagerController extends Controller
                 'Y-m-d',
                 strtotime($getFltToDate)
             );
-
         } else {
 
 
@@ -914,592 +913,2022 @@ class BranchManagerController extends Controller
     }
 
 
-  
-   public function receptionDashboardReportExport(Request $request)
-{
+
+    public function receptionDashboardReportExport(Request $request)
+    {
 
 
-    $sessRole     = session('role');
-    $sessUsername = session('username');
-    $sessUserid   = session('sessionid');
-
-
-
-
-    $allowedRoles = [
-        'operation',
-        'counselor',
-        'super_admin',
-        'branch_manager',
-        'finance',
-        'branch'
-    ];
+        $sessRole     = session('role');
+        $sessUsername = session('username');
+        $sessUserid   = session('sessionid');
 
 
 
-    if (
-        !in_array($sessRole, $allowedRoles, true) &&
-        !in_array($sessUsername, ['prabjot', 'navjot'], true)
-    ) {
-        return redirect()
-            ->route('login')
-            ->with(
-                'error',
-                'You are not authorized to export this report.'
+
+        $allowedRoles = [
+            'operation',
+            'counselor',
+            'super_admin',
+            'branch_manager',
+            'finance',
+            'branch'
+        ];
+
+
+
+        if (
+            !in_array($sessRole, $allowedRoles, true) &&
+            !in_array($sessUsername, ['prabjot', 'navjot'], true)
+        ) {
+            return redirect()
+                ->route('login')
+                ->with(
+                    'error',
+                    'You are not authorized to export this report.'
+                );
+        }
+
+
+
+
+        $assignId = $request->get('userid', $sessUserid);
+
+
+
+        $getFltDate   = $request->get('GetFltDate');
+        $getFltToDate = $request->get('GetFltToDate');
+
+
+        if (
+            !empty($getFltDate) &&
+            !empty($getFltToDate)
+        ) {
+
+            $fromDate = date(
+                'Y-m-d',
+                strtotime($getFltDate)
             );
-    }
+
+            $toDate = date(
+                'Y-m-d',
+                strtotime($getFltToDate)
+            );
+        } else {
+
+            $fromDate = date('Y-m-d');
+            $toDate   = date('Y-m-d');
+
+            $getFltDate   = $fromDate;
+            $getFltToDate = $toDate;
+        }
 
 
 
-
-    $assignId = $request->get('userid', $sessUserid);
-
-
-
-    $getFltDate   = $request->get('GetFltDate');
-    $getFltToDate = $request->get('GetFltToDate');
-
-
-    if (
-        !empty($getFltDate) &&
-        !empty($getFltToDate)
-    ) {
-
-        $fromDate = date(
-            'Y-m-d',
-            strtotime($getFltDate)
-        );
-
-        $toDate = date(
-            'Y-m-d',
-            strtotime($getFltToDate)
-        );
-
-    } else {
-
-        $fromDate = date('Y-m-d');
-        $toDate   = date('Y-m-d');
-
-        $getFltDate   = $fromDate;
-        $getFltToDate = $toDate;
-    }
-
-
-
-    $query = DB::table('lead_appointed')
-        ->select([
-            'applicant_name',
-            'gender',
-            'email',
-            'branch_by',
-            'msg_uniquecode',
-            'callerno',
-            'branch',
-            'walkin_status',
-            'action_taken',
-            'category',
-            'assign_name',
-            'assign_date',
-            'walkedin_date',
-            'appointed_date',
-            'appointed_datetime',
-            'created_date',
-            'created_by'
-        ])
-        ->where('userid', $assignId)
-        ->where('created_by', 'callcenter')
-        ->whereDate(
-            'created_date',
-            '>=',
-            $fromDate
-        )
-        ->whereDate(
-            'created_date',
-            '<=',
-            $toDate
-        );
+        $query = DB::table('lead_appointed')
+            ->select([
+                'applicant_name',
+                'gender',
+                'email',
+                'branch_by',
+                'msg_uniquecode',
+                'callerno',
+                'branch',
+                'walkin_status',
+                'action_taken',
+                'category',
+                'assign_name',
+                'assign_date',
+                'walkedin_date',
+                'appointed_date',
+                'appointed_datetime',
+                'created_date',
+                'created_by'
+            ])
+            ->where('userid', $assignId)
+            ->where('created_by', 'callcenter')
+            ->whereDate(
+                'created_date',
+                '>=',
+                $fromDate
+            )
+            ->whereDate(
+                'created_date',
+                '<=',
+                $toDate
+            );
 
 
 
-    if (
-        $sessRole === 'counselor' &&
-        $sessUsername !== 'sahil_arora'
-    ) {
+        if (
+            $sessRole === 'counselor' &&
+            $sessUsername !== 'sahil_arora'
+        ) {
 
-        $query->where(
-            'assign_id',
-            $sessUserid
-        );
-    }
+            $query->where(
+                'assign_id',
+                $sessUserid
+            );
+        }
 
 
 
 
 
-    if ($request->has('leads')) {
+        if ($request->has('leads')) {
 
-        $query->where(
-            'walkin_status',
-            3
-        );
+            $query->where(
+                'walkin_status',
+                3
+            );
 
-        $reportName = 'lead';
+            $reportName = 'lead';
+        } elseif ($request->has('enrolled_walking')) {
 
+            $query->where(
+                'walkin_status',
+                2
+            );
 
-
-    } elseif ($request->has('enrolled_walking')) {
-
-        $query->where(
-            'walkin_status',
-            2
-        );
-
-        $reportName = 'enrolled_walkin';
+            $reportName = 'enrolled_walkin';
 
 
-    /*
+            /*
     | Assign Lead
     | Old PHP:
     | assign_id != ''
     */
+        } elseif ($request->has('assign_leads')) {
 
-    } elseif ($request->has('assign_leads')) {
-
-        $query->where(
-            'assign_id',
-            '!=',
-            ''
-        );
-
-        $reportName = 'assigned_leads';
-
-
-
-
-    } elseif ($request->has('assign_lead_not')) {
-
-        $query->where(
-            'assign_id',
-            ''
-        );
-
-        $reportName = 'not_assigned_leads';
-
-
-
-
-    } elseif ($request->has('walkin_status')) {
-
-        $query->where(
-            'walkin_status',
-            0
-        );
-
-        $reportName = 'walkin';
-
-
-    } else {
-
-        $reportName = 'reception_report';
-    }
-
-
-
-
-    $records = $query
-        ->orderBy(
-            'created_date',
-            'desc'
-        )
-        ->get();
-
-
-
-
-    if ($records->isEmpty()) {
-
-        return redirect()
-            ->route(
-                'branch.reception.dashboard.reports',
-                [
-                    'GetFltDate'   => $getFltDate,
-                    'GetFltToDate' => $getFltToDate
-                ]
-            )
-            ->with(
-                'error',
-                'No data found for the selected report.'
+            $query->where(
+                'assign_id',
+                '!=',
+                ''
             );
-    }
+
+            $reportName = 'assigned_leads';
+        } elseif ($request->has('assign_lead_not')) {
+
+            $query->where(
+                'assign_id',
+                ''
+            );
+
+            $reportName = 'not_assigned_leads';
+        } elseif ($request->has('walkin_status')) {
+
+            $query->where(
+                'walkin_status',
+                0
+            );
+
+            $reportName = 'walkin';
+        } else {
+
+            $reportName = 'reception_report';
+        }
 
 
 
-    $filename =
-        'lead_appointed_report_' .
-        $assignId .
-        '_' .
-        $reportName .
-        '_' .
-        $fromDate .
-        '_to_' .
-        $toDate .
-        '.csv';
+
+        $records = $query
+            ->orderBy(
+                'created_date',
+                'desc'
+            )
+            ->get();
 
 
 
-    $headers = [
 
-        'Content-Type' =>
+        if ($records->isEmpty()) {
+
+            return redirect()
+                ->route(
+                    'branch.reception.dashboard.reports',
+                    [
+                        'GetFltDate'   => $getFltDate,
+                        'GetFltToDate' => $getFltToDate
+                    ]
+                )
+                ->with(
+                    'error',
+                    'No data found for the selected report.'
+                );
+        }
+
+
+
+        $filename =
+            'lead_appointed_report_' .
+            $assignId .
+            '_' .
+            $reportName .
+            '_' .
+            $fromDate .
+            '_to_' .
+            $toDate .
+            '.csv';
+
+
+
+        $headers = [
+
+            'Content-Type' =>
             'text/csv; charset=UTF-8',
 
-        'Content-Disposition' =>
+            'Content-Disposition' =>
             'attachment; filename="' .
-            $filename .
-            '"',
+                $filename .
+                '"',
 
-        'Pragma' =>
+            'Pragma' =>
             'no-cache',
 
-        'Cache-Control' =>
+            'Cache-Control' =>
             'must-revalidate',
 
-        'Expires' =>
+            'Expires' =>
             '0'
-    ];
+        ];
 
 
 
 
-    $columns = [
+        $columns = [
 
-        'Applicant Name',
-        'Gender',
-        'Email',
-        'Branch By',
-        'Unique Code',
-        'Caller No',
-        'Branch',
-        'Walkin Status',
-        'Action Taken',
-        'Category',
-        'Assigned To',
-        'Assign Date',
-        'Walkedin Date',
-        'Appointed Date',
-        'Appointed Datetime',
-        'Created Date',
-        'Created By'
-    ];
-
-
-
-
-    return response()->stream(
-
-        function () use (
-            $records,
-            $columns
-        ) {
-
-            $output = fopen(
-                'php://output',
-                'w'
-            );
+            'Applicant Name',
+            'Gender',
+            'Email',
+            'Branch By',
+            'Unique Code',
+            'Caller No',
+            'Branch',
+            'Walkin Status',
+            'Action Taken',
+            'Category',
+            'Assigned To',
+            'Assign Date',
+            'Walkedin Date',
+            'Appointed Date',
+            'Appointed Datetime',
+            'Created Date',
+            'Created By'
+        ];
 
 
 
 
-            fwrite(
-                $output,
-                "\xEF\xBB\xBF"
-            );
+        return response()->stream(
 
-
-
-
-            fputcsv(
-                $output,
+            function () use (
+                $records,
                 $columns
-            );
+            ) {
+
+                $output = fopen(
+                    'php://output',
+                    'w'
+                );
 
 
 
-            foreach ($records as $row) {
+
+                fwrite(
+                    $output,
+                    "\xEF\xBB\xBF"
+                );
+
+
+
 
                 fputcsv(
                     $output,
-                    [
-
-                        $row->applicant_name ?? '',
-
-                        $row->gender ?? '',
-
-                        $row->email ?? '',
-
-                        $row->branch_by ?? '',
-
-                        $row->msg_uniquecode ?? '',
-
-                        $row->callerno ?? '',
-
-                        $row->branch ?? '',
-
-                        $row->walkin_status ?? '',
-
-                        $row->action_taken ?? '',
-
-                        $row->category ?? '',
-
-                        $row->assign_name ?? '',
-
-                        $row->assign_date ?? '',
-
-                        $row->walkedin_date ?? '',
-
-                        $row->appointed_date ?? '',
-
-                        $row->appointed_datetime ?? '',
-
-                        $row->created_date ?? '',
-
-                        $row->created_by ?? ''
-                    ]
+                    $columns
                 );
+
+
+
+                foreach ($records as $row) {
+
+                    fputcsv(
+                        $output,
+                        [
+
+                            $row->applicant_name ?? '',
+
+                            $row->gender ?? '',
+
+                            $row->email ?? '',
+
+                            $row->branch_by ?? '',
+
+                            $row->msg_uniquecode ?? '',
+
+                            $row->callerno ?? '',
+
+                            $row->branch ?? '',
+
+                            $row->walkin_status ?? '',
+
+                            $row->action_taken ?? '',
+
+                            $row->category ?? '',
+
+                            $row->assign_name ?? '',
+
+                            $row->assign_date ?? '',
+
+                            $row->walkedin_date ?? '',
+
+                            $row->appointed_date ?? '',
+
+                            $row->appointed_datetime ?? '',
+
+                            $row->created_date ?? '',
+
+                            $row->created_by ?? ''
+                        ]
+                    );
+                }
+
+
+
+                fclose($output);
+            },
+
+            200,
+
+            $headers
+        );
+    }
+
+
+
+  
+  public function adminBranchReport()
+    {
+        if (session('role') !== 'super_admin') {
+            return redirect()
+                ->route('login')
+                ->with('error', 'Unauthorized access.');
+        }
+
+        return view('admin.admin_branch_report');
+    }
+
+
+
+
+ public function adminBranchReportData(Request $request)
+{
+   
+
+    if (session('role') !== 'super_admin') {
+
+        return response()->json([
+            'status' => 'logout'
+        ], 401);
+    }
+
+
+  
+    if ($request->boolean('export')) {
+
+        $filename = 'admin_cons_data_report.xls';
+
+
+        return response()->streamDownload(function () {
+
+            echo "client Name\t"
+                . "client Number\t"
+                . "country\t"
+                . "visa\t"
+                . "Branch\t"
+                . "WalkIn Date\t"
+                . "file Status\t"
+                . "file Number\n";
+
+
+            $users = DB::table('seminarpre')
+                ->whereNotNull('assign_id')
+                ->where('assign_id', '!=', '')
+                ->orderBy('sno')
+                ->get();
+
+
+            foreach ($users as $row) {
+
+                $appointment = DB::table('lead_appointed')
+                    ->where(
+                        'callerno',
+                        $row->smobile
+                    )
+                    ->orderByDesc('id')
+                    ->first();
+
+
+                $walkinDate = $appointment
+                    ? ($appointment->walkedin_date ?? '')
+                    : '';
+
+
+                $clientName =
+                    $this->excelSafeValue(
+                        $row->sname ?? ''
+                    );
+
+
+                $clientNumber =
+                    $this->excelSafeValue(
+                        $row->smobile ?? ''
+                    );
+
+
+                $country =
+                    $this->excelSafeValue(
+                        $row->scountry ?? ''
+                    );
+
+
+                $visa =
+                    $this->excelSafeValue(
+                        !empty($row->svisa)
+                            ? $row->svisa
+                            : ($row->category ?? '')
+                    );
+
+
+                $branch =
+                    $this->excelSafeValue(
+                        $row->branch ?? ''
+                    );
+
+
+                $walkinDate =
+                    $this->excelSafeValue(
+                        $walkinDate
+                    );
+
+
+                $status =
+                    $this->excelSafeValue(
+                        $row->student_status ?? ''
+                    );
+
+
+                $fileNo =
+                    $this->excelSafeValue(
+                        $row->file_no ?? ''
+                    );
+
+
+                echo $clientName . "\t"
+                    . $clientNumber . "\t"
+                    . $country . "\t"
+                    . $visa . "\t"
+                    . $branch . "\t"
+                    . $walkinDate . "\t"
+                    . $status . "\t"
+                    . $fileNo . "\n";
             }
 
+        }, $filename, [
+
+            'Content-Type' =>
+                'application/vnd.ms-excel; charset=utf-8',
+
+            'Content-Disposition' =>
+                'attachment; filename="' . $filename . '"',
+
+        ]);
+
+    }
 
 
-            fclose($output);
 
-        },
+    $request->validate([
 
+        'from_date' => [
+            'required',
+            'date'
+        ],
+
+        'to_date' => [
+            'required',
+            'date'
+        ],
+
+    ]);
+
+
+    $fromDate = $request->from_date;
+    $toDate   = $request->to_date;
+
+
+
+    $branches = DB::table('crm_login')
+
+        ->where(
+            'role',
+            'branch'
+        )
+
+        ->whereNotNull(
+            'branch'
+        )
+
+        ->select('branch')
+
+        ->groupBy('branch')
+
+        ->orderBy('branch')
+
+        ->get();
+
+
+    $branchReports = [];
+
+
+    $totalCallCenterFresh = 0;
+    $totalCallCenterOld = 0;
+    $totalBranchFresh = 0;
+    $totalBranchOld = 0;
+    $totalEnrolledWalkin = 0;
+    $totalWalkin = 0;
+    $totalEnrolled = 0;
+    $totalFollowup = 0;
+    $totalDrop = 0;
+
+
+   
+
+    foreach ($branches as $branch) {
+
+        $branchName = $branch->branch;
+
+
+   
+
+        $freshCallCenter = DB::table(
+            'lead_appointed as la'
+        )
+
+            ->where(
+                'la.created_by',
+                'user'
+            )
+
+            ->where(
+                'la.walkin_status',
+                '0'
+            )
+
+            ->where(
+                'la.branch',
+                $branchName
+            )
+
+            ->whereBetween(
+                'la.walkedin_date',
+                [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]
+            )
+
+            ->whereIn(
+                'la.callerno',
+                function ($query) {
+
+                    $query->select(
+                        'callerno'
+                    )
+
+                    ->from(
+                        'lead_appointed'
+                    )
+
+                    ->where(
+                        'walkin_status',
+                        '0'
+                    )
+
+                    ->where(
+                        'created_by',
+                        'user'
+                    )
+
+                    ->groupBy(
+                        'callerno'
+                    )
+
+                    ->havingRaw(
+                        'COUNT(callerno) = 1'
+                    );
+
+                }
+            )
+
+            ->count();
+
+
+
+
+        $oldCallCenter = DB::table(
+            'lead_appointed as la'
+        )
+
+            ->where(
+                'la.created_by',
+                'user'
+            )
+
+            ->where(
+                'la.walkin_status',
+                '0'
+            )
+
+            ->where(
+                'la.branch',
+                $branchName
+            )
+
+            ->whereBetween(
+                'la.walkedin_date',
+                [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]
+            )
+
+            ->whereIn(
+                'la.callerno',
+                function ($query) {
+
+                    $query->select(
+                        'callerno'
+                    )
+
+                    ->from(
+                        'lead_appointed'
+                    )
+
+                    ->where(
+                        'walkin_status',
+                        '0'
+                    )
+
+                    ->where(
+                        'created_by',
+                        'user'
+                    )
+
+                    ->groupBy(
+                        'callerno'
+                    )
+
+                    ->havingRaw(
+                        'COUNT(callerno) > 1'
+                    );
+
+                }
+            )
+
+            ->count();
+
+
+
+
+        $freshBranch = DB::table(
+            'lead_appointed as la'
+        )
+
+            ->where(
+                'la.branch',
+                $branchName
+            )
+
+            ->where(
+                'la.walkin_status',
+                '0'
+            )
+
+            ->where(
+                'la.created_by',
+                'branch'
+            )
+
+            ->whereBetween(
+                'la.walkedin_date',
+                [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]
+            )
+
+            ->whereIn(
+                'la.callerno',
+                function ($query) {
+
+                    $query->select(
+                        'callerno'
+                    )
+
+                    ->from(
+                        'lead_appointed'
+                    )
+
+                    ->where(
+                        'walkin_status',
+                        '0'
+                    )
+
+                    ->where(
+                        'created_by',
+                        'branch'
+                    )
+
+                    ->groupBy(
+                        'callerno'
+                    )
+
+                    ->havingRaw(
+                        'COUNT(callerno) = 1'
+                    );
+
+                }
+            )
+
+            ->count();
+
+
+
+        $oldBranch = DB::table(
+            'lead_appointed as la'
+        )
+
+            ->where(
+                'la.branch',
+                $branchName
+            )
+
+            ->where(
+                'la.walkin_status',
+                '0'
+            )
+
+            ->where(
+                'la.created_by',
+                'branch'
+            )
+
+            ->whereBetween(
+                'la.walkedin_date',
+                [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]
+            )
+
+            ->whereIn(
+                'la.callerno',
+                function ($query) {
+
+                    $query->select(
+                        'callerno'
+                    )
+
+                    ->from(
+                        'lead_appointed'
+                    )
+
+                    ->where(
+                        'walkin_status',
+                        '0'
+                    )
+
+                    ->where(
+                        'created_by',
+                        'branch'
+                    )
+
+                    ->groupBy(
+                        'callerno'
+                    )
+
+                    ->havingRaw(
+                        'COUNT(callerno) > 1'
+                    );
+
+                }
+            )
+
+            ->count();
+
+
+
+        $enrolledWalkin = DB::table(
+            'lead_appointed'
+        )
+
+            ->where(
+                'branch',
+                $branchName
+            )
+
+            ->where(
+                'walkin_status',
+                '2'
+            )
+
+            ->whereBetween(
+                'walkedin_date',
+                [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]
+            )
+
+            ->count();
+
+
+
+        $totalBranchWalkin =
+            $freshCallCenter +
+            $oldCallCenter +
+            $freshBranch +
+            $oldBranch;
+
+
+        $enrolled = DB::table(
+            'seminarpre'
+        )
+
+            ->where(
+                'branch',
+                $branchName
+            )
+
+            ->whereRaw(
+                "LOWER(TRIM(student_status)) = 'enrolled'"
+            )
+
+            ->whereBetween(
+                'counselor_date',
+                [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]
+            )
+
+            ->count();
+
+
+
+        $followup = DB::table(
+            'seminarpre'
+        )
+
+            ->where(
+                'branch',
+                $branchName
+            )
+
+            ->whereRaw(
+                "LOWER(TRIM(student_status)) = 'follow-up'"
+            )
+
+            ->whereBetween(
+                'counselor_date',
+                [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]
+            )
+
+            ->count();
+
+
+
+        $drop = DB::table(
+            'seminarpre'
+        )
+
+            ->where(
+                'branch',
+                $branchName
+            )
+
+            ->whereRaw(
+                "LOWER(TRIM(student_status)) = 'drop'"
+            )
+
+            ->whereBetween(
+                'counselor_date',
+                [
+                    $fromDate . ' 00:00:00',
+                    $toDate . ' 23:59:59'
+                ]
+            )
+
+            ->count();
+
+
+       
+        $branchReports[] = [
+
+            'branch' =>
+                $branchName,
+
+            'fresh_call_center' =>
+                (int) $freshCallCenter,
+
+            'old_call_center' =>
+                (int) $oldCallCenter,
+
+            'fresh_branch' =>
+                (int) $freshBranch,
+
+            'old_branch' =>
+                (int) $oldBranch,
+
+            'enrolled_walkin' =>
+                (int) $enrolledWalkin,
+
+            'total_walkin' =>
+                (int) $totalBranchWalkin,
+
+            'followup' =>
+                (int) $followup,
+
+            'enrolled' =>
+                (int) $enrolled,
+
+            'drop' =>
+                (int) $drop,
+
+        ];
+
+
+     
+        $totalCallCenterFresh +=
+            $freshCallCenter;
+
+        $totalCallCenterOld +=
+            $oldCallCenter;
+
+        $totalBranchFresh +=
+            $freshBranch;
+
+        $totalBranchOld +=
+            $oldBranch;
+
+        $totalEnrolledWalkin +=
+            $enrolledWalkin;
+
+        $totalWalkin +=
+            $totalBranchWalkin;
+
+        $totalFollowup +=
+            $followup;
+
+        $totalEnrolled +=
+            $enrolled;
+
+        $totalDrop +=
+            $drop;
+    }
+
+
+
+    return response()->json([
+
+        'status' =>
+            'success',
+
+        'from_date' =>
+            $fromDate,
+
+        'to_date' =>
+            $toDate,
+
+        'branches' =>
+            $branchReports,
+
+        'totals' => [
+
+            'fresh_call_center' =>
+                $totalCallCenterFresh,
+
+            'old_call_center' =>
+                $totalCallCenterOld,
+
+            'fresh_branch' =>
+                $totalBranchFresh,
+
+            'old_branch' =>
+                $totalBranchOld,
+
+            'enrolled_walkin' =>
+                $totalEnrolledWalkin,
+
+            'total_walkin' =>
+                $totalWalkin,
+
+            'followup' =>
+                $totalFollowup,
+
+            'enrolled' =>
+                $totalEnrolled,
+
+            'drop' =>
+                $totalDrop,
+
+        ]
+
+    ]);
+}
+
+
+
+
+// public function adminBranchReportUserData(Request $request)
+// {
+//     $fromDate = $request->input('from_date');
+//     $toDate   = $request->input('to_date');
+
+//     $query = DB::table('student as s')
+//         ->leftJoin('crm_login as c', 'c.id', '=', 's.assign_to')
+//         ->select([
+//             's.sno',
+//             's.sname',
+//             's.smobile',
+//             's.scountry',
+//             's.svisa',
+//             's.branch',
+//             'c.name as assign_name',
+//             's.walkedin_date',
+//             's.student_status',
+//             's.file_no',
+//         ]);
+
+//     /*
+//     |--------------------------------------------------------------------------
+//     | Date Filter
+//     |--------------------------------------------------------------------------
+//     */
+
+//     if (!empty($fromDate)) {
+//         $query->whereDate('s.walkedin_date', '>=', $fromDate);
+//     }
+
+//     if (!empty($toDate)) {
+//         $query->whereDate('s.walkedin_date', '<=', $toDate);
+//     }
+
+//     /*
+//     |--------------------------------------------------------------------------
+//     | DataTables
+//     |--------------------------------------------------------------------------
+//     */
+
+//     return DataTables::of($query)
+
+//         ->editColumn('sname', function ($row) {
+//             return $row->sname ?? '';
+//         })
+
+//         ->editColumn('smobile', function ($row) {
+//             return $row->smobile ?? '';
+//         })
+
+//         ->editColumn('scountry', function ($row) {
+//             return $row->scountry ?? '';
+//         })
+
+//         ->editColumn('svisa', function ($row) {
+//             return $row->svisa ?? '';
+//         })
+
+//         ->editColumn('branch', function ($row) {
+//             return $row->branch ?? '';
+//         })
+
+//         ->editColumn('assign_name', function ($row) {
+//             return $row->assign_name ?? '';
+//         })
+
+//         ->editColumn('walkedin_date', function ($row) {
+//             return $row->walkedin_date ?? '';
+//         })
+
+//         ->editColumn('student_status', function ($row) {
+//             return $row->student_status ?? '';
+//         })
+
+//         ->editColumn('file_no', function ($row) {
+
+//             if (
+//                 strtolower($row->student_status ?? '') === 'enrolled'
+//             ) {
+//                 return $row->file_no ?? '';
+//             }
+
+//             return '';
+//         })
+
+//         ->make(true);
+// }
+
+public function adminBranchReportUserData(Request $request)
+{
+    if (session('role') !== 'super_admin') {
+        return response()->json([
+            'status' => 'logout',
+            'message' => 'Unauthorized access.'
+        ], 401);
+    }
+
+    $request->validate([
+        'from_date' => [
+            'required',
+            'date'
+        ],
+
+        'to_date' => [
+            'required',
+            'date',
+            'after_or_equal:from_date'
+        ],
+    ]);
+
+    $fromDate = $request->input('from_date');
+    $toDate   = $request->input('to_date');
+
+    $query = DB::table('student as s')
+        ->leftJoin(
+            'crm_login as c',
+            'c.id',
+            '=',
+            's.assign_to'
+        )
+        ->select([
+            's.sno',
+            's.sname',
+            's.smobile',
+            's.scountry',
+            's.svisa',
+            's.branch',
+            'c.name as assign_name',
+            's.walkedin_date',
+            's.student_status',
+            's.file_no',
+        ])
+        ->whereBetween('s.walkedin_date', [
+            $fromDate . ' 00:00:00',
+            $toDate . ' 23:59:59'
+        ]);
+
+    return DataTables::of($query)
+
+        ->editColumn('sname', function ($row) {
+            return $row->sname ?? '';
+        })
+
+        ->editColumn('smobile', function ($row) {
+            return $row->smobile ?? '';
+        })
+
+        ->editColumn('scountry', function ($row) {
+            return $row->scountry ?? '';
+        })
+
+        ->editColumn('svisa', function ($row) {
+            return $row->svisa ?? '';
+        })
+
+        ->editColumn('branch', function ($row) {
+            return $row->branch ?? '';
+        })
+
+        ->editColumn('assign_name', function ($row) {
+            return $row->assign_name ?? '';
+        })
+
+        ->editColumn('walkedin_date', function ($row) {
+            return $row->walkedin_date ?? '';
+        })
+
+        ->editColumn('student_status', function ($row) {
+            return $row->student_status ?? '';
+        })
+
+        ->editColumn('file_no', function ($row) {
+
+            if (
+                strtolower(trim($row->student_status ?? '')) ===
+                'enrolled'
+            ) {
+                return $row->file_no ?? '';
+            }
+
+            return '';
+        })
+
+        ->make(true);
+}
+
+
+public function exportBranchReport(Request $request)
+{
+    $rows = DB::table('seminarpre as s')
+        ->select([
+            's.sname',
+            's.smobile',
+            's.scountry',
+            's.svisa',
+            's.category',
+            's.branch',
+            's.walkedin_date',
+            's.student_status',
+            's.file_no',
+        ])
+        ->orderBy('s.walkedin_date', 'desc')
+        ->get();
+
+    $filename =
+        'branch-report-' .
+        date('Y-m-d-H-i-s') .
+        '.xls';
+
+    $headers = [
+        'Content-Type' =>
+            'application/vnd.ms-excel; charset=UTF-8',
+
+        'Content-Disposition' =>
+            'attachment; filename="' . $filename . '"',
+
+        'Cache-Control' =>
+            'max-age=0',
+    ];
+
+    $html = '';
+
+    $html .= '<table border="1">';
+
+    $html .= '<thead>';
+    $html .= '<tr>';
+
+    $html .= '<th>Client Name</th>';
+    $html .= '<th>Client Number</th>';
+    $html .= '<th>Country Name</th>';
+    $html .= '<th>Visa Type</th>';
+    $html .= '<th>Branch Name</th>';
+    $html .= '<th>Walk-In Date</th>';
+    $html .= '<th>File Status</th>';
+    $html .= '<th>File Number</th>';
+
+    $html .= '</tr>';
+    $html .= '</thead>';
+
+    $html .= '<tbody>';
+
+    foreach ($rows as $row) {
+
+        $visa =
+            $row->svisa ??
+            $row->category ??
+            '';
+
+        $html .= '<tr>';
+
+        $html .= '<td>' .
+            e($row->sname ?? '') .
+            '</td>';
+
+        $html .= '<td>' .
+            e($row->smobile ?? '') .
+            '</td>';
+
+        $html .= '<td>' .
+            e($row->scountry ?? '') .
+            '</td>';
+
+        $html .= '<td>' .
+            e($visa) .
+            '</td>';
+
+        $html .= '<td>' .
+            e($row->branch ?? '') .
+            '</td>';
+
+        $html .= '<td>' .
+            e($row->walkedin_date ?? '') .
+            '</td>';
+
+        $html .= '<td>' .
+            e($row->student_status ?? '') .
+            '</td>';
+
+        $html .= '<td>';
+
+        if (
+            ($row->student_status ?? '') ===
+            'enrolled'
+        ) {
+            $html .= e(
+                $row->file_no ?? ''
+            );
+        }
+
+        $html .= '</td>';
+
+        $html .= '</tr>';
+    }
+
+    $html .= '</tbody>';
+    $html .= '</table>';
+
+    return response(
+        "\xEF\xBB\xBF" . $html,
         200,
-
         $headers
     );
 }
 
 
 
-    public function adminBranchReport()
-    {
-        return view('admin.admin_branch_report');
-    }
+   
 
-    public function branchSummary(Request $request)
-    {
-        $from = $request->from_date;
-        $to   = $request->to_date;
+//     public function adminBranchReportDetails(Request $request)
+// {
+    
 
-        $query = DB::table('lead_appointed')
-            ->leftJoin('seminarpre', 'lead_appointed.callerno', '=', 'seminarpre.smobile');
+//     if (session('role') !== 'super_admin') {
 
-        if ($from && $to) {
-            $query->whereBetween('lead_appointed.created_date', [$from, $to]);
-        }
+//         return response()->json([
+//             'status' => 'logout'
+//         ], 401);
+//     }
 
-        $data = $query->select(
-            'lead_appointed.branch',
 
-            DB::raw("SUM(CASE WHEN lead_appointed.source='call_center' AND lead_appointed.type='fresh' THEN 1 ELSE 0 END) as fresh_call"),
-            DB::raw("SUM(CASE WHEN lead_appointed.source='call_center' AND lead_appointed.type='old' THEN 1 ELSE 0 END) as old_call"),
 
-            DB::raw("SUM(CASE WHEN lead_appointed.source='branch' AND lead_appointed.type='fresh' THEN 1 ELSE 0 END) as fresh_branch"),
-            DB::raw("SUM(CASE WHEN lead_appointed.source='branch' AND lead_appointed.type='old' THEN 1 ELSE 0 END) as old_branch"),
+//     $request->validate([
 
-            DB::raw("SUM(CASE WHEN seminarpre.student_status='enrolled' THEN 1 ELSE 0 END) as enrolled_walkin"),
+//         'from_date' => [
+//             'required',
+//             'date'
+//         ],
 
-            DB::raw("COUNT(*) as total_walkin"),
+//         'to_date' => [
+//             'required',
+//             'date',
+//             'after_or_equal:from_date'
+//         ],
 
-            DB::raw("SUM(CASE WHEN seminarpre.student_status='enrolled' THEN 1 ELSE 0 END) as enrolled")
-        )
-            ->groupBy('lead_appointed.branch')
-            ->get();
+//         'branch' => [
+//             'nullable',
+//             'string'
+//         ],
 
-        $totals = [
-            'fresh_call' => $data->sum('fresh_call'),
-            'old_call' => $data->sum('old_call'),
-            'fresh_branch' => $data->sum('fresh_branch'),
-            'old_branch' => $data->sum('old_branch'),
-            'enrolled_walkin' => $data->sum('enrolled_walkin'),
-            'total_walkin' => $data->sum('total_walkin'),
-            'enrolled' => $data->sum('enrolled'),
-        ];
+//     ]);
 
-        // ✅ ADD THIS (USER DETAILS QUERY)
-        $users = DB::table('seminarpre')
-            ->leftJoin('lead_appointed', 'lead_appointed.callerno', '=', 'seminarpre.smobile')
-            ->when($from && $to, function ($q) use ($from, $to) {
-                $q->whereBetween('lead_appointed.created_date', [$from, $to]);
-            })
-            ->select(
-                'seminarpre.sname as client_name',
-                'seminarpre.smobile as client_number',
-                'seminarpre.scountry as country',
-                'seminarpre.svisa as visa',
-                'lead_appointed.branch',
-                'lead_appointed.counselor_name',
-                'lead_appointed.created_date as walkin_date',
-                'seminarpre.student_status as file_status',
-                'seminarpre.file_no'
-            )
-            ->get();
 
-        return response()->json([
-            'data' => $data,
-            'totals' => $totals,
-            'users' => $users
-        ]);
-    }
+//     $fromDate = $request->from_date;
+//     $toDate   = $request->to_date;
+//     $branch   = $request->branch;
 
-public function adminwalknReport(Request $request)
+
+
+//     $baseQuery = DB::table('seminarpre');
+
+
+
+//     if (
+//         !empty($branch) &&
+//         $branch !== 'all'
+//     ) {
+
+//         $baseQuery->where(
+//             'branch',
+//             $branch
+//         );
+//     }
+
+
+
+//     $countries = (clone $baseQuery)
+//         ->selectRaw('TRIM(scountry) AS country')
+//         ->whereNotNull('scountry')
+//         ->whereRaw("TRIM(scountry) <> ''")
+//         ->distinct()
+//         ->orderByRaw('TRIM(scountry)')
+//         ->get();
+
+
+//     $countryReports = [];
+
+
+//     $countryWalkinTotal   = 0;
+//     $countryFollowupTotal = 0;
+//     $countryEnrolledTotal = 0;
+//     $countryDropTotal     = 0;
+
+
+
+
+//     foreach ($countries as $country) {
+
+//         $countryName = $country->country;
+
+
+
+
+//         $countryQuery = clone $baseQuery;
+
+//         $countryQuery->whereRaw(
+//             'TRIM(scountry) = ?',
+//             [$countryName]
+//         );
+
+
+
+//         $walkin = (clone $countryQuery)
+//             ->count('sno');
+
+
+
+//         $followup = (clone $countryQuery)
+//             ->whereRaw(
+//                 "LOWER(TRIM(student_status)) = 'follow-up'"
+//             )
+//             ->count('sno');
+
+
+
+
+//         $enrolled = (clone $countryQuery)
+//             ->whereRaw(
+//                 "LOWER(TRIM(student_status)) = 'enrolled'"
+//             )
+//             ->count('sno');
+
+
+
+//         $drop = (clone $countryQuery)
+//             ->whereRaw(
+//                 "LOWER(TRIM(student_status)) = 'drop'"
+//             )
+//             ->count('sno');
+
+
+
+//         $countryReports[] = [
+
+//             'country' =>
+//                 $countryName,
+
+//             'walkin' =>
+//                 (int) $walkin,
+
+//             'followup' =>
+//                 (int) $followup,
+
+//             'enrolled' =>
+//                 (int) $enrolled,
+
+//             'drop' =>
+//                 (int) $drop,
+
+//         ];
+
+
+
+//         $countryWalkinTotal += $walkin;
+
+//         $countryFollowupTotal += $followup;
+
+//         $countryEnrolledTotal += $enrolled;
+
+//         $countryDropTotal += $drop;
+//     }
+
+
+
+
+//     $visas = (clone $baseQuery)
+//         ->select('category')
+//         ->distinct()
+//         ->orderBy('category')
+//         ->get();
+
+
+//     $visaReports = [];
+
+
+//     $visaWalkinTotal   = 0;
+//     $visaFollowupTotal = 0;
+//     $visaEnrolledTotal = 0;
+//     $visaDropTotal     = 0;
+
+
+
+
+//     foreach ($visas as $visa) {
+
+//         $visaType = $visa->category;
+
+
+    
+
+//         $visaQuery = clone $baseQuery;
+
+
+
+//         if ($visaType === null) {
+
+//             $visaQuery->whereNull('category');
+
+//         } else {
+
+//             $visaQuery->where(
+//                 'category',
+//                 $visaType
+//             );
+
+//         }
+
+
+
+//         $walkin = (clone $visaQuery)
+//             ->count('sno');
+
+
+
+//         $followup = (clone $visaQuery)
+//             ->whereRaw(
+//                 "LOWER(TRIM(student_status)) = 'follow-up'"
+//             )
+//             ->count('sno');
+
+
+//         $enrolled = (clone $visaQuery)
+//             ->whereRaw(
+//                 "LOWER(TRIM(student_status)) = 'enrolled'"
+//             )
+//             ->count('sno');
+
+
+
+//         $drop = (clone $visaQuery)
+//             ->whereRaw(
+//                 "LOWER(TRIM(student_status)) = 'drop'"
+//             )
+//             ->count('sno');
+
+
+
+//         $displayVisa = $visaType ?? '';
+
+
+
+//         $visaReports[] = [
+
+//             'visa' =>
+//                 $displayVisa,
+
+//             'walkin' =>
+//                 (int) $walkin,
+
+//             'followup' =>
+//                 (int) $followup,
+
+//             'enrolled' =>
+//                 (int) $enrolled,
+
+//             'drop' =>
+//                 (int) $drop,
+
+//         ];
+
+
+  
+
+//         $visaWalkinTotal += $walkin;
+
+//         $visaFollowupTotal += $followup;
+
+//         $visaEnrolledTotal += $enrolled;
+
+//         $visaDropTotal += $drop;
+//     }
+
+
+
+//     $countryTotals = [
+
+//         'walkin' =>
+//             (int) $countryWalkinTotal,
+
+//         'followup' =>
+//             (int) $countryFollowupTotal,
+
+//         'enrolled' =>
+//             (int) $countryEnrolledTotal,
+
+//         'drop' =>
+//             (int) $countryDropTotal,
+
+//     ];
+
+
+//     $visaTotals = [
+
+//         'walkin' =>
+//             (int) $visaWalkinTotal,
+
+//         'followup' =>
+//             (int) $visaFollowupTotal,
+
+//         'enrolled' =>
+//             (int) $visaEnrolledTotal,
+
+//         'drop' =>
+//             (int) $visaDropTotal,
+
+//     ];
+
+
+
+//     return response()->json([
+
+//         'status' =>
+//             'success',
+
+//         'branch' =>
+//             $branch ?: 'all',
+
+//         'from_date' =>
+//             $fromDate,
+
+//         'to_date' =>
+//             $toDate,
+
+
+
+
+//         'countryReports' =>
+//             $countryReports,
+
+//         /*
+//         | Keep plural key
+//         */
+//         'countryTotals' =>
+//             $countryTotals,
+
+//         /*
+//         | Also keep singular key for compatibility
+//         */
+//         'countryTotal' =>
+//             $countryTotals,
+
+
+
+//         'visaReports' =>
+//             $visaReports,
+
+
+//         'visaTotals' =>
+//             $visaTotals,
+
+        
+//         'visaTotal' =>
+//             $visaTotals,
+
+//     ]);
+// }
+
+public function adminBranchReportDetails(Request $request)
 {
+    if (session('role') !== 'super_admin') {
+        return response()->json([
+            'status' => 'logout'
+        ], 401);
+    }
+
+    $request->validate([
+        'from_date' => [
+            'required',
+            'date'
+        ],
+
+        'to_date' => [
+            'required',
+            'date',
+            'after_or_equal:from_date'
+        ],
+
+        'branch' => [
+            'nullable',
+            'string'
+        ],
+    ]);
+
+    $fromDate = $request->input('from_date');
+    $toDate   = $request->input('to_date');
+    $branch   = $request->input('branch');
+
     /*
     |--------------------------------------------------------------------------
-    | Branch Summary
+    | BASE QUERY
     |--------------------------------------------------------------------------
     */
 
-    $branchReports = [];
+    $baseQuery = DB::table('seminarpre');
 
-    $walkin_total = 0;
-    $followup_total = 0;
-    $enrolled_total = 0;
-    $droped_total = 0;
+    /*
+    |--------------------------------------------------------------------------
+    | DATE FILTER
+    |--------------------------------------------------------------------------
+    */
 
-    // FIX:
-    // Old PHP:
-    // SELECT * FROM crm_login WHERE role='counselor' GROUP BY branch
-    //
-    // Laravel/MySQL ONLY_FULL_GROUP_BY does not allow SELECT * with GROUP BY branch.
-    // We only need the branch, so select only branch.
+    $baseQuery->whereBetween('counselor_date', [
+        $fromDate . ' 00:00:00',
+        $toDate . ' 23:59:59'
+    ]);
 
-    $counsellors = DB::table('crm_login')
-        ->select('branch')
-        ->where('role', 'counselor')
-        ->whereNotNull('branch')
-        ->groupBy('branch')
+    /*
+    |--------------------------------------------------------------------------
+    | BRANCH FILTER
+    |--------------------------------------------------------------------------
+    */
+
+    if (!empty($branch) && $branch !== 'all') {
+        $baseQuery->where('branch', $branch);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | COUNTRY REPORT
+    |--------------------------------------------------------------------------
+    */
+
+    $countries = (clone $baseQuery)
+        ->selectRaw('TRIM(scountry) AS country')
+        ->whereNotNull('scountry')
+        ->whereRaw("TRIM(scountry) <> ''")
+        ->distinct()
+        ->orderByRaw('TRIM(scountry)')
         ->get();
 
+    $countryReports = [];
 
-    foreach ($counsellors as $counsellor) {
+    $countryWalkinTotal   = 0;
+    $countryFollowupTotal = 0;
+    $countryEnrolledTotal = 0;
+    $countryDropTotal     = 0;
 
-        $branch = $counsellor->branch;
+    foreach ($countries as $country) {
 
+        $countryName = $country->country;
 
-        // Walk-in
-        $walkin = DB::table('seminarpre')
-            ->where('branch', $branch)
-            ->count();
+        $countryQuery = clone $baseQuery;
 
+        $countryQuery->whereRaw(
+            'TRIM(scountry) = ?',
+            [$countryName]
+        );
 
-        // Follow-up
-        $followup = DB::table('seminarpre')
-            ->where('branch', $branch)
-            ->where('student_status', 'follow-up')
-            ->count();
+        $walkin = (clone $countryQuery)
+            ->count('sno');
 
+        $followup = (clone $countryQuery)
+            ->whereRaw(
+                "LOWER(TRIM(student_status)) = 'follow-up'"
+            )
+            ->count('sno');
 
-        // Enrolled
-        $enrolled = DB::table('seminarpre')
-            ->where('branch', $branch)
-            ->where('student_status', 'enrolled')
-            ->count();
+        $enrolled = (clone $countryQuery)
+            ->whereRaw(
+                "LOWER(TRIM(student_status)) = 'enrolled'"
+            )
+            ->count('sno');
 
+        $drop = (clone $countryQuery)
+            ->whereRaw(
+                "LOWER(TRIM(student_status)) = 'drop'"
+            )
+            ->count('sno');
 
-        // Drop
-        $droped = DB::table('seminarpre')
-            ->where('branch', $branch)
-            ->where('student_status', 'drop')
-            ->count();
+        $countryReports[] = [
+            'country'  => $countryName,
+            'walkin'   => (int) $walkin,
+            'followup' => (int) $followup,
+            'enrolled' => (int) $enrolled,
+            'drop'     => (int) $drop,
+        ];
 
+        $countryWalkinTotal   += $walkin;
+        $countryFollowupTotal += $followup;
+        $countryEnrolledTotal += $enrolled;
+        $countryDropTotal     += $drop;
+    }
 
-        // Totals
-        $walkin_total += $walkin;
-        $followup_total += $followup;
-        $enrolled_total += $enrolled;
-        $droped_total += $droped;
+    /*
+    |--------------------------------------------------------------------------
+    | VISA REPORT
+    |--------------------------------------------------------------------------
+    */
 
+    $visas = (clone $baseQuery)
+        ->select('category')
+        ->distinct()
+        ->orderBy('category')
+        ->get();
 
-        // Percentage
-        if ($enrolled >= 1 && $walkin >= 1) {
+    $visaReports = [];
 
-            $percentage = ($enrolled * 100) / $walkin;
+    $visaWalkinTotal   = 0;
+    $visaFollowupTotal = 0;
+    $visaEnrolledTotal = 0;
+    $visaDropTotal     = 0;
+
+    foreach ($visas as $visa) {
+
+        $visaType = $visa->category;
+
+        $visaQuery = clone $baseQuery;
+
+        if ($visaType === null) {
+
+            $visaQuery->whereNull('category');
 
         } else {
 
-            $percentage = 0;
-
+            $visaQuery->where(
+                'category',
+                $visaType
+            );
         }
 
+        $walkin = (clone $visaQuery)
+            ->count('sno');
 
-        $branchReports[] = [
-            'branch'     => $branch,
-            'walkin'     => $walkin,
-            'followup'   => $followup,
-            'enrolled'   => $enrolled,
-            'droped'     => $droped,
-            'percentage' => round($percentage, 2),
+        $followup = (clone $visaQuery)
+            ->whereRaw(
+                "LOWER(TRIM(student_status)) = 'follow-up'"
+            )
+            ->count('sno');
+
+        $enrolled = (clone $visaQuery)
+            ->whereRaw(
+                "LOWER(TRIM(student_status)) = 'enrolled'"
+            )
+            ->count('sno');
+
+        $drop = (clone $visaQuery)
+            ->whereRaw(
+                "LOWER(TRIM(student_status)) = 'drop'"
+            )
+            ->count('sno');
+
+        $visaReports[] = [
+            'visa'     => $visaType ?? '',
+            'walkin'   => (int) $walkin,
+            'followup' => (int) $followup,
+            'enrolled' => (int) $enrolled,
+            'drop'     => (int) $drop,
         ];
+
+        $visaWalkinTotal   += $walkin;
+        $visaFollowupTotal += $followup;
+        $visaEnrolledTotal += $enrolled;
+        $visaDropTotal     += $drop;
     }
-
-
-    // Total percentage
-    if ($enrolled_total >= 1 && $walkin_total >= 1) {
-
-        $percentage_total = ($enrolled_total * 100) / $walkin_total;
-
-    } else {
-
-        $percentage_total = 0;
-
-    }
-
 
     /*
     |--------------------------------------------------------------------------
-    | User Details
+    | TOTALS
     |--------------------------------------------------------------------------
     */
 
-    $userReports = DB::table('seminarpre')
-        ->join(
-            'lead_appointed',
-            'seminarpre.smobile',
-            '=',
-            'lead_appointed.callerno'
-        )
-        ->select(
-            'seminarpre.sno',
-            'seminarpre.sname',
-            'seminarpre.smobile',
-            'seminarpre.branch',
-            'seminarpre.svisa',
-            'seminarpre.scode',
-            'seminarpre.student_status',
-            'seminarpre.file_no',
-            'seminarpre.scountry',
-            'seminarpre.assign_name',
-            'lead_appointed.id',
-            'lead_appointed.walkedin_date'
-        )
-        ->where('seminarpre.assign_id', '!=', '')
-        ->get();
+    $countryTotals = [
+        'walkin'   => (int) $countryWalkinTotal,
+        'followup' => (int) $countryFollowupTotal,
+        'enrolled' => (int) $countryEnrolledTotal,
+        'drop'     => (int) $countryDropTotal,
+    ];
 
+    $visaTotals = [
+        'walkin'   => (int) $visaWalkinTotal,
+        'followup' => (int) $visaFollowupTotal,
+        'enrolled' => (int) $visaEnrolledTotal,
+        'drop'     => (int) $visaDropTotal,
+    ];
 
-    return view('admin.admin_walkn_report', compact(
-        'branchReports',
-        'walkin_total',
-        'followup_total',
-        'enrolled_total',
-        'droped_total',
-        'percentage_total',
-        'userReports'
-    ));
+    return response()->json([
+        'status' => 'success',
+
+        'branch' => $branch ?: 'all',
+
+        'from_date' => $fromDate,
+
+        'to_date' => $toDate,
+
+        'countryReports' => $countryReports,
+
+        'countryTotals' => $countryTotals,
+
+        'countryTotal' => $countryTotals,
+
+        'visaReports' => $visaReports,
+
+        'visaTotals' => $visaTotals,
+
+        'visaTotal' => $visaTotals,
+    ]);
 }
 
 
 
+
+    public function adminwalknReportExport(Request $request)
+    {
+        if (session('role') !== 'super_admin') {
+            return redirect()
+                ->route('login')
+                ->with('error', 'Unauthorized access.');
+        }
+
+        $latestAppointments = DB::table('lead_appointed')
+            ->select(
+                'callerno',
+                DB::raw('MAX(id) as latest_id')
+            )
+            ->where('created_by', 'branch')
+            ->groupBy('callerno');
+
+        $userReports = DB::table('lead_appointed as la')
+            ->joinSub(
+                $latestAppointments,
+                'latest',
+                function ($join) {
+                    $join->on('la.id', '=', 'latest.latest_id');
+                }
+            )
+            ->join(
+                'seminarpre as s',
+                'la.callerno',
+                '=',
+                's.smobile'
+            )
+            ->where('s.assign_id', '!=', '')
+            ->select(
+                's.sname',
+                's.smobile',
+                's.scountry',
+                's.svisa',
+                's.branch',
+                's.assign_name',
+                's.student_status',
+                's.file_no',
+                'la.walkedin_date'
+            )
+            ->orderByDesc('la.id')
+            ->get();
+
+        return response()->streamDownload(function () use ($userReports) {
+
+            echo "Client Name\tClient Number\tCountry\tVisa\tBranch\tCounselor Name\tWalk-In Date\tFile Status\tFile Number\n";
+
+            foreach ($userReports as $row) {
+
+                echo
+                    $this->excelValue($row->sname) . "\t" .
+                    $this->excelValue($row->smobile) . "\t" .
+                    $this->excelValue($row->scountry) . "\t" .
+                    $this->excelValue($row->svisa) . "\t" .
+                    $this->excelValue($row->branch) . "\t" .
+                    $this->excelValue($row->assign_name) . "\t" .
+                    $this->excelValue($row->walkedin_date) . "\t" .
+                    $this->excelValue($row->student_status) . "\t" .
+                    $this->excelValue(
+                        $row->student_status === 'enrolled'
+                            ? $row->file_no
+                            : ''
+                    ) .
+                    "\n";
+            }
+
+        }, 'admin_branch_report.xls', [
+            'Content-Type' =>
+                'application/vnd.ms-excel; charset=utf-8',
+            'Cache-Control' =>
+                'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
+    }
 
 
 

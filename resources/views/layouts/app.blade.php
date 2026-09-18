@@ -1360,9 +1360,7 @@
                 </ul>
 
 
-                {{-- =========================================================
-                 SUPER ADMIN
-            ========================================================== --}}
+
 
                 @elseif ($role === 'super_admin')
 
@@ -1393,7 +1391,7 @@
 
                                 <a
                                     class="dropdown-item"
-                                    href="{{ route('admin.walkn.report') }}">
+                                    href="{{ route('admin.branch.report') }}">
 
                                     Branch Report
 
@@ -1406,13 +1404,13 @@
 
                                 <a
                                     class="dropdown-item"
-                                    href="{{ route('admin.branch.report') }}">
+                                    href="{{ route('admin.walkn.report') }}">
 
                                     Walk in Report
 
                                 </a>
-
                             </li>
+
 
                         </ul>
 
@@ -1848,12 +1846,12 @@
     </script> -->
 
     <script>
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}'
-        }
-    });
-</script>
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        });
+    </script>
 
 
     {{-- =========================================================
