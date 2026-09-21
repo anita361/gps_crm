@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class BranchManagerController extends Controller
 {
@@ -2065,26 +2066,32 @@ public function adminBranchReportUserData(Request $request)
     $fromDate = $request->input('from_date');
     $toDate   = $request->input('to_date');
 
-    $query = DB::table('student as s')
+    $query = DB::table('lead_appointed as la')
+        ->leftJoin(
+            'seminarpre as sp',
+            'la.callerno',
+            '=',
+            'sp.smobile'
+        )
         ->leftJoin(
             'crm_login as c',
-            'c.id',
+            'la.userid',
             '=',
-            's.assign_to'
+            'c.id'
         )
         ->select([
-            's.sno',
-            's.sname',
-            's.smobile',
-            's.scountry',
-            's.svisa',
-            's.branch',
+            'sp.sno',
+            'sp.sname',
+            'sp.smobile',
+            'sp.scountry',
+            'sp.svisa',
+            'la.branch',
             'c.name as assign_name',
-            's.walkedin_date',
-            's.student_status',
-            's.file_no',
+            'la.walkedin_date',
+            'sp.student_status',
+            'sp.file_no',
         ])
-        ->whereBetween('s.walkedin_date', [
+        ->whereBetween('la.walkedin_date', [
             $fromDate . ' 00:00:00',
             $toDate . ' 23:59:59'
         ]);
@@ -2137,7 +2144,6 @@ public function adminBranchReportUserData(Request $request)
 
         ->make(true);
 }
-
 
 public function exportBranchReport(Request $request)
 {

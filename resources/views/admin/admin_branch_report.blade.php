@@ -18,6 +18,75 @@
                 Branch Report Admin
             </div>
 
+            {{-- =================================================
+                 DATE FILTER
+            ================================================== --}}
+            <div class="report-date-filter">
+
+                <div class="row">
+
+                    <div class="col-sm-4">
+
+                        <div class="form-group">
+
+                            <label for="post_at">
+                                From Date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="post_at"
+                                class="form-control"
+                                value="2025-01-01"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-sm-4">
+
+                        <div class="form-group">
+
+                            <label for="post_at_to_date">
+                                To Date
+                            </label>
+
+                            <input
+                                type="date"
+                                id="post_at_to_date"
+                                class="form-control"
+                                value="2025-05-08"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-sm-4">
+
+                        <div class="form-group search-button-wrapper">
+
+                            <button
+                                type="button"
+                                id="searchReport"
+                                class="btn report-search-btn"
+                            >
+                                <i class="fa fa-search"></i>
+                                Search
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
             <div class="table-responsive">
 
                 <table
@@ -28,6 +97,7 @@
                 >
 
                     <thead>
+
                         <tr>
                             <th>Branch</th>
                             <th>Walk-in</th>
@@ -36,15 +106,23 @@
                             <th>Drop</th>
                             <th>Percentage(%)</th>
                         </tr>
+
                     </thead>
 
                     <tbody id="branchSummaryBody">
 
                         <tr>
-                            <td colspan="6" class="text-center">
+
+                            <td
+                                colspan="6"
+                                class="text-center"
+                            >
+
                                 <i class="fa fa-spinner fa-spin"></i>
                                 Loading...
+
                             </td>
+
                         </tr>
 
                     </tbody>
@@ -64,13 +142,17 @@
         <div class="manage-file">
 
             <div class="report-section-title">
+
                 <i class="fa fa-user"></i>
                 User Details
+
             </div>
+
 
             <div id="alldata">
 
                 <br>
+
 
                 {{-- =================================================
                      EXPORT
@@ -80,6 +162,7 @@
                     method="POST"
                     action="{{ route('admin.branch.report.export') }}"
                     autocomplete="off"
+                    id="exportReportForm"
                 >
 
                     @csrf
@@ -88,6 +171,20 @@
                         type="hidden"
                         name="export"
                         value="1"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="from_date"
+                        id="export_from_date"
+                        value="2025-01-01"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="to_date"
+                        id="export_to_date"
+                        value="2025-05-08"
                     >
 
                     <div class="export-wrapper">
@@ -370,11 +467,13 @@
                         <thead>
 
                             <tr>
+
                                 <th>Call Time</th>
                                 <th>Status</th>
                                 <th>Followup/Enrolled/Drop date</th>
                                 <th>Remark</th>
                                 <th>Counsellor Name</th>
+
                             </tr>
 
                         </thead>
@@ -462,6 +561,65 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
 }
 
+
+/* =========================================================
+   DATE FILTER
+========================================================= */
+
+.report-date-filter {
+    margin-left: 10px;
+    margin-right: 10px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f7f7f7;
+    border: 1px solid #ddd;
+}
+
+.report-date-filter .form-group {
+    margin-bottom: 0;
+}
+
+.report-date-filter label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.report-date-filter .form-control {
+    height: 34px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    font-size: 12px;
+    padding: 5px 8px;
+}
+
+.search-button-wrapper {
+    padding-top: 18px;
+}
+
+.report-search-btn {
+    background: #2868e8;
+    border: 1px solid #2868e8;
+    color: #fff;
+    font-size: 12px;
+    padding: 7px 20px;
+    border-radius: 2px;
+}
+
+.report-search-btn:hover,
+.report-search-btn:focus {
+    background: #1f55bd;
+    border-color: #1f55bd;
+    color: #fff;
+}
+
+
+/* =========================================================
+   BRANCH TABLE
+========================================================= */
+
 .branch-summary-table {
     width: calc(100% - 20px);
     margin-left: 10px;
@@ -518,6 +676,11 @@ body {
     color: #0056b3;
 }
 
+
+/* =========================================================
+   EXPORT
+========================================================= */
+
 .export-wrapper {
     text-align: center;
     margin-bottom: 25px;
@@ -536,6 +699,11 @@ body {
     background: #222;
     color: #fff;
 }
+
+
+/* =========================================================
+   USER TABLE
+========================================================= */
 
 .user-table-wrapper {
     padding-left: 22px;
@@ -630,6 +798,11 @@ body {
     font-size: 11px;
 }
 
+
+/* =========================================================
+   MODALS
+========================================================= */
+
 .modal-header {
     background: #2868e8;
     color: #fff;
@@ -703,6 +876,11 @@ body {
     margin-bottom: 10px;
 }
 
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
 @media(max-width: 768px) {
 
     .crm-branch-report {
@@ -718,6 +896,23 @@ body {
         width: 100%;
         margin-left: 0;
         margin-right: 0;
+    }
+
+    .report-date-filter {
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .report-date-filter .form-group {
+        margin-bottom: 15px;
+    }
+
+    .search-button-wrapper {
+        padding-top: 0;
+    }
+
+    .report-search-btn {
+        width: 100%;
     }
 
 }
@@ -743,27 +938,36 @@ $(document).ready(function () {
 
     function getDateRange() {
 
-        let today = new Date();
+        /*
+        |--------------------------------------------------------------------------
+        | IMPORTANT FIX
+        |--------------------------------------------------------------------------
+        | Do NOT automatically use the current year.
+        |
+        | The old code was sending:
+        | 2026-01-01 to 2026-current-date
+        |
+        | But lead_appointed.walkedin_date data currently exists
+        | up to 2025-05-08.
+        |
+        | Now dates are taken from the selected date fields.
+        |--------------------------------------------------------------------------
+        */
 
-        let year = today.getFullYear();
+        let fromDate =
+            $('#post_at').val();
 
-        let month = String(
-            today.getMonth() + 1
-        ).padStart(2, '0');
+        let toDate =
+            $('#post_at_to_date').val();
 
-        let day = String(
-            today.getDate()
-        ).padStart(2, '0');
 
         return {
 
             from_date:
-                year + '-01-01',
+                fromDate,
 
             to_date:
-                year + '-' +
-                month + '-' +
-                day
+                toDate
 
         };
 
@@ -780,7 +984,9 @@ $(document).ready(function () {
             value === null ||
             value === undefined
         ) {
+
             return '';
+
         }
 
         return $('<div>')
@@ -796,7 +1002,8 @@ $(document).ready(function () {
 
     function numberValue(value) {
 
-        let number = parseInt(value, 10);
+        let number =
+            parseInt(value, 10);
 
         return isNaN(number)
             ? 0
@@ -811,7 +1018,59 @@ $(document).ready(function () {
 
     function loadBranchSummary() {
 
-        let dates = getDateRange();
+        let dates =
+            getDateRange();
+
+
+        if (
+            !dates.from_date ||
+            !dates.to_date
+        ) {
+
+            $('#branchSummaryBody').html(`
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="text-center text-danger"
+                    >
+                        Please select From Date and To Date.
+                    </td>
+
+                </tr>
+
+            `);
+
+            return;
+
+        }
+
+
+        if (
+            dates.from_date >
+            dates.to_date
+        ) {
+
+            $('#branchSummaryBody').html(`
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="text-center text-danger"
+                    >
+                        From Date cannot be greater than To Date.
+                    </td>
+
+                </tr>
+
+            `);
+
+            return;
+
+        }
+
 
         $('#branchSummaryBody').html(`
 
@@ -831,7 +1090,8 @@ $(document).ready(function () {
 
         `);
 
-        $('#branchSummaryFooter').html('');
+        $('#branchSummaryFooter')
+            .html('');
 
 
         $.ajax({
@@ -881,6 +1141,7 @@ $(document).ready(function () {
                     `);
 
                     return;
+
                 }
 
 
@@ -891,7 +1152,9 @@ $(document).ready(function () {
                     response.totals || {};
 
 
-                if (!branches.length) {
+                if (
+                    !branches.length
+                ) {
 
                     $('#branchSummaryBody').html(`
 
@@ -901,7 +1164,7 @@ $(document).ready(function () {
                                 colspan="6"
                                 class="text-center text-muted"
                             >
-                                No branch report found.
+                                No branch report found for selected dates.
                             </td>
 
                         </tr>
@@ -909,6 +1172,7 @@ $(document).ready(function () {
                     `);
 
                     return;
+
                 }
 
 
@@ -917,35 +1181,47 @@ $(document).ready(function () {
 
                 $.each(
                     branches,
-                    function (index, row) {
+                    function (
+                        index,
+                        row
+                    ) {
 
                         let branch =
-                            row.branch ?? 'Unknown';
+                            row.branch ??
+                            '';
+
 
                         let walkin =
                             numberValue(
                                 row.total_walkin
                             );
 
+
                         let enrolled =
                             numberValue(
                                 row.enrolled
                             );
+
 
                         let followup =
                             numberValue(
                                 row.followup
                             );
 
+
                         let drop =
                             numberValue(
                                 row.drop
                             );
 
-                        let percentage = 0;
+
+                        let percentage =
+                            0;
 
 
-                        if (walkin > 0) {
+                        if (
+                            walkin > 0
+                        ) {
 
                             percentage =
                                 (
@@ -1010,15 +1286,18 @@ $(document).ready(function () {
                         totals.total_walkin
                     );
 
+
                 let totalEnrolled =
                     numberValue(
                         totals.enrolled
                     );
 
+
                 let totalFollowup =
                     numberValue(
                         totals.followup
                     );
+
 
                 let totalDrop =
                     numberValue(
@@ -1026,10 +1305,13 @@ $(document).ready(function () {
                     );
 
 
-                let totalPercentage = 0;
+                let totalPercentage =
+                    0;
 
 
-                if (totalWalkin > 0) {
+                if (
+                    totalWalkin > 0
+                ) {
 
                     totalPercentage =
                         (
@@ -1089,6 +1371,7 @@ $(document).ready(function () {
                     xhr.responseText
                 );
 
+
                 $('#branchSummaryBody').html(`
 
                     <tr>
@@ -1111,11 +1394,20 @@ $(document).ready(function () {
     }
 
 
+    /* =========================================================
+       INITIAL BRANCH SUMMARY
+    ========================================================= */
+
     loadBranchSummary();
 
 
+    /* =========================================================
+       USER DATATABLE
+    ========================================================= */
 
-    if ($.fn.DataTable) {
+    if (
+        $.fn.DataTable
+    ) {
 
         if (
             $.fn.DataTable.isDataTable(
@@ -1132,28 +1424,41 @@ $(document).ready(function () {
 
         $('#appointment_data').DataTable({
 
-            processing: true,
+            processing:
+                true,
 
-            serverSide: true,
+            serverSide:
+                true,
 
-            pageLength: 10,
+            pageLength:
+                10,
 
             lengthMenu: [
+
                 [10, 25, 50, 100],
+
                 [10, 25, 50, 100]
+
             ],
 
-            ordering: true,
+            ordering:
+                true,
 
-            searching: true,
+            searching:
+                true,
 
-            info: true,
+            info:
+                true,
 
-            autoWidth: false,
+            autoWidth:
+                false,
 
-            responsive: false,
+            responsive:
+                false,
 
-            order: [],
+            order:
+                [],
+
 
             ajax: {
 
@@ -1168,11 +1473,14 @@ $(document).ready(function () {
                     let dates =
                         getDateRange();
 
+
                     d._token =
                         "{{ csrf_token() }}";
 
+
                     d.from_date =
                         dates.from_date;
+
 
                     d.to_date =
                         dates.to_date;
@@ -1189,6 +1497,7 @@ $(document).ready(function () {
                 }
 
             },
+
 
             language: {
 
@@ -1231,163 +1540,248 @@ $(document).ready(function () {
 
             },
 
+
             columns: [
 
                 {
-                    data: 'sname',
-                    name: 'sname',
-                    defaultContent: ''
+                    data:
+                        'sname',
+
+                    name:
+                        'sname',
+
+                    defaultContent:
+                        ''
                 },
 
+
                 {
-                    data: 'smobile',
-                    name: 'smobile',
-                    defaultContent: ''
+                    data:
+                        'smobile',
+
+                    name:
+                        'smobile',
+
+                    defaultContent:
+                        ''
                 },
 
+
                 {
-                    data: 'scountry',
-                    name: 'scountry',
-                    defaultContent: ''
+                    data:
+                        'scountry',
+
+                    name:
+                        'scountry',
+
+                    defaultContent:
+                        ''
                 },
 
+
                 {
-                    data: 'svisa',
-                    name: 'svisa',
-                    defaultContent: ''
+                    data:
+                        'svisa',
+
+                    name:
+                        'svisa',
+
+                    defaultContent:
+                        ''
                 },
 
+
                 {
-                    data: 'branch',
-                    name: 'branch',
-                    defaultContent: ''
+                    data:
+                        'branch',
+
+                    name:
+                        'branch',
+
+                    defaultContent:
+                        ''
                 },
 
+
                 {
-                    data: 'assign_name',
-                    name: 'assign_name',
-                    defaultContent: ''
+                    data:
+                        'assign_name',
+
+                    name:
+                        'assign_name',
+
+                    defaultContent:
+                        ''
                 },
 
+
                 {
-                    data: 'walkedin_date',
-                    name: 'walkedin_date',
-                    defaultContent: ''
+                    data:
+                        'walkedin_date',
+
+                    name:
+                        'walkedin_date',
+
+                    defaultContent:
+                        ''
                 },
 
+
                 {
-                    data: 'student_status',
-                    name: 'student_status',
-                    defaultContent: ''
+                    data:
+                        'student_status',
+
+                    name:
+                        'student_status',
+
+                    defaultContent:
+                        ''
                 },
 
+
                 {
-                    data: 'file_no',
-                    name: 'file_no',
-                    defaultContent: '',
+                    data:
+                        'file_no',
 
-                    render: function (
-                        data,
-                        type,
-                        row
-                    ) {
+                    name:
+                        'file_no',
 
-                        if (
-                            row.student_status &&
-                            row.student_status
-                                .toLowerCase() ===
-                                'enrolled'
+                    defaultContent:
+                        '',
+
+                    render:
+                        function (
+                            data,
+                            type,
+                            row
                         ) {
 
-                            return escapeHtml(
-                                data
-                            );
+                            if (
+                                row.student_status &&
+                                row.student_status
+                                    .toLowerCase() ===
+                                    'enrolled'
+                            ) {
 
-                        }
+                                return escapeHtml(
+                                    data
+                                );
 
-                        return '';
-
-                    }
-
-                },
-
-                {
-                    data: null,
-                    name: 'call_logs',
-                    orderable: false,
-                    searchable: false,
-
-                    render: function (
-                        data,
-                        type,
-                        row
-                    ) {
-
-                        let id =
-                            row.sno ??
-                            '';
-
-                        return `
-
-                            <button
-                                type="button"
-                                class="btn btn-primary btn-sm calllogsdata"
-                                data-id="${escapeHtml(id)}"
-                            >
-
-                                <i class="fa fa-phone"></i>
-                                Call Logs
-
-                            </button>
-
-                        `;
-
-                    }
-
-                },
-
-                {
-                    data: null,
-                    name: 'view_details',
-                    orderable: false,
-                    searchable: false,
-
-                    render: function (
-                        data,
-                        type,
-                        row
-                    ) {
-
-                        let mobile =
-                            row.smobile ??
-                            '';
-
-                        if (!mobile) {
+                            }
 
                             return '';
 
                         }
 
-
-                        let url =
-                            "{{ url('/walking-details') }}/" +
-                            encodeURIComponent(
-                                mobile
-                            );
+                },
 
 
-                        return `
+                /* =================================================
+                   CALL LOGS
+                ================================================== */
 
-                            <a
-                                href="${url}"
-                                class="btn btn-sm btn-primary"
-                            >
-                                View
-                            </a>
+                {
+                    data:
+                        null,
 
-                        `;
+                    name:
+                        'call_logs',
 
-                    }
+                    orderable:
+                        false,
+
+                    searchable:
+                        false,
+
+                    render:
+                        function (
+                            data,
+                            type,
+                            row
+                        ) {
+
+                            let id =
+                                row.sno ??
+                                '';
+
+
+                            return `
+
+                                <button
+                                    type="button"
+                                    class="btn btn-primary btn-sm calllogsdata"
+                                    data-id="${escapeHtml(id)}"
+                                >
+
+                                    <i class="fa fa-phone"></i>
+                                    Call Logs
+
+                                </button>
+
+                            `;
+
+                        }
+
+                },
+
+
+                /* =================================================
+                   VIEW DETAILS
+                ================================================== */
+
+                {
+                    data:
+                        null,
+
+                    name:
+                        'view_details',
+
+                    orderable:
+                        false,
+
+                    searchable:
+                        false,
+
+                    render:
+                        function (
+                            data,
+                            type,
+                            row
+                        ) {
+
+                            let mobile =
+                                row.smobile ??
+                                '';
+
+
+                            if (
+                                !mobile
+                            ) {
+
+                                return '';
+
+                            }
+
+
+                            let url =
+                                "{{ url('/walking-details') }}/" +
+                                encodeURIComponent(
+                                    mobile
+                                );
+
+
+                            return `
+
+                                <a
+                                    href="${url}"
+                                    class="btn btn-sm btn-primary"
+                                >
+                                    View
+                                </a>
+
+                            `;
+
+                        }
 
                 }
 
@@ -1399,55 +1793,398 @@ $(document).ready(function () {
 
 
     /* =========================================================
-       BUILD REPORT TOTALS
+       SEARCH BUTTON
     ========================================================= */
 
-    function calculateReportTotals(rows) {
+    $('#searchReport').on(
+        'click',
+        function () {
 
-        let totals = {
-
-            walkin: 0,
-
-            followup: 0,
-
-            enrolled: 0,
-
-            drop: 0
-
-        };
+            let dates =
+                getDateRange();
 
 
-        $.each(
-            rows || [],
-            function (index, item) {
+            if (
+                !dates.from_date ||
+                !dates.to_date
+            ) {
 
-                totals.walkin +=
-                    numberValue(
-                        item.walkin
-                    );
+                alert(
+                    'Please select From Date and To Date.'
+                );
 
-                totals.followup +=
-                    numberValue(
-                        item.followup
-                    );
-
-                totals.enrolled +=
-                    numberValue(
-                        item.enrolled
-                    );
-
-                totals.drop +=
-                    numberValue(
-                        item.drop
-                    );
+                return;
 
             }
-        );
 
 
-        return totals;
+            if (
+                dates.from_date >
+                dates.to_date
+            ) {
 
-    }
+                alert(
+                    'From Date cannot be greater than To Date.'
+                );
+
+                return;
+
+            }
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Update export dates
+            |--------------------------------------------------------------------------
+            */
+
+            $('#export_from_date')
+                .val(
+                    dates.from_date
+                );
+
+
+            $('#export_to_date')
+                .val(
+                    dates.to_date
+                );
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reload branch summary
+            |--------------------------------------------------------------------------
+            */
+
+            loadBranchSummary();
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Reload user DataTable
+            |--------------------------------------------------------------------------
+            */
+
+            if (
+                $.fn.DataTable.isDataTable(
+                    '#appointment_data'
+                )
+            ) {
+
+                $('#appointment_data')
+                    .DataTable()
+                    .ajax
+                    .reload();
+
+            }
+
+        }
+    );
+
+
+    /* =========================================================
+       EXPORT DATE
+    ========================================================= */
+
+    $('#exportReportForm').on(
+        'submit',
+        function () {
+
+            let dates =
+                getDateRange();
+
+
+            $('#export_from_date')
+                .val(
+                    dates.from_date
+                );
+
+
+            $('#export_to_date')
+                .val(
+                    dates.to_date
+                );
+
+        }
+    );
+
+
+    /* =========================================================
+       BRANCH DETAILS
+    ========================================================= */
+
+    $(document).on(
+        'click',
+        '.data_summery',
+        function () {
+
+            let branch =
+                $(this).attr('data-id');
+
+
+            let dates =
+                getDateRange();
+
+
+            $('#branchDetailsLoader')
+                .show();
+
+
+            $('#branchDetailsError')
+                .hide()
+                .html('');
+
+
+            $('#fetch_data_summery')
+                .hide()
+                .html('');
+
+
+            $('#data_summery')
+                .modal('show');
+
+
+            $.ajax({
+
+                url:
+                    "{{ route('admin.branch.report.details') }}",
+
+                type:
+                    "POST",
+
+                dataType:
+                    "json",
+
+                data: {
+
+                    _token:
+                        "{{ csrf_token() }}",
+
+                    from_date:
+                        dates.from_date,
+
+                    to_date:
+                        dates.to_date,
+
+                    branch:
+                        branch
+
+                },
+
+                success: function (response) {
+
+                    $('#branchDetailsLoader')
+                        .hide();
+
+
+                    if (
+                        !response ||
+                        response.status !==
+                        'success'
+                    ) {
+
+                        $('#branchDetailsError')
+                            .html(
+                                response.message ||
+                                'Unable to load branch details.'
+                            )
+                            .show();
+
+                        return;
+
+                    }
+
+
+                    let html =
+                        buildReportHtml(
+                            response
+                        );
+
+
+                    $('#fetch_data_summery')
+                        .html(html)
+                        .show();
+
+                },
+
+                error: function (xhr) {
+
+                    console.log(
+                        'Branch details error:',
+                        xhr.responseText
+                    );
+
+
+                    $('#branchDetailsLoader')
+                        .hide();
+
+
+                    let message =
+                        'Unable to load branch details.';
+
+
+                    if (
+                        xhr.responseJSON &&
+                        xhr.responseJSON.message
+                    ) {
+
+                        message =
+                            xhr.responseJSON.message;
+
+                    }
+
+
+                    $('#branchDetailsError')
+                        .html(
+                            escapeHtml(message)
+                        )
+                        .show();
+
+                }
+
+            });
+
+        }
+    );
+
+
+    /* =========================================================
+       TOTAL DETAILS
+       IMPORTANT:
+       USING YOUR EXISTING ROUTE
+       admin.branch.report.details
+       NO NEW ROUTE
+    ========================================================= */
+
+    $(document).on(
+        'click',
+        '.totale_data_summery',
+        function () {
+
+            let dates =
+                getDateRange();
+
+
+            $('#totalDetailsLoader')
+                .show();
+
+
+            $('#totalDetailsError')
+                .hide()
+                .html('');
+
+
+            $('#fetch_total_data_summery')
+                .hide()
+                .html('');
+
+
+            $('#total_data_summery')
+                .modal('show');
+
+
+            $.ajax({
+
+                url:
+                    "{{ route('admin.branch.report.details') }}",
+
+                type:
+                    "POST",
+
+                dataType:
+                    "json",
+
+                data: {
+
+                    _token:
+                        "{{ csrf_token() }}",
+
+                    from_date:
+                        dates.from_date,
+
+                    to_date:
+                        dates.to_date,
+
+                    branch:
+                        "all"
+
+                },
+
+                success: function (response) {
+
+                    $('#totalDetailsLoader')
+                        .hide();
+
+
+                    if (
+                        !response ||
+                        response.status !==
+                        'success'
+                    ) {
+
+                        $('#totalDetailsError')
+                            .html(
+                                response.message ||
+                                'Unable to load total details.'
+                            )
+                            .show();
+
+                        return;
+
+                    }
+
+
+                    let html =
+                        buildReportHtml(
+                            response
+                        );
+
+
+                    $('#fetch_total_data_summery')
+                        .html(html)
+                        .show();
+
+                },
+
+                error: function (xhr) {
+
+                    console.log(
+                        'Total details error:',
+                        xhr.responseText
+                    );
+
+
+                    $('#totalDetailsLoader')
+                        .hide();
+
+
+                    let message =
+                        'Unable to load total details.';
+
+
+                    if (
+                        xhr.responseJSON &&
+                        xhr.responseJSON.message
+                    ) {
+
+                        message =
+                            xhr.responseJSON.message;
+
+                    }
+
+
+                    $('#totalDetailsError')
+                        .html(
+                            escapeHtml(message)
+                        )
+                        .show();
+
+                }
+
+            });
+
+        }
+    );
 
 
     /* =========================================================
@@ -1503,10 +2240,13 @@ $(document).ready(function () {
 
 
         let countryTotal =
-            response.countryTotals || null;
+            response.countryTotals ||
+            null;
 
 
-        if (!countryTotal) {
+        if (
+            !countryTotal
+        ) {
 
             countryTotal =
                 calculateReportTotals(
@@ -1516,11 +2256,16 @@ $(document).ready(function () {
         }
 
 
-        if (countryReports.length > 0) {
+        if (
+            countryReports.length > 0
+        ) {
 
             $.each(
                 countryReports,
-                function (index, item) {
+                function (
+                    index,
+                    item
+                ) {
 
                     html += `
 
@@ -1528,7 +2273,8 @@ $(document).ready(function () {
 
                             <td>
                                 ${escapeHtml(
-                                    item.country ?? ''
+                                    item.country ??
+                                    ''
                                 )}
                             </td>
 
@@ -1685,10 +2431,13 @@ $(document).ready(function () {
 
 
         let visaTotal =
-            response.visaTotals || null;
+            response.visaTotals ||
+            null;
 
 
-        if (!visaTotal) {
+        if (
+            !visaTotal
+        ) {
 
             visaTotal =
                 calculateReportTotals(
@@ -1698,11 +2447,16 @@ $(document).ready(function () {
         }
 
 
-        if (visaReports.length > 0) {
+        if (
+            visaReports.length > 0
+        ) {
 
             $.each(
                 visaReports,
-                function (index, item) {
+                function (
+                    index,
+                    item
+                ) {
 
                     html += `
 
@@ -1710,7 +2464,8 @@ $(document).ready(function () {
 
                             <td>
                                 ${escapeHtml(
-                                    item.visa ?? ''
+                                    item.visa ??
+                                    ''
                                 )}
                             </td>
 
@@ -1827,266 +2582,65 @@ $(document).ready(function () {
 
 
     /* =========================================================
-       BRANCH DETAILS
+       CALCULATE REPORT TOTALS
     ========================================================= */
 
-    $(document).on(
-        'click',
-        '.data_summery',
-        function () {
+    function calculateReportTotals(rows) {
 
-            let branch =
-                $(this).attr('data-id');
+        let totals = {
 
-            let dates =
-                getDateRange();
+            walkin:
+                0,
 
+            followup:
+                0,
 
-            $('#branchDetailsLoader')
-                .show();
+            enrolled:
+                0,
 
-            $('#branchDetailsError')
-                .hide()
-                .html('');
+            drop:
+                0
 
-            $('#fetch_data_summery')
-                .hide()
-                .html('');
+        };
 
 
-            $('#data_summery')
-                .modal('show');
+        $.each(
+            rows || [],
+            function (
+                index,
+                item
+            ) {
 
-
-            $.ajax({
-
-                url:
-                    "{{ route('admin.branch.report.details') }}",
-
-                type:
-                    "POST",
-
-                dataType:
-                    "json",
-
-                data: {
-
-                    _token:
-                        "{{ csrf_token() }}",
-
-                    from_date:
-                        dates.from_date,
-
-                    to_date:
-                        dates.to_date,
-
-                    branch:
-                        branch
-
-                },
-
-                success: function (response) {
-
-                    $('#branchDetailsLoader')
-                        .hide();
-
-
-                    if (
-                        !response ||
-                        response.status !== 'success'
-                    ) {
-
-                        $('#branchDetailsError')
-                            .html(
-                                response.message ||
-                                'Unable to load branch details.'
-                            )
-                            .show();
-
-                        return;
-
-                    }
-
-
-                    let html =
-                        buildReportHtml(
-                            response
-                        );
-
-
-                    $('#fetch_data_summery')
-                        .html(html)
-                        .show();
-
-                },
-
-                error: function (xhr) {
-
-                    console.log(
-                        'Branch details error:',
-                        xhr.responseText
+                totals.walkin +=
+                    numberValue(
+                        item.walkin
                     );
 
 
-                    $('#branchDetailsLoader')
-                        .hide();
-
-
-                    let message =
-                        'Unable to load branch details.';
-
-
-                    if (
-                        xhr.responseJSON &&
-                        xhr.responseJSON.message
-                    ) {
-
-                        message =
-                            xhr.responseJSON.message;
-
-                    }
-
-
-                    $('#branchDetailsError')
-                        .html(message)
-                        .show();
-
-                }
-
-            });
-
-        }
-    );
-
-
-    /* =========================================================
-       TOTAL DETAILS
-    ========================================================= */
-
-    $(document).on(
-        'click',
-        '.totale_data_summery',
-        function () {
-
-            let dates =
-                getDateRange();
-
-
-            $('#totalDetailsLoader')
-                .show();
-
-            $('#totalDetailsError')
-                .hide()
-                .html('');
-
-            $('#fetch_total_data_summery')
-                .hide()
-                .html('');
-
-
-            $('#total_data_summery')
-                .modal('show');
-
-
-            $.ajax({
-
-                url:
-                    "{{ route('admin.branch.report.details') }}",
-
-                type:
-                    "POST",
-
-                dataType:
-                    "json",
-
-                data: {
-
-                    _token:
-                        "{{ csrf_token() }}",
-
-                    from_date:
-                        dates.from_date,
-
-                    to_date:
-                        dates.to_date,
-
-                    branch:
-                        "all"
-
-                },
-
-                success: function (response) {
-
-                    $('#totalDetailsLoader')
-                        .hide();
-
-
-                    if (
-                        !response ||
-                        response.status !== 'success'
-                    ) {
-
-                        $('#totalDetailsError')
-                            .html(
-                                response.message ||
-                                'Unable to load total details.'
-                            )
-                            .show();
-
-                        return;
-
-                    }
-
-
-                    let html =
-                        buildReportHtml(
-                            response
-                        );
-
-
-                    $('#fetch_total_data_summery')
-                        .html(html)
-                        .show();
-
-                },
-
-                error: function (xhr) {
-
-                    console.log(
-                        'Total details error:',
-                        xhr.responseText
+                totals.followup +=
+                    numberValue(
+                        item.followup
                     );
 
 
-                    $('#totalDetailsLoader')
-                        .hide();
+                totals.enrolled +=
+                    numberValue(
+                        item.enrolled
+                    );
 
 
-                    let message =
-                        'Unable to load total details.';
+                totals.drop +=
+                    numberValue(
+                        item.drop
+                    );
+
+            }
+        );
 
 
-                    if (
-                        xhr.responseJSON &&
-                        xhr.responseJSON.message
-                    ) {
+        return totals;
 
-                        message =
-                            xhr.responseJSON.message;
-
-                    }
-
-
-                    $('#totalDetailsError')
-                        .html(message)
-                        .show();
-
-                }
-
-            });
-
-        }
-    );
+    }
 
 
     /* =========================================================
@@ -2099,18 +2653,35 @@ $(document).ready(function () {
         function () {
 
             let id =
-                $(this).attr('data-id');
+                $(this).attr(
+                    'data-id'
+                );
 
 
             $('#callLogsLoader')
                 .show();
 
+
             $('#callLogsError')
                 .hide()
                 .html('');
 
-            $('#ldld')
-                .html('');
+
+            $('#ldld').html(`
+
+                <tr>
+
+                    <td
+                        colspan="5"
+                        class="text-center"
+                    >
+                        <i class="fa fa-spinner fa-spin"></i>
+                        Loading...
+                    </td>
+
+                </tr>
+
+            `);
 
 
             $('#Calllogs')
@@ -2152,7 +2723,10 @@ $(document).ready(function () {
 
                         $.each(
                             response.logs,
-                            function (index, log) {
+                            function (
+                                index,
+                                log
+                            ) {
 
                                 html += `
 
@@ -2160,31 +2734,36 @@ $(document).ready(function () {
 
                                         <td>
                                             ${escapeHtml(
-                                                log.call_time ?? ''
+                                                log.call_time ??
+                                                ''
                                             )}
                                         </td>
 
                                         <td>
                                             ${escapeHtml(
-                                                log.status ?? ''
+                                                log.status ??
+                                                ''
                                             )}
                                         </td>
 
                                         <td>
                                             ${escapeHtml(
-                                                log.follow_date ?? ''
+                                                log.follow_date ??
+                                                ''
                                             )}
                                         </td>
 
                                         <td>
                                             ${escapeHtml(
-                                                log.remark ?? ''
+                                                log.remark ??
+                                                ''
                                             )}
                                         </td>
 
                                         <td>
                                             ${escapeHtml(
-                                                log.counsellor_name ?? ''
+                                                log.counsellor_name ??
+                                                ''
                                             )}
                                         </td>
 
@@ -2274,6 +2853,7 @@ $(document).ready(function () {
                 .hide()
                 .html('');
 
+
             $('#branchDetailsError')
                 .hide()
                 .html('');
@@ -2290,6 +2870,7 @@ $(document).ready(function () {
                 .hide()
                 .html('');
 
+
             $('#totalDetailsError')
                 .hide()
                 .html('');
@@ -2305,6 +2886,7 @@ $(document).ready(function () {
             $('#ldld')
                 .html('');
 
+
             $('#callLogsError')
                 .hide()
                 .html('');
@@ -2313,7 +2895,31 @@ $(document).ready(function () {
     );
 
 
-    $('body').addClass('loaded');
+    /* =========================================================
+       SEARCH ENTER KEY
+    ========================================================= */
+
+    $('#post_at, #post_at_to_date').on(
+        'keypress',
+        function (e) {
+
+            if (
+                e.which === 13
+            ) {
+
+                e.preventDefault();
+
+                $('#searchReport')
+                    .trigger('click');
+
+            }
+
+        }
+    );
+
+
+    $('body')
+        .addClass('loaded');
 
 });
 
