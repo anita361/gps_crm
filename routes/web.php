@@ -83,14 +83,6 @@ Route::middleware('login')->group(function () {
     Route::get('/eligible-details', [CounselorDashboardController::class, 'eligibleDetails'])->name('eligible.details');
     Route::get('/aus-eligible-details', [CounselorDashboardController::class, 'ausEligibleDetails'])->name('aus.eligible.details');
 
-    // Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
-    //     ->name('admin.branch.report');
-
-    // Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknReport'])
-    //     ->name('admin.walkn.report');
-
-    // Route::post('/admin/walkn-report/export', [BranchManagerController::class, 'adminwalknReportExport'])
-    //     ->name('admin.walkn.report.export');
 
 
     Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
@@ -103,24 +95,61 @@ Route::middleware('login')->group(function () {
     Route::post('/admin-branch-report/details', [BranchManagerController::class, 'adminBranchReportDetails'])
         ->name('admin.branch.report.details');
 
-        Route::post('/admin-branch-report/users', [BranchManagerController::class, 'adminBranchReportUserData'])
-    ->name('admin.branch.report.users');
+    Route::post('/admin-branch-report/users', [BranchManagerController::class, 'adminBranchReportUserData'])
+        ->name('admin.branch.report.users');
 
 
     Route::post('/admin/branch-report/export', [BranchManagerController::class, 'exportBranchReport'])->name('admin.branch.report.export');
+    Route::post('/admin-branch-report/call-logs', [BranchManagerController::class, 'branchReportCallLogs'])->name('admin.branch.report.call.logs');
 
-    Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknReport'])
-        ->name('admin.walkn.report');
+    // Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknReport'])
+    //     ->name('admin.walkn.report');
 
-    Route::post('/admin/walkn-report/export', [BranchManagerController::class, 'adminwalknReportExport'])
-        ->name('admin.walkn.report.export');
+    // Route::post('/admin/walkn-report/export', [BranchManagerController::class, 'adminwalknReportExport'])
+    //     ->name('admin.walkn.report.export');
+
+    // Route::post('/fetch-city', [BranchManagerController::class, 'fetchCity']);
+    // Route::post('/fetch-all-city', [BranchManagerController::class, 'fetchAllCity']);
+
+    // Route::post('/admin/branch-dashboard/count', [
+    //     BranchManagerController::class,
+    //     'branchDashboardCount'
+    // ])->name('admin.branch.dashboard.count');
+
+
+    // Route::post('/admin/branch-dashboard/details', [
+    //     BranchManagerController::class,
+    //     'branchDashboardDetails'
+    // ])->name('admin.branch.dashboard.details');
 
 
 
 
+    // Route::post('/admin/branch-dashboard/modal', [
+    //     BranchManagerController::class,
+    //     'branchDashboardModal'
+    // ])->name('admin.branch.dashboard.modal');
 
-    Route::post('/fetch-city', [BranchManagerController::class, 'fetchCity']);
-    Route::post('/fetch-all-city', [BranchManagerController::class, 'fetchAllCity']);
+    Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
+        ->name('admin.branch.report');
+
+    Route::post('/admin-branch-report/data', [BranchManagerController::class, 'branchSummary'])
+        ->name('admin.branch.report.data');
+
+    Route::post('/admin-branch-report/details', [BranchManagerController::class, 'branchDetails'])
+        ->name('admin.branch.report.details');
+
+    Route::post('/admin-branch-report/detail-summary', [BranchManagerController::class, 'branchDetailSummary'])
+        ->name('admin.branch.report.detail.summary');
+
+    Route::post('/admin-branch-report/export', [BranchManagerController::class, 'branchReportExport'])
+        ->name('admin.branch.report.export');
+
+        Route::get('/admin-walkin-report', [BranchManagerController::class, 'walkinReport'])
+    ->name('admin.walkn.report');
+
+
+
 
     Route::view('/cc-agent-report', 'callcenter.cc_agent_report')->name('callcenter.admin.dashboard');
 
