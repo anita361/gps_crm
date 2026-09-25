@@ -85,6 +85,7 @@ Route::middleware('login')->group(function () {
 
 
 
+
     Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
         ->name('admin.branch.report');
 
@@ -100,56 +101,44 @@ Route::middleware('login')->group(function () {
 
 
     Route::post('/admin/branch-report/export', [BranchManagerController::class, 'exportBranchReport'])->name('admin.branch.report.export');
-    Route::post('/admin-branch-report/call-logs', [BranchManagerController::class, 'branchReportCallLogs'])->name('admin.branch.report.call.logs');
 
-    // Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknReport'])
-    //     ->name('admin.walkn.report');
+    Route::get('/admin.walkn.report', [BranchManagerController::class, 'adminwalknReport'])
+        ->name('admin.walkn.report');
 
-    // Route::post('/admin/walkn-report/export', [BranchManagerController::class, 'adminwalknReportExport'])
-    //     ->name('admin.walkn.report.export');
+    Route::post('/admin.walkn.report.details', [BranchManagerController::class, 'adminWalknDetails'])
+        ->name('admin.walkn.report.details');
 
-    // Route::post('/fetch-city', [BranchManagerController::class, 'fetchCity']);
-    // Route::post('/fetch-all-city', [BranchManagerController::class, 'fetchAllCity']);
+    Route::post('/admin/walkn-report/export', [BranchManagerController::class, 'adminwalknReportExport'])
+        ->name('admin.walkn.report.export');
 
-    // Route::post('/admin/branch-dashboard/count', [
-    //     BranchManagerController::class,
-    //     'branchDashboardCount'
-    // ])->name('admin.branch.dashboard.count');
+    Route::post('/get-logs', [BranchManagerController::class, 'getLogs'])
+        ->name('get-logs');
 
+    Route::post('/fetch-city', [BranchManagerController::class, 'fetchCity'])
+        ->name('fetch-city');
 
-    // Route::post('/admin/branch-dashboard/details', [
-    //     BranchManagerController::class,
-    //     'branchDashboardDetails'
-    // ])->name('admin.branch.dashboard.details');
+    Route::post('/fetch-all-city', [BranchManagerController::class, 'fetchAllCity'])
+        ->name('fetch-all-city');
 
 
 
+    Route::get('/admin-counsellor-report', [BranchManagerController::class, 'adminCounsellorReport'])
+        ->name('admin.counsellor.report');
 
-    // Route::post('/admin/branch-dashboard/modal', [
-    //     BranchManagerController::class,
-    //     'branchDashboardModal'
-    // ])->name('admin.branch.dashboard.modal');
+    Route::post('/admin-counsellor-report/branch', [BranchManagerController::class, 'adminCounsellorReportData'])
+        ->name('admin.counsellor.report.branch');
 
-    Route::get('/admin-branch-report', [BranchManagerController::class, 'adminBranchReport'])
-        ->name('admin.branch.report');
+    Route::post('/admin-counsellor-report/users', [BranchManagerController::class, 'adminCounsellorReportUserData'])
+        ->name('admin.counsellor.report.users');
 
-    Route::post('/admin-branch-report/data', [BranchManagerController::class, 'branchSummary'])
-        ->name('admin.branch.report.data');
+    Route::post('/admin-counsellor-report/logs', [BranchManagerController::class, 'adminCounsellorReportLogs'])
+        ->name('admin.counsellor.report.logs');
 
-    Route::post('/admin-branch-report/details', [BranchManagerController::class, 'branchDetails'])
-        ->name('admin.branch.report.details');
+    Route::post('/admin-counsellor-report/all-city', [BranchManagerController::class, 'adminCounsellorReportAllCity'])
+        ->name('admin.counsellor.report.all-city');
 
-    Route::post('/admin-branch-report/detail-summary', [BranchManagerController::class, 'branchDetailSummary'])
-        ->name('admin.branch.report.detail.summary');
-
-    Route::post('/admin-branch-report/export', [BranchManagerController::class, 'branchReportExport'])
-        ->name('admin.branch.report.export');
-
-        Route::get('/admin-walkin-report', [BranchManagerController::class, 'walkinReport'])
-    ->name('admin.walkn.report');
-
-
-
+    Route::post('/admin/counsellor-report/export', [BranchManagerController::class, 'exportCounsellorReport'])
+        ->name('admin.counsellor.report.export');
 
     Route::view('/cc-agent-report', 'callcenter.cc_agent_report')->name('callcenter.admin.dashboard');
 
@@ -428,6 +417,10 @@ Route::middleware('login')->group(function () {
 
     Route::get('/commission-list', [WalkinController::class, 'commissionList'])
         ->name('commission.list');
+    Route::post('/tuition-fee-update', [WalkinController::class, 'updateTuitionFee'])
+        ->name('tuition.fee.update.save');
+    Route::get('/tuition-fee-update', [WalkinController::class, 'tuitionFeeUpdate'])
+        ->name('tuition.fee.update');
 
     Route::get('/download-commission-excel', [WalkinController::class, 'downloadCommissionExcel'])
         ->name('download.commission.excel');

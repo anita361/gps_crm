@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use App\Models\Student;
 use App\Mail\StudentConsentMail;
+use Illuminate\Support\Facades\Validator;
 
 
 
@@ -3149,7 +3150,7 @@ class WalkinController extends Controller
 
         $html .= '<tr>';
 
-        $html .= '<th colspan="' . count($headers) . '" 
+        $html .= '<th colspan="' . count($headers) . '"
                     style="background:#2d63dc;color:#ffffff;font-size:16px;">
                     Daily Sales Report
               </th>';
@@ -10721,5 +10722,217 @@ class WalkinController extends Controller
             'status' => true,
             'users' => $users
         ]);
+    }
+
+
+    public function tuitionFeeUpdate(Request $request)
+    {
+        // Check login
+        if (!session('login')) {
+            return redirect()->route('logout');
+        }
+
+        // Allowed roles
+        $allowedRoles = [
+            'super_admin',
+            'finance',
+            'commission',
+            'operation'
+        ];
+
+        $role = session('role');
+
+        if (!in_array($role, $allowedRoles, true)) {
+            return redirect()->route('index');
+        }
+
+
+
+        $limit = (int) $request->get('limit', 10);
+
+        if (!in_array($limit, [10, 25, 50, 100], true)) {
+            $limit = 10;
+        }
+
+
+
+        $filterProvince = trim((string) $request->get('province', ''));
+        $filterCollege  = trim((string) $request->get('clg_name', ''));
+        $filterCampus   = trim((string) $request->get('campus_name', ''));
+        $filterProgram  = trim((string) $request->get('prg_name', ''));
+
+
+
+        $provinces = DB::table('college_list')
+            ->whereNotNull('province')
+            ->where('province', '<>', '')
+            ->select('province')
+            ->distinct()
+            ->orderBy('province')
+            ->pluck('province');
+
+        $colleges = DB::table('college_list')
+            ->whereNotNull('clg_name')
+            ->where('clg_name', '<>', '')
+            ->select('clg_name')
+            ->distinct()
+            ->orderBy('clg_name')
+            ->pluck('clg_name');
+
+        $campuses = DB::table('college_list')
+            ->whereNotNull('campus_name')
+            ->where('campus_name', '<>', '')
+            ->select('campus_name')
+            ->distinct()
+            ->orderBy('campus_name')
+            ->pluck('campus_name');
+
+        $programs = DB::table('college_list')
+            ->whereNotNull('prg_name')
+            ->where('prg_name', '<>', '')
+            ->select('prg_name')
+            ->distinct()
+            ->orderBy('prg_name')
+            ->pluck('prg_name');
+
+
+
+        $query = DB::table('college_list')
+            ->select([
+                'id',
+                'province',
+                'clg_name',
+                'campus_name',
+                'prg_name',
+                'tution_fee'
+            ]);
+
+
+        if ($filterProvince !== '') {
+            $query->whereRaw(
+                'TRIM(province) = ?',
+                [$filterProvince]
+            );
+        }
+
+
+
+        if ($filterCollege !== '') {
+            $query->whereRaw(
+                'TRIM(clg_name) = ?',
+                [$filterCollege]
+            );
+        }
+
+
+
+        if ($filterCampus !== '') {
+            $query->whereRaw(
+                'TRIM(campus_name) = ?',
+                [$filterCampus]
+            );
+        }
+
+
+
+        if ($filterProgram !== '') {
+            $query->whereRaw(
+                'TRIM(prg_name) = ?',
+                [$filterProgram]
+            );
+        }
+
+
+
+        $collegeList = $query
+            ->orderByDesc('id')
+            ->paginate($limit)
+            ->withQueryString();
+
+
+
+        return view('tuition_fee_update', [
+            'collegeList'    => $collegeList,
+            'provinces'      => $provinces,
+            'colleges'       => $colleges,
+            'campuses'       => $campuses,
+            'programs'       => $programs,
+
+            'filterProvince' => $filterProvince,
+            'filterCollege'  => $filterCollege,
+            'filterCampus'   => $filterCampus,
+            'filterProgram'  => $filterProgram,
+
+            'limit'          => $limit,
+        ]);
+    }
+
+
+
+    public function updateTuitionFee(Request $request)
+    {
+        $request->validate([
+            'id' => [
+                'required',
+                'integer'
+            ],
+
+            'tution_fee' => [
+                'required',
+                'regex:/^\d+(\.\d{1,2})?$/'
+            ],
+        ]);
+
+        try {
+
+            $updated = DB::table('college_list')
+                ->where('id', $request->id)
+                ->update([
+                    'tution_fee' => $request->tution_fee,
+                ]);
+
+            if ($updated) {
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Tuition fee updated successfully.',
+                    'tution_fee' => $request->tution_fee,
+                ]);
+            }
+
+
+
+            $exists = DB::table('college_list')
+                ->where('id', $request->id)
+                ->exists();
+
+            if ($exists) {
+
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Tuition fee is already up to date.',
+                    'tution_fee' => $request->tution_fee,
+                ]);
+            }
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Record not found.',
+            ], 404);
+        } catch (\Throwable $e) {
+
+            \Log::error(
+                'Tuition fee update failed',
+                [
+                    'id' => $request->id,
+                    'error' => $e->getMessage(),
+                ]
+            );
+
+            return response()->json([
+                'status' => false,
+                'message' => 'Unable to update tuition fee.',
+            ], 500);
+        }
     }
 }

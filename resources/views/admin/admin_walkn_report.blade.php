@@ -1,1392 +1,1495 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Branch Report')
+@section('title', 'Branch Dashboard')
 
 @section('content')
 
-<style>
-    .crm-branch-report {
-        background: #f5f6f8;
-        min-height: calc(100vh - 70px);
-        padding: 20px 0 40px;
-    }
+    <style>
+        /* =========================================================
+                           PAGE
+                        ========================================================= */
 
-    .crm-branch-report .report-card {
-        background: #fff;
-        border-radius: 6px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
-        padding: 20px;
-        margin-bottom: 20px;
-    }
-
-    .report-section-title {
-        background: #2868e8;
-        color: #fff;
-        font-size: 15px;
-        font-weight: 600;
-        padding: 11px 15px;
-        border-radius: 4px;
-        margin-bottom: 15px;
-    }
-
-    .filter-label {
-        font-size: 13px;
-        font-weight: 600;
-        color: #444;
-        margin-bottom: 5px;
-    }
-
-    .filter-input {
-        width: 100%;
-        height: 40px;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 7px 10px;
-        font-size: 13px;
-        outline: none;
-    }
-
-    .filter-input:focus {
-        border-color: #2868e8;
-        box-shadow: 0 0 0 2px rgba(40, 104, 232, 0.08);
-    }
-
-    .crm-login-button1 {
-        background: #444;
-        border: 0;
-        color: #fff;
-        height: 40px;
-        padding: 0 20px;
-        border-radius: 4px;
-        font-size: 13px;
-        cursor: pointer;
-    }
-
-    .crm-login-button1:hover {
-        background: #2868e8;
-    }
-
-    .export-btn {
-        background: #198754;
-    }
-
-    .export-btn:hover {
-        background: #157347;
-    }
-
-    .table-responsive {
-        width: 100%;
-        overflow-x: auto;
-    }
-
-    .branch-report-table {
-        width: 100% !important;
-        border-collapse: collapse;
-        margin-bottom: 0;
-    }
-
-    .branch-report-table thead th {
-        background: #292929;
-        color: #fff;
-        font-size: 12px;
-        font-weight: 600;
-        padding: 10px 8px;
-        text-align: center;
-        vertical-align: middle;
-        white-space: nowrap;
-        border: 1px solid #444;
-    }
-
-    .branch-report-table tbody td,
-    .branch-report-table tfoot td {
-        font-size: 12px;
-        padding: 9px 8px;
-        border: 1px solid #ddd;
-        vertical-align: middle;
-        text-align: center;
-    }
-
-    .branch-report-table tbody tr:nth-child(odd) {
-        background: #eeeeee;
-    }
-
-    .branch-report-table tbody tr:nth-child(even) {
-        background: #fff;
-    }
-
-    .branch-report-table tfoot td {
-        background: #292929;
-        color: #fff;
-        font-weight: 600;
-    }
-
-    .branch-name {
-        text-align: left !important;
-        font-weight: 600;
-    }
-
-    .report-link {
-        color: #2868e8;
-        text-decoration: none;
-        font-weight: 600;
-        cursor: pointer;
-    }
-
-    .report-link:hover {
-        text-decoration: underline;
-    }
-
-    .loading-row {
-        text-align: center !important;
-        padding: 25px !important;
-        color: #777;
-    }
-
-    .spinner-border-sm {
-        width: 1rem;
-        height: 1rem;
-    }
-
-    .empty-row {
-        text-align: center !important;
-        color: #777;
-        padding: 20px !important;
-    }
-
-    .error-box {
-        display: none;
-        background: #f8d7da;
-        color: #842029;
-        border: 1px solid #f5c2c7;
-        padding: 10px 12px;
-        border-radius: 4px;
-        margin-bottom: 12px;
-        font-size: 13px;
-    }
-
-    .success-box {
-        display: none;
-        background: #d1e7dd;
-        color: #0f5132;
-        border: 1px solid #badbcc;
-        padding: 10px 12px;
-        border-radius: 4px;
-        margin-bottom: 12px;
-        font-size: 13px;
-    }
-
-    /* Modal */
-    .crm-modal .modal-header {
-        background: #2868e8;
-        color: #fff;
-        border-bottom: 0;
-    }
-
-    .crm-modal .modal-title {
-        font-size: 15px;
-        font-weight: 600;
-    }
-
-    .crm-modal .modal-header .btn-close {
-        filter: brightness(0) invert(1);
-    }
-
-    .crm-modal .modal-body {
-        padding: 15px;
-        background: #fff;
-    }
-
-    .modal-loader {
-        text-align: center;
-        padding: 30px 10px;
-        color: #777;
-        font-size: 13px;
-    }
-
-    .modal-loader .spinner-border {
-        margin-bottom: 8px;
-    }
-
-    .detail-section-title {
-        background: #292929;
-        color: #fff;
-        padding: 9px 12px;
-        font-size: 13px;
-        font-weight: 600;
-        border-radius: 3px;
-        margin-bottom: 8px;
-    }
-
-    .detail-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-bottom: 20px;
-    }
-
-    .detail-table th {
-        background: #292929;
-        color: #fff;
-        font-size: 11px;
-        padding: 8px 6px;
-        border: 1px solid #444;
-        text-align: center;
-        white-space: nowrap;
-    }
-
-    .detail-table td {
-        font-size: 11px;
-        padding: 7px 6px;
-        border: 1px solid #ddd;
-        text-align: center;
-    }
-
-    .detail-table tbody tr:nth-child(odd) {
-        background: #eeeeee;
-    }
-
-    .detail-table tbody tr:nth-child(even) {
-        background: #fff;
-    }
-
-    .details-wrapper {
-        display: none;
-    }
-
-    /* Appointment table */
-    #appointment_data {
-        width: 100% !important;
-    }
-
-    #appointment_data_wrapper {
-        width: 100%;
-    }
-
-    #appointment_data_wrapper .dataTables_length,
-    #appointment_data_wrapper .dataTables_filter {
-        margin-bottom: 12px;
-    }
-
-    #appointment_data_wrapper .dataTables_filter input {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 5px 8px;
-        margin-left: 5px;
-    }
-
-    #appointment_data_wrapper .dataTables_length select {
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        padding: 4px 8px;
-    }
-
-    #appointment_data thead th {
-        background: #292929;
-        color: #fff;
-        font-size: 11px;
-        padding: 9px 6px;
-        text-align: center;
-        white-space: nowrap;
-    }
-
-    #appointment_data tbody td {
-        font-size: 11px;
-        padding: 8px 6px;
-        vertical-align: middle;
-        text-align: center;
-    }
-
-    #appointment_data tbody tr:nth-child(odd) {
-        background: #eeeeee;
-    }
-
-    #appointment_data tbody tr:nth-child(even) {
-        background: #fff;
-    }
-
-    .status-badge {
-        display: inline-block;
-        padding: 3px 7px;
-        border-radius: 3px;
-        font-size: 10px;
-        font-weight: 600;
-        text-transform: capitalize;
-    }
-
-    .status-enrolled {
-        background: #d1e7dd;
-        color: #0f5132;
-    }
-
-    .status-follow-up {
-        background: #fff3cd;
-        color: #664d03;
-    }
-
-    .status-drop {
-        background: #f8d7da;
-        color: #842029;
-    }
-
-    .status-default {
-        background: #e2e3e5;
-        color: #41464b;
-    }
-
-    .view-details-btn {
-        display: inline-block;
-        background: #2868e8;
-        color: #fff !important;
-        padding: 4px 9px;
-        border-radius: 3px;
-        text-decoration: none;
-        font-size: 10px;
-    }
-
-    .view-details-btn:hover {
-        background: #1e56c7;
-    }
-
-    .no-data {
-        text-align: center;
-        padding: 20px !important;
-        color: #777;
-    }
-
-    .date-error {
-        color: #dc3545;
-        font-size: 12px;
-        margin-top: 5px;
-        display: none;
-    }
-
-    @media (max-width: 767px) {
-        .crm-branch-report {
-            padding: 10px 0 30px;
+        .crm-Lead-Summary {
+            background: #f1f2f5;
+            min-height: calc(100vh - 70px);
+            padding-bottom: 30px;
         }
 
-        .report-card {
-            padding: 12px !important;
+        .main-crm {
+            margin-top: 97px;
+            padding-left: 0;
+            padding-right: 0;
         }
 
-        .filter-row > div {
-            margin-bottom: 10px;
+        /* =========================================================
+                           BRANCH DASHBOARD HEADER
+                        ========================================================= */
+
+        .branch-dashboard-title {
+            width: 100%;
+            height: 34px;
+            line-height: 34px;
+            background: #0869e8;
+            color: #fff;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 400;
+            margin: 0 0 0 0;
+            padding: 0;
         }
 
-        .export-btn {
+        .branch-dashboard-title i {
+            margin-right: 5px;
+        }
+
+        /* =========================================================
+                           SEARCH BOX
+                        ========================================================= */
+
+        .report-search-box {
+            background: #fff;
+            border-radius: 0;
+            padding: 11px 13px 22px 13px;
+            margin-bottom: 26px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        .report-search-box .row {
+            margin-left: 0;
+            margin-right: 0;
+        }
+
+        .report-search-box label {
+            display: block;
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-size: 12px;
+            color: #111;
+        }
+
+        .report-search-box .form-control {
+            height: 31px;
+            border: 1px solid #d0d0d0;
+            border-radius: 3px;
+            font-size: 12px;
+            padding: 5px 7px;
+            box-shadow: none;
+        }
+
+        .report-search-box .form-control:focus {
+            border-color: #aaa;
+            box-shadow: none;
+        }
+
+        #search {
+            width: auto;
+            min-width: 55px;
+            height: 27px;
+            margin-top: 19px;
+            padding: 3px 12px;
+            background: #4d4d4d;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+        }
+
+        #search:hover {
+            background: #333;
+            opacity: 1;
+        }
+
+        /* =========================================================
+                           REPORT SECTIONS
+                        ========================================================= */
+
+        .report-section {
+            background: #fff;
+            border-radius: 0;
+            padding: 0 12px 20px 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        .report-section-title {
+            background: #0869e8;
+            color: #fff;
+            padding: 7px 10px;
+            border-radius: 0;
+            font-size: 16px;
+            font-weight: 400;
+            text-align: center;
+            margin: 0 -12px 24px -12px;
+            min-height: 31px;
+            line-height: 17px;
+        }
+
+        .report-section-title i {
+            margin-right: 5px;
+        }
+
+        /* =========================================================
+                           BRANCH REPORT TABLE
+                        ========================================================= */
+
+        .dashboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0;
+        }
+
+        .dashboard-table th {
+            background: #4b4b4b;
+            color: #fff;
+            padding: 8px 7px;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #666;
+            white-space: nowrap;
+        }
+
+        .dashboard-table th:nth-child(even) {
+            background: #292929;
+        }
+
+        .dashboard-table td {
+            padding: 7px 6px;
+            font-size: 11px;
+            text-align: center;
+            vertical-align: middle;
+            border: 1px solid #d3d3d3;
+            white-space: nowrap;
+        }
+
+        .dashboard-table tbody tr:nth-child(odd) {
+            background: #eeeeee;
+        }
+
+        .dashboard-table tbody tr:nth-child(even) {
+            background: #fff;
+        }
+
+        .dashboard-table tfoot td {
+            background: #0869e8;
+            color: #fff;
+            font-weight: 700;
+            border: 1px solid #ddd;
+            padding: 7px 6px;
+        }
+
+        .walkin-link {
+            color: #000;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .walkin-link:hover {
+            color: #0869e8;
+            text-decoration: underline;
+        }
+
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .report-empty {
+            text-align: center !important;
+            padding: 15px !important;
+            color: #777;
+        }
+
+        /* =========================================================
+                           EXPORT
+                        ========================================================= */
+
+        .export-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 7px;
+        }
+
+        .crm-login-button1 {
+            background: #4b4b4b;
+            color: #fff;
+            border: none;
+            border-radius: 2px;
+            padding: 7px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: none;
+        }
+
+        .crm-login-button1:hover {
+            background: #333;
+        }
+
+        /* =========================================================
+                           USER DETAILS DATATABLE
+                        ========================================================= */
+
+        #appointment_data {
+            width: 100% !important;
+            margin-top: 12px !important;
+        }
+
+        #appointment_data_wrapper {
+            width: 100%;
+        }
+
+        #appointment_data_wrapper .dataTables_length {
+            margin-bottom: 25px;
+            font-size: 11px;
+        }
+
+        #appointment_data_wrapper .dataTables_length label {
+            font-weight: 600;
+        }
+
+        #appointment_data_wrapper .dataTables_length select {
+            min-width: 80px;
+            height: 28px;
+            font-size: 11px;
+        }
+
+        #appointment_data_wrapper .dataTables_filter {
+            margin-bottom: 25px;
+            font-size: 11px;
+        }
+
+        #appointment_data_wrapper .dataTables_filter input {
+            height: 28px;
+            font-size: 11px;
+            border: 1px solid #ccc;
+            border-radius: 3px;
+            padding: 4px 7px;
+        }
+
+        #appointment_data_wrapper .dataTables_info {
             margin-top: 10px;
+            font-size: 11px;
+            color: #777;
         }
-    }
-</style>
 
-<div class="crm-branch-report">
-    <div class="container-fluid main-crm">
+        #appointment_data_wrapper .dataTables_paginate {
+            margin-top: 8px;
+            font-size: 10px;
+        }
 
-        {{-- Page Header --}}
-        <div class="report-card">
-            <div class="report-section-title">
-                Admin Branch Report
+        #appointment_data thead th {
+            background: #000;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: middle;
+            padding: 6px 5px;
+            border: 1px solid #fff;
+        }
+
+        #appointment_data tbody td {
+            font-size: 11px;
+            vertical-align: middle;
+            text-align: center;
+            padding: 6px 5px;
+            white-space: nowrap;
+        }
+
+        #appointment_data tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        #appointment_data tbody tr:nth-child(odd) {
+            background: #fff;
+        }
+
+        .view-details {
+            color: #2868e8;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .view-details:hover {
+            text-decoration: underline;
+        }
+
+        /* =========================================================
+                           PAGE LOADER
+                        ========================================================= */
+
+        #imgloader {
+            display: none;
+            position: fixed;
+            z-index: 99999;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.75);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loader-box {
+            background: #fff;
+            padding: 25px 35px;
+            border-radius: 5px;
+            text-align: center;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .loader-box .spinner-border {
+            width: 2.5rem;
+            height: 2.5rem;
+        }
+
+        /* =========================================================
+                           MODALS
+                        ========================================================= */
+
+        .modal-header {
+            background: #0869e8;
+            color: #fff;
+        }
+
+        .modal-header .btn-close {
+            filter: brightness(0) invert(1);
+        }
+
+        .modal-report-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-loader {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .modal-error {
+            display: none;
+            color: #842029;
+            background: #f8d7da;
+            border: 1px solid #f5c2c7;
+            padding: 10px 12px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        .modal-content-area {
+            display: none;
+        }
+
+        /* =========================================================
+                           DATATABLE BUTTONS
+                        ========================================================= */
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            font-size: 10px !important;
+            padding: 3px 7px !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #0869e8 !important;
+            color: #fff !important;
+            border: 1px solid #0869e8 !important;
+        }
+
+        /* =========================================================
+                           MOBILE
+                        ========================================================= */
+
+        @media (max-width: 767px) {
+
+            .main-crm {
+                margin-top: 80px;
+            }
+
+            .report-search-box {
+                padding: 12px;
+            }
+
+            #search {
+                margin-top: 10px;
+            }
+
+            .report-section {
+                padding: 0 8px 15px 8px;
+            }
+
+            .report-section-title {
+                margin-left: -8px;
+                margin-right: -8px;
+                font-size: 14px;
+            }
+
+            .dashboard-table {
+                min-width: 1000px;
+            }
+
+            #appointment_data {
+                min-width: 1200px;
+            }
+        }
+    </style>
+
+
+    <div class="crm-Lead-Summary">
+
+        <div class="container-fluid main-crm">
+
+            {{-- =====================================================
+                 BRANCH DASHBOARD HEADER
+            ====================================================== --}}
+
+            <div class="branch-dashboard-title">
+                <i class="fa fa-desktop"></i> Branch Dashboard
             </div>
 
-            {{-- Filters --}}
-            <div class="row align-items-end">
 
-                <div class="col-md-3 col-sm-6">
-                    <label class="filter-label" for="post_at">From Date</label>
-                    <input
-                        type="date"
-                        id="post_at"
-                        class="filter-input"
-                    >
-                </div>
+            {{-- =====================================================
+                 SEARCH SECTION
+            ====================================================== --}}
 
-                <div class="col-md-3 col-sm-6">
-                    <label class="filter-label" for="post_at_to_date">To Date</label>
-                    <input
-                        type="date"
-                        id="post_at_to_date"
-                        class="filter-input"
-                    >
-                    <div class="date-error" id="dateError">
-                        Please select a valid date range.
+            <div class="report-search-box">
+
+                <div class="row">
+
+                    <div class="col-md-3">
+
+                        <label for="post_at">
+                            Search By Date
+                        </label>
+
+                        <input type="text" id="post_at" class="form-control" placeholder="From Date" autocomplete="off">
+
                     </div>
+
+
+                    <div class="col-md-3">
+
+                        <label for="post_at_to_date">
+                            &nbsp;
+                        </label>
+
+                        <input type="text" id="post_at_to_date" class="form-control" placeholder="To Date"
+                            autocomplete="off">
+
+                    </div>
+
+
+                    <div class="col-md-2">
+
+                        <button type="button" id="search">
+                            Search
+                        </button>
+
+                    </div>
+
                 </div>
 
-                <div class="col-md-2 col-sm-6">
-                    <button
-                        type="button"
-                        id="search"
-                        class="crm-login-button1"
-                    >
-                        Search
-                    </button>
+            </div>
+
+
+            {{-- =====================================================
+                 BRANCH WISE REPORT
+                 HIDDEN INITIALLY
+            ====================================================== --}}
+
+            <div id="branchReportSection" class="report-section" style="display:none;">
+
+                <div class="report-section-title">
+                    <i class="fa fa-bar-chart"></i>
+                    Branch Wise Report
                 </div>
 
-                <div class="col-md-4 col-sm-6 text-md-end">
-                    <form
-                        method="POST"
-                        action="{{ route('admin.branch.report.export') }}"
-                        id="exportForm"
-                    >
+
+                <div class="table-responsive">
+
+                    <table class="dashboard-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Branch
+                                </th>
+
+                                <th>
+                                    Fresh Call center Walkin
+                                </th>
+
+                                <th>
+                                    Old Call center Walkin
+                                </th>
+
+                                <th>
+                                    Fresh Branch Walkin
+                                </th>
+
+                                <th>
+                                    Old Branch Walkin
+                                </th>
+
+                                <th>
+                                    Enrolled Walkin
+                                </th>
+
+                                <th>
+                                    Total Walkin
+                                </th>
+
+                                <th>
+                                    Enrolled
+                                </th>
+
+                                <th>
+                                    Percentage (%)
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody id="alldatacount">
+
+                            <tr>
+
+                                <td colspan="9" class="report-empty">
+
+                                    No report found.
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+
+                        <tfoot id="branchReportFooter">
+                        </tfoot>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+
+
+            <div id="exportSection" class="report-section" style="display:none;">
+
+                <div class="export-wrapper">
+
+                    <form action="{{ route('admin.branch.report.export') }}" method="POST" id="exportForm">
+
                         @csrf
 
-                        <input
-                            type="hidden"
-                            name="export"
-                            value="1"
-                        >
+                        <input type="hidden" name="from_date" id="export_from_date">
 
-                        <input
-                            type="hidden"
-                            name="from_date"
-                            id="export_from_date"
-                        >
+                        <input type="hidden" name="to_date" id="export_to_date">
 
-                        <input
-                            type="hidden"
-                            name="to_date"
-                            id="export_to_date"
-                        >
 
-                        <button
-                            type="submit"
-                            class="crm-login-button1 export-btn"
-                        >
+                        <button type="submit" class="crm-login-button1">
+
                             Export to Excel
+
                         </button>
+
                     </form>
+
                 </div>
 
             </div>
-        </div>
-
-        {{-- Alerts --}}
-        <div class="error-box" id="reportError"></div>
-        <div class="success-box" id="reportSuccess"></div>
-
-        {{-- Branch Summary --}}
-        <div class="report-card">
-            <div class="report-section-title">
-                Branch Summary
-            </div>
-
-            <div class="table-responsive">
-                <table
-                    class="branch-report-table"
-                    id="branchSummaryTable"
-                >
-                    <thead>
-                        <tr>
-                            <th>Branch</th>
-                            <th>Fresh Call Center Walkin</th>
-                            <th>Old Call Center Walkin</th>
-                            <th>Fresh Branch Walkin</th>
-                            <th>Old Branch Walkin</th>
-                            <th>Enrolled Walkin</th>
-                            <th>Total Walkin</th>
-                            <th>Enrolled</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="branchSummaryBody">
-                        <tr>
-                            <td
-                                colspan="8"
-                                class="loading-row"
-                            >
-                                <div
-                                    class="spinner-border spinner-border-sm"
-                                    role="status"
-                                ></div>
-                                <div>Loading...</div>
-                            </td>
-                        </tr>
-                    </tbody>
-
-                    <tfoot id="branchSummaryFooter">
-                        <tr>
-                            <td>Others</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                            <td>0</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-
-        {{-- Appointment Details --}}
-        <div class="report-card">
-            <div class="report-section-title">
-                Walk-In Details
-            </div>
-
-            <div class="table-responsive">
-                <table
-                    class="table table-bordered"
-                    id="appointment_data"
-                >
-                    <thead>
-                        <tr>
-                            <th>Client Name</th>
-                            <th>Client Number</th>
-                            <th>Country Name</th>
-                            <th>Visa Type</th>
-                            <th>Branch Name</th>
-                            <th>Counselor Name</th>
-                            <th>Walk-In Date</th>
-                            <th>File Status</th>
-                            <th>File Number</th>
-                            <th>View Details</th>
-                        </tr>
-                    </thead>
-
-                    <tbody id="appointmentDataBody">
-                        <tr>
-                            <td
-                                colspan="10"
-                                class="no-data"
-                            >
-                                Loading...
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-    </div>
-</div>
 
 
-{{-- ========================================================= --}}
-{{-- Branch Detail Modal --}}
-{{-- ========================================================= --}}
-<div
-    class="modal fade crm-modal"
-    id="data_summery"
-    tabindex="-1"
-    aria-labelledby="dataSummaryLabel"
-    aria-hidden="true"
->
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
+            {{-- =====================================================
+                 USER DETAILS SECTION
+                 HIDDEN INITIALLY
+            ====================================================== --}}
 
-            <div class="modal-header">
-                <h5
-                    class="modal-title"
-                    id="dataSummaryLabel"
-                >
-                    Walk In Reports
-                </h5>
+            <div id="userDetailsSection" class="report-section" style="display:none;">
 
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                ></button>
-            </div>
+                <div class="report-section-title">
 
-            <div class="modal-body">
+                    <i class="fa fa-user"></i>
+                    User Details
 
-                <div id="branchDetailsLoader" class="modal-loader">
-                    <div
-                        class="spinner-border spinner-border-sm"
-                        role="status"
-                    ></div>
-                    <div>Loading...</div>
                 </div>
 
-                <div
-                    id="branchDetailsError"
-                    class="error-box"
-                ></div>
 
-                <div
-                    id="fetch_data_summery"
-                    class="details-wrapper"
-                >
-                    <div class="table-responsive">
-                        <table class="detail-table">
-                            <thead>
-                                <tr>
-                                    <th colspan="5">
-                                        Country Report
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>Country</th>
-                                    <th>Walk-In</th>
-                                    <th>Follow-Up</th>
-                                    <th>Enrolled</th>
-                                    <th>Drop</th>
-                                </tr>
-                            </thead>
+                <div class="table-responsive">
 
-                            <tbody id="branchCountryBody">
-                                <tr>
-                                    <td
-                                        colspan="5"
-                                        class="no-data"
-                                    >
-                                        No data found
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <table id="appointment_data" class="table table-bordered table-striped">
 
-                    <div class="table-responsive">
-                        <table class="detail-table">
-                            <thead>
-                                <tr>
-                                    <th colspan="5">
-                                        Visa Report
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>Visa Type</th>
-                                    <th>Walk-In</th>
-                                    <th>Follow-Up</th>
-                                    <th>Enrolled</th>
-                                    <th>Drop</th>
-                                </tr>
-                            </thead>
+                        <thead>
 
-                            <tbody id="branchVisaBody">
-                                <tr>
-                                    <td
-                                        colspan="5"
-                                        class="no-data"
-                                    >
-                                        No data found
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-
-{{-- ========================================================= --}}
-{{-- Total Detail Modal --}}
-{{-- ========================================================= --}}
-<div
-    class="modal fade crm-modal"
-    id="total_data_summery"
-    tabindex="-1"
-    aria-labelledby="totalDataSummaryLabel"
-    aria-hidden="true"
->
-    <div class="modal-dialog modal-xl modal-dialog-scrollable">
-        <div class="modal-content">
-
-            <div class="modal-header">
-                <h5
-                    class="modal-title"
-                    id="totalDataSummaryLabel"
-                >
-                    Walk In Reports
-                </h5>
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Close"
-                ></button>
-            </div>
-
-            <div class="modal-body">
-
-                <div id="totalDetailsLoader" class="modal-loader">
-                    <div
-                        class="spinner-border spinner-border-sm"
-                        role="status"
-                    ></div>
-                    <div>Loading...</div>
-                </div>
-
-                <div
-                    id="totalDetailsError"
-                    class="error-box"
-                ></div>
-
-                <div
-                    id="fetch_total_data_summery"
-                    class="details-wrapper"
-                >
-                    <div class="table-responsive">
-                        <table class="detail-table">
-                            <thead>
-                                <tr>
-                                    <th colspan="5">
-                                        Country Report
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>Country</th>
-                                    <th>Walk-In</th>
-                                    <th>Follow-Up</th>
-                                    <th>Enrolled</th>
-                                    <th>Drop</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="totalCountryBody">
-                                <tr>
-                                    <td
-                                        colspan="5"
-                                        class="no-data"
-                                    >
-                                        No data found
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="table-responsive">
-                        <table class="detail-table">
-                            <thead>
-                                <tr>
-                                    <th colspan="5">
-                                        Visa Report
-                                    </th>
-                                </tr>
-                                <tr>
-                                    <th>Visa Type</th>
-                                    <th>Walk-In</th>
-                                    <th>Follow-Up</th>
-                                    <th>Enrolled</th>
-                                    <th>Drop</th>
-                                </tr>
-                            </thead>
-
-                            <tbody id="totalVisaBody">
-                                <tr>
-                                    <td
-                                        colspan="5"
-                                        class="no-data"
-                                    >
-                                        No data found
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-</div>
-
-
-<script>
-    $(document).ready(function () {
-
-        /*
-        |--------------------------------------------------------------------------
-        | Date Helpers
-        |--------------------------------------------------------------------------
-        */
-
-        function padNumber(number) {
-            return String(number).padStart(2, '0');
-        }
-
-        function formatDate(date) {
-            return date.getFullYear() + '-' +
-                padNumber(date.getMonth() + 1) + '-' +
-                padNumber(date.getDate());
-        }
-
-        function getDefaultDateRange() {
-            const today = new Date();
-
-            const firstDayOfYear = new Date(
-                today.getFullYear(),
-                0,
-                1
-            );
-
-            return {
-                from: formatDate(firstDayOfYear),
-                to: formatDate(today)
-            };
-        }
-
-        const defaultDates = getDefaultDateRange();
-
-        $('#post_at').val(defaultDates.from);
-        $('#post_at_to_date').val(defaultDates.to);
-
-        $('#export_from_date').val(defaultDates.from);
-        $('#export_to_date').val(defaultDates.to);
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | CSRF
-        |--------------------------------------------------------------------------
-        */
-
-        const csrfToken = '{{ csrf_token() }}';
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | HTML Escape
-        |--------------------------------------------------------------------------
-        */
-
-        function escapeHtml(value) {
-            if (value === null || value === undefined) {
-                return '';
-            }
-
-            return $('<div>')
-                .text(value)
-                .html();
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Number Helper
-        |--------------------------------------------------------------------------
-        */
-
-        function numberValue(value) {
-            const number = parseInt(value, 10);
-
-            return isNaN(number) ? 0 : number;
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Date Validation
-        |--------------------------------------------------------------------------
-        */
-
-        function getSelectedDates() {
-
-            const fromDate = $('#post_at').val();
-            const toDate = $('#post_at_to_date').val();
-
-            $('#dateError').hide();
-
-            if (!fromDate || !toDate) {
-                $('#dateError')
-                    .text('Please select both dates.')
-                    .show();
-
-                return null;
-            }
-
-            if (fromDate > toDate) {
-                $('#dateError')
-                    .text('From date cannot be greater than To date.')
-                    .show();
-
-                return null;
-            }
-
-            return {
-                from_date: fromDate,
-                to_date: toDate
-            };
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Update Export Form
-        |--------------------------------------------------------------------------
-        */
-
-        function updateExportDates() {
-
-            $('#export_from_date')
-                .val($('#post_at').val());
-
-            $('#export_to_date')
-                .val($('#post_at_to_date').val());
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Report Alerts
-        |--------------------------------------------------------------------------
-        */
-
-        function showError(message) {
-
-            $('#reportSuccess').hide();
-
-            $('#reportError')
-                .text(message || 'Something went wrong.')
-                .show();
-        }
-
-        function hideError() {
-            $('#reportError').hide();
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Branch Summary Loading
-        |--------------------------------------------------------------------------
-        */
-
-        function loadBranchSummary() {
-
-            const dates = getSelectedDates();
-
-            if (!dates) {
-                return;
-            }
-
-            updateExportDates();
-            hideError();
-
-            $('#branchSummaryBody').html(`
-                <tr>
-                    <td colspan="8" class="loading-row">
-                        <div
-                            class="spinner-border spinner-border-sm"
-                            role="status"
-                        ></div>
-                        <div>Loading...</div>
-                    </td>
-                </tr>
-            `);
-
-            $('#branchSummaryFooter').html(`
-                <tr>
-                    <td>Others</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                </tr>
-            `);
-
-            $.ajax({
-                url: '{{ route('admin.branch.report.data') }}',
-                type: 'POST',
-                data: {
-                    _token: csrfToken,
-                    from_date: dates.from_date,
-                    to_date: dates.to_date
-                },
-
-                success: function (response) {
-
-                    if (response.status === 'logout') {
-                        window.location.href = '{{ url('/') }}';
-                        return;
-                    }
-
-                    if (response.status !== 'success') {
-
-                        $('#branchSummaryBody').html(`
                             <tr>
-                                <td colspan="8" class="empty-row">
-                                    Unable to load branch report.
-                                </td>
+
+                                <th>
+                                    Client Name
+                                </th>
+
+                                <th>
+                                    Client Number
+                                </th>
+
+                                <th>
+                                    Country
+                                </th>
+
+                                <th>
+                                    Visa
+                                </th>
+
+                                <th>
+                                    Branch
+                                </th>
+
+                                <th>
+                                    Counselor Name
+                                </th>
+
+                                <th>
+                                    Walk-In Date
+                                </th>
+
+                                <th>
+                                    File Status
+                                </th>
+
+                                <th>
+                                    File Number
+                                </th>
+
+                                <th>
+                                    View
+                                </th>
+
                             </tr>
-                        `);
 
-                        showError(
-                            response.message ||
-                            'Unable to load branch report.'
-                        );
+                        </thead>
 
-                        return;
-                    }
 
-                    const branches = response.branches || [];
-                    const totals = response.totals || {};
+                        <tbody id="appointment_data_body">
+                        </tbody>
 
-                    if (branches.length === 0) {
+                    </table>
 
-                        $('#branchSummaryBody').html(`
-                            <tr>
-                                <td colspan="8" class="empty-row">
-                                    No branch report found.
-                                </td>
-                            </tr>
-                        `);
+                </div>
 
-                    } else {
+            </div>
 
-                        let html = '';
+        </div>
 
-                        branches.forEach(function (row) {
+    </div>
 
-                            const branch =
-                                row.branch ?? '';
 
-                            const freshCallCenter =
-                                numberValue(
-                                    row.fresh_call_center
-                                );
+    {{-- =========================================================
+         PAGE LOADER
+    ========================================================= --}}
 
-                            const oldCallCenter =
-                                numberValue(
-                                    row.old_call_center
-                                );
+    <div id="imgloader">
 
-                            const freshBranch =
-                                numberValue(
-                                    row.fresh_branch
-                                );
+        <div class="loader-box">
 
-                            const oldBranch =
-                                numberValue(
-                                    row.old_branch
-                                );
+            <div class="spinner-border" role="status"></div>
 
-                            const enrolledWalkin =
-                                numberValue(
-                                    row.enrolled_walkin
-                                );
+            <div style="margin-top:10px;">
+                Loading Report...
+            </div>
 
-                            const totalWalkin =
-                                numberValue(
-                                    row.total_walkin
-                                );
+        </div>
 
-                            const enrolled =
-                                numberValue(
-                                    row.enrolled
-                                );
+    </div>
 
-                            html += `
-                                <tr>
 
-                                    <td class="branch-name">
-                                        ${escapeHtml(branch)}
-                                    </td>
+    {{-- =========================================================
+         BRANCH DETAILS MODAL
+    ========================================================= --}}
 
-                                    <td>
-                                        ${freshCallCenter}
-                                    </td>
+    <div class="modal fade" id="data_summery" tabindex="-1" aria-hidden="true">
 
-                                    <td>
-                                        ${oldCallCenter}
-                                    </td>
+        <div class="modal-dialog modal-xl">
 
-                                    <td>
-                                        ${freshBranch}
-                                    </td>
+            <div class="modal-content">
 
-                                    <td>
-                                        ${oldBranch}
-                                    </td>
+                <div class="modal-header">
 
-                                    <td>
-                                        ${enrolledWalkin}
-                                    </td>
+                    <h5 class="modal-title modal-report-title">
+                        Walk In Reports
+                    </h5>
 
-                                    <td>
-                                        <a
-                                            href="javascript:void(0)"
-                                            class="report-link branch-walkin-link data_summery"
-                                            data-id="${escapeHtml(branch)}"
-                                            title="View branch details"
-                                        >
-                                            ${totalWalkin}
-                                        </a>
-                                    </td>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
 
-                                    <td>
-                                        ${enrolled}
-                                    </td>
+                </div>
 
-                                </tr>
-                            `;
-                        });
 
-                        $('#branchSummaryBody')
-                            .html(html);
-                    }
+                <div class="modal-body">
 
-                    const totalFreshCallCenter =
-                        numberValue(
-                            totals.fresh_call_center
-                        );
+                    <div id="branchDetailsLoader" class="modal-loader">
 
-                    const totalOldCallCenter =
-                        numberValue(
-                            totals.old_call_center
-                        );
+                        <div class="spinner-border"></div>
 
-                    const totalFreshBranch =
-                        numberValue(
-                            totals.fresh_branch
-                        );
+                        <div style="margin-top:10px;">
+                            Loading...
+                        </div>
 
-                    const totalOldBranch =
-                        numberValue(
-                            totals.old_branch
-                        );
+                    </div>
 
-                    const totalEnrolledWalkin =
-                        numberValue(
-                            totals.enrolled_walkin
-                        );
 
-                    const totalWalkin =
-                        numberValue(
-                            totals.total_walkin
-                        );
+                    <div id="branchDetailsError" class="modal-error">
+                    </div>
 
-                    const totalEnrolled =
-                        numberValue(
-                            totals.enrolled
-                        );
 
-                    $('#branchSummaryFooter').html(`
-                        <tr>
-                            <td>Others</td>
+                    <div id="fetch_data_summery" class="modal-content-area">
+                    </div>
 
-                            <td>
-                                ${totalFreshCallCenter}
-                            </td>
+                </div>
 
-                            <td>
-                                ${totalOldCallCenter}
-                            </td>
+            </div>
 
-                            <td>
-                                ${totalFreshBranch}
-                            </td>
+        </div>
 
-                            <td>
-                                ${totalOldBranch}
-                            </td>
+    </div>
 
-                            <td>
-                                ${totalEnrolledWalkin}
-                            </td>
 
-                            <td>
-                                <a
-                                    href="javascript:void(0)"
-                                    class="report-link totale_data_summery"
-                                    title="View total details"
-                                >
-                                    ${totalWalkin}
-                                </a>
-                            </td>
+    {{-- =========================================================
+         TOTAL DETAILS MODAL
+    ========================================================= --}}
 
-                            <td>
-                                ${totalEnrolled}
-                            </td>
-                        </tr>
-                    `);
-                },
+    <div class="modal fade" id="total_data_summery" tabindex="-1" aria-hidden="true">
 
-                error: function (xhr) {
+        <div class="modal-dialog modal-xl">
 
-                    if (
-                        xhr.status === 401 ||
-                        xhr.status === 419
-                    ) {
-                        window.location.reload();
-                        return;
-                    }
+            <div class="modal-content">
 
-                    $('#branchSummaryBody').html(`
-                        <tr>
-                            <td colspan="8" class="empty-row">
-                                Unable to load branch report.
-                            </td>
-                        </tr>
-                    `);
+                <div class="modal-header">
 
-                    showError(
-                        'Unable to load branch report.'
-                    );
-                }
+                    <h5 class="modal-title modal-report-title">
+                        Walk In Reports
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+                    </button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div id="totalDetailsLoader" class="modal-loader">
+
+                        <div class="spinner-border"></div>
+
+                        <div style="margin-top:10px;">
+                            Loading...
+                        </div>
+
+                    </div>
+
+
+                    <div id="totalDetailsError" class="modal-error">
+                    </div>
+
+
+                    <div id="fetch_total_data_summery" class="modal-content-area">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <script>
+        $(document).ready(function() {
+
+
+
+            let appointmentTable = null;
+
+
+
+
+            $('#post_at, #post_at_to_date').datepicker({
+
+                format: 'yyyy-mm-dd',
+
+                autoclose: true,
+
+                todayHighlight: true
+
             });
-        }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Appointment Details
-        |--------------------------------------------------------------------------
-        */
 
-        function loadAppointmentDetails() {
 
-            const dates = getSelectedDates();
+            function numberValue(value) {
 
-            if (!dates) {
-                return;
+                let number = parseInt(value, 10);
+
+                if (isNaN(number)) {
+
+                    return 0;
+
+                }
+
+                return number;
+
             }
 
-            $('#appointmentDataBody').html(`
-                <tr>
-                    <td colspan="10" class="no-data">
-                        Loading...
-                    </td>
-                </tr>
-            `);
 
-            $.ajax({
-                url: '{{ route('admin.branch.report.details') }}',
-                type: 'POST',
 
-                data: {
-                    _token: csrfToken,
-                    from_date: dates.from_date,
-                    to_date: dates.to_date
-                },
 
-                success: function (response) {
+            function escapeHtml(value) {
 
-                    if (response.status === 'logout') {
-                        window.location.href = '{{ url('/') }}';
-                        return;
+                return $('<div>')
+                    .text(value == null ? '' : value)
+                    .html();
+
+            }
+
+
+
+            function destroyAppointmentTable() {
+
+                if (
+                    $.fn.DataTable &&
+                    $.fn.DataTable.isDataTable('#appointment_data')
+                ) {
+
+                    $('#appointment_data')
+                        .DataTable()
+                        .clear()
+                        .destroy();
+
+                }
+
+                appointmentTable = null;
+
+                $('#appointment_data_body').empty();
+
+            }
+
+
+
+            $('#search').on('click', function() {
+
+                let fromDate =
+                    $('#post_at').val().trim();
+
+                let toDate =
+                    $('#post_at_to_date').val().trim();
+
+
+
+
+                if (
+                    fromDate === '' ||
+                    toDate === ''
+                ) {
+
+                    alert('Please Select Date');
+
+                    return;
+
+                }
+
+
+                if (fromDate > toDate) {
+
+                    alert(
+                        'From Date cannot be greater than To Date'
+                    );
+
+                    return;
+
+                }
+
+
+
+                $('#export_from_date')
+                    .val(fromDate);
+
+                $('#export_to_date')
+                    .val(toDate);
+
+
+
+
+                $('#branchReportSection').hide();
+
+                $('#exportSection').hide();
+
+                $('#userDetailsSection').hide();
+
+
+
+
+                destroyAppointmentTable();
+
+
+
+
+                $('#alldatacount').html('');
+
+                $('#branchReportFooter').html('');
+
+
+
+
+                $('#imgloader').css(
+                    'display',
+                    'flex'
+                );
+
+
+
+                $.ajax({
+
+                    url: "{{ route('admin.walkn.report.details') }}",
+
+                    type: "POST",
+
+                    dataType: "json",
+
+                    data: {
+
+                        _token: "{{ csrf_token() }}",
+
+                        from_date: fromDate,
+
+                        to_date: toDate
+
+                    },
+
+
+
+
+                    success: function(response) {
+
+                        console.log(
+                            'Branch Report Response:',
+                            response
+                        );
+
+
+
+
+                        if (
+                            response.status ===
+                            'logout'
+                        ) {
+
+                            window.location.href =
+                                "{{ route('login') }}";
+
+                            return;
+
+                        }
+
+
+
+
+                        if (
+                            response.status !==
+                            'success'
+                        ) {
+
+                            alert(
+                                response.message ||
+                                'Unable to load report.'
+                            );
+
+                            return;
+
+                        }
+
+
+
+
+                        $('#branchReportSection')
+                            .show();
+
+                        $('#exportSection')
+                            .show();
+
+                        $('#userDetailsSection')
+                            .show();
+
+
+
+
+                        renderBranchReport(response);
+
+
+
+                        renderUserDetails(
+                            response.data || []
+                        );
+
+                    },
+
+
+
+
+                    error: function(xhr) {
+
+                        console.log(
+                            'Report Error:',
+                            xhr.responseText
+                        );
+
+
+                        if (xhr.status === 401) {
+
+                            window.location.href =
+                                "{{ route('login') }}";
+
+                            return;
+
+                        }
+
+
+                        let message =
+                            'Unable to load branch report.';
+
+
+                        if (
+                            xhr.responseJSON &&
+                            xhr.responseJSON.message
+                        ) {
+
+                            message =
+                                xhr.responseJSON.message;
+
+                        }
+
+
+                        alert(message);
+
+                    },
+
+
+
+
+                    complete: function() {
+
+                        $('#imgloader').hide();
+
                     }
 
-                    if (response.status !== 'success') {
+                });
 
-                        $('#appointmentDataBody').html(`
+            });
+
+
+
+
+            function renderBranchReport(response) {
+
+                let branches =
+                    response.branches || [];
+
+                let totals =
+                    response.totals || {};
+
+
+                let html = '';
+
+
+
+                if (branches.length === 0) {
+
+                    html += `
+
+                        <tr>
+
+                            <td
+                                colspan="9"
+                                class="report-empty"
+                            >
+                                No branch report found.
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                    $('#alldatacount')
+                        .html(html);
+
+                    $('#branchReportFooter')
+                        .html('');
+
+                    return;
+
+                }
+
+
+
+                $.each(
+                    branches,
+                    function(index, row) {
+
+                        let branch =
+                            row.branch || '';
+
+
+                        let freshCallCenter =
+                            numberValue(
+                                row.fresh_call_center
+                            );
+
+
+                        let oldCallCenter =
+                            numberValue(
+                                row.old_call_center
+                            );
+
+
+                        let freshBranch =
+                            numberValue(
+                                row.fresh_branch
+                            );
+
+
+                        let oldBranch =
+                            numberValue(
+                                row.old_branch
+                            );
+
+
+                        let enrolledWalkin =
+                            numberValue(
+                                row.enrolled_walkin
+                            );
+
+
+                        let totalWalkin =
+                            numberValue(
+                                row.total_walkin
+                            );
+
+
+                        let enrolled =
+                            numberValue(
+                                row.enrolled
+                            );
+
+
+                        let percentage = 0;
+
+
+                        if (totalWalkin > 0) {
+
+                            percentage = (
+                                enrolled /
+                                totalWalkin *
+                                100
+                            ).toFixed(2);
+
+                        }
+
+
+                        html += `
+
                             <tr>
-                                <td colspan="10" class="no-data">
-                                    Unable to load details.
+
+                                <td>
+                                    ${escapeHtml(branch)}
                                 </td>
-                            </tr>
-                        `);
 
-                        return;
-                    }
-
-                    const rows = response.rows || [];
-
-                    if ($.fn.DataTable.isDataTable(
-                        '#appointment_data'
-                    )) {
-                        $('#appointment_data')
-                            .DataTable()
-                            .destroy();
-                    }
-
-                    let html = '';
-
-                    if (rows.length === 0) {
-
-                        html = `
-                            <tr>
-                                <td colspan="10" class="no-data">
-                                    No data found
+                                <td>
+                                    ${freshCallCenter}
                                 </td>
+
+                                <td>
+                                    ${oldCallCenter}
+                                </td>
+
+                                <td>
+                                    ${freshBranch}
+                                </td>
+
+                                <td>
+                                    ${oldBranch}
+                                </td>
+
+                                <td>
+                                    ${enrolledWalkin}
+                                </td>
+
+                                <td>
+
+                                    <a
+                                        href="javascript:void(0)"
+                                        class="walkin-link branch-walkin-link"
+                                        data-branch="${escapeHtml(branch)}"
+                                    >
+                                        ${totalWalkin}
+                                    </a>
+
+                                </td>
+
+                                <td>
+                                    ${enrolled}
+                                </td>
+
+                                <td>
+                                    ${percentage}%
+                                </td>
+
                             </tr>
+
                         `;
 
-                    } else {
+                    }
+                );
 
-                        rows.forEach(function (row) {
 
-                            const name =
-                                row.sname ?? '';
+                $('#alldatacount')
+                    .html(html);
 
-                            const mobile =
-                                row.smobile ??
-                                row.callerno ??
+
+
+
+                let totalFreshCallCenter =
+                    numberValue(
+                        totals.fresh_call_center
+                    );
+
+
+                let totalOldCallCenter =
+                    numberValue(
+                        totals.old_call_center
+                    );
+
+
+                let totalFreshBranch =
+                    numberValue(
+                        totals.fresh_branch
+                    );
+
+
+                let totalOldBranch =
+                    numberValue(
+                        totals.old_branch
+                    );
+
+
+                let totalEnrolledWalkin =
+                    numberValue(
+                        totals.enrolled_walkin
+                    );
+
+
+                let totalWalkin =
+                    numberValue(
+                        totals.total_walkin
+                    );
+
+
+                let totalEnrolled =
+                    numberValue(
+                        totals.enrolled
+                    );
+
+
+                let totalPercentage = 0;
+
+
+                if (totalWalkin > 0) {
+
+                    totalPercentage = (
+                        totalEnrolled /
+                        totalWalkin *
+                        100
+                    ).toFixed(2);
+
+                }
+
+
+                let footer = `
+
+                    <tr>
+
+                        <td>
+                            Total
+                        </td>
+
+                        <td>
+                            ${totalFreshCallCenter}
+                        </td>
+
+                        <td>
+                            ${totalOldCallCenter}
+                        </td>
+
+                        <td>
+                            ${totalFreshBranch}
+                        </td>
+
+                        <td>
+                            ${totalOldBranch}
+                        </td>
+
+                        <td>
+                            ${totalEnrolledWalkin}
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="javascript:void(0)"
+                                class="walkin-link totale_data_summery"
+                            >
+                                ${totalWalkin}
+                            </a>
+
+                        </td>
+
+                        <td>
+                            ${totalEnrolled}
+                        </td>
+
+                        <td>
+                            ${totalPercentage}%
+                        </td>
+
+                    </tr>
+
+                `;
+
+
+                $('#branchReportFooter')
+                    .html(footer);
+
+            }
+
+
+
+
+            function renderUserDetails(data) {
+
+                let tbody =
+                    $('#appointment_data_body');
+
+
+
+
+                if (
+                    $.fn.DataTable &&
+                    $.fn.DataTable.isDataTable('#appointment_data')
+                ) {
+
+                    $('#appointment_data')
+                        .DataTable()
+                        .clear()
+                        .destroy();
+
+                }
+
+
+                appointmentTable = null;
+
+
+
+
+                tbody.empty();
+
+
+
+                if (
+                    data &&
+                    data.length > 0
+                ) {
+
+                    $.each(
+                        data,
+                        function(index, row) {
+
+                            let clientName =
+                                row.sname || '';
+
+
+                            let clientNumber =
+                                row.smobile ||
+                                row.callerno ||
                                 '';
 
-                            const country =
-                                row.scountry ?? '';
 
-                            const visa =
-                                row.svisa ?? '';
+                            let country =
+                                row.scountry || '';
 
-                            const branch =
-                                row.branch_by ??
-                                row.branch ??
-                                '';
 
-                            const counselor =
-                                row.assign_name ?? '';
+                            let visa =
+                                row.svisa || '';
 
-                            const walkinDate =
-                                row.walkedin_date ??
-                                '';
 
-                            const status =
-                                row.student_status ?? '';
+                            let branch =
+                                row.branch || '';
 
-                            const fileNo =
-                                row.file_no ?? '';
 
-                            let statusClass =
-                                'status-default';
+                            let counselor =
+                                row.assign_name || '';
 
-                            const normalizedStatus =
-                                String(status)
-                                    .toLowerCase()
-                                    .replace(/\s+/g, '-');
+
+                            let walkinDate =
+                                row.walkedin_date || '';
+
+
+                            let status =
+                                row.student_status || '';
+
+
+                            let fileNumber = '';
+
 
                             if (
-                                normalizedStatus ===
+                                String(status)
+                                .toLowerCase() ===
                                 'enrolled'
                             ) {
-                                statusClass =
-                                    'status-enrolled';
 
-                            } else if (
-                                normalizedStatus ===
-                                'follow-up'
-                            ) {
-                                statusClass =
-                                    'status-follow-up';
+                                fileNumber =
+                                    row.file_no || '';
 
-                            } else if (
-                                normalizedStatus ===
-                                'drop'
-                            ) {
-                                statusClass =
-                                    'status-drop';
                             }
 
-                            const viewUrl =
-                                '{{ url('/walkindetails.php') }}' +
-                                '?smobile=' +
+
+                            let viewUrl =
+                                "{{ url('/walkin-details') }}" +
+                                "?smobile=" +
                                 encodeURIComponent(
-                                    mobile
+                                    clientNumber
                                 );
 
-                            html += `
+
+                            tbody.append(`
+
                                 <tr>
 
                                     <td>
-                                        ${escapeHtml(name)}
+                                        ${escapeHtml(clientName)}
                                     </td>
 
                                     <td>
-                                        ${escapeHtml(mobile)}
+                                        ${escapeHtml(clientNumber)}
                                     </td>
 
                                     <td>
@@ -1410,503 +1513,750 @@
                                     </td>
 
                                     <td>
-                                        <span
-                                            class="status-badge ${statusClass}"
-                                        >
-                                            ${escapeHtml(status)}
-                                        </span>
+                                        ${escapeHtml(status)}
                                     </td>
 
                                     <td>
-                                        ${escapeHtml(fileNo)}
+                                        ${escapeHtml(fileNumber)}
                                     </td>
 
                                     <td>
+
                                         <a
                                             href="${viewUrl}"
-                                            class="view-details-btn"
+                                            class="view-details"
+                                            target="_blank"
                                         >
                                             View
                                         </a>
+
                                     </td>
 
                                 </tr>
-                            `;
-                        });
-                    }
 
-                    $('#appointmentDataBody')
-                        .html(html);
+                            `);
 
-                    $('#appointment_data').DataTable({
-                        pageLength: 10,
-                        ordering: true,
-                        searching: true,
-                        responsive: false,
-                        autoWidth: false,
-                        language: {
-                            emptyTable: 'No data found',
-                            zeroRecords: 'No matching records found'
                         }
-                    });
-                },
+                    );
 
-                error: function () {
-
-                    if ($.fn.DataTable.isDataTable(
-                        '#appointment_data'
-                    )) {
-                        $('#appointment_data')
-                            .DataTable()
-                            .destroy();
-                    }
-
-                    $('#appointmentDataBody').html(`
-                        <tr>
-                            <td colspan="10" class="no-data">
-                                Unable to load details.
-                            </td>
-                        </tr>
-                    `);
                 }
-            });
-        }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Branch Country + Visa Detail
-        |--------------------------------------------------------------------------
-        */
 
-        function loadBranchDetail(branch) {
 
-            const dates = getSelectedDates();
+                appointmentTable =
+                    $('#appointment_data').DataTable({
 
-            if (!dates) {
-                return;
+                        pageLength: 10,
+
+                        lengthChange: true,
+
+                        searching: true,
+
+                        ordering: true,
+
+                        info: true,
+
+                        autoWidth: false,
+
+                        responsive: false,
+
+                        language: {
+
+                            emptyTable: "No user details found.",
+
+                            zeroRecords: "No matching user details found."
+
+                        }
+
+                    });
+
             }
 
-            $('#branchDetailsLoader').show();
-            $('#branchDetailsError').hide();
-            $('#fetch_data_summery').hide();
 
-            $('#branchCountryBody').html(`
-                <tr>
-                    <td colspan="5" class="no-data">
-                        Loading...
-                    </td>
-                </tr>
-            `);
 
-            $('#branchVisaBody').html(`
-                <tr>
-                    <td colspan="5" class="no-data">
-                        Loading...
-                    </td>
-                </tr>
-            `);
+            $(document).on(
+                'click',
+                '.branch-walkin-link',
+                function() {
 
-            $('#data_summery').modal('show');
+                    let branch =
+                        $(this).data('branch');
 
-            $.ajax({
-                url: '{{ route('admin.branch.report.detail.summary') }}',
-                type: 'POST',
 
-                data: {
-                    _token: csrfToken,
-                    branch: branch,
-                    from_date: dates.from_date,
-                    to_date: dates.to_date
-                },
+                    let fromDate =
+                        $('#post_at').val();
 
-                success: function (response) {
 
-                    $('#branchDetailsLoader').hide();
+                    let toDate =
+                        $('#post_at_to_date').val();
 
-                    if (response.status === 'logout') {
-                        window.location.href = '{{ url('/') }}';
-                        return;
-                    }
 
-                    if (response.status !== 'success') {
+                    $('#branchDetailsLoader')
+                        .show();
 
-                        $('#branchDetailsError')
-                            .text(
-                                response.message ||
-                                'Unable to load branch details.'
-                            )
-                            .show();
-
-                        return;
-                    }
-
-                    renderCountryRows(
-                        '#branchCountryBody',
-                        response.country || []
-                    );
-
-                    renderVisaRows(
-                        '#branchVisaBody',
-                        response.visa || []
-                    );
-
-                    $('#fetch_data_summery').show();
-                },
-
-                error: function () {
-
-                    $('#branchDetailsLoader').hide();
 
                     $('#branchDetailsError')
-                        .text(
-                            'Unable to load branch details.'
-                        )
-                        .show();
+                        .hide()
+                        .html('');
+
+
+                    $('#fetch_data_summery')
+                        .hide()
+                        .html('');
+
+
+                    $('#data_summery')
+                        .modal('show');
+
+
+                    loadSummary(
+                        branch,
+                        fromDate,
+                        toDate,
+                        '#branchDetailsLoader',
+                        '#branchDetailsError',
+                        '#fetch_data_summery'
+                    );
+
                 }
-            });
-        }
+            );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Total Country + Visa Detail
-        |--------------------------------------------------------------------------
-        */
 
-        function loadTotalDetail() {
+            $(document).on(
+                'click',
+                '.totale_data_summery',
+                function() {
 
-            const dates = getSelectedDates();
+                    let fromDate =
+                        $('#post_at').val();
 
-            if (!dates) {
-                return;
-            }
 
-            $('#totalDetailsLoader').show();
-            $('#totalDetailsError').hide();
-            $('#fetch_total_data_summery').hide();
+                    let toDate =
+                        $('#post_at_to_date').val();
 
-            $('#totalCountryBody').html(`
-                <tr>
-                    <td colspan="5" class="no-data">
-                        Loading...
-                    </td>
-                </tr>
-            `);
 
-            $('#totalVisaBody').html(`
-                <tr>
-                    <td colspan="5" class="no-data">
-                        Loading...
-                    </td>
-                </tr>
-            `);
+                    $('#totalDetailsLoader')
+                        .show();
 
-            $('#total_data_summery').modal('show');
-
-            $.ajax({
-                url: '{{ route('admin.branch.report.detail.summary') }}',
-                type: 'POST',
-
-                data: {
-                    _token: csrfToken,
-                    branch: 'all',
-                    from_date: dates.from_date,
-                    to_date: dates.to_date
-                },
-
-                success: function (response) {
-
-                    $('#totalDetailsLoader').hide();
-
-                    if (response.status === 'logout') {
-                        window.location.href = '{{ url('/') }}';
-                        return;
-                    }
-
-                    if (response.status !== 'success') {
-
-                        $('#totalDetailsError')
-                            .text(
-                                response.message ||
-                                'Unable to load total details.'
-                            )
-                            .show();
-
-                        return;
-                    }
-
-                    renderCountryRows(
-                        '#totalCountryBody',
-                        response.country || []
-                    );
-
-                    renderVisaRows(
-                        '#totalVisaBody',
-                        response.visa || []
-                    );
-
-                    $('#fetch_total_data_summery').show();
-                },
-
-                error: function () {
-
-                    $('#totalDetailsLoader').hide();
 
                     $('#totalDetailsError')
-                        .text(
-                            'Unable to load total details.'
-                        )
-                        .show();
+                        .hide()
+                        .html('');
+
+
+                    $('#fetch_total_data_summery')
+                        .hide()
+                        .html('');
+
+
+                    $('#total_data_summery')
+                        .modal('show');
+
+
+                    loadSummary(
+                        'all',
+                        fromDate,
+                        toDate,
+                        '#totalDetailsLoader',
+                        '#totalDetailsError',
+                        '#fetch_total_data_summery'
+                    );
+
                 }
-            });
-        }
+            );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Render Country Rows
-        |--------------------------------------------------------------------------
-        */
 
-        function renderCountryRows(selector, rows) {
+            function loadSummary(
+                branch,
+                fromDate,
+                toDate,
+                loaderSelector,
+                errorSelector,
+                contentSelector
+            ) {
 
-            if (!rows.length) {
+                $.ajax({
 
-                $(selector).html(`
+                    url: "{{ route('admin.walkn.report.details') }}",
+
+                    type: "POST",
+
+                    dataType: "json",
+
+                    data: {
+
+                        _token: "{{ csrf_token() }}",
+
+                        from_date: fromDate,
+
+                        to_date: toDate,
+
+                        branch: branch
+
+                    },
+
+
+                    success: function(response) {
+
+
+
+                        if (
+                            response.status ===
+                            'logout'
+                        ) {
+
+                            window.location.href =
+                                "{{ route('login') }}";
+
+                            return;
+
+                        }
+
+
+
+                        if (
+                            response.status !==
+                            'success'
+                        ) {
+
+                            $(errorSelector)
+                                .text(
+                                    response.message ||
+                                    'Unable to load details.'
+                                )
+                                .show();
+
+                            return;
+
+                        }
+
+
+                        let countryReports =
+                            response.countryReports || [];
+
+
+                        let visaReports =
+                            response.visaReports || [];
+
+
+                        let html = '';
+
+
+
+                        let countryTotalWalkin = 0;
+
+                        let countryTotalFollowup = 0;
+
+                        let countryTotalEnrolled = 0;
+
+                        let countryTotalDrop = 0;
+
+
+
+
+                        let visaTotalWalkin = 0;
+
+                        let visaTotalFollowup = 0;
+
+                        let visaTotalEnrolled = 0;
+
+                        let visaTotalDrop = 0;
+
+
+
+
+                        html += `
+
+                <h6
+                    style="
+                        font-weight:600;
+                        margin-bottom:10px;
+                    "
+                >
+                    Country Wise
+                </h6>
+
+                <div class="table-responsive">
+
+                    <table class="dashboard-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Country
+                                </th>
+
+                                <th>
+                                    Walk-In
+                                </th>
+
+                                <th>
+                                    Follow-Up
+                                </th>
+
+                                <th>
+                                    Enrolled
+                                </th>
+
+                                <th>
+                                    Drop
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+            `;
+
+
+                        if (
+                            countryReports.length === 0
+                        ) {
+
+                            html += `
+
                     <tr>
-                        <td colspan="5" class="no-data">
-                            No data found
-                        </td>
-                    </tr>
-                `);
 
-                return;
+                        <td
+                            colspan="5"
+                            class="report-empty"
+                        >
+                            No country data found.
+                        </td>
+
+                    </tr>
+
+                `;
+
+                        } else {
+
+                            $.each(
+                                countryReports,
+                                function(index, row) {
+
+                                    let rowWalkin =
+                                        numberValue(
+                                            row.walkin
+                                        );
+
+                                    let rowFollowup =
+                                        numberValue(
+                                            row.followup
+                                        );
+
+                                    let rowEnrolled =
+                                        numberValue(
+                                            row.enrolled
+                                        );
+
+                                    let rowDrop =
+                                        numberValue(
+                                            row.drop
+                                        );
+
+
+
+                                    countryTotalWalkin +=
+                                        rowWalkin;
+
+                                    countryTotalFollowup +=
+                                        rowFollowup;
+
+                                    countryTotalEnrolled +=
+                                        rowEnrolled;
+
+                                    countryTotalDrop +=
+                                        rowDrop;
+
+
+                                    html += `
+
+                            <tr>
+
+                                <td>
+                                    ${escapeHtml(
+                                        row.country || ''
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${rowWalkin}
+                                </td>
+
+                                <td>
+                                    ${rowFollowup}
+                                </td>
+
+                                <td>
+                                    ${rowEnrolled}
+                                </td>
+
+                                <td>
+                                    ${rowDrop}
+                                </td>
+
+                            </tr>
+
+                        `;
+
+                                }
+                            );
+
+                        }
+
+
+
+
+                        html += `
+
+                        </tbody>
+
+                        <tfoot>
+
+                            <tr>
+
+                                <td>
+                                    Total
+                                </td>
+
+                                <td>
+                                    ${countryTotalWalkin}
+                                </td>
+
+                                <td>
+                                    ${countryTotalFollowup}
+                                </td>
+
+                                <td>
+                                    ${countryTotalEnrolled}
+                                </td>
+
+                                <td>
+                                    ${countryTotalDrop}
+                                </td>
+
+                            </tr>
+
+                        </tfoot>
+
+                    </table>
+
+                </div>
+
+                <div style="height:20px;"></div>
+
+            `;
+
+
+
+
+                        html += `
+
+                <h6
+                    style="
+                        font-weight:600;
+                        margin-bottom:10px;
+                    "
+                >
+                    Visa Wise
+                </h6>
+
+                <div class="table-responsive">
+
+                    <table class="dashboard-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Visa Type
+                                </th>
+
+                                <th>
+                                    Walk-In
+                                </th>
+
+                                <th>
+                                    Follow-Up
+                                </th>
+
+                                <th>
+                                    Enrolled
+                                </th>
+
+                                <th>
+                                    Drop
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+            `;
+
+
+                        if (
+                            visaReports.length === 0
+                        ) {
+
+                            html += `
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="report-empty"
+                        >
+                            No visa data found.
+                        </td>
+
+                    </tr>
+
+                `;
+
+                        } else {
+
+                            $.each(
+                                visaReports,
+                                function(index, row) {
+
+                                    /*
+                                     * BACKEND RETURNS:
+                                     *
+                                     * 'visa' => $visaType
+                                     *
+                                     * So use row.visa here.
+                                     */
+
+
+                                    let rowWalkin =
+                                        numberValue(
+                                            row.walkin
+                                        );
+
+                                    let rowFollowup =
+                                        numberValue(
+                                            row.followup
+                                        );
+
+                                    let rowEnrolled =
+                                        numberValue(
+                                            row.enrolled
+                                        );
+
+                                    let rowDrop =
+                                        numberValue(
+                                            row.drop
+                                        );
+
+
+
+
+                                    visaTotalWalkin +=
+                                        rowWalkin;
+
+                                    visaTotalFollowup +=
+                                        rowFollowup;
+
+                                    visaTotalEnrolled +=
+                                        rowEnrolled;
+
+                                    visaTotalDrop +=
+                                        rowDrop;
+
+
+                                    html += `
+
+                            <tr>
+
+                                <td>
+                                    ${escapeHtml(
+                                        row.visa || ''
+                                    )}
+                                </td>
+
+                                <td>
+                                    ${rowWalkin}
+                                </td>
+
+                                <td>
+                                    ${rowFollowup}
+                                </td>
+
+                                <td>
+                                    ${rowEnrolled}
+                                </td>
+
+                                <td>
+                                    ${rowDrop}
+                                </td>
+
+                            </tr>
+
+                        `;
+
+                                }
+                            );
+
+                        }
+
+
+
+                        html += `
+
+                        </tbody>
+
+                        <tfoot>
+
+                            <tr>
+
+                                <td>
+                                    Total
+                                </td>
+
+                                <td>
+                                    ${visaTotalWalkin}
+                                </td>
+
+                                <td>
+                                    ${visaTotalFollowup}
+                                </td>
+
+                                <td>
+                                    ${visaTotalEnrolled}
+                                </td>
+
+                                <td>
+                                    ${visaTotalDrop}
+                                </td>
+
+                            </tr>
+
+                        </tfoot>
+
+                    </table>
+
+                </div>
+
+            `;
+
+
+                        $(contentSelector)
+                            .html(html)
+                            .show();
+
+                    },
+
+
+                    error: function(xhr) {
+
+                        if (xhr.status === 401) {
+
+                            window.location.href =
+                                "{{ route('login') }}";
+
+                            return;
+
+                        }
+
+
+                        let message =
+                            'Unable to load details.';
+
+
+                        if (
+                            xhr.responseJSON &&
+                            xhr.responseJSON.message
+                        ) {
+
+                            message =
+                                xhr.responseJSON.message;
+
+                        }
+
+
+                        $(errorSelector)
+                            .text(message)
+                            .show();
+
+                    },
+
+
+                    complete: function() {
+
+                        $(loaderSelector)
+                            .hide();
+
+                    }
+
+                });
+
             }
 
-            let html = '';
-
-            rows.forEach(function (row) {
-
-                html += `
-                    <tr>
-
-                        <td>
-                            ${escapeHtml(
-                                row.country ??
-                                row.scountry ??
-                                ''
-                            )}
-                        </td>
-
-                        <td>
-                            ${numberValue(
-                                row.walkin
-                            )}
-                        </td>
-
-                        <td>
-                            ${numberValue(
-                                row.followup
-                            )}
-                        </td>
-
-                        <td>
-                            ${numberValue(
-                                row.enrolled
-                            )}
-                        </td>
-
-                        <td>
-                            ${numberValue(
-                                row.drop
-                            )}
-                        </td>
-
-                    </tr>
-                `;
-            });
-
-            $(selector).html(html);
-        }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Render Visa Rows
-        |--------------------------------------------------------------------------
-        */
-
-        function renderVisaRows(selector, rows) {
-
-            if (!rows.length) {
-
-                $(selector).html(`
-                    <tr>
-                        <td colspan="5" class="no-data">
-                            No data found
-                        </td>
-                    </tr>
-                `);
-
-                return;
-            }
-
-            let html = '';
-
-            rows.forEach(function (row) {
-
-                html += `
-                    <tr>
-
-                        <td>
-                            ${escapeHtml(
-                                row.visa_type ??
-                                row.category ??
-                                row.svisa ??
-                                ''
-                            )}
-                        </td>
-
-                        <td>
-                            ${numberValue(
-                                row.walkin
-                            )}
-                        </td>
-
-                        <td>
-                            ${numberValue(
-                                row.followup
-                            )}
-                        </td>
-
-                        <td>
-                            ${numberValue(
-                                row.enrolled
-                            )}
-                        </td>
-
-                        <td>
-                            ${numberValue(
-                                row.drop
-                            )}
-                        </td>
-
-                    </tr>
-                `;
-            });
-
-            $(selector).html(html);
-        }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Branch Walk-In Click
-        |--------------------------------------------------------------------------
-        */
+            $('#data_summery').on(
+                'hidden.bs.modal',
+                function() {
 
-        $(document).on(
-            'click',
-            '.branch-walkin-link',
-            function (e) {
+                    $('#branchDetailsLoader')
+                        .hide();
 
-                e.preventDefault();
+                    $('#branchDetailsError')
+                        .hide()
+                        .html('');
 
-                const branch =
-                    $(this).attr('data-id');
+                    $('#fetch_data_summery')
+                        .hide()
+                        .html('');
 
-                if (!branch) {
-                    return;
                 }
-
-                loadBranchDetail(branch);
-            }
-        );
+            );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Total Walk-In Click
-        |--------------------------------------------------------------------------
-        */
+            /* =========================================================
+               RESET TOTAL MODAL
+            ========================================================= */
 
-        $(document).on(
-            'click',
-            '.totale_data_summery',
-            function (e) {
+            $('#total_data_summery').on(
+                'hidden.bs.modal',
+                function() {
 
-                e.preventDefault();
+                    $('#totalDetailsLoader')
+                        .hide();
 
-                loadTotalDetail();
-            }
-        );
+                    $('#totalDetailsError')
+                        .hide()
+                        .html('');
 
+                    $('#fetch_total_data_summery')
+                        .hide()
+                        .html('');
 
-        /*
-        |--------------------------------------------------------------------------
-        | Search
-        |--------------------------------------------------------------------------
-        */
-
-        $('#search').on('click', function () {
-
-            loadBranchSummary();
-            loadAppointmentDetails();
+                }
+            );
 
         });
 
+        $('#exportForm').on('submit', function() {
 
-        /*
-        |--------------------------------------------------------------------------
-        | Date Change
-        |--------------------------------------------------------------------------
-        */
+            $('#export_from_date').val($('#post_at').val());
 
-        $('#post_at, #post_at_to_date').on(
-            'change',
-            function () {
+            $('#export_to_date').val($('#post_at_to_date').val());
 
-                updateExportDates();
-
-            }
-        );
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Export
-        |--------------------------------------------------------------------------
-        */
-
-        $('#exportForm').on('submit', function () {
-
-            const dates = getSelectedDates();
-
-            if (!dates) {
-                return false;
-            }
-
-            $('#export_from_date')
-                .val(dates.from_date);
-
-            $('#export_to_date')
-                .val(dates.to_date);
-
-            return true;
         });
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Initial Load
-        |--------------------------------------------------------------------------
-        */
-
-        loadBranchSummary();
-        loadAppointmentDetails();
-
-    });
-</script>
+    </script>
 
 @endsection
