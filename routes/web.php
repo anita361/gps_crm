@@ -140,6 +140,10 @@ Route::middleware('login')->group(function () {
     Route::post('/admin/counsellor-report/export', [BranchManagerController::class, 'exportCounsellorReport'])
         ->name('admin.counsellor.report.export');
 
+    Route::get('/admin/counsellor/walkin-report', [BranchManagerController::class, 'walkinReport'])->name('admin.counsellor.walkin.report');
+
+    Route::post('/admin/counsellor/walkin-report/logs',[BranchManagerController::class, 'walkinReportLogs'])->name('admin.counsellor.walkin.report.logs');
+
     Route::view('/cc-agent-report', 'callcenter.cc_agent_report')->name('callcenter.admin.dashboard');
 
     Route::view('/fi-dashboard', 'status.fi_dashboard')->name('status.fi');
@@ -429,28 +433,7 @@ Route::middleware('login')->group(function () {
     Route::get('/enrolled-list', [WalkinController::class, 'enrolledList'])->name('enrolled.list');
     Route::get('/drop-list', [WalkinController::class, 'dropList'])->name('drop.list');
 
-    //      Route::get('/finance-appointment-pending', [WalkinController::class, 'financeAppointmentPending'])->name('finance.appointment.pending');
 
-
-
-    //      Route::get('/finance/colleges',
-    //     [WalkinController::class, 'financeColleges']
-    // )->name('finance.colleges');
-
-
-    // Route::get('/finance/campuses',
-    //     [WalkinController::class, 'financeCampuses']
-    // )->name('finance.campuses');
-
-
-    // Route::get('/finance/programs',
-    //     [WalkinController::class, 'financePrograms']
-    // )->name('finance.programs');
-
-
-    // Route::post('/finance/osap-status',
-    //     [WalkinController::class, 'financeOsapStatus']
-    // )->name('finance.osap.status');
 
     Route::post('/drop/update-status', [WalkinController::class, 'updateDropStatus'])
         ->name('drop.update-status');
