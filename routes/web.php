@@ -275,6 +275,8 @@ Route::middleware('login')->group(function () {
     Route::get('/daily-activity-reports', [WalkinController::class, 'dailyActivityReports'])->name('daily.activity.reports');
     Route::get('/daily-activity-reports/download', [WalkinController::class, 'dailyActivityReportDownload'])->name('daily.activity.report.download');
     Route::get('/stitching-reports', [WalkinController::class, 'stitchingReports'])->name('stitching.reports');
+    Route::get('/stitching-reports/excel', [WalkinController::class, 'stitchingReportsExcel'])->name('stitching.reports.excel');
+
 
 
 
