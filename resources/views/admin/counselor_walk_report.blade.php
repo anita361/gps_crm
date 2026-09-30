@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <style>
+ <style>
         body {
             font-size: 13px;
         }
@@ -138,7 +138,12 @@
             color: #dc3545;
         }
 
+        .report-count {
+            font-weight: 600;
+        }
+
         @media (max-width: 768px) {
+
             .report-header {
                 font-size: 15px;
             }
@@ -159,18 +164,13 @@
 
         <div class="report-card">
 
-            {{-- =========================================================
-                 HEADER
-            ========================================================== --}}
 
             <div class="report-header">
                 Walk In Report
             </div>
 
 
-            {{-- =========================================================
-                 DATE FILTER
-            ========================================================== --}}
+
 
             <div class="filter-box">
 
@@ -205,7 +205,9 @@
                         <div class="col-md-2">
 
                             <button type="submit" class="btn btn-primary btn-sm w-100">
+
                                 Search
+
                             </button>
 
                         </div>
@@ -216,7 +218,9 @@
 
                                 <a href="{{ route('admin.counsellor.walkin.report') }}"
                                     class="btn btn-secondary btn-sm w-100">
+
                                     Reset
+
                                 </a>
 
                             </div>
@@ -229,16 +233,10 @@
             </div>
 
 
-            {{-- =========================================================
-                 REPORT DATA
-            ========================================================== --}}
 
             @if (!empty($fromDate) && !empty($toDate))
 
 
-                {{-- =====================================================
-                     COUNSELLOR WISE REPORT
-                ====================================================== --}}
 
                 <div class="report-section">
 
@@ -253,12 +251,14 @@
                             <thead>
 
                                 <tr>
+
                                     <th>Name</th>
                                     <th>Branch</th>
                                     <th>Fresh Walk-In</th>
                                     <th>Old Walk-In</th>
                                     <th>Enrolled Walk-In</th>
                                     <th>Total</th>
+
                                 </tr>
 
                             </thead>
@@ -298,16 +298,18 @@
                                 @empty
 
                                     <tr>
+
                                         <td colspan="6" class="no-data">
                                             No counselor data found.
                                         </td>
+
                                     </tr>
                                 @endforelse
 
                             </tbody>
 
 
-                            @if (isset($counsellors) && $counsellors->count())
+                            @if (isset($counsellors) && $counsellors->count() > 0)
                                 <tfoot>
 
                                     <tr>
@@ -344,9 +346,7 @@
                 </div>
 
 
-                {{-- =====================================================
-                     COUNTRY WISE REPORT
-                ====================================================== --}}
+
 
                 <div class="report-section">
 
@@ -361,9 +361,11 @@
                             <thead>
 
                                 <tr>
+
                                     <th>Country</th>
                                     <th>Fresh Walk-In</th>
                                     <th>Old Walk-In</th>
+
                                 </tr>
 
                             </thead>
@@ -379,11 +381,11 @@
                                         </td>
 
                                         <td>
-                                            {{ $country->fresh_walkin ?? 0 }}
+                                            {{ (int) ($country->fresh_walkin ?? 0) }}
                                         </td>
 
                                         <td>
-                                            {{ $country->old_walkin ?? 0 }}
+                                            {{ (int) ($country->old_walkin ?? 0) }}
                                         </td>
 
                                     </tr>
@@ -408,9 +410,7 @@
                 </div>
 
 
-                {{-- =====================================================
-                     VISA TYPE WISE REPORT
-                ====================================================== --}}
+
 
                 <div class="report-section">
 
@@ -425,9 +425,11 @@
                             <thead>
 
                                 <tr>
+
                                     <th>Visa Type</th>
                                     <th>Fresh Walk-In</th>
                                     <th>Old Walk-In</th>
+
                                 </tr>
 
                             </thead>
@@ -443,11 +445,11 @@
                                         </td>
 
                                         <td>
-                                            {{ $visa->fresh_walkin ?? 0 }}
+                                            {{ (int) ($visa->fresh_walkin ?? 0) }}
                                         </td>
 
                                         <td>
-                                            {{ $visa->old_walkin ?? 0 }}
+                                            {{ (int) ($visa->old_walkin ?? 0) }}
                                         </td>
 
                                     </tr>
@@ -472,9 +474,7 @@
                 </div>
 
 
-                {{-- =====================================================
-                     CLIENT DETAILS
-                ====================================================== --}}
+
 
                 <div class="report-section">
 
@@ -572,7 +572,9 @@
                                                     <img src="{{ asset('images/call-log.png') }}" width="20"
                                                         height="20" alt="Call Logs">
 
-                                                    <span>Call Logs</span>
+                                                    <span>
+                                                        Call Logs
+                                                    </span>
 
                                                 </button>
                                             @else
@@ -586,10 +588,16 @@
 
                                         <td>
 
-                                            @if (!empty($row->smobile ?? $row->callerno))
-                                                <a href="{{ url('/walking-details') . '/' . urlencode($row->smobile ?? $row->callerno) }}"
+                                            @php
+                                                $clientMobile = $row->smobile ?? ($row->callerno ?? null);
+                                            @endphp
+
+                                            @if (!empty($clientMobile))
+                                                <a href="{{ url('/walking-details') . '/' . urlencode($clientMobile) }}"
                                                     class="btn btn-sm btn-primary view-btn">
+
                                                     View
+
                                                 </a>
                                             @else
                                                 <span class="text-muted">
@@ -620,10 +628,6 @@
 
                 </div>
             @else
-                {{-- =====================================================
-                     NO FILTER SELECTED
-                ====================================================== --}}
-
                 <div class="p-4 text-center">
 
                     <div class="text-muted">
@@ -642,9 +646,6 @@
     </div>
 
 
-    {{-- ================================================================
-         CALL LOGS MODAL
-    ================================================================= --}}
 
     <div class="modal fade" id="Calllogs" tabindex="-1" aria-labelledby="CalllogsLabel" aria-hidden="true">
 
@@ -827,16 +828,14 @@
 
     </div>
 
-@endsection
 
+@endsection
 
 @push('scripts')
     <script>
         $(document).ready(function() {
 
-            /* ============================================================
-               ESCAPE HTML
-            ============================================================ */
+
 
             function escapeHtml(value) {
 
@@ -850,13 +849,10 @@
                 return $('<div>')
                     .text(value)
                     .html();
-
             }
 
 
-            /* ============================================================
-               CALL LOGS BUTTON
-            ============================================================ */
+
 
             $(document).on('click', '.calllogsdata', function(e) {
 
@@ -872,31 +868,27 @@
                 }
 
 
-                /* --------------------------------------------------------
-                   RESET TABLES TO LOADING
-                -------------------------------------------------------- */
+                // Loading call logs
 
                 $('#ldld').html(`
-                <tr>
-                    <td colspan="5" class="loading-row">
-                        Loading call logs...
-                    </td>
-                </tr>
-            `);
+            <tr>
+                <td colspan="5" class="loading-row">
+                    Loading call logs...
+                </td>
+            </tr>
+        `);
 
+
+                // Loading notes
 
                 $('#notesBody').html(`
-                <tr>
-                    <td colspan="7" class="loading-row">
-                        Loading notes...
-                    </td>
-                </tr>
-            `);
+            <tr>
+                <td colspan="7" class="loading-row">
+                    Loading notes...
+                </td>
+            </tr>
+        `);
 
-
-                /* --------------------------------------------------------
-                   OPEN MODAL
-                -------------------------------------------------------- */
 
                 const modalElement =
                     document.getElementById('Calllogs');
@@ -921,9 +913,6 @@
                 modal.show();
 
 
-                /* ========================================================
-                   AJAX
-                ======================================================== */
 
                 $.ajax({
 
@@ -960,11 +949,10 @@
                         );
 
 
-                        /* ------------------------------------------------
-                           INVALID RESPONSE
-                        ------------------------------------------------ */
-
-                        if (!res || typeof res !== 'object') {
+                        if (
+                            !res ||
+                            typeof res !== 'object'
+                        ) {
 
                             showAjaxError(
                                 'Invalid server response.'
@@ -974,9 +962,6 @@
                         }
 
 
-                        /* ------------------------------------------------
-                           CALL LOGS
-                        ------------------------------------------------ */
 
                         $('#ldld').empty();
 
@@ -1009,31 +994,31 @@
 
                                     $('#ldld').append(`
 
-                                    <tr>
+                                <tr>
 
-                                        <td>
-                                            ${escapeHtml(callTime)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(callTime)}
+                                    </td>
 
-                                        <td>
-                                            ${escapeHtml(status)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(status)}
+                                    </td>
 
-                                        <td>
-                                            ${escapeHtml(followupDate)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(followupDate)}
+                                    </td>
 
-                                        <td>
-                                            ${escapeHtml(remark)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(remark)}
+                                    </td>
 
-                                        <td>
-                                            ${escapeHtml(counsellorName)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(counsellorName)}
+                                    </td>
 
-                                    </tr>
+                                </tr>
 
-                                `);
+                            `);
 
                                 }
                             );
@@ -1042,25 +1027,22 @@
 
                             $('#ldld').html(`
 
-                            <tr>
+                        <tr>
 
-                                <td colspan="5"
-                                    class="text-center">
+                            <td colspan="5"
+                                class="text-center">
 
-                                    No call logs found.
+                                No call logs found.
 
-                                </td>
+                            </td>
 
-                            </tr>
+                        </tr>
 
-                        `);
+                    `);
 
                         }
 
 
-                        /* ------------------------------------------------
-                           NOTES
-                        ------------------------------------------------ */
 
                         $('#notesBody').empty();
 
@@ -1099,39 +1081,39 @@
 
                                     $('#notesBody').append(`
 
-                                    <tr>
+                                <tr>
 
-                                        <td>
-                                            ${escapeHtml(sno)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(sno)}
+                                    </td>
 
-                                        <td>
-                                            ${escapeHtml(remarks)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(remarks)}
+                                    </td>
 
-                                        <td>
-                                            ${escapeHtml(updatedBy)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(updatedBy)}
+                                    </td>
 
-                                        <td>
-                                            ${escapeHtml(datetime)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(datetime)}
+                                    </td>
 
-                                        <td>
-                                            ${escapeHtml(commissionStatus)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(commissionStatus)}
+                                    </td>
 
-                                        <td>
-                                            ${escapeHtml(commOneAmount)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(commOneAmount)}
+                                    </td>
 
-                                        <td>
-                                            ${escapeHtml(commTwoAmount)}
-                                        </td>
+                                    <td>
+                                        ${escapeHtml(commTwoAmount)}
+                                    </td>
 
-                                    </tr>
+                                </tr>
 
-                                `);
+                            `);
 
                                 }
                             );
@@ -1140,27 +1122,24 @@
 
                             $('#notesBody').html(`
 
-                            <tr>
+                        <tr>
 
-                                <td colspan="7"
-                                    class="text-center">
+                            <td colspan="7"
+                                class="text-center">
 
-                                    No notes found.
+                                No notes found.
 
-                                </td>
+                            </td>
 
-                            </tr>
+                        </tr>
 
-                        `);
+                    `);
 
                         }
 
                     },
 
 
-                    /* ====================================================
-                       AJAX ERROR
-                    ==================================================== */
 
                     error: function(xhr, status, error) {
 
@@ -1193,7 +1172,6 @@
 
                             message =
                                 'Server error. Please check Laravel logs.';
-
                         }
 
 
@@ -1206,9 +1184,6 @@
             });
 
 
-            /* ============================================================
-               AJAX ERROR DISPLAY
-            ============================================================ */
 
             function showAjaxError(message) {
 
@@ -1218,41 +1193,38 @@
 
                 $('#ldld').html(`
 
-                <tr>
+            <tr>
 
-                    <td colspan="5"
-                        class="error-row">
+                <td colspan="5"
+                    class="error-row">
 
-                        ${safeMessage}
+                    ${safeMessage}
 
-                    </td>
+                </td>
 
-                </tr>
+            </tr>
 
-            `);
+        `);
 
 
                 $('#notesBody').html(`
 
-                <tr>
+            <tr>
 
-                    <td colspan="7"
-                        class="error-row">
+                <td colspan="7"
+                    class="error-row">
 
-                        ${safeMessage}
+                    ${safeMessage}
 
-                    </td>
+                </td>
 
-                </tr>
+            </tr>
 
-            `);
+        `);
 
             }
 
 
-            /* ============================================================
-               FROM DATE CHANGE
-            ============================================================ */
 
             $('#from_date').on('change', function() {
 
@@ -1291,10 +1263,6 @@
             });
 
 
-            /* ============================================================
-               SET MINIMUM TO DATE ON PAGE LOAD
-            ============================================================ */
-
             const existingFromDate =
                 $('#from_date').val();
 
@@ -1308,10 +1276,6 @@
 
             }
 
-
-            /* ============================================================
-               FORM VALIDATION
-            ============================================================ */
 
             $('#walkinReportFilterForm').on(
                 'submit',
@@ -1355,9 +1319,7 @@
             );
 
 
-            /* ============================================================
-               RESET MODAL WHEN CLOSED
-            ============================================================ */
+
 
             $('#Calllogs').on(
                 'hidden.bs.modal',
@@ -1365,34 +1327,34 @@
 
                     $('#ldld').html(`
 
-                    <tr>
+                <tr>
 
-                        <td colspan="5"
-                            class="text-center">
+                    <td colspan="5"
+                        class="text-center">
 
-                            Select Call Logs
+                        Select Call Logs
 
-                        </td>
+                    </td>
 
-                    </tr>
+                </tr>
 
-                `);
+            `);
 
 
                     $('#notesBody').html(`
 
-                    <tr>
+                <tr>
 
-                        <td colspan="7"
-                            class="text-center">
+                    <td colspan="7"
+                        class="text-center">
 
-                            Select Call Logs
+                        Select Call Logs
 
-                        </td>
+                    </td>
 
-                    </tr>
+                </tr>
 
-                `);
+            `);
 
                 }
             );

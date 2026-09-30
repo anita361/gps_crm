@@ -96,10 +96,10 @@
 
                 <div class="col-12" style="padding-bottom: 25px;">
 
-                    {{-- FILTER FORM --}}
+
                     <form method="GET" action="{{ route('tuition.fee.update') }}" class="row g-2 mb-3" id="filterForm">
 
-                        {{-- Province --}}
+
                         <div class="col-sm-2">
                             <select name="province" id="provinceFilter" class="form-select form-control">
                                 <option value="">All Provinces</option>
@@ -113,7 +113,7 @@
                             </select>
                         </div>
 
-                        {{-- College --}}
+
                         <div class="col-sm-2">
                             <select name="clg_name" id="collegeFilter" class="form-select form-control">
                                 <option value="">All Colleges</option>
@@ -126,7 +126,7 @@
                             </select>
                         </div>
 
-                        {{-- Campus --}}
+
                         <div class="col-sm-2">
                             <select name="campus_name" id="campusFilter" class="form-select form-control">
                                 <option value="">All Campuses</option>
@@ -139,7 +139,7 @@
                             </select>
                         </div>
 
-                        {{-- Program --}}
+
                         <div class="col-sm-2">
                             <select name="prg_name" id="programFilter" class="form-select form-control">
                                 <option value="">All Programs</option>
@@ -153,7 +153,7 @@
                             </select>
                         </div>
 
-                        {{-- Page limit --}}
+
                         <input type="hidden" name="limit" value="{{ $limit }}" id="filterLimit">
 
                         {{-- Clear --}}
@@ -169,7 +169,7 @@
 
                 <div class="col-sm-12">
 
-                    {{-- Page Limit --}}
+
                     <select id="limitSelect" class="form-select form-select-sm"
                         style="width:auto; display:inline-block; margin-bottom:10px;">
                         <option value="10" {{ $limit == 10 ? 'selected' : '' }}>10</option>
@@ -233,7 +233,7 @@
 
                     </div>
 
-                    {{-- Pagination --}}
+
                     <div class="pagination-wrapper">
 
                         <div>

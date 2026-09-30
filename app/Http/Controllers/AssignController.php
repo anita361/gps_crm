@@ -11,8 +11,8 @@ class AssignController extends Controller
     public function counselors()
     {
         return DB::table('crm_login')
-            ->whereIn('role', ['counselor','branch_manager'])
-            ->select('id','name')
+            ->whereIn('role', ['counselor', 'branch_manager'])
+            ->select('id', 'name')
             ->get();
     }
 
@@ -33,17 +33,16 @@ class AssignController extends Controller
 
 
         $counselor = DB::table('crm_login')
-            ->where('id',$request->assign)
+            ->where('id', $request->assign)
             ->first();
 
 
 
-        if(!$counselor)
-        {
+        if (!$counselor) {
             return response()->json([
 
-                'status'=>0,
-                'message'=>'Counselor not found'
+                'status' => 0,
+                'message' => 'Counselor not found'
 
             ]);
         }
@@ -54,23 +53,19 @@ class AssignController extends Controller
 
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Update lead_appointed
-        |--------------------------------------------------------------------------
-        */
+
 
         DB::table('lead_appointed')
-            ->where('id',$request->appntid)
+            ->where('id', $request->appntid)
             ->update([
 
-                'assign_id'=>$request->assign,
+                'assign_id' => $request->assign,
 
-                'assign_name'=>$counselor->name,
+                'assign_name' => $counselor->name,
 
-                'category'=>$request->category,
+                'category' => $request->category,
 
-                'assign_date'=>$date
+                'assign_date' => $date
 
             ]);
 
@@ -78,24 +73,19 @@ class AssignController extends Controller
 
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Update seminarpre
-        |--------------------------------------------------------------------------
-        */
 
 
         DB::table('seminarpre')
-            ->where('smobile',$request->mobile)
+            ->where('smobile', $request->mobile)
             ->update([
 
-                'assign_id'=>$request->assign,
+                'assign_id' => $request->assign,
 
-                'assign_name'=>$counselor->name,
+                'assign_name' => $counselor->name,
 
-                'category'=>$request->category,
+                'category' => $request->category,
 
-                'assign_date'=>$date
+                'assign_date' => $date
 
             ]);
 
@@ -104,25 +94,20 @@ class AssignController extends Controller
 
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Insert assign status
-        |--------------------------------------------------------------------------
-        */
 
         DB::table('assign_status')->insert([
 
-            'lead_appointed_id'=>$request->appntid,
+            'lead_appointed_id' => $request->appntid,
 
-            'counelor_id'=>$request->assign,
+            'counelor_id' => $request->assign,
 
-            'category'=>$request->category,
+            'category' => $request->category,
 
-            'status'=>1,
+            'status' => 1,
 
-            'created_date'=>$date,
+            'created_date' => $date,
 
-            'created_time'=>now()->format('H:i:s')
+            'created_time' => now()->format('H:i:s')
 
         ]);
 
@@ -132,12 +117,10 @@ class AssignController extends Controller
 
         return response()->json([
 
-            'status'=>1,
+            'status' => 1,
 
-            'message'=>'Counselor Assigned Successfully'
+            'message' => 'Counselor Assigned Successfully'
 
         ]);
-
     }
-
 }

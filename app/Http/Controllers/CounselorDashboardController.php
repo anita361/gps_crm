@@ -25,7 +25,7 @@ class CounselorDashboardController extends Controller
             $id = (int) $request->get('id');
             $status = (string) $request->get('status');
 
-            // Only allow 0 or 1
+
             if (!in_array($status, ['0', '1'], true)) {
                 return response('0', 400);
             }
@@ -240,9 +240,7 @@ class CounselorDashboardController extends Controller
 
                 'assign_name',
 
-                /*
-            | Blank
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -253,9 +251,7 @@ class CounselorDashboardController extends Controller
                 ) AS blank_count
             "),
 
-                /*
-            | Not Process
-            */
+
 
                 DB::raw("
                 COUNT(
@@ -762,27 +758,23 @@ class CounselorDashboardController extends Controller
         $query->orderBy('s.enrolled_date', 'DESC');
         $filename = 'opr_list_' . date('Y-m-d_H-i-s') . '.csv';
         return response()->streamDownload(function () use ($query) {
-            $output = fopen('php://output', 'w'); /* |-------------------------------------------------------------------------- | UTF-8 BOM | | This helps Excel display UTF-8 characters correctly. |-------------------------------------------------------------------------- */
-            echo "\xEF\xBB\xBF"; /* |-------------------------------------------------------------------------- | CSV Header | | Same as old opr_listing_excel.php |-------------------------------------------------------------------------- */
+            $output = fopen('php://output', 'w');
+            echo "\xEF\xBB\xBF";
             fputcsv($output, ['Client Name', 'Client Number', 'Country Name', 'Counselor Name', 'File Number', 'Student Status', 'Source', 'Source Remarks', 'Enrolled Date', 'Finance Manager', 'Email', 'Provinence Name', 'College', 'Campus', 'Program Name', 'Start Date', 'End Date', 'Opr Last Status Date', 'Operation Status', 'Opr Last Status', 'ONID User Name', 'ONID Password']); /* |-------------------------------------------------------------------------- | Process Records in Chunks | | Prevents loading thousands of records into memory. |-------------------------------------------------------------------------- */
             $query->chunk(500, function ($rows) use ($output) {
-                foreach ($rows as $row) { /* |-------------------------------------------------------------------------- | Old PHP: | | $sname = str_replace('-', '', $row['sname']); |-------------------------------------------------------------------------- */
-                    $clientName = str_replace('-', '', $row->sname ?? ''); /* |-------------------------------------------------------------------------- | Write CSV Row |-------------------------------------------------------------------------- */
+                foreach ($rows as $row) {
+                    $clientName = str_replace('-', '', $row->sname ?? '');
                     fputcsv($output, [$clientName, $row->smobile ?? '', $row->scountry ?? '', $row->assign_name ?? '', $row->file_no ?? '', $row->student_status ?? '', $row->ssource ?? '', $row->source_remarks ?? '', $row->enrolled_date ?? '', $row->finance_manager ?? '', $row->semail ?? '', $row->province_name ?? '', $row->collage_name ?? '', $row->campus_name ?? '', $row->program_name ?? '', $row->start_date ?? '', $row->end_date ?? '', $row->opr_stage_date ?? '', $row->opr_stage ?? '', $row->oprStsSend ?? '', $row->onid_user_name ?? '', $row->onid_user_pass ?? '']);
-                } /* |-------------------------------------------------------------------------- | Flush output |-------------------------------------------------------------------------- */
+                }
                 fflush($output);
-            }); /* |-------------------------------------------------------------------------- | Close CSV |-------------------------------------------------------------------------- */
+            });
             fclose($output);
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8', 'Cache-Control' => 'no-cache, no-store, must-revalidate', 'Pragma' => 'no-cache', 'Expires' => '0']);
     }
 
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | Canada Eligibility Details
-    |--------------------------------------------------------------------------
-    */
+
     public function eligibleDetails(Request $request)
     {
         $clientId = $request->get('id');
@@ -823,21 +815,12 @@ class CounselorDashboardController extends Controller
 
     public function fullReport(Request $request)
     {
-        /*
-    |--------------------------------------------------------------------------
-    | Check Login
-    |--------------------------------------------------------------------------
-    */
 
         if (!session()->has('login')) {
             return redirect()->route('login');
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Session Data
-    |--------------------------------------------------------------------------
-    */
+
 
         $role = session('role');
         $userId = session('login');
@@ -1066,7 +1049,7 @@ class CounselorDashboardController extends Controller
 
             $output = fopen('php://output', 'w');
 
-            // UTF-8 BOM for Excel
+
             echo "\xEF\xBB\xBF";
 
             fputcsv($output, [
@@ -1385,7 +1368,7 @@ class CounselorDashboardController extends Controller
         $date = Carbon::now();
 
 
-        // Get logged in user from session
+
         $role = session('role');
         $username = session('username');
         $createdBy = session('name') ?? $username ?? 'Admin';
@@ -1433,7 +1416,7 @@ class CounselorDashboardController extends Controller
 
 
 
-        // File Upload
+
 
         if ($request->hasFile('files_data')) {
 
@@ -1473,7 +1456,7 @@ class CounselorDashboardController extends Controller
 
 
 
-           
+
             DB::table('email_temp')
                 ->where('id', $template_id)
                 ->update([

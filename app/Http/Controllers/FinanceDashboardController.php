@@ -68,11 +68,7 @@ class FinanceDashboardController extends Controller
             ->whereNotNull('assign_name')
             ->where('assign_name', '<>', '');
 
-        /*
-        |--------------------------------------
-        | DATE FILTER
-        |--------------------------------------
-        */
+
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $query->whereBetween('start_date', [
                 $request->from_date,
@@ -80,11 +76,7 @@ class FinanceDashboardController extends Controller
             ]);
         }
 
-        /*
-        |--------------------------------------
-        | ROLE BASED FILTER
-        |--------------------------------------
-        */
+
         $role = Session::get('role');
         $userId = Session::get('login');
 
@@ -98,11 +90,7 @@ class FinanceDashboardController extends Controller
             $query->where('assign_id', $user->userid);
         }
 
-        /*
-        |--------------------------------------
-        | FINAL RESULT
-        |--------------------------------------
-        */
+
         $reports = $query
             ->groupBy('assign_name')
             ->orderBy('assign_name')

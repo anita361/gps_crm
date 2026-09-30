@@ -14,17 +14,7 @@ class StatusController extends Controller
             'status'  => 'required',
         ]);
 
-        // DB::table('opr_sts_logs')->insert([
-        //     'main_id'          => $request->reg_sno,
-        //     'stage'            => $request->status,
-        //     'stage_date'       => $request->followup_date,
-        //     'created_name'     => session('name'),
-        //     'created_id'       => session('login'),
-        //     'created_datetime' => now()->format('Y-m-d H:i:s'),
-        //     'created_date'     => now()->format('Y-m-d'),
-        //     'stage_remarks'    => $request->remarks,
-        //     'oprStsSend'       => 1,
-        // ]);
+
 
         DB::table('seminarpre')
             ->where('sno', $request->reg_sno)
@@ -37,40 +27,6 @@ class StatusController extends Controller
 
         return back()->with('success', 'Status Updated Successfully.');
     }
-    // public function update(Request $request)
-    // {
-    //     $request->validate([
-    //         'reg_sno' => 'required',
-    //         'status'  => 'required',
-    //     ]);
-
-    //     DB::table('opr_sts_logs')->insert([
-    //         'main_id'          => $request->reg_sno,
-    //         'stage'            => $request->status,
-    //         'stage_date'       => $request->followup_date,
-    //         'created_name'     => session('name'),
-    //         'created_id'       => session('login'),
-    //         'created_datetime' => now()->format('Y-m-d H:i:s'),
-    //         'created_date'     => now()->format('Y-m-d'),
-    //         'stage_remarks'    => $request->remarks,
-    //         'oprStsSend'       => $request->oprStsSend ?? 1,
-    //     ]);
-
-    //     DB::table('seminarpre')
-    //         ->where('sno', $request->reg_sno)
-    //         ->update([
-    //             'status'          => $request->status,
-    //             'follow_date'     => $request->followup_date,
-    //             'remark_type'     => $request->remarks_type,
-    //             'student_remark'  => $request->remarks,
-    //             'oprStsSend'      => $request->oprStsSend ?? 1,
-    //         ]);
-
-    //     return response()->json([
-    //         'status'  => 1,
-    //         'message' => 'Status Updated Successfully.'
-    //     ]);
-    // }
 
     public function logs(Request $request)
     {

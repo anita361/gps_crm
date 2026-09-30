@@ -1,9 +1,7 @@
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-
 
     <meta charset="UTF-8">
 
@@ -14,38 +12,36 @@
     <title>@yield('title', 'GPS CRM') | GPS Education CRM</title>
 
 
-    {{-- Bootstrap --}}
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 
-    {{-- Font Awesome --}}
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" rel="stylesheet">
 
 
-    {{-- DataTables --}}
+
     <link href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" rel="stylesheet">
 
 
-    {{-- Summernote --}}
+
     <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-bs5.min.css" rel="stylesheet">
 
 
-    {{-- =========================================================
-     BOOTSTRAP DATEPICKER CSS
-========================================================== --}}
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css"
         rel="stylesheet">
 
 
-    {{-- jQuery --}}
+
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
 
-    {{-- Bootstrap JS --}}
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 
-    {{-- SweetAlert --}}
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
@@ -59,18 +55,15 @@
             font-size: 14px;
         }
 
-
         .navbar {
             background: #fff;
             box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
             padding: 10px 20px;
         }
 
-
         .navbar-brand img {
             height: 60px;
         }
-
 
         .navbar-nav .nav-link {
             color: #222;
@@ -78,17 +71,14 @@
             margin-left: 10px;
         }
 
-
         .navbar-nav .nav-link:hover {
             color: #0d6efd;
         }
-
 
         .navbar-nav .nav-link.active {
             color: #0d6efd;
             font-weight: bold;
         }
-
 
         .card {
             border: none;
@@ -96,7 +86,6 @@
             overflow: hidden;
             box-shadow: 0 2px 12px rgba(0, 0, 0, .15);
         }
-
 
         .card-header {
             background: #2f64e7 !important;
@@ -107,7 +96,6 @@
             padding: 12px;
         }
 
-
         .table-dark th {
             background: #555 !important;
             color: #fff;
@@ -115,17 +103,14 @@
             vertical-align: middle;
         }
 
-
         .table td {
             vertical-align: middle;
         }
-
 
         .btn-success,
         .btn-danger {
             min-width: 95px;
         }
-
 
         footer {
             margin-top: 50px;
@@ -134,35 +119,27 @@
             color: #666;
         }
 
-
         .dropdown-menu {
             border-radius: 0;
         }
 
 
-        /* =========================================================
-       BOOTSTRAP DATEPICKER
-    ========================================================== */
 
         .datepicker {
             z-index: 9999 !important;
         }
     </style>
 
-
 </head>
 
 <body>
 
 
-    {{-- =========================================================
-     NAVBAR
-========================================================== --}}
+
 
     <nav class="navbar navbar-expand-lg">
 
         <div class="container-fluid">
-
 
             <a class="navbar-brand" href="{{ route('branch.dashboard') }}">
 
@@ -180,24 +157,17 @@
 
             <div class="collapse navbar-collapse" id="navbarMenu">
 
-
                 @php
-
                     $role = session('role');
-
                     $username = session('username');
-
                 @endphp
 
 
-                {{-- =========================================================
-                 BRANCH
-            ========================================================== --}}
+
 
                 @if ($role === 'branch')
 
                     <ul class="navbar-nav ms-auto align-items-center">
-
 
                         <li class="nav-item">
 
@@ -255,14 +225,8 @@
                         </li>
 
                     </ul>
-
-
-                    {{-- =========================================================
-                 COMMISSION
-            ========================================================== --}}
                 @elseif ($role === 'commission')
                     <ul class="navbar-nav ms-auto align-items-center">
-
 
                         <li class="nav-item">
 
@@ -278,18 +242,10 @@
                         </li>
 
                     </ul>
-
-
-                    {{-- =========================================================
-                 BRANCH MANAGER
-                 PRABJOT
-                 NAVJOT
-            ========================================================== --}}
                 @elseif ($role === 'branch_manager' || $username === 'prabjot' || $username === 'navjot')
                     <ul class="navbar-nav ms-auto align-items-center">
 
 
-                        {{-- Dashboard --}}
 
                         <li class="nav-item">
 
@@ -305,7 +261,7 @@
                         </li>
 
 
-                        {{-- Finance Dashboard --}}
+
 
                         <li class="nav-item">
 
@@ -321,7 +277,7 @@
                         </li>
 
 
-                        {{-- Dashboard Report --}}
+
 
                         <li class="nav-item dropdown">
 
@@ -335,7 +291,6 @@
 
 
                             <ul class="dropdown-menu">
-
 
                                 <li>
 
@@ -409,7 +364,7 @@
                         </li>
 
 
-                        {{-- Lead List --}}
+
 
                         <li class="nav-item dropdown">
 
@@ -424,7 +379,6 @@
 
 
                             <ul class="dropdown-menu">
-
 
                                 <li>
 
@@ -469,12 +423,12 @@
                         </li>
 
 
-                        {{-- Followup --}}
+
 
                         <li class="nav-item dropdown">
 
                             <a class="nav-link dropdown-toggle {{ request()->routeIs('lead.followup*') ? 'active' : '' }}"
-                                href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                href="#" role="button" data-bs-toggle="dropdown">
 
                                 <i class="fa fa-phone"></i>
 
@@ -484,7 +438,6 @@
 
 
                             <ul class="dropdown-menu">
-
 
                                 <li>
 
@@ -529,7 +482,7 @@
                         </li>
 
 
-                        {{-- Enrolled --}}
+
 
                         <li class="nav-item dropdown">
 
@@ -544,7 +497,6 @@
 
 
                             <ul class="dropdown-menu">
-
 
                                 <li>
 
@@ -654,7 +606,7 @@
                         </li>
 
 
-                        {{-- Reports --}}
+
 
                         <li class="nav-item dropdown">
 
@@ -669,7 +621,6 @@
 
 
                             <ul class="dropdown-menu">
-
 
                                 <li>
 
@@ -756,7 +707,6 @@
 
                             <ul class="dropdown-menu">
 
-
                                 <li>
 
                                     <a class="dropdown-item" href="{{ route('users.index') }}">
@@ -801,7 +751,6 @@
                     </ul>
                 @elseif ($role === 'counselor' && $username !== 'prabjot' && $username !== 'navjot')
                     <ul class="navbar-nav ms-auto align-items-center">
-
 
                         <li class="nav-item">
 
@@ -858,7 +807,6 @@
 
                             <ul class="dropdown-menu">
 
-
                                 <li>
 
                                     <a class="dropdown-item" href="{{ route('lead.followup') }}">
@@ -912,7 +860,6 @@
 
                             <ul class="dropdown-menu">
 
-
                                 <li>
 
                                     <a class="dropdown-item" href="{{ route('counselor.full.report') }}">
@@ -961,7 +908,7 @@
                         </li>
 
 
-                        {{-- Operation Status --}}
+
 
                         <li class="nav-item">
 
@@ -1037,7 +984,7 @@
                         </li>
 
 
-                        {{-- Zainab_admin --}}
+
 
                         @if ($username === 'Zainab_admin')
                             <li class="nav-item">
@@ -1082,14 +1029,8 @@
                         </li>
 
                     </ul>
-
-
-                    {{-- =========================================================
-                 OPERATION
-            ========================================================== --}}
                 @elseif ($role === 'operation')
                     <ul class="navbar-nav ms-auto align-items-center">
-
 
                         <li class="nav-item">
 
@@ -1176,7 +1117,6 @@
                 @elseif ($role === 'super_admin')
                     <ul class="navbar-nav ms-auto align-items-center">
 
-
                         {{-- Branch Dashboard --}}
 
                         <li class="nav-item dropdown">
@@ -1192,7 +1132,6 @@
 
 
                             <ul class="dropdown-menu">
-
 
                                 <li>
 
@@ -1212,8 +1151,8 @@
                                         Walk in Report
 
                                     </a>
-                                </li>
 
+                                </li>
 
                             </ul>
 
@@ -1250,7 +1189,7 @@
                         </li>
 
 
-                        {{-- Counselor Dashboard --}}
+
 
                         <li class="nav-item dropdown">
 
@@ -1258,22 +1197,33 @@
                                 data-bs-toggle="dropdown">
 
                                 <i class="fa fa-desktop"></i>
+
                                 Counsellor Dashboard
 
                             </a>
 
+
                             <ul class="dropdown-menu">
 
                                 <li>
+
                                     <a class="dropdown-item" href="{{ route('admin.counsellor.report') }}">
+
                                         Counselor Report
+
                                     </a>
+
                                 </li>
 
+
                                 <li>
+
                                     <a class="dropdown-item" href="{{ route('admin.counsellor.walkin.report') }}">
+
                                         Walk in Report
+
                                     </a>
+
                                 </li>
 
                             </ul>
@@ -1296,7 +1246,6 @@
 
 
                             <ul class="dropdown-menu">
-
 
                                 <li>
 
@@ -1322,15 +1271,15 @@
 
                                 <!-- <li>
 
-                                <a
-                                    class="dropdown-item"
-                                    href="{{ route('lead.followup.missed') }}">
+                                    <a
+                                        class="dropdown-item"
+                                        href="{{ route('lead.followup.missed') }}">
 
-                                    Missed Followup
+                                        Missed Followup
 
-                                </a>
+                                    </a>
 
-                            </li> -->
+                                </li> -->
 
                             </ul>
 
@@ -1352,14 +1301,8 @@
                         </li>
 
                     </ul>
-
-
-                    {{-- =========================================================
-                 FINANCE
-            ========================================================== --}}
                 @elseif ($role === 'finance')
                     <ul class="navbar-nav ms-auto align-items-center">
-
 
                         <li class="nav-item">
 
@@ -1401,11 +1344,14 @@
 
 
                         <li class="nav-item">
+
                             <a class="nav-link" href="{{ route('finance.appointment.pending') }}">
+
                                 <i class="fa fa-user"></i>
+
                                 Finance Appointment Pending
+
                             </a>
-                        </li>
 
                         </li>
 
@@ -1427,13 +1373,9 @@
                 @endif
 
 
-                {{-- =========================================================
-                 USER / LOGOUT
-            ========================================================== --}}
 
                 @if ($role)
                     <ul class="navbar-nav align-items-center">
-
 
                         <li class="nav-item">
 
@@ -1469,7 +1411,6 @@
                     </ul>
                 @endif
 
-
             </div>
 
         </div>
@@ -1477,12 +1418,8 @@
     </nav>
 
 
-    {{-- =========================================================
-     MAIN CONTENT
-========================================================== --}}
 
     <div class="container-fluid mt-3">
-
 
         @if (session('success'))
             <div class="alert alert-success">
@@ -1521,13 +1458,9 @@
 
         @yield('content')
 
-
     </div>
 
 
-    {{-- =========================================================
-     FOOTER
-========================================================== --}}
 
     <footer>
 
@@ -1536,30 +1469,22 @@
     </footer>
 
 
-    {{-- =========================================================
-     DATATABLES
-========================================================== --}}
+
 
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
-
 
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 
 
-    {{-- =========================================================
-     BOOTSTRAP DATEPICKER JS
-     IMPORTANT: Must load before @stack('scripts')
-========================================================== --}}
+
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js">
     </script>
 
 
-    {{-- =========================================================
-     AJAX CSRF + DEFAULT DATATABLE
-========================================================== --}}
 
-    <!-- <script>
+    <!--
+    <script>
         $.ajaxSetup({
 
             headers: {
@@ -1588,17 +1513,21 @@
             });
 
         }
-    </script> -->
+    </script>
+    -->
+
 
     <script>
         $.ajaxSetup({
+
             headers: {
+
                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+
             }
+
         });
     </script>
-
-
 
 
     @stack('scripts')

@@ -103,7 +103,9 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-    {{-- <script>
+
+
+    <script>
         let fid = null;
 
         $('.my-div').on('click', function() {
@@ -127,7 +129,16 @@
             }
 
             let id = @json($studentId);
+
             let code = @json($consentCode);
+
+            let button = $(this);
+
+            button.prop('disabled', true);
+
+            button.html(
+                '<i class="fa fa-spinner fa-spin"></i> Saving...'
+            );
 
             $.ajax({
 
@@ -141,7 +152,9 @@
 
                     id: id,
 
-                    fid: fid
+                    fid: fid,
+
+                    code: code
 
                 },
 
@@ -150,21 +163,37 @@
                     if (result.status == 200) {
 
                         window.location.href =
-                            "{{ url('/student-consent/success') }}/" + result.id;
+                            "{{ route('student-consent.success', ['id' => '__ID__']) }}"
+                            .replace('__ID__', result.id);
 
                     } else {
 
-                        alert(result.message || 'Something went wrong.');
+                        alert(
+                            result.message ||
+                            'Something went wrong.'
+                        );
 
+                        button.prop('disabled', false);
+
+                        button.html(
+                            'Select Signature & Continue'
+                        );
                     }
-
                 },
 
                 error: function(xhr) {
 
+                    button.prop('disabled', false);
+
+                    button.html(
+                        'Select Signature & Continue'
+                    );
+
                     if (xhr.status == 409) {
 
-                        alert('You have already signed the contract.');
+                        alert(
+                            'You have already signed the contract.'
+                        );
 
                         return;
                     }
@@ -174,138 +203,22 @@
                         xhr.responseJSON.message
                     ) {
 
-                        alert(xhr.responseJSON.message);
+                        alert(
+                            xhr.responseJSON.message
+                        );
 
                     } else {
 
-                        alert('Something went wrong.');
-
+                        alert(
+                            'Something went wrong.'
+                        );
                     }
-
                 }
 
             });
 
         });
     </script>
- --}}
-
- <script>
-
-let fid = null;
-
-$('.my-div').on('click', function () {
-
-    $('.my-div').removeClass('select-any');
-
-    $(this).addClass('select-any');
-
-    fid = $(this).data('id');
-
-});
-
-
-$('.Next').on('click', function () {
-
-    if (!fid) {
-
-        alert('Please Select Signature.');
-
-        return false;
-    }
-
-    let id = @json($studentId);
-
-    let code = @json($consentCode);
-
-    let button = $(this);
-
-    button.prop('disabled', true);
-
-    button.html(
-        '<i class="fa fa-spinner fa-spin"></i> Saving...'
-    );
-
-    $.ajax({
-
-        type: 'POST',
-
-        url: "{{ route('student-consent.signature') }}",
-
-        data: {
-
-            _token: "{{ csrf_token() }}",
-
-            id: id,
-
-            fid: fid,
-
-            code: code
-
-        },
-
-        success: function (result) {
-
-            if (result.status == 200) {
-
-                window.location.href =
-                    "{{ route('student-consent.success', ['id' => '__ID__']) }}"
-                    .replace('__ID__', result.id);
-
-            } else {
-
-                alert(
-                    result.message ||
-                    'Something went wrong.'
-                );
-
-                button.prop('disabled', false);
-
-                button.html(
-                    'Select Signature & Continue'
-                );
-            }
-        },
-
-        error: function (xhr) {
-
-            button.prop('disabled', false);
-
-            button.html(
-                'Select Signature & Continue'
-            );
-
-            if (xhr.status == 409) {
-
-                alert(
-                    'You have already signed the contract.'
-                );
-
-                return;
-            }
-
-            if (
-                xhr.responseJSON &&
-                xhr.responseJSON.message
-            ) {
-
-                alert(
-                    xhr.responseJSON.message
-                );
-
-            } else {
-
-                alert(
-                    'Something went wrong.'
-                );
-            }
-        }
-
-    });
-
-});
-
-</script>
     <style>
         @font-face {
             font-family: "PaulSignature-WEJY";

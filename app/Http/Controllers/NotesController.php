@@ -12,7 +12,7 @@ class NotesController extends Controller
 
     public function getNotes(Request $request)
     {
-            // dd($request->all());
+        // dd($request->all());
         $notes = DB::table('notes_logs')
             ->select(
                 'main_id',
@@ -32,7 +32,7 @@ class NotesController extends Controller
             'notes' => $notes
         ]);
     }
-    
+
 
     public function addNote(Request $request)
     {

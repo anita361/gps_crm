@@ -18,27 +18,19 @@
 
             <div class="card-body">
 
-                {{-- <form method="GET" action="" autocomplete="off"> --}}
+
                 <form method="GET" action="{{ route('branch.manager.dashboard') }}" autocomplete="off">
 
                     <div class="row align-items-end">
 
-                        <!-- Search Dropdown -->
+
                         <div class="col-lg-4 col-md-5">
 
                             <label class="fw-bold mb-2">
                                 Search By Name, Number, Email and File No
                             </label>
 
-                            {{-- <select class="form-select" id="search_type" onchange="showSearchField()">
 
-                                <option value="">Search Using</option>
-                                <option value="student_name">Search Student Name</option>
-                                <option value="mobile">Search Mobile</option>
-                                <option value="email">Search Email</option>
-                                <option value="file">Search File</option>
-
-                            </select> --}}
                             <select class="form-select" id="search_type" onchange="showSearchField()">
 
                                 <option value="">Search Using</option>
@@ -63,7 +55,7 @@
 
                         </div>
 
-                        <!-- Student Name -->
+
                         <div class="col-lg-5 col-md-7" id="student_name_div" style="display:none;">
 
                             <label class="fw-bold mb-2">
@@ -83,7 +75,7 @@
 
                         </div>
 
-                        <!-- Mobile -->
+
                         <div class="col-lg-5 col-md-7" id="mobile_div" style="display:none;">
 
                             <label class="fw-bold mb-2">
@@ -102,7 +94,7 @@
 
                         </div>
 
-                        <!-- Email -->
+
                         <div class="col-lg-5 col-md-7" id="email_div" style="display:none;">
 
                             <label class="fw-bold mb-2">
@@ -289,7 +281,7 @@
 
 
 
-                                        <!-- ASSIGN MODAL -->
+
 
                                         <div class="modal fade" id="myassignModal{{ $row->id }}" tabindex="-1">
 
@@ -374,7 +366,7 @@
 
 
 
-                                                            <!-- Category -->
+
 
                                                             <div class="mb-3">
 
@@ -455,9 +447,6 @@
 
 
                                         </div>
-
-
-
 
 
                                     </td>

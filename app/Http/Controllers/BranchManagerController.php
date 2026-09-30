@@ -75,28 +75,6 @@ class BranchManagerController extends Controller
 
 
 
-    //  public function getLogs(Request $request)
-    // {
-    //     $idno = $request->id;
-
-    //     if (!$idno) {
-    //         return response()->json([
-    //             'status' => 'error',
-    //             'message' => 'Seminar ID is required.'
-    //         ], 400);
-    //     }
-
-    //     $logs = DB::table('counslor_status')
-    //         ->where('seminar_id', $idno)
-    //         ->orderByDesc('id')
-    //         ->get();
-
-    //     return response()->json([
-    //         'status' => 'success',
-    //         'logs' => $logs
-    //     ]);
-    // }
-
     public function getLogs(Request $request)
     {
         $idno = $request->id;
@@ -3545,15 +3523,7 @@ class BranchManagerController extends Controller
     }
 
 
-    /**
-     * Check logged-in user
-     *
-     * Your LoginController stores:
-     * login
-     * role
-     * username
-     * name
-     */
+
     private function checkSuperAdmin()
     {
         if (!session()->has('login')) {
@@ -3566,13 +3536,7 @@ class BranchManagerController extends Controller
     }
 
 
-    /**
-     * Counsellor Summary
-     *
-     * Handles:
-     * - All Branch
-     * - Individual Branch
-     */
+
     public function adminCounsellorReportData(Request $request)
     {
         $this->checkSuperAdmin();
@@ -3582,11 +3546,6 @@ class BranchManagerController extends Controller
             $branch = $request->input('branch', 'all_branch');
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | ALL BRANCH
-            |--------------------------------------------------------------------------
-            */
 
             if ($branch === 'all_branch') {
 
@@ -3663,16 +3622,7 @@ class BranchManagerController extends Controller
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | SELECTED BRANCH
-            |--------------------------------------------------------------------------
-            |
-            | Legacy behavior:
-            | crm_login WHERE role='counselor'
-            | AND branch='$branch'
-            |
-            */
+
 
             $counsellors = DB::table('crm_login')
                 ->where('role', 'counselor')
@@ -3815,13 +3765,7 @@ class BranchManagerController extends Controller
     }
 
 
-    /**
-     * User Details
-     *
-     * Legacy tables:
-     * seminarpre
-     * lead_appointed
-     */
+
     public function adminCounsellorReportUserData(Request $request)
     {
         $this->checkSuperAdmin();
@@ -3831,18 +3775,6 @@ class BranchManagerController extends Controller
             $branch = $request->input('branch', 'all_branch');
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Get latest lead_appointed row for each callerno
-            |--------------------------------------------------------------------------
-            |
-            | Old PHP used:
-            |
-            | GROUP BY lead_appointed.callerno
-            |
-            | Using MAX(id) is safer when MySQL strict mode is enabled.
-            |
-            */
 
             $latestAppointment = DB::table('lead_appointed')
                 ->select(
@@ -3852,11 +3784,6 @@ class BranchManagerController extends Controller
                 ->groupBy('callerno');
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Main Query
-            |--------------------------------------------------------------------------
-            */
 
             $query = DB::table('seminarpre')
                 ->joinSub(
@@ -3881,11 +3808,6 @@ class BranchManagerController extends Controller
                 ->where('seminarpre.assign_id', '!=', '');
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Branch Filter
-            |--------------------------------------------------------------------------
-            */
 
             if ($branch !== 'all_branch') {
 
@@ -3895,12 +3817,6 @@ class BranchManagerController extends Controller
                 );
             }
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Select Data
-            |--------------------------------------------------------------------------
-            */
 
             $users = $query
                 ->select(
@@ -3921,12 +3837,6 @@ class BranchManagerController extends Controller
                 ->orderByDesc('lead_appointed.id')
                 ->get();
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Format Response
-            |--------------------------------------------------------------------------
-            */
 
             $result = [];
 
@@ -3978,15 +3888,7 @@ class BranchManagerController extends Controller
     }
 
 
-    /**
-     * Get Call Logs
-     *
-     * Old PHP:
-     * fetchdata.php?tag=fetch
-     *
-     * Table:
-     * counslor_status
-     */
+
     public function adminCounsellorReportLogs(Request $request)
     {
         $this->checkSuperAdmin();
@@ -4005,11 +3907,7 @@ class BranchManagerController extends Controller
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Call Logs
-            |--------------------------------------------------------------------------
-            */
+
 
             $logs = DB::table('counslor_status')
                 ->where('seminar_id', $id)
@@ -4084,9 +3982,7 @@ class BranchManagerController extends Controller
     }
 
 
-    /**
-     * Country-wise + Visa-wise Report
-     */
+
     public function adminCounsellorReportAllCity(Request $request)
     {
         $this->checkSuperAdmin();
@@ -4099,11 +3995,6 @@ class BranchManagerController extends Controller
             );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | Base Query
-            |--------------------------------------------------------------------------
-            */
 
             $baseQuery = DB::table('seminarpre');
 
@@ -4119,12 +4010,6 @@ class BranchManagerController extends Controller
                 );
             }
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | COUNTRY REPORT
-            |--------------------------------------------------------------------------
-            */
 
             $countries = (clone $baseQuery)
                 ->select(
@@ -4212,15 +4097,6 @@ class BranchManagerController extends Controller
             }
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | VISA REPORT
-            |--------------------------------------------------------------------------
-            |
-            | Legacy code uses "category".
-            |
-            */
-
             $visas = (clone $baseQuery)
                 ->select(
                     'category',
@@ -4306,13 +4182,6 @@ class BranchManagerController extends Controller
                 $visaDrop += $drop;
             }
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Response
-            |--------------------------------------------------------------------------
-            */
-
             return response()->json([
 
                 'status' => 'success',
@@ -4353,11 +4222,7 @@ class BranchManagerController extends Controller
     }
 
 
-    /**
-     * Export Counsellor Report
-     *
-     * Generates CSV which opens directly in Excel.
-     */
+
     public function exportCounsellorReport(Request $request)
     {
         $this->checkSuperAdmin();
@@ -4384,11 +4249,6 @@ class BranchManagerController extends Controller
                     );
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | CSV Header
-                    |--------------------------------------------------------------------------
-                    */
 
                     fputcsv($handle, [
 
@@ -4408,11 +4268,7 @@ class BranchManagerController extends Controller
                     ]);
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | ALL BRANCH
-                    |--------------------------------------------------------------------------
-                    */
+
 
                     if ($branch === 'all_branch') {
 
@@ -4479,14 +4335,7 @@ class BranchManagerController extends Controller
 
                             $percentage,
                         ]);
-                    }
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SELECTED BRANCH
-                    |--------------------------------------------------------------------------
-                    */ else {
+                    } else {
 
                         $counsellors = DB::table('crm_login')
                             ->where(
@@ -4617,476 +4466,354 @@ class BranchManagerController extends Controller
         }
     }
 
-   public function walkinReport(Request $request)
-{
-    $fromDate = $request->input('from_date');
-    $toDate   = $request->input('to_date');
+    public function walkinReport(Request $request)
+    {
+        $fromDate = $request->input('from_date');
+        $toDate   = $request->input('to_date');
 
-    $counsellors   = collect();
-    $countryReport = collect();
-    $visaReport    = collect();
-    $clientDetails = collect();
+        $counsellors   = collect();
+        $countryReport = collect();
+        $visaReport    = collect();
+        $clientDetails = collect();
 
-    $totals = [
-        'fresh'    => 0,
-        'old'      => 0,
-        'enrolled' => 0,
-        'total'    => 0,
-    ];
-
-    /*
-    |--------------------------------------------------------------------------
-    | ONLY GENERATE REPORT WHEN BOTH DATES ARE SELECTED
-    |--------------------------------------------------------------------------
-    */
-
-    if ($fromDate && $toDate) {
-
-        /*
-        |--------------------------------------------------------------------------
-        | FRESH CALLERS
-        |--------------------------------------------------------------------------
-        |
-        | PHP:
-        |
-        | SELECT callerno
-        | FROM lead_appointed
-        | WHERE walkin_status='0'
-        | GROUP BY callerno
-        | HAVING COUNT(callerno)=1
-        |
-        */
-
-        $freshCallers = DB::table('lead_appointed')
-            ->select('callerno')
-            ->where('walkin_status', '0')
-            ->whereNotNull('callerno')
-            ->where('callerno', '!=', '')
-            ->groupBy('callerno')
-            ->havingRaw('COUNT(callerno) = 1');
+        $totals = [
+            'fresh'    => 0,
+            'old'      => 0,
+            'enrolled' => 0,
+            'total'    => 0,
+        ];
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | OLD CALLERS
-        |--------------------------------------------------------------------------
-        |
-        | PHP:
-        |
-        | SELECT callerno
-        | FROM lead_appointed
-        | WHERE walkin_status='0'
-        | GROUP BY callerno
-        | HAVING COUNT(callerno)>1
-        |
-        */
 
-        $oldCallers = DB::table('lead_appointed')
-            ->select('callerno')
-            ->where('walkin_status', '0')
-            ->whereNotNull('callerno')
-            ->where('callerno', '!=', '')
-            ->groupBy('callerno')
-            ->havingRaw('COUNT(callerno) > 1');
+        if ($fromDate && $toDate) {
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | COUNSELOR WISE REPORT
-        |--------------------------------------------------------------------------
-        */
 
-        $counsellors = DB::table('crm_login')
-            ->where(function ($query) {
-                $query->where('role', 'counselor')
-                    ->orWhere('role', 'branch_manager');
-            })
-            ->get();
+            $freshCallers = DB::table('lead_appointed')
+                ->select('callerno')
+                ->where('walkin_status', '0')
+                ->whereNotNull('callerno')
+                ->where('callerno', '!=', '')
+                ->groupBy('callerno')
+                ->havingRaw('COUNT(callerno) = 1');
 
 
-        foreach ($counsellors as $counsellor) {
 
-            /*
-            |--------------------------------------------------------------------------
-            | FRESH WALK-IN
-            |--------------------------------------------------------------------------
-            */
-
-            $fresh = DB::table('lead_appointed')
-                ->where('assign_id', $counsellor->id)
-                ->whereBetween('walkedin_date', [
-                    $fromDate,
-                    $toDate
-                ])
-                ->whereIn('callerno', $freshCallers)
-                ->count();
+            $oldCallers = DB::table('lead_appointed')
+                ->select('callerno')
+                ->where('walkin_status', '0')
+                ->whereNotNull('callerno')
+                ->where('callerno', '!=', '')
+                ->groupBy('callerno')
+                ->havingRaw('COUNT(callerno) > 1');
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | OLD WALK-IN
-            |--------------------------------------------------------------------------
-            */
-
-            $old = DB::table('lead_appointed')
-                ->where('assign_id', $counsellor->id)
-                ->whereBetween('walkedin_date', [
-                    $fromDate,
-                    $toDate
-                ])
-                ->whereIn('callerno', $oldCallers)
-                ->count();
+            $counsellors = DB::table('crm_login')
+                ->where(function ($query) {
+                    $query->where('role', 'counselor')
+                        ->orWhere('role', 'branch_manager');
+                })
+                ->get();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | ENROLLED WALK-IN
-            |--------------------------------------------------------------------------
-            */
-
-            $enrolled = DB::table('lead_appointed')
-                ->where('assign_id', $counsellor->id)
-                ->where('walkin_status', '2')
-                ->whereBetween('walkedin_date', [
-                    $fromDate,
-                    $toDate
-                ])
-                ->count();
+            foreach ($counsellors as $counsellor) {
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | TOTAL
-            |--------------------------------------------------------------------------
-            */
-
-            $total = $fresh + $old + $enrolled;
-
-
-            $counsellor->fresh_walkin    = $fresh;
-            $counsellor->old_walkin      = $old;
-            $counsellor->enrolled_walkin = $enrolled;
-            $counsellor->total_walkin    = $total;
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | GRAND TOTAL
-            |--------------------------------------------------------------------------
-            */
-
-            $totals['fresh'] += $fresh;
-            $totals['old'] += $old;
-            $totals['enrolled'] += $enrolled;
-            $totals['total'] += $total;
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | COUNTRY WISE REPORT
-        |--------------------------------------------------------------------------
-        |
-        | EXACT PHP LOGIC
-        |--------------------------------------------------------------------------
-        */
-
-        $countries = DB::table('seminarpre')
-            ->select('scountry')
-            ->whereNotNull('scountry')
-            ->where('scountry', '!=', '')
-            ->groupBy('scountry')
-            ->get();
-
-
-        foreach ($countries as $country) {
-
-            /*
-            |--------------------------------------------------------------------------
-            | OLD WALK-IN BY COUNTRY
-            |--------------------------------------------------------------------------
-            */
-
-            $old = DB::table('lead_appointed')
-                ->join(
-                    'seminarpre',
-                    'lead_appointed.callerno',
-                    '=',
-                    'seminarpre.smobile'
-                )
-                ->where(
-                    'seminarpre.scountry',
-                    $country->scountry
-                )
-                ->whereBetween(
-                    'lead_appointed.walkedin_date',
-                    [
+                $fresh = DB::table('lead_appointed')
+                    ->where('assign_id', $counsellor->id)
+                    ->whereBetween('walkedin_date', [
                         $fromDate,
                         $toDate
-                    ]
-                )
-                ->whereIn(
-                    'lead_appointed.callerno',
-                    $oldCallers
-                )
-                ->count();
+                    ])
+                    ->whereIn('callerno', $freshCallers)
+                    ->count();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | FRESH WALK-IN BY COUNTRY
-            |--------------------------------------------------------------------------
-            */
 
-            $fresh = DB::table('lead_appointed')
-                ->join(
-                    'seminarpre',
-                    'lead_appointed.callerno',
-                    '=',
-                    'seminarpre.smobile'
-                )
-                ->where(
-                    'seminarpre.scountry',
-                    $country->scountry
-                )
-                ->whereBetween(
-                    'lead_appointed.walkedin_date',
-                    [
+                $old = DB::table('lead_appointed')
+                    ->where('assign_id', $counsellor->id)
+                    ->whereBetween('walkedin_date', [
                         $fromDate,
                         $toDate
-                    ]
-                )
-                ->whereIn(
-                    'lead_appointed.callerno',
-                    $freshCallers
-                )
-                ->count();
+                    ])
+                    ->whereIn('callerno', $oldCallers)
+                    ->count();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | PHP ONLY SHOWS COUNTRY WHEN DATA EXISTS
-            |--------------------------------------------------------------------------
-            */
 
-            if ($fresh > 0 || $old > 0) {
+                $enrolled = DB::table('lead_appointed')
+                    ->where('assign_id', $counsellor->id)
+                    ->where('walkin_status', '2')
+                    ->whereBetween('walkedin_date', [
+                        $fromDate,
+                        $toDate
+                    ])
+                    ->count();
 
-                $countryReport->push(
-                    (object) [
-                        'scountry'     => $country->scountry,
-                        'fresh_walkin' => $fresh,
-                        'old_walkin'   => $old,
-                    ]
-                );
+
+
+                $total = $fresh + $old + $enrolled;
+
+
+                $counsellor->fresh_walkin    = $fresh;
+                $counsellor->old_walkin      = $old;
+                $counsellor->enrolled_walkin = $enrolled;
+                $counsellor->total_walkin    = $total;
+
+
+
+
+                $totals['fresh'] += $fresh;
+                $totals['old'] += $old;
+                $totals['enrolled'] += $enrolled;
+                $totals['total'] += $total;
             }
-        }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | VISA TYPE WISE REPORT
-        |--------------------------------------------------------------------------
-        */
-
-        $visaTypes = DB::table('seminarpre')
-            ->select('svisa')
-            ->whereNotNull('svisa')
-            ->where('svisa', '!=', '')
-            ->groupBy('svisa')
-            ->get();
 
 
-        foreach ($visaTypes as $visa) {
-
-            /*
-            |--------------------------------------------------------------------------
-            | OLD WALK-IN BY VISA
-            |--------------------------------------------------------------------------
-            */
-
-            $old = DB::table('lead_appointed')
-                ->join(
-                    'seminarpre',
-                    'lead_appointed.callerno',
-                    '=',
-                    'seminarpre.smobile'
-                )
-                ->where(
-                    'seminarpre.svisa',
-                    $visa->svisa
-                )
-                ->whereBetween(
-                    'lead_appointed.walkedin_date',
-                    [
-                        $fromDate,
-                        $toDate
-                    ]
-                )
-                ->whereIn(
-                    'lead_appointed.callerno',
-                    $oldCallers
-                )
-                ->count();
+            $countries = DB::table('seminarpre')
+                ->select('scountry')
+                ->whereNotNull('scountry')
+                ->where('scountry', '!=', '')
+                ->groupBy('scountry')
+                ->get();
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | FRESH WALK-IN BY VISA
-            |--------------------------------------------------------------------------
-            */
-
-            $fresh = DB::table('lead_appointed')
-                ->join(
-                    'seminarpre',
-                    'lead_appointed.callerno',
-                    '=',
-                    'seminarpre.smobile'
-                )
-                ->where(
-                    'seminarpre.svisa',
-                    $visa->svisa
-                )
-                ->whereBetween(
-                    'lead_appointed.walkedin_date',
-                    [
-                        $fromDate,
-                        $toDate
-                    ]
-                )
-                ->whereIn(
-                    'lead_appointed.callerno',
-                    $freshCallers
-                )
-                ->count();
+            foreach ($countries as $country) {
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | ONLY DISPLAY TYPES HAVING DATA
-            |--------------------------------------------------------------------------
-            */
+                $old = DB::table('lead_appointed')
+                    ->join(
+                        'seminarpre',
+                        'lead_appointed.callerno',
+                        '=',
+                        'seminarpre.smobile'
+                    )
+                    ->where(
+                        'seminarpre.scountry',
+                        $country->scountry
+                    )
+                    ->whereBetween(
+                        'lead_appointed.walkedin_date',
+                        [
+                            $fromDate,
+                            $toDate
+                        ]
+                    )
+                    ->whereIn(
+                        'lead_appointed.callerno',
+                        $oldCallers
+                    )
+                    ->count();
 
-            if ($fresh > 0 || $old > 0) {
 
-                $visaReport->push(
-                    (object) [
-                        'svisa'        => $visa->svisa,
-                        'fresh_walkin' => $fresh,
-                        'old_walkin'   => $old,
-                    ]
-                );
+
+                $fresh = DB::table('lead_appointed')
+                    ->join(
+                        'seminarpre',
+                        'lead_appointed.callerno',
+                        '=',
+                        'seminarpre.smobile'
+                    )
+                    ->where(
+                        'seminarpre.scountry',
+                        $country->scountry
+                    )
+                    ->whereBetween(
+                        'lead_appointed.walkedin_date',
+                        [
+                            $fromDate,
+                            $toDate
+                        ]
+                    )
+                    ->whereIn(
+                        'lead_appointed.callerno',
+                        $freshCallers
+                    )
+                    ->count();
+
+
+
+                if ($fresh > 0 || $old > 0) {
+
+                    $countryReport->push(
+                        (object) [
+                            'scountry'     => $country->scountry,
+                            'fresh_walkin' => $fresh,
+                            'old_walkin'   => $old,
+                        ]
+                    );
+                }
             }
+
+
+
+
+            $visaTypes = DB::table('seminarpre')
+                ->select('svisa')
+                ->whereNotNull('svisa')
+                ->where('svisa', '!=', '')
+                ->groupBy('svisa')
+                ->get();
+
+
+            foreach ($visaTypes as $visa) {
+
+
+
+                $old = DB::table('lead_appointed')
+                    ->join(
+                        'seminarpre',
+                        'lead_appointed.callerno',
+                        '=',
+                        'seminarpre.smobile'
+                    )
+                    ->where(
+                        'seminarpre.svisa',
+                        $visa->svisa
+                    )
+                    ->whereBetween(
+                        'lead_appointed.walkedin_date',
+                        [
+                            $fromDate,
+                            $toDate
+                        ]
+                    )
+                    ->whereIn(
+                        'lead_appointed.callerno',
+                        $oldCallers
+                    )
+                    ->count();
+
+
+
+                $fresh = DB::table('lead_appointed')
+                    ->join(
+                        'seminarpre',
+                        'lead_appointed.callerno',
+                        '=',
+                        'seminarpre.smobile'
+                    )
+                    ->where(
+                        'seminarpre.svisa',
+                        $visa->svisa
+                    )
+                    ->whereBetween(
+                        'lead_appointed.walkedin_date',
+                        [
+                            $fromDate,
+                            $toDate
+                        ]
+                    )
+                    ->whereIn(
+                        'lead_appointed.callerno',
+                        $freshCallers
+                    )
+                    ->count();
+
+
+
+                if ($fresh > 0 || $old > 0) {
+
+                    $visaReport->push(
+                        (object) [
+                            'svisa'        => $visa->svisa,
+                            'fresh_walkin' => $fresh,
+                            'old_walkin'   => $old,
+                        ]
+                    );
+                }
+            }
+
+
+
+
+            $clientDetails = DB::table('seminarpre as sp')
+                ->join(
+                    'lead_appointed as la',
+                    'sp.smobile',
+                    '=',
+                    'la.callerno'
+                )
+                ->where(
+                    'la.walkin_status',
+                    '!=',
+                    '1'
+                )
+                ->whereBetween(
+                    'la.walkedin_date',
+                    [
+                        $fromDate,
+                        $toDate
+                    ]
+                )
+                ->select(
+                    'sp.sno',
+                    'sp.sname',
+                    'sp.smobile',
+                    'sp.branch',
+                    'sp.svisa',
+                    'sp.scode',
+                    'sp.student_status',
+                    'sp.file_no',
+                    'sp.assign_name',
+                    'sp.scountry',
+                    'la.callerno'
+                )
+                ->groupBy(
+                    'la.callerno',
+                    'sp.sno',
+                    'sp.sname',
+                    'sp.smobile',
+                    'sp.branch',
+                    'sp.svisa',
+                    'sp.scode',
+                    'sp.student_status',
+                    'sp.file_no',
+                    'sp.assign_name',
+                    'sp.scountry'
+                )
+                ->get();
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | CLIENT DETAILS
-        |--------------------------------------------------------------------------
-        |
-        | PHP ORIGINAL:
-        |
-        | SELECT ...
-        | FROM seminarpre
-        | INNER JOIN lead_appointed
-        | ON seminarpre.smobile = lead_appointed.callerno
-        | WHERE lead_appointed.walkin_status!='1'
-        | AND lead_appointed.walkedin_date BETWEEN ...
-        | GROUP BY lead_appointed.callerno
-        |
-        |--------------------------------------------------------------------------
-        */
-
-        $clientDetails = DB::table('seminarpre as sp')
-            ->join(
-                'lead_appointed as la',
-                'sp.smobile',
-                '=',
-                'la.callerno'
+        return view(
+            'admin.counselor_walk_report',
+            compact(
+                'fromDate',
+                'toDate',
+                'counsellors',
+                'countryReport',
+                'visaReport',
+                'clientDetails',
+                'totals'
             )
-            ->where(
-                'la.walkin_status',
-                '!=',
-                '1'
-            )
-            ->whereBetween(
-                'la.walkedin_date',
-                [
-                    $fromDate,
-                    $toDate
-                ]
-            )
-            ->select(
-                'sp.sno',
-                'sp.sname',
-                'sp.smobile',
-                'sp.branch',
-                'sp.svisa',
-                'sp.scode',
-                'sp.student_status',
-                'sp.file_no',
-                'sp.assign_name',
-                'sp.scountry',
-                'la.callerno'
-            )
-            ->groupBy(
-                'la.callerno',
-                'sp.sno',
-                'sp.sname',
-                'sp.smobile',
-                'sp.branch',
-                'sp.svisa',
-                'sp.scode',
-                'sp.student_status',
-                'sp.file_no',
-                'sp.assign_name',
-                'sp.scountry'
-            )
-            ->get();
+        );
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | RETURN VIEW
-    |--------------------------------------------------------------------------
-    */
+    public function walkinReportLogs(Request $request)
+    {
+        $idno = $request->input('idno');
 
-    return view(
-        'admin.counselor_walk_report',
-        compact(
-            'fromDate',
-            'toDate',
-            'counsellors',
-            'countryReport',
-            'visaReport',
-            'clientDetails',
-            'totals'
-        )
-    );
-}
+        if (!$idno) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Student ID not found.',
+                'call_logs' => [],
+                'notes' => [],
+            ], 422);
+        }
 
-public function walkinReportLogs(Request $request)
-{
-    $idno = $request->input('idno');
+        // Put your OLD fetchdata.php?tag=fetch query here.
 
-    if (!$idno) {
         return response()->json([
-            'status' => false,
-            'message' => 'Student ID not found.',
-            'call_logs' => [],
-            'notes' => [],
-        ], 422);
+            'status' => true,
+            'call_logs' => $callLogs,
+            'notes' => $notes,
+        ]);
     }
-
-    // Put your OLD fetchdata.php?tag=fetch query here.
-
-    return response()->json([
-        'status' => true,
-        'call_logs' => $callLogs,
-        'notes' => $notes,
-    ]);
-}
 
 
 

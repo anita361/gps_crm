@@ -52,17 +52,7 @@ class CsvUploadController extends Controller
 
 
 
-    // public function seminarList()
 
-    // {
-
-    //     $seminars = DB::table('seminarpre')->get();
-
-
-
-    //     return view('leads.seminar_list', compact('seminars'));
-
-    // }
 
     public function seminarList(Request $request)
     {
@@ -77,52 +67,52 @@ class CsvUploadController extends Controller
     }
 
     public function seminarDownload()
-{
-    $fileName = 'seminar_leads.csv';
+    {
+        $fileName = 'seminar_leads.csv';
 
-    $headers = [
-        'Content-Type' => 'text/csv',
-        'Content-Disposition' => 'attachment; filename="'.$fileName.'"',
-    ];
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ];
 
-    $callback = function () {
+        $callback = function () {
 
-        $file = fopen('php://output', 'w');
+            $file = fopen('php://output', 'w');
 
-        fputcsv($file, [
-            'Client Name',
-            'Client Email',
-            'Province',
-            'Mobile No',
-            'Created Date',
-            'Apply From',
-            'RSVP Name',
-            'Accompanying NO'
-        ]);
-
-        $rows = DB::table('lead_appointed')
-            ->where('no_accompanying', '!=', '')
-            ->orderBy('created_date', 'desc')
-            ->get();
-
-        foreach ($rows as $row) {
             fputcsv($file, [
-                $row->applicant_name,
-                $row->email,
-                $row->province_name,
-                $row->callerno,
-                $row->created_date . ' ' . $row->created_time,
-                $row->lead_from,
-                $row->rep_name_via,
-                $row->no_accompanying,
+                'Client Name',
+                'Client Email',
+                'Province',
+                'Mobile No',
+                'Created Date',
+                'Apply From',
+                'RSVP Name',
+                'Accompanying NO'
             ]);
-        }
 
-        fclose($file);
-    };
+            $rows = DB::table('lead_appointed')
+                ->where('no_accompanying', '!=', '')
+                ->orderBy('created_date', 'desc')
+                ->get();
 
-    return response()->stream($callback, 200, $headers);
-}
+            foreach ($rows as $row) {
+                fputcsv($file, [
+                    $row->applicant_name,
+                    $row->email,
+                    $row->province_name,
+                    $row->callerno,
+                    $row->created_date . ' ' . $row->created_time,
+                    $row->lead_from,
+                    $row->rep_name_via,
+                    $row->no_accompanying,
+                ]);
+            }
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
 
 
 

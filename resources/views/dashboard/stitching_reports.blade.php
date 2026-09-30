@@ -4,553 +4,340 @@
 
 @section('content')
 
-<style>
-    /*
-    |--------------------------------------------------------------------------
-    | Main Report Container
-    |--------------------------------------------------------------------------
-    */
+<div class="container-fluid" style="margin-top: 100px;">
 
-    .stitching-report-card {
-        background: #ffffff;
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
-        margin-top: 10px;
-        margin-bottom: 30px;
-        min-height: 500px;
-    }
+    <div class="card shadow-sm">
 
-    /*
-    |--------------------------------------------------------------------------
-    | Blue Header
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-report-header {
-        background: #2f64e7;
-        color: #ffffff;
-        height: 32px;
-        line-height: 32px;
-        text-align: center;
-        font-size: 15px;
-        font-weight: 500;
-    }
-
-    .stitching-report-header i {
-        margin-right: 6px;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Filter Area
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-filter-area {
-        padding: 10px 12px 0 12px;
-    }
-
-    .stitching-filter-area label {
-        display: block;
-        font-size: 12px;
-        color: #333333;
-        margin-bottom: 3px;
-    }
-
-    .stitching-year {
-        width: 292px;
-        height: 27px;
-        border: 1px solid #cccccc;
-        border-radius: 3px;
-        padding: 2px 8px;
-        font-size: 12px;
-        background: #ffffff;
-    }
-
-    .stitching-search {
-        margin-top: 16px;
-        height: 27px;
-        padding: 2px 12px;
-        font-size: 11px;
-        border-radius: 2px;
-        background: #337ab7;
-        border-color: #337ab7;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Total Students
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-total {
-        text-align: center;
-        margin-top: 8px;
-        margin-bottom: 27px;
-        color: #337ab7;
-        font-size: 14px;
-        font-weight: bold;
-    }
-
-    .stitching-total span {
-        text-decoration: underline;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Table
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-table-wrapper {
-        width: 100%;
-        overflow-x: auto;
-        padding: 0 12px;
-    }
-
-    .stitching-table {
-        width: 100%;
-        border-collapse: collapse;
-        border-spacing: 0;
-        font-size: 11px;
-        table-layout: fixed;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Table Header
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-table thead th {
-        background: #000000;
-        color: #ffffff;
-        border: 1px solid #000000;
-        text-align: center;
-        vertical-align: middle;
-        height: 24px;
-        padding: 3px 5px;
-        font-size: 10px;
-        font-weight: bold;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Column Widths
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-table th:nth-child(1),
-    .stitching-table td:nth-child(1) {
-        width: 13%;
-    }
-
-    .stitching-table th:nth-child(2),
-    .stitching-table td:nth-child(2) {
-        width: 10%;
-    }
-
-    .stitching-table th:nth-child(3),
-    .stitching-table td:nth-child(3) {
-        width: 9%;
-    }
-
-    .stitching-table th:nth-child(4),
-    .stitching-table td:nth-child(4) {
-        width: 9%;
-    }
-
-    .stitching-table th:nth-child(5),
-    .stitching-table td:nth-child(5) {
-        width: 13%;
-    }
-
-    .stitching-table th:nth-child(6),
-    .stitching-table td:nth-child(6) {
-        width: 20%;
-    }
-
-    .stitching-table th:nth-child(7),
-    .stitching-table td:nth-child(7) {
-        width: 15%;
-    }
-
-    .stitching-table th:nth-child(8),
-    .stitching-table td:nth-child(8) {
-        width: 10%;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Table Body
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-table tbody td {
-        border: 1px solid #cccccc;
-        text-align: center;
-        vertical-align: middle;
-        height: 24px;
-        padding: 3px 5px;
-    }
-
-    .stitching-table tbody tr:nth-child(odd) {
-        background: #f7f7f7;
-    }
-
-    .stitching-table tbody tr:nth-child(even) {
-        background: #e7e7e7;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Month
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-month {
-        color: #333333;
-        font-weight: bold;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Status Numbers
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-status {
-        color: #337ab7;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Monthly Total
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-month-total {
-        color: red;
-        font-weight: bold;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Footer
-    |--------------------------------------------------------------------------
-    */
-
-    .stitching-table tfoot td {
-        border: 1px solid #cccccc;
-        background: #f1f1f1;
-        text-align: center;
-        vertical-align: middle;
-        height: 25px;
-        padding: 3px 5px;
-        font-weight: bold;
-    }
-
-    .stitching-footer-total {
-        color: darkgreen;
-    }
-
-    .stitching-grand-total {
-        color: darkred;
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Responsive
-    |--------------------------------------------------------------------------
-    */
-
-    @media (max-width: 768px) {
-
-        .stitching-year {
-            width: 100%;
-        }
-
-        .stitching-table {
-            min-width: 850px;
-        }
-
-        .stitching-filter-area {
-            padding-bottom: 10px;
-        }
-    }
-</style>
-
-
-<div class="container-fluid">
-
-    <div class="stitching-report-card">
-
-        {{-- ========================================================= --}}
-        {{-- HEADER --}}
-        {{-- ========================================================= --}}
-
-        <div class="stitching-report-header">
-
-            <i class="fa fa-user"></i>
-
-            Stitching Reports (Month Wise)
-
+        {{-- =========================
+             CARD HEADER
+        ========================== --}}
+        <div class="card-header">
+            <h2 class="mb-0">
+                <i class="fa fa-user"></i>
+                Stitching Reports (Month Wise)
+            </h2>
         </div>
 
+        <div class="card-body">
 
-        {{-- ========================================================= --}}
-        {{-- YEAR FILTER --}}
-        {{-- ========================================================= --}}
+            {{-- =========================
+                 DATE FILTER
+            ========================== --}}
+            <form method="GET" action="{{ route('stitching.reports') }}">
 
-        <div class="stitching-filter-area">
+                <div class="row mb-4">
 
-            <form
-                method="GET"
-                action="{{ route('stitching.reports') }}"
-            >
-
-                <div class="row">
-
-                    <div class="col-md-2 col-sm-4 col-12">
-
-                        <label for="year">
-                            Filter by Year:
+                    {{-- START DATE --}}
+                    <div class="col-sm-3">
+                        <label for="start_date">
+                            <strong>Start Date:</strong>
                         </label>
 
-                        <select
-                            name="year"
-                            id="year"
-                            class="stitching-year"
+                        <input
+                            type="text"
+                            id="start_date"
+                            name="start_date"
+                            class="form-control datepick"
+                            value="{{ $startDate }}"
+                            autocomplete="off"
                         >
-
-                            @php
-                                $currentYear = date('Y');
-                            @endphp
-
-                            @for(
-                                $y = $currentYear;
-                                $y >= $currentYear - 2;
-                                $y--
-                            )
-
-                                <option
-                                    value="{{ $y }}"
-                                    {{ (int) $year === (int) $y ? 'selected' : '' }}
-                                >
-                                    {{ $y }}
-                                </option>
-
-                            @endfor
-
-                        </select>
-
                     </div>
 
+                    {{-- END DATE --}}
+                    <div class="col-sm-3">
+                        <label for="end_date">
+                            <strong>End Date:</strong>
+                        </label>
 
-                    <div class="col-md-2 col-sm-3 col-12">
+                        <input
+                            type="text"
+                            id="end_date"
+                            name="end_date"
+                            class="form-control datepick"
+                            value="{{ $endDate }}"
+                            autocomplete="off"
+                        >
+                    </div>
+
+                    {{-- SEARCH --}}
+                    <div class="col-sm-2">
+                        <label>&nbsp;</label>
+                        <br>
 
                         <button
                             type="submit"
-                            class="btn btn-primary btn-sm stitching-search"
+                            class="btn btn-success btn-sm"
                         >
+                            <i class="fa fa-search"></i>
                             Search
                         </button>
+                    </div>
 
+                    {{-- RESET --}}
+                    <div class="col-sm-2">
+                        <label>&nbsp;</label>
+                        <br>
+
+                        <a
+                            href="{{ route('stitching.reports') }}"
+                            class="btn btn-secondary btn-sm"
+                        >
+                            <i class="fa fa-refresh"></i>
+                            Reset
+                        </a>
                     </div>
 
                 </div>
 
             </form>
 
-        </div>
+
+            {{-- =========================
+                 TOTAL STUDENTS
+            ========================== --}}
+            <div class="mb-3">
+
+                <h4>
+                    Total Students -
+                    <strong>{{ $grand_total }}</strong>
+                </h4>
+
+            </div>
 
 
-        {{-- ========================================================= --}}
-        {{-- TOTAL STUDENTS --}}
-        {{-- ========================================================= --}}
+            {{-- =========================
+                 REPORT TABLE
+            ========================== --}}
+            <div class="table-responsive">
 
-        <div class="stitching-total">
+                <table
+                    border="1"
+                    width="100%"
+                    cellspacing="0"
+                    cellpadding="5"
+                    class="table table-bordered text-center table-striped"
+                    style="white-space: nowrap;"
+                >
 
-            <span>
-                Total Students - {{ $totalCount }}
-            </span>
-
-        </div>
-
-
-        {{-- ========================================================= --}}
-        {{-- REPORT TABLE --}}
-        {{-- ========================================================= --}}
-
-        <div class="stitching-table-wrapper">
-
-            <table class="stitching-table">
-
-                <thead>
-
-                    <tr>
-
-                        <th>
-                            Month
-                        </th>
-
-                        <th>
-                            Start
-                        </th>
-
-                        <th>
-                            FR1
-                        </th>
-
-                        <th>
-                            FR2
-                        </th>
-
-                        <th>
-                            Cancel
-                        </th>
-
-                        <th>
-                            Withdrawal
-                        </th>
-
-                        <th>
-                            Pending
-                        </th>
-
-                        <th>
-                            Total
-                        </th>
-
-                    </tr>
-
-                </thead>
-
-
-                <tbody>
-
-                    @foreach($months as $monthNum => $monthName)
+                    {{-- =========================
+                         TABLE HEADER
+                    ========================== --}}
+                    <thead class="thead-dark">
 
                         <tr>
 
-                            {{-- Month --}}
+                            <th>
+                                Month
+                            </th>
 
-                            <td class="stitching-month">
-                                {{ $monthName }}
-                            </td>
+                            @foreach($statuses as $status)
 
+                                <th>
 
-                            {{-- Start --}}
+                                    {{ $statusLabels[$status] ?? ($status === '' ? 'Blank' : $status) }}
 
-                            <td class="stitching-status">
-                                {{ $data[$monthNum]['Start'] ?? 0 }}
-                            </td>
+                                </th>
 
+                            @endforeach
 
-                            {{-- FR1 --}}
-
-                            <td class="stitching-status">
-                                {{ $data[$monthNum]['FR1'] ?? 0 }}
-                            </td>
-
-
-                            {{-- FR2 --}}
-
-                            <td class="stitching-status">
-                                {{ $data[$monthNum]['FR2'] ?? 0 }}
-                            </td>
-
-
-                            {{-- Cancel --}}
-
-                            <td class="stitching-status">
-                                {{ $data[$monthNum]['Cancel'] ?? 0 }}
-                            </td>
-
-
-                            {{-- Withdrawal --}}
-
-                            <td class="stitching-status">
-                                {{ $data[$monthNum]['Withdrawal'] ?? 0 }}
-                            </td>
-
-
-                            {{-- Pending --}}
-
-                            <td class="stitching-status">
-                                {{ $data[$monthNum][''] ?? 0 }}
-                            </td>
-
-
-                            {{-- Monthly Total --}}
-
-                            <td class="stitching-month-total">
-                                {{ $monthlyTotals[$monthNum] ?? 0 }}
-                            </td>
+                            <th>
+                                Total
+                            </th>
 
                         </tr>
 
-                    @endforeach
-
-                </tbody>
+                    </thead>
 
 
-                {{-- ================================================= --}}
-                {{-- TOTAL --}}
-                {{-- ================================================= --}}
+                    {{-- =========================
+                         TABLE BODY
+                    ========================== --}}
+                    <tbody>
 
-                <tfoot>
+                        @if(!empty($monthlyData))
 
-                    <tr>
+                            @foreach($monthlyData as $month)
 
-                        <td>
-                            Total
-                        </td>
+                                <tr>
 
-
-                        <td class="stitching-footer-total">
-                            {{ $totals['Start'] ?? 0 }}
-                        </td>
-
-
-                        <td class="stitching-footer-total">
-                            {{ $totals['FR1'] ?? 0 }}
-                        </td>
+                                    {{-- MONTH --}}
+                                    <td>
+                                        <strong>
+                                            {{ $month['month_name'] }}
+                                        </strong>
+                                    </td>
 
 
-                        <td class="stitching-footer-total">
-                            {{ $totals['FR2'] ?? 0 }}
-                        </td>
+                                    {{-- STATUS COUNTS --}}
+                                    @foreach($statuses as $status)
+
+                                        <td>
+
+                                            {{ $month['statuses'][$status] ?? 0 }}
+
+                                        </td>
+
+                                    @endforeach
 
 
-                        <td class="stitching-footer-total">
-                            {{ $totals['Cancel'] ?? 0 }}
-                        </td>
+                                    {{-- MONTH TOTAL --}}
+                                    <td>
+
+                                        <strong>
+                                            {{ $month['total'] }}
+                                        </strong>
+
+                                    </td>
+
+                                </tr>
+
+                            @endforeach
+
+                        @else
+
+                            <tr>
+
+                                <td
+                                    colspan="{{ count($statuses) + 2 }}"
+                                    class="text-center"
+                                >
+
+                                    <strong>
+                                        No records found.
+                                    </strong>
+
+                                </td>
+
+                            </tr>
+
+                        @endif
+
+                    </tbody>
 
 
-                        <td class="stitching-footer-total">
-                            {{ $totals['Withdrawal'] ?? 0 }}
-                        </td>
+                    {{-- =========================
+                         GRAND TOTAL
+                    ========================== --}}
+                    <tfoot>
+
+                        <tr class="font-weight-bold">
+
+                            <th>
+                                Grand Total
+                            </th>
 
 
-                        <td class="stitching-footer-total">
-                            {{ $totals[''] ?? 0 }}
-                        </td>
+                            {{-- BLANK --}}
+                            <th>
+                                {{ $grand_blank }}
+                            </th>
 
 
-                        <td class="stitching-grand-total">
-                            {{ array_sum($monthlyTotals) }}
-                        </td>
+                            {{-- START --}}
+                            <th>
+                                {{ $grand_start }}
+                            </th>
 
-                    </tr>
 
-                </tfoot>
+                            {{-- FR1 --}}
+                            <th>
+                                {{ $grand_fr1 }}
+                            </th>
 
-            </table>
+
+                            {{-- FR2 --}}
+                            <th>
+                                {{ $grand_fr2 }}
+                            </th>
+
+
+                            {{-- CANCEL --}}
+                            <th>
+                                {{ $grand_cancel }}
+                            </th>
+
+
+                            {{-- WITHDRAWAL --}}
+                            <th>
+                                {{ $grand_with }}
+                            </th>
+
+
+                            {{-- NOT PROCESS --}}
+                            <th>
+                                {{ $grand_not_pro }}
+                            </th>
+
+
+                            {{-- VERY FAST AND WONDERLIC --}}
+                            <th>
+                                {{ $grand_vr_fst }}
+                            </th>
+
+
+                            {{-- FAO APPOINTMENT --}}
+                            <th>
+                                {{ $grand_apnt }}
+                            </th>
+
+
+                            {{-- CONTRACT --}}
+                            <th>
+                                {{ $grand_contract }}
+                            </th>
+
+
+                            {{-- NOT STARTED --}}
+                            <th>
+                                {{ $grand_not_start }}
+                            </th>
+
+
+                            {{-- GRADUATE --}}
+                            <th>
+                                {{ $grand_grad }}
+                            </th>
+
+
+                            {{-- GRAND TOTAL --}}
+                            <th>
+                                {{ $grand_total }}
+                            </th>
+
+                        </tr>
+
+                    </tfoot>
+
+                </table>
+
+            </div>
 
         </div>
 
     </div>
 
 </div>
+
+
+{{-- =========================
+     DATEPICKER
+========================== --}}
+<script>
+
+$(document).ready(function () {
+
+    if ($.fn.datepicker) {
+
+        $(".datepick").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            todayHighlight: true
+        });
+
+    }
+
+});
+
+</script>
 
 @endsection

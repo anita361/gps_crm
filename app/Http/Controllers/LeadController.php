@@ -12,30 +12,28 @@ use App\Models\AssignStatus;
 
 class LeadController extends Controller
 {
-
     public function create()
     {
         return view('branch_manager.new_lead');
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
-            'fname'            => 'required|string|max:100',
-            'lname'            => 'nullable|string|max:100',
-            'email'            => 'nullable|email|max:150',
-            'phone'            => 'required|max:20',
-            'country'          => 'required',
-            'address'          => 'required',
-            'city'             => 'required',
-            'postal_code'      => 'nullable|max:20',
-            'marital_status'   => 'required',
-            'gender'           => 'required',
-            'husband_name'     => 'nullable|string|max:150',
-            'wife_name'        => 'nullable|string|max:150',
-            'ssource'          => 'required',
-            'source_remarks'   => 'nullable|string',
+            'fname'          => 'required|string|max:100',
+            'lname'          => 'nullable|string|max:100',
+            'email'          => 'nullable|email|max:150',
+            'phone'          => 'required|max:20',
+            'country'        => 'required',
+            'address'        => 'required',
+            'city'           => 'required',
+            'postal_code'    => 'nullable|max:20',
+            'marital_status' => 'required',
+            'gender'         => 'required',
+            'husband_name'   => 'nullable|string|max:150',
+            'wife_name'      => 'nullable|string|max:150',
+            'ssource'        => 'required',
+            'source_remarks' => 'nullable|string',
         ]);
 
         $userId = session('login');
@@ -56,8 +54,6 @@ class LeadController extends Controller
         DB::beginTransaction();
 
         try {
-
-
 
             $seminar = SeminarPre::where('smobile', $phone)->first();
 
@@ -80,14 +76,13 @@ class LeadController extends Controller
                     'marital_status'   => $request->marital_status,
                     'gender'           => $request->gender,
 
-                    'husband_name' => $request->husband_name ?? '',
-                    'wife_name'   => $request->wife_name ?? '',
+                    'husband_name'     => $request->husband_name ?? '',
+                    'wife_name'       => $request->wife_name ?? '',
 
                     'ssource'          => $request->ssource,
                     'source_remarks'   => $request->source_remarks,
 
                 ];
-
 
                 if (in_array($userRole, ['branch_manager', 'counselor'])) {
 
@@ -100,8 +95,8 @@ class LeadController extends Controller
 
                 $seminarId = $seminar->sno;
             } else {
-                $seminarData = [
 
+                $seminarData = [
 
                     'lead_sno'            => '',
                     'user_id'             => $user->id,
@@ -125,7 +120,6 @@ class LeadController extends Controller
                     'osap_sts_remarks'    => '',
                     'finance_id'          => 0,
                     'comm_amount'         => 0,
-
 
                     'fname'               => $request->fname,
                     'lname'               => $request->lname,
@@ -160,12 +154,11 @@ class LeadController extends Controller
 
                     'assign_name'         => $userName,
                     'assign_id'           => $user->id,
-                    'assign_date'         => $today->toDateString(),
+                    'assign_date'        => $today->toDateString(),
 
                     'update_date'         => '',
                     'update_time'         => '',
                 ];
-
 
                 if (in_array($userRole, ['branch_manager', 'counselor'])) {
 
@@ -187,14 +180,9 @@ class LeadController extends Controller
                 }
             }
 
-
-
             $lead = LeadAppointed::where('seminar_id', $seminarId)->first();
 
             if ($lead) {
-
-
-
 
                 $leadData = [
 
@@ -208,15 +196,14 @@ class LeadController extends Controller
                     'marital_status'  => $request->marital_status,
                     'gender'          => $request->gender,
 
-                    'husband_name' => $request->husband_name ?? '',
-                    'wife_name'   => $request->wife_name ?? '',
+                    'husband_name'    => $request->husband_name ?? '',
+                    'wife_name'       => $request->wife_name ?? '',
 
                     'created_date'    => $today->toDateString(),
                     'created_time'    => $today->format('H:i:s'),
                     'created_by'      => 'callcenter',
 
                 ];
-
 
                 if (in_array($userRole, ['branch_manager', 'counselor'])) {
 
@@ -227,7 +214,6 @@ class LeadController extends Controller
 
                 $lead->update($leadData);
             } else {
-
 
                 $leadData = [
 
@@ -243,16 +229,14 @@ class LeadController extends Controller
                     'marital_status'  => $request->marital_status,
                     'gender'          => $request->gender,
 
-                    'husband_name' => $request->husband_name ?? '',
-                    'wife_name'   => $request->wife_name ?? '',
+                    'husband_name'    => $request->husband_name ?? '',
+                    'wife_name'       => $request->wife_name ?? '',
 
                     'created_date'    => $today->toDateString(),
                     'created_time'    => $today->format('H:i:s'),
                     'created_by'      => 'callcenter',
 
                 ];
-
-
 
                 if (in_array($userRole, ['branch_manager', 'counselor'])) {
 
@@ -264,11 +248,6 @@ class LeadController extends Controller
                 LeadAppointed::create($leadData);
             }
 
-
-
-
-
-
             if (in_array($userRole, ['branch_manager', 'counselor'])) {
 
                 AssignStatus::updateOrCreate(
@@ -278,8 +257,8 @@ class LeadController extends Controller
                     ],
 
                     [
-                        'counelor_id' => $user->id,
-                        'status'      => 1,
+                        'counelor_id'  => $user->id,
+                        'status'       => 1,
                         'created_date' => $today->toDateString(),
                         'created_time' => $today->format('H:i:s'),
                     ]
@@ -303,8 +282,6 @@ class LeadController extends Controller
         }
     }
 
-
-
     public function checkPhone(Request $request)
     {
         $request->validate([
@@ -320,11 +297,7 @@ class LeadController extends Controller
         ]);
     }
 
-    /*
-    |--------------------------------------------------------------------------
-    | Show Walk-in Details
-    |--------------------------------------------------------------------------
-    */
+
 
     public function show($mobile)
     {

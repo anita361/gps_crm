@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
-
     public function index()
     {
         if (Session::has('login')) {
@@ -19,7 +18,6 @@ class LoginController extends Controller
 
         return view('login');
     }
-
 
     public function login(Request $request)
     {
@@ -31,7 +29,6 @@ class LoginController extends Controller
         $user = CrmLogin::where('username', $request->username)
             ->where('password', md5($request->password))
             ->first();
-
 
         if (!$user) {
             return back()
@@ -46,7 +43,6 @@ class LoginController extends Controller
 
         return $this->redirectByRole($user->role);
     }
-
 
     public function logout()
     {

@@ -10,168 +10,96 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class OperationController extends Controller
 {
-    /**
-     * AOL Enrolled Dashboard
-     */
-    // public function aolEnrolledStatus(Request $request)
-    // {
-    //     $query = DB::table('seminarpre')
-    //         ->where('student_status', 'enrolled');
 
-    //     // Date Filter
-    //     if ($request->filled('GetFltDate')) {
-    //         $query->whereDate('start_date', $request->GetFltDate);
-    //     }
-
-    //     // Operation Status
-    //     if ($request->filled('operation_status')) {
-    //         $query->where('opr_stage', $request->operation_status);
-    //     }
-
-    //     // Fund Status
-    //     if ($request->filled('fund_aol_status')) {
-    //         $query->where('fund_aol_status', $request->fund_aol_status);
-    //     }
-
-    //     // Province
-    //     if ($request->filled('province_name')) {
-    //         $query->where('province_name', $request->province_name);
-    //     }
-
-
-    //     if ($request->filled('collage_name')) {
-    //         $query->where('collage_name', $request->collage_name);
-    //     }
-
-    //     if ($request->filled('campus_name')) {
-    //         $query->where('campus_name', $request->campus_name);
-    //     }
-
-
-    //     if ($request->filled('prg_name')) {
-    //         $query->where('prg_name', $request->prg_name);
-    //     }
-
-
-    //     if ($request->filled('counselor_id')) {
-    //         $query->where('assign_id', $request->counselor_id);
-    //     }
-
-
-    //     $data = $query
-    //         ->orderByDesc('enrolled_date')
-    //         ->get();
-
-
-    //     $colleges = DB::table('college_list')
-    //         ->select('clg_name')
-    //         ->distinct()
-    //         ->orderBy('clg_name')
-    //         ->get();
-
-
-    //     $counselors = DB::table('crm_login')
-    //         ->where('role', 'counselor')
-    //         ->orderBy('name')
-    //         ->get();
-
-    //     return view('operation.dashboard', compact(
-    //         'data',
-    //         'colleges',
-    //         'counselors'
-    //     ));
-    // }
     public function aolEnrolledStatus(Request $request)
-{
-    $query = DB::table('seminarpre')
-        ->select(
-            'sno',
-            'sname',
-            'smobile',
-            'scountry',
-            'assign_name',
-            'assign_id',
-            'file_no',
-            'semail',
-            'collage_name',
-            'campus_name',
-            'program_name',
-            'province_name',
-            'start_date',
-            'end_date',
-            'opr_stage',
-            'opr_stage_date',
-            'opr_stage_remarks',
-            'stage_update_name',
-            'oprStsSend',
-            'fund_aol_status',
-            'osap_status',
-            'student_status',
-            'enrolled_date'
-        )
-        ->where('student_status', 'enrolled');
+    {
+        $query = DB::table('seminarpre')
+            ->select(
+                'sno',
+                'sname',
+                'smobile',
+                'scountry',
+                'assign_name',
+                'assign_id',
+                'file_no',
+                'semail',
+                'collage_name',
+                'campus_name',
+                'program_name',
+                'province_name',
+                'start_date',
+                'end_date',
+                'opr_stage',
+                'opr_stage_date',
+                'opr_stage_remarks',
+                'stage_update_name',
+                'oprStsSend',
+                'fund_aol_status',
+                'osap_status',
+                'student_status',
+                'enrolled_date'
+            )
+            ->where('student_status', 'enrolled');
 
-    // Start Date
-    if ($request->filled('GetFltDate')) {
-        $query->whereDate('start_date', $request->GetFltDate);
+
+        if ($request->filled('GetFltDate')) {
+            $query->whereDate('start_date', $request->GetFltDate);
+        }
+
+
+        if ($request->filled('operation_status')) {
+            $query->where('opr_stage', $request->operation_status);
+        }
+
+
+        if ($request->filled('fund_aol_status')) {
+            $query->where('fund_aol_status', $request->fund_aol_status);
+        }
+
+        if ($request->filled('province_name')) {
+            $query->where('province_name', $request->province_name);
+        }
+
+
+        if ($request->filled('collage_name')) {
+            $query->where('collage_name', $request->collage_name);
+        }
+
+
+        if ($request->filled('campus_name')) {
+            $query->where('campus_name', $request->campus_name);
+        }
+
+        if ($request->filled('program_name')) {
+            $query->where('program_name', $request->program_name);
+        }
+
+
+        if ($request->filled('counselor_id')) {
+            $query->where('assign_id', $request->counselor_id);
+        }
+
+        $data = $query
+            ->orderBy('enrolled_date', 'DESC')
+            ->get();
+
+        $colleges = DB::table('college_list')
+            ->select('clg_name')
+            ->distinct()
+            ->orderBy('clg_name')
+            ->get();
+
+        $counselors = DB::table('crm_login')
+            ->where('role', 'counselor')
+            ->orderBy('name')
+            ->get();
+
+        return view('operation.dashboard', compact(
+            'data',
+            'colleges',
+            'counselors'
+        ));
     }
-
-    // Operation Status
-    if ($request->filled('operation_status')) {
-        $query->where('opr_stage', $request->operation_status);
-    }
-
-    // Main Status
-    if ($request->filled('fund_aol_status')) {
-        $query->where('fund_aol_status', $request->fund_aol_status);
-    }
-
-    // Province
-    if ($request->filled('province_name')) {
-        $query->where('province_name', $request->province_name);
-    }
-
-    // College
-    if ($request->filled('collage_name')) {
-        $query->where('collage_name', $request->collage_name);
-    }
-
-    // Campus
-    if ($request->filled('campus_name')) {
-        $query->where('campus_name', $request->campus_name);
-    }
-
-    // Program
-    if ($request->filled('program_name')) {
-        $query->where('program_name', $request->program_name);
-    }
-
-    // Counselor
-    if ($request->filled('counselor_id')) {
-        $query->where('assign_id', $request->counselor_id);
-    }
-
-    $data = $query
-        ->orderBy('enrolled_date', 'DESC')
-        ->get();
-
-    $colleges = DB::table('college_list')
-        ->select('clg_name')
-        ->distinct()
-        ->orderBy('clg_name')
-        ->get();
-
-    $counselors = DB::table('crm_login')
-        ->where('role', 'counselor')
-        ->orderBy('name')
-        ->get();
-
-    return view('operation.dashboard', compact(
-        'data',
-        'colleges',
-        'counselors'
-    ));
-}
 
 
     public function updateOperationStatus(Request $request)
@@ -304,9 +232,7 @@ class OperationController extends Controller
         return response($html);
     }
 
-    /**
-     * Operation Status Logs
-     */
+
     public function operationLogs(Request $request)
     {
         $logs = DB::table('opr_sts_logs')
@@ -341,9 +267,7 @@ class OperationController extends Controller
         return response($html);
     }
 
-    /**
-     * Fund Status Logs
-     */
+
     public function fundStatusLogs(Request $request)
     {
         $logs = DB::table('fund_status_logs')
@@ -378,9 +302,7 @@ class OperationController extends Controller
         return response($html);
     }
 
-    /**
-     * Get Campus List
-     */
+
     public function getCampuses($college)
     {
         $campuses = DB::table('college_list')
@@ -402,9 +324,7 @@ class OperationController extends Controller
         return response($html);
     }
 
-    /**
-     * Get Program List
-     */
+
     public function getPrograms($college, $campus)
     {
         $programs = DB::table('program_list')
@@ -427,9 +347,7 @@ class OperationController extends Controller
         return response($html);
     }
 
-    /**
-     * Export Excel
-     */
+
     public function exportExcel()
     {
         return Excel::download(

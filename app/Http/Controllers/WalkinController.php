@@ -1326,58 +1326,6 @@ class WalkinController extends Controller
         }
     }
 
-    // public function studentConsent(Request $request)
-    // {
-    //     if (!$request->has('id') || !$request->has('code')) {
-    //         abort(404, 'Invalid student link.');
-    //     }
-
-    //     $code = $request->query('code');
-    //     $encodedId = $request->query('id');
-
-    //     $studentId = base64_decode($encodedId, true);
-
-    //     if ($studentId === false || !is_numeric($studentId)) {
-    //         abort(404, 'Invalid student ID.');
-    //     }
-
-    //     $student = DB::table('seminarpre')
-    //         ->where('sno', $studentId)
-    //         ->first();
-
-    //     if (!$student) {
-    //         abort(404, 'Student not found.');
-    //     }
-
-    //     if (
-    //         $code != $student->expire_link &&
-    //         $code != $student->osap_expire_link
-    //     ) {
-    //         abort(403, 'This link is invalid or expired.');
-    //     }
-
-    //     $studentName = $student->sname ?? 'Student';
-
-    //     $alreadySigned = !empty($student->signature);
-
-    //     $nameLength = strlen($studentName);
-
-    //     if ($nameLength >= 25 && $nameLength <= 30) {
-    //         $styleFontSize = '23px';
-    //     } elseif ($nameLength >= 31 && $nameLength <= 38) {
-    //         $styleFontSize = '21px';
-    //     } else {
-    //         $styleFontSize = '26px';
-    //     }
-
-    //     return view('student-consent', [
-    //         'student'       => $student,
-    //         'studentName'   => $studentName,
-    //         'styleFontSize' => $styleFontSize,
-    //         'alreadySigned' => $alreadySigned,
-    //         'studentId'     => $student->sno,
-    //     ]);
-    // }
 
     public function studentConsent(Request $request)
     {
@@ -1402,11 +1350,7 @@ class WalkinController extends Controller
             abort(404, 'Student not found.');
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Validate consent code
-    |--------------------------------------------------------------------------
-    */
+
 
         $validCode = false;
 
@@ -1461,71 +1405,7 @@ class WalkinController extends Controller
 
 
 
-    // public function saveStudentSignature(Request $request)
-    // {
-    //     $request->validate([
-    //         'id'  => 'required|integer',
-    //         'fid' => 'required|integer|between:1,6',
-    //     ]);
 
-    //     $student = DB::table('seminarpre')
-    //         ->where('sno', $request->id)
-    //         ->first();
-
-    //     if (!$student) {
-
-    //         return response()->json([
-    //             'status'  => 404,
-    //             'success' => false,
-    //             'message' => 'Student not found.'
-    //         ], 404);
-    //     }
-
-
-
-    //     if (!empty($student->signature)) {
-
-    //         return response()->json([
-    //             'status'  => 409,
-    //             'success' => false,
-    //             'message' => 'You have already signed the contract.'
-    //         ], 409);
-    //     }
-
-
-
-    //     $signatureStyles = [
-    //         1 => 'PaulSignature-WEJY',
-    //         2 => 'Amadgone-BW1ax',
-    //         3 => 'Heatwood-GOKPO',
-    //         4 => 'MaradonaSignature-DOMv0',
-    //         5 => 'PandemiDemo-6Ygqx',
-    //         6 => 'SouthSand-qZ611',
-    //     ];
-
-    //     if (!isset($signatureStyles[$request->fid])) {
-
-    //         return response()->json([
-    //             'status'  => 422,
-    //             'success' => false,
-    //             'message' => 'Invalid signature selected.'
-    //         ], 422);
-    //     }
-
-
-    //     DB::table('seminarpre')
-    //         ->where('sno', $student->sno)
-    //         ->update([
-    //             'signature' => $request->fid,
-    //         ]);
-
-    //     return response()->json([
-    //         'status'  => 200,
-    //         'success' => true,
-    //         'message' => 'Signature saved successfully.',
-    //         'id'      => $student->sno,
-    //     ]);
-    // }
 
     public function saveStudentSignature(Request $request)
     {
@@ -1548,11 +1428,7 @@ class WalkinController extends Controller
             ], 404);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Validate consent link
-    |--------------------------------------------------------------------------
-    */
+
 
         $validCode = false;
 
@@ -1586,11 +1462,6 @@ class WalkinController extends Controller
             ], 403);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Check already signed
-    |--------------------------------------------------------------------------
-    */
 
         if (!empty($student->signature)) {
 
@@ -1601,11 +1472,6 @@ class WalkinController extends Controller
             ], 409);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Validate signature
-    |--------------------------------------------------------------------------
-    */
 
         $signatureStyles = [
             1 => 'PaulSignature-WEJY',
@@ -1625,11 +1491,7 @@ class WalkinController extends Controller
             ], 422);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Save signature
-    |--------------------------------------------------------------------------
-    */
+
 
         DB::table('seminarpre')
             ->where('sno', $student->sno)
@@ -1724,203 +1586,7 @@ class WalkinController extends Controller
             'template' => $body
         ]);
     }
-    //   public function sendMessage(Request $request)
-    // {
 
-
-    //     $request->validate([
-    //         'reg_sno'    => 'required',
-    //         'mobile'     => 'required',
-    //         'email'      => 'required|email',
-    //         'subject'    => 'required',
-    //         'message'    => 'required',
-    //         'template'   => 'nullable',
-    //         'attachment' => 'nullable|file|max:5120',
-    //     ]);
-
-
-
-    //     $attachment = '';
-
-    //     if ($request->hasFile('attachment')) {
-
-    //         $uploadPath = public_path('uploads/messages');
-
-    //         // Create directory if it doesn't exist
-    //         if (!file_exists($uploadPath)) {
-    //             mkdir($uploadPath, 0777, true);
-    //         }
-
-    //         $attachment = time() . '_' .
-    //             $request->file('attachment')->getClientOriginalName();
-
-    //         $request->file('attachment')->move(
-    //             $uploadPath,
-    //             $attachment
-    //         );
-    //     }
-    //      $mail = new PHPMailer(true);
-
-    //     try {
-    //         $mail->isSMTP();
-
-    //        $mail->Host = 'smtp-relay.brevo.com';
-
-    //         $mail->SMTPAuth = true;
-
-    //         $mail->Username = env('MAIL_USERNAME');
-    //         $mail->Password = env('MAIL_PASSWORD');
-    //          $mail->Port = 2525;
-    //           $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    //             $mail->Timeout = 30;
-
-
-
-    //         $mail->SMTPDebug = 2;
-
-    //         $mail->Debugoutput = function ($str, $level) {
-
-    //             \Log::info(
-    //                 "PHPMailer SMTP [$level]: " . trim($str)
-    //             );
-    //         };
-
-
-
-
-    //         $mail->CharSet = 'UTF-8';
-    //         $mail->Encoding = 'base64';
-
-
-
-    //         $mail->setFrom(
-    //             env('MAIL_FROM_ADDRESS'),
-    //             env('MAIL_FROM_NAME', 'Application')
-    //         );
-
-
-
-    //         $mail->addAddress(
-    //             $request->email
-    //         );
-
-
-
-    //         $mail->addCC(
-    //             'ajaypal@opulencedigitech.com'
-    //         );
-
-
-
-
-    //         $mail->addBCC(
-    //             'anita@opulencedigitech.com'
-    //         );
-
-    //         $mail->addBCC(
-    //             'anita@imperialdigitech.com'
-    //         );
-
-
-
-
-    //         $mail->Subject = $request->subject;
-
-
-
-
-    //         $mail->isHTML(true);
-
-    //         $mail->Body = $request->message;
-
-
-    //         $mail->AltBody = strip_tags(
-    //             $request->message
-    //         );
-
-
-
-
-    //         if (!empty($attachment)) {
-
-    //             $mail->addAttachment(
-    //                 public_path(
-    //                     'uploads/messages/' . $attachment
-    //                 )
-    //             );
-    //         }
-
-
-
-    //         $mail->send();
-
-
-
-
-    //         DB::table('semail_logs')->insert([
-    //             'email'      => $request->email,
-    //             'created_by' => session('login'),
-    //         ]);
-
-
-
-
-    //         return back()->with(
-    //             'success',
-    //             'Email sent successfully.'
-    //         );
-    //     } catch (\Exception $e) {
-
-
-
-    //         \Log::error('PHPMailer ERROR', [
-
-    //             'error' => $mail->ErrorInfo,
-
-    //             'exception' => $e->getMessage(),
-
-    //             'host' => 'smtp-relay.brevo.com',
-
-    //             'port' => 2525,
-
-    //             'username' => env('MAIL_USERNAME'),
-
-    //             'password_loaded' =>
-    //             !empty(env('MAIL_PASSWORD')),
-
-    //             'encryption' => 'tls',
-
-    //             'from' => env('MAIL_FROM_ADDRESS'),
-
-    //         ]);
-
-
-
-
-    //         dd([
-
-    //             'error' => $mail->ErrorInfo,
-
-    //             'exception' => $e->getMessage(),
-
-    //             'host' => 'smtp-relay.brevo.com',
-
-    //             'port' => 2525,
-
-    //             'username' => env('MAIL_USERNAME'),
-
-    //             'password' =>
-    //             !empty(env('MAIL_PASSWORD'))
-    //                 ? 'LOADED'
-    //                 : 'NOT LOADED',
-
-    //             'encryption' => 'tls',
-
-    //             'from' => env('MAIL_FROM_ADDRESS'),
-
-    //         ]);
-    //     }
-    // }
     public function sendMessage(Request $request)
     {
         $request->validate([
@@ -4422,6 +4088,121 @@ class WalkinController extends Controller
             )
         );
     }
+
+
+    public function exportNotesRemarks(Request $request)
+    {
+        $created_id = session('login');
+
+
+
+        $created_name = DB::table('crm_login')
+            ->where('id', $created_id)
+            ->value('name');
+
+
+
+        $created_name = preg_replace(
+            '/[^A-Za-z0-9_-]/',
+            '_',
+            $created_name ?? ''
+        );
+
+        if (empty($created_name)) {
+            $created_name = 'User';
+        }
+
+
+        $filename = 'notes_remarks_' .
+            $created_name . '_' .
+            now()->format('Y-m-d_H-i-s') .
+            '.csv';
+
+
+
+        $query = DB::table('notes_logs as nl')
+            ->leftJoin(
+                'seminarpre as s',
+                'nl.main_id',
+                '=',
+                's.sno'
+            )
+            ->select(
+                'nl.notes_remarks',
+                'nl.comm_one_amt',
+                'nl.comm_two_amt',
+                'nl.created_datetime',
+                's.sname',
+                's.smobile',
+                's.file_no'
+            )
+            ->where('nl.created_id', $created_id)
+            ->orderByDesc('nl.created_datetime');
+
+
+
+        return response()->streamDownload(function () use ($query) {
+
+
+            echo "\xEF\xBB\xBF";
+
+            $output = fopen('php://output', 'w');
+
+
+            fputcsv($output, [
+                'Client Name',
+                'Client Number',
+                'File Number',
+                'Notes Remarks',
+                'Commission One Amount',
+                'Commission Two Amount',
+                'Created Date Time'
+            ]);
+
+
+
+            $count = 0;
+
+            $query->chunk(500, function ($rows) use ($output, &$count) {
+
+                foreach ($rows as $row) {
+
+
+                    $sname = str_replace(
+                        '-',
+                        '',
+                        $row->sname ?? ''
+                    );
+
+                    fputcsv($output, [
+                        $sname,
+                        $row->smobile ?? '',
+                        $row->file_no ?? '',
+                        $row->notes_remarks ?? '',
+                        $row->comm_one_amt ?? '',
+                        $row->comm_two_amt ?? '',
+                        $row->created_datetime ?? ''
+                    ]);
+
+                    $count++;
+
+                    if ($count % 500 === 0) {
+                        fflush($output);
+                    }
+                }
+            });
+
+            fclose($output);
+        }, $filename, [
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
+    }
+
+
+
 
     public function saveCommissionStatus(Request $request)
     {
@@ -8736,11 +8517,7 @@ class WalkinController extends Controller
         $role = session('role');
         $username = $user->username ?? '';
 
-        /*
-    |--------------------------------------------------------------------------
-    | Authorization
-    |--------------------------------------------------------------------------
-    */
+
         if (
             !in_array($role, ['super_admin', 'branch_manager']) &&
             !in_array($username, ['prabjot', 'navjot'])
@@ -8750,12 +8527,7 @@ class WalkinController extends Controller
                 ->with('error', 'You are not authorized to access this report.');
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Filters
-    |--------------------------------------------------------------------------
-    */
-        $GetFltDatestart = $request->input('GetFltDatestart', '');
+       $GetFltDatestart = $request->input('GetFltDatestart', '');
         $GetFltDateend   = $request->input('GetFltDateend', '');
 
         $provinceFilter = $request->input('provinceFilter', '');
@@ -8772,11 +8544,7 @@ class WalkinController extends Controller
             })
         );
 
-        /*
-    |--------------------------------------------------------------------------
-    | User province permissions
-    |--------------------------------------------------------------------------
-    */
+
         $allowedProvinces = [];
 
         if (($user->Ontario ?? '') === 'yes') {
@@ -9599,348 +9367,191 @@ class WalkinController extends Controller
     }
 
 
+
+
     public function stitchingReports(Request $request)
     {
 
-        $year = (int) $request->input('year', date('Y'));
+        $startDate = $request->filled('start_date')
+            ? $request->start_date
+            : date('Y-01-01');
 
-
-
-
-        $months = [
-            1  => 'Jan',
-            2  => 'Feb',
-            3  => 'Mar',
-            4  => 'Apr',
-            5  => 'May',
-            6  => 'Jun',
-            7  => 'Jul',
-            8  => 'Aug',
-            9  => 'Sep',
-            10 => 'Oct',
-            11 => 'Nov',
-            12 => 'Dec',
-        ];
+        $endDate = $request->filled('end_date')
+            ? $request->end_date
+            : date('Y-12-31');
 
 
 
         $statuses = [
+            '',
             'Start',
             'FR1',
             'FR2',
             'Cancel',
             'Withdrawal',
-            '',
+            'Not Process',
+            'Very Fast and Wonderlic',
+            'FAO Appointment',
+            'Contract',
+            'Not Started',
+            'Graduate'
         ];
 
 
 
-        $data = [];
-
-        $totals = array_fill_keys($statuses, 0);
-
-        $monthlyTotals = [];
-
-
-        foreach (range(1, 12) as $month) {
-
-            foreach ($statuses as $status) {
-
-                $data[$month][$status] = 0;
-            }
-
-            $monthlyTotals[$month] = 0;
-        }
+        $statusLabels = [
+            ''                         => 'Blank',
+            'Not Process'              => 'Not Process',
+            'Very Fast and Wonderlic'  => 'Very Fast and Wonderlic',
+            'FAO Appointment'          => 'FAO Appointment',
+            'Contract'                 => 'Contract',
+            'Not Started'              => 'Not Started',
+            'Start'                    => 'Start',
+            'Graduate'                 => 'Graduate',
+            'FR1'                      => 'FR1',
+            'FR2'                      => 'FR2',
+            'Cancel'                   => 'Cancel',
+            'Withdrawal'               => 'Withdrawal'
+        ];
 
 
 
-        $Ontario = session('Ontario', 'no');
-
-        $Alberta = session('Alberta', 'no');
-
-        $British_Columbia = session('British_Columbia', 'no');
-
-        $Manitoba = session('Manitoba', 'no');
-
-        $sess_username = session('username');
-
-
-
-
-        $provinces = [];
-
-
-        if ($Ontario == 'yes') {
-
-            $provinces[] = 'Ontario';
-        }
-
-
-        if ($Alberta == 'yes') {
-
-            $provinces[] = 'Alberta';
-        }
-
-
-        if ($British_Columbia == 'yes') {
-
-            $provinces[] = 'British Columbia';
-        }
-
-
-        if ($Manitoba == 'yes') {
-
-            $provinces[] = 'Manitoba';
-        }
-
-
-
-
-        $applyProvinceFilter =
-            ($sess_username == 'prabjot' || $sess_username == 'navjot')
-            && !empty($provinces);
-
-
-
-        $query = DB::table('seminarpre')
+        $rows = DB::table('seminarpre')
             ->select(
-                DB::raw('MONTH(start_date) AS month'),
-                'fund_aol_status',
-                DB::raw('COUNT(*) AS total')
+                DB::raw("DATE_FORMAT(Start_date, '%Y-%m') as month_key"),
+                DB::raw("DATE_FORMAT(Start_date, '%M %Y') as month_name"),
+                'opr_stage',
+                DB::raw('COUNT(*) as total')
             )
-            ->whereYear('start_date', $year);
-
-
-
-
-        if ($applyProvinceFilter) {
-
-            $query->whereIn('province_name', $provinces);
-        }
-
-
-
-
-        $results = $query
+            ->whereBetween('Start_date', [
+                $startDate,
+                $endDate
+            ])
+            ->whereIn('student_status', [
+                'enrolled',
+                'Re-enrolled'
+            ])
+            ->where('opr_stage', '!=', 'Drop')
             ->groupBy(
-                DB::raw('MONTH(start_date)'),
-                'fund_aol_status'
+                DB::raw("DATE_FORMAT(Start_date, '%Y-%m')"),
+                DB::raw("DATE_FORMAT(Start_date, '%M %Y')"),
+                'opr_stage'
             )
+            ->orderBy('month_key', 'asc')
             ->get();
 
 
 
 
-        foreach ($results as $row) {
+        $monthlyData = [];
 
-            $month = (int) $row->month;
+        foreach ($rows as $row) {
 
-
-            $status = $row->fund_aol_status ?? '';
-
+            $month = $row->month_key;
 
 
-            if (array_key_exists($status, $data[$month])) {
+            $status = $row->opr_stage ?? '';
 
-                $data[$month][$status] = (int) $row->total;
+            if (!isset($monthlyData[$month])) {
+
+                $monthlyData[$month] = [
+                    'month_name' => $row->month_name,
+                    'statuses'   => [],
+                    'total'      => 0
+                ];
             }
+
+            $monthlyData[$month]['statuses'][$status] =
+                ($monthlyData[$month]['statuses'][$status] ?? 0)
+                + (int) $row->total;
+
+            $monthlyData[$month]['total'] += (int) $row->total;
         }
 
 
 
 
-        foreach ($months as $monthNum => $monthName) {
-
-            $monthTotal = 0;
-
-
-            foreach ($statuses as $status) {
-
-                $value = $data[$monthNum][$status] ?? 0;
-
-
-
-                $totals[$status] += $value;
-
-
-
-                $monthTotal += $value;
-            }
+        $grand_blank     = 0;
+        $grand_start     = 0;
+        $grand_fr1       = 0;
+        $grand_fr2       = 0;
+        $grand_cancel    = 0;
+        $grand_with      = 0;
+        $grand_not_pro   = 0;
+        $grand_vr_fst    = 0;
+        $grand_apnt      = 0;
+        $grand_contract  = 0;
+        $grand_not_start = 0;
+        $grand_grad      = 0;
+        $grand_total     = 0;
 
 
-            $monthlyTotals[$monthNum] = $monthTotal;
+        foreach ($monthlyData as $month) {
+
+            $grand_blank +=
+                $month['statuses'][''] ?? 0;
+
+            $grand_start +=
+                $month['statuses']['Start'] ?? 0;
+
+            $grand_fr1 +=
+                $month['statuses']['FR1'] ?? 0;
+
+            $grand_fr2 +=
+                $month['statuses']['FR2'] ?? 0;
+
+            $grand_cancel +=
+                $month['statuses']['Cancel'] ?? 0;
+
+            $grand_with +=
+                $month['statuses']['Withdrawal'] ?? 0;
+
+            $grand_not_pro +=
+                $month['statuses']['Not Process'] ?? 0;
+
+            $grand_vr_fst +=
+                $month['statuses']['Very Fast and Wonderlic'] ?? 0;
+
+            $grand_apnt +=
+                $month['statuses']['FAO Appointment'] ?? 0;
+
+            $grand_contract +=
+                $month['statuses']['Contract'] ?? 0;
+
+            $grand_not_start +=
+                $month['statuses']['Not Started'] ?? 0;
+
+            $grand_grad +=
+                $month['statuses']['Graduate'] ?? 0;
+
+            $grand_total +=
+                $month['total'];
         }
-
-
-
-
-        $totalCount = array_sum($monthlyTotals);
 
 
 
         return view('dashboard.stitching_reports', compact(
-            'year',
-            'months',
+            'startDate',
+            'endDate',
             'statuses',
-            'data',
-            'totals',
-            'monthlyTotals',
-            'totalCount'
+            'statusLabels',
+            'monthlyData',
+            'grand_blank',
+            'grand_start',
+            'grand_fr1',
+            'grand_fr2',
+            'grand_cancel',
+            'grand_with',
+            'grand_not_pro',
+            'grand_vr_fst',
+            'grand_apnt',
+            'grand_contract',
+            'grand_not_start',
+            'grand_grad',
+            'grand_total'
         ));
     }
 
-
-    // public function allLeadList(Request $request)
-    // {
-
-    //     $colleges = DB::table('college_list')
-    //         ->select('clg_name')
-    //         ->whereNotNull('clg_name')
-    //         ->where('clg_name', '!=', '')
-    //         ->groupBy('clg_name')
-    //         ->orderBy('clg_name')
-    //         ->get();
-
-
-    //     $operations = DB::table('crm_login')
-    //         ->select('id', 'name')
-    //         ->whereIn('role', ['operation', 'Operation'])
-    //         ->orderBy('name')
-    //         ->get();
-
-
-    //     $provinces = DB::table('college_list')
-    //         ->select('province')
-    //         ->whereNotNull('province')
-    //         ->where('province', '!=', '')
-    //         ->groupBy('province')
-    //         ->orderBy('province')
-    //         ->get();
-
-
-    //     $query = DB::table('seminarpre');
-
-
-    //     if ($request->filled('ssource')) {
-    //         $query->where('ssource', $request->ssource);
-    //     }
-
-
-    //     if ($request->filled('student_status')) {
-    //         $query->where(
-    //             'student_status',
-    //             $request->student_status
-    //         );
-    //     }
-
-
-    //     if ($request->filled('substatus')) {
-
-    //         $query->where(
-    //             'status',
-    //             $request->substatus
-    //         );
-    //     }
-
-
-    //     if (
-    //         $request->filled('status') &&
-    //         !$request->filled('substatus')
-    //     ) {
-    //         $query->where(
-    //             'status',
-    //             $request->status
-    //         );
-    //     }
-
-
-    //     if ($request->filled('student_name')) {
-
-    //         $name = trim($request->student_name);
-
-    //         $query->where(function ($q) use ($name) {
-
-    //             $q->where('sname', 'LIKE', '%' . $name . '%')
-    //                 ->orWhere('fname', 'LIKE', '%' . $name . '%')
-    //                 ->orWhere('lname', 'LIKE', '%' . $name . '%');
-    //         });
-    //     }
-
-
-    //     if ($request->filled('search')) {
-
-    //         $search = trim($request->search);
-
-    //         $query->where(function ($q) use ($search) {
-
-    //             $q->where('sname', 'LIKE', '%' . $search . '%')
-    //                 ->orWhere('fname', 'LIKE', '%' . $search . '%')
-    //                 ->orWhere('lname', 'LIKE', '%' . $search . '%')
-    //                 ->orWhere('smobile', 'LIKE', '%' . $search . '%')
-    //                 ->orWhere('semail', 'LIKE', '%' . $search . '%')
-    //                 ->orWhere('file_no', 'LIKE', '%' . $search . '%');
-    //         });
-    //     }
-
-
-    //     if ($request->filled('province_name')) {
-
-    //         $query->where(
-    //             'province_name',
-    //             $request->province_name
-    //         );
-    //     }
-
-
-    //     if ($request->filled('collage_name')) {
-
-    //         $query->where(
-    //             'collage_name',
-    //             $request->collage_name
-    //         );
-    //     }
-
-
-    //     if ($request->filled('campus_name')) {
-
-    //         $query->where(
-    //             'campus_name',
-    //             $request->campus_name
-    //         );
-    //     }
-
-
-    //     if ($request->filled('program_name')) {
-
-    //         $query->where(
-    //             'program_name',
-    //             'LIKE',
-    //             '%' . trim($request->program_name) . '%'
-    //         );
-    //     }
-
-    //     $perPage = (int) $request->get('per_page', 25);
-
-    //     if (!in_array($perPage, [10, 25, 50, 100])) {
-    //         $perPage = 25;
-    //     }
-
-    //     $students = $query
-    //         ->orderByDesc('sno')
-    //         ->paginate($perPage)
-    //         ->withQueryString();
-
-
-    //     return view(
-    //         'dashboard.all_lead_list',
-    //         compact(
-    //             'students',
-    //             'colleges',
-    //             'operations',
-    //             'provinces'
-    //         )
-    //     );
-    // }
 
 
     public function allLeadList(Request $request)
@@ -10518,11 +10129,7 @@ class WalkinController extends Controller
                 'opr_stage',
             ]);
 
-        /*
-    |--------------------------------------------------------------------------
-    | Name / Mobile / Email Search
-    |--------------------------------------------------------------------------
-    */
+
 
         if (!empty($nameMobileEmail)) {
 
@@ -10534,62 +10141,37 @@ class WalkinController extends Controller
             });
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Student Status
-    |--------------------------------------------------------------------------
-    */
+
 
         if (!empty($studentStatus)) {
             $query->where('student_status', $studentStatus);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Sub Status
-    |--------------------------------------------------------------------------
-    */
 
         if (!empty($subStatus)) {
             $query->where('opr_stage', $subStatus);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | Source
-    |--------------------------------------------------------------------------
-    */
+
 
         if (!empty($source)) {
             $query->where('ssource', $source);
         }
 
-        /*
-    |--------------------------------------------------------------------------
-    | File Name
-    |--------------------------------------------------------------------------
-    */
+
 
         $fileName = 'All_lead_' . now()->format('Y-m-d_H-i-s') . '.csv';
 
-        /*
-    |--------------------------------------------------------------------------
-    | CSV Download
-    |--------------------------------------------------------------------------
-    */
+
 
         return response()->streamDownload(function () use ($query) {
 
-            // UTF-8 BOM for Excel
+
             echo "\xEF\xBB\xBF";
 
             $output = fopen('php://output', 'w');
 
-            /*
-        |--------------------------------------------------------------------------
-        | CSV Header
-        |--------------------------------------------------------------------------
-        */
+
 
             fputcsv($output, [
                 'S.No',
@@ -10610,11 +10192,6 @@ class WalkinController extends Controller
                 'Operation Stage'
             ]);
 
-            /*
-        |--------------------------------------------------------------------------
-        | Get Data in Chunks
-        |--------------------------------------------------------------------------
-        */
 
             $num = 0;
 
