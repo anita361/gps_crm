@@ -198,6 +198,9 @@ Route::middleware('login')->group(function () {
     Route::get('/seminar-lead-list', [CsvUploadController::class, 'seminarList'])->name('seminar.list');
     Route::get('/seminar-lead-download', [CsvUploadController::class, 'seminarDownload'])->name('seminar.download');
     Route::post('/lead-assign', [CsvUploadController::class, 'assignLead'])->name('lead.assign');
+    Route::get('/lead-transfer', [CsvUploadController::class, 'leadTransfer'])->name('lead.transfer');
+    Route::post('/lead-transfer/{id}/action', [CsvUploadController::class, 'leadTransferAction'])->name('lead.transfer.action');
+
 
 
 

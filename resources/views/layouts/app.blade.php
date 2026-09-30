@@ -417,6 +417,16 @@
                                     </a>
 
                                 </li>
+                                <li>
+                                    <a class="dropdown-item {{ request()->routeIs('lead.transfer*') ? 'active' : '' }}"
+                                        href="{{ route('lead.transfer') }}">
+
+                                        <i class="fa fa-exchange-alt"></i>
+
+                                        Lead Transfer
+
+                                    </a>
+                                </li>
 
                             </ul>
 
