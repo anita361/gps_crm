@@ -53,6 +53,11 @@ Route::middleware('login')->group(function () {
     Route::get('/eligible-details', [CounselorDashboardController::class, 'eligibleDetails'])->name('eligible.details');
     Route::get('/aus-eligible-details', [CounselorDashboardController::class, 'ausEligibleDetails'])->name('aus.eligible.details');
 
+    Route::get('/manage-files', [CounselorDashboardController::class, 'manageFiles'])->name('manage.files');
+    Route::post('/manage-files/logs', [CounselorDashboardController::class, 'manageFileLogs'])->name('manage.files.logs');
+
+
+
 
 
 
@@ -200,6 +205,7 @@ Route::middleware('login')->group(function () {
     Route::post('/lead-assign', [CsvUploadController::class, 'assignLead'])->name('lead.assign');
     Route::get('/lead-transfer', [CsvUploadController::class, 'leadTransfer'])->name('lead.transfer');
     Route::post('/lead-transfer/{id}/action', [CsvUploadController::class, 'leadTransferAction'])->name('lead.transfer.action');
+    Route::post('/counselor-dashboard/lead-transfer-request', [CsvUploadController::class, 'requestLeadTransfer'])->name('counselor.lead.transfer.request');
 
 
 

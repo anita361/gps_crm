@@ -4,9 +4,8 @@
 
 namespace App\Http\Controllers;
 
-
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
@@ -316,11 +315,7 @@ class CsvUploadController extends Controller
     public function leadTransfer(Request $request)
     {
 
-        /*
-        |--------------------------------------------------------------------------
-        | Check Login
-        |--------------------------------------------------------------------------
-        */
+
 
         if (!session('role')) {
 
@@ -330,11 +325,7 @@ class CsvUploadController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Branch Manager Only
-        |--------------------------------------------------------------------------
-        */
+
 
         if (
             session('role') !==
@@ -347,11 +338,6 @@ class CsvUploadController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Today
-        |--------------------------------------------------------------------------
-        */
 
         $today =
             Carbon::today()->format(
@@ -359,11 +345,6 @@ class CsvUploadController extends Controller
             );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Filters
-        |--------------------------------------------------------------------------
-        */
 
         $filterType =
             $request->get(
@@ -408,11 +389,6 @@ class CsvUploadController extends Controller
             );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Limit
-        |--------------------------------------------------------------------------
-        */
 
         $limit =
             (int) $request->get(
@@ -437,23 +413,13 @@ class CsvUploadController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Query
-        |--------------------------------------------------------------------------
-        */
+
 
         $query =
             DB::table(
                 'lead_transfer_requests as r'
             );
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | Status Filter
-        |--------------------------------------------------------------------------
-        */
 
         if (
             $status !== '' &&
@@ -467,11 +433,6 @@ class CsvUploadController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Lead Name Filter
-        |--------------------------------------------------------------------------
-        */
 
         if ($leadName !== '') {
 
@@ -483,11 +444,6 @@ class CsvUploadController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Today Filter
-        |--------------------------------------------------------------------------
-        */
 
         if (
             $filterType ===
@@ -501,11 +457,7 @@ class CsvUploadController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Previous Date Filter
-        |--------------------------------------------------------------------------
-        */
+
 
         if (
             $filterType ===
@@ -537,11 +489,6 @@ class CsvUploadController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Get Requests
-        |--------------------------------------------------------------------------
-        */
 
         $transfers =
             $query
@@ -562,11 +509,6 @@ class CsvUploadController extends Controller
             );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Blade
-        |--------------------------------------------------------------------------
-        */
 
         return view(
             'leads.transfer_lead_request',
@@ -583,65 +525,35 @@ class CsvUploadController extends Controller
     }
 
 
-    /*
-    |--------------------------------------------------------------------------
-    | ACCEPT / REJECT TRANSFER REQUEST
-    |--------------------------------------------------------------------------
-    */
+
 
     public function leadTransferAction(
         Request $request,
         $id
     ) {
 
-        /*
-        |--------------------------------------------------------------------------
-        | Login Check
-        |--------------------------------------------------------------------------
-        */
+
 
         if (!session('role')) {
 
             return response()->json([
-
-                'status' =>
-                'error',
-
-                'message' =>
-                'Session expired.'
-
+                'status' => 'error',
+                'message' => 'Session expired.'
             ], 401);
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Branch Manager Check
-        |--------------------------------------------------------------------------
-        */
 
-        if (
-            session('role') !==
-            'branch_manager'
-        ) {
+
+        if (session('role') !== 'branch_manager') {
 
             return response()->json([
-
-                'status' =>
-                'error',
-
-                'message' =>
-                'Unauthorized action.'
-
+                'status' => 'error',
+                'message' => 'Unauthorized action.'
             ], 403);
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Validation
-        |--------------------------------------------------------------------------
-        */
 
         $request->validate([
 
@@ -659,70 +571,135 @@ class CsvUploadController extends Controller
         ]);
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Find Transfer Request
-        |--------------------------------------------------------------------------
-        */
 
-        $transfer =
-            DB::table(
-                'lead_transfer_requests'
-            )
-            ->where(
-                'id',
-                $id
-            )
+
+        $id = (int) $id;
+
+        if ($id <= 0) {
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid request ID.'
+            ], 400);
+        }
+
+
+
+
+        $managerId = (int) session('login');
+
+
+
+
+        $manager = DB::table('crm_login')
+            ->where('id', $managerId)
+            ->first();
+
+
+        if (!$manager) {
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Branch manager not found.'
+            ], 404);
+        }
+
+
+        $managerName = trim(
+            $manager->name ?? ''
+        );
+
+
+
+
+        $transfer = DB::table(
+            'lead_transfer_requests'
+        )
+            ->where('id', $id)
             ->first();
 
 
         if (!$transfer) {
 
             return response()->json([
-
-                'status' =>
-                'error',
-
-                'message' =>
-                'Transfer request not found.'
-
+                'status' => 'error',
+                'message' => 'Transfer request not found.'
             ], 404);
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Already Processed
-        |--------------------------------------------------------------------------
-        */
 
-        if (
-            $transfer->status !==
-            'Pending'
-        ) {
+        if ($transfer->status !== 'Pending') {
 
             return response()->json([
-
-                'status' =>
-                'error',
-
+                'status' => 'error',
                 'message' =>
                 'This transfer request has already been processed.'
-
-            ]);
+            ], 422);
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | ACCEPT
-        |--------------------------------------------------------------------------
-        */
 
-        if (
-            $request->action ===
-            'accept'
-        ) {
+
+        if ($request->action === 'accept') {
+
+
+            $leadId = (int) $transfer->lead_id;
+
+            $newCounselorId = (int) $transfer->requested_by_id;
+
+            $newCounselorName = trim(
+                $transfer->requested_by_name ?? ''
+            );
+
+            $originalCounselorId = (int) (
+                $transfer->current_counselor_id ?? 0
+            );
+
+
+
+
+            $lead = DB::table('seminarpre')
+                ->select([
+                    'sno',
+                    'sname',
+                    'smobile',
+                    'assign_id',
+                    'assign_name'
+                ])
+                ->where('sno', $leadId)
+                ->first();
+
+
+            if (!$lead) {
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Lead not found in seminarpre.',
+                    'lead_id' => $leadId
+                ], 404);
+            }
+
+
+
+            $actualCurrentCounselorId = (int) (
+                $lead->assign_id ?? 0
+            );
+
+
+            if (
+                $actualCurrentCounselorId !==
+                $originalCounselorId
+            ) {
+
+                return response()->json([
+                    'status' => 'error',
+                    'message' =>
+                    'This lead has already been reassigned. '
+                        . 'The transfer request can no longer be accepted.'
+                ], 422);
+            }
+
 
 
             DB::beginTransaction();
@@ -731,23 +708,56 @@ class CsvUploadController extends Controller
             try {
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | Update Transfer Request
-                |--------------------------------------------------------------------------
-                */
+                $leadUpdated = DB::table('seminarpre')
+                    ->where('sno', $leadId)
+                    ->where('assign_id', $originalCounselorId)
+                    ->update([
 
-                DB::table(
+                        'assign_id' =>
+                        $newCounselorId,
+
+                        'assign_name' =>
+                        $newCounselorName,
+
+                        'assign_date' =>
+                        now(),
+
+                        'update_date' =>
+                        now()->toDateString(),
+
+                        'update_time' =>
+                        now()->format('H:i:s')
+
+                    ]);
+
+
+                if ($leadUpdated <= 0) {
+
+                    throw new \Exception(
+                        'Unable to update lead assignment.'
+                    );
+                }
+
+
+
+                $requestUpdated = DB::table(
                     'lead_transfer_requests'
                 )
-                    ->where(
-                        'id',
-                        $id
-                    )
+                    ->where('id', $id)
+                    ->where('status', 'Pending')
                     ->update([
 
                         'status' =>
                         'Accepted',
+
+                        'approved_by_id' =>
+                        $managerId,
+
+                        'approved_by_name' =>
+                        $managerName,
+
+                        'approved_at' =>
+                        now(),
 
                         'updated_at' =>
                         now()
@@ -755,25 +765,14 @@ class CsvUploadController extends Controller
                     ]);
 
 
-                /*
-                |--------------------------------------------------------------------------
-                | IMPORTANT
-                |--------------------------------------------------------------------------
-                |
-                | If your original PHP approve file changes the actual lead
-                | counselor here, put that exact query here.
-                |
-                | Example:
-                |
-                | DB::table('leads')
-                |     ->where('id', $transfer->lead_id)
-                |     ->update([
-                |         'counselor_id' => $transfer->requested_by_id,
-                |         'updated_at' => now()
-                |     ]);
-                |
-                |--------------------------------------------------------------------------
-                */
+                if ($requestUpdated <= 0) {
+
+                    throw new \Exception(
+                        'Transfer request was not updated. '
+                            . 'It may already have been processed.'
+                    );
+                }
+
 
 
                 DB::commit();
@@ -785,7 +784,16 @@ class CsvUploadController extends Controller
                     'success',
 
                     'message' =>
-                    'Lead transfer request accepted successfully.'
+                    'Lead transfer request accepted successfully.',
+
+                    'lead_id' =>
+                    $leadId,
+
+                    'new_counselor_id' =>
+                    $newCounselorId,
+
+                    'new_counselor_name' =>
+                    $newCounselorName
 
                 ]);
             } catch (\Throwable $e) {
@@ -795,8 +803,17 @@ class CsvUploadController extends Controller
 
 
                 Log::error(
-                    'Lead Transfer Accept Error: ' .
+                    'Lead Transfer Accept Error',
+                    [
+                        'transfer_request_id' =>
+                        $id,
+
+                        'lead_id' =>
+                        $leadId,
+
+                        'error' =>
                         $e->getMessage()
+                    ]
                 );
 
 
@@ -813,27 +830,18 @@ class CsvUploadController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | REJECT
-        |--------------------------------------------------------------------------
-        */
 
-        if (
-            $request->action ===
-            'reject'
-        ) {
+        if ($request->action === 'reject') {
 
 
-            $reason =
-                trim(
-                    $request->reason ?? ''
-                );
+            $reason = trim(
+                $request->reason ?? ''
+            );
 
 
-            if (
-                $reason === ''
-            ) {
+
+
+            if ($reason === '') {
 
                 return response()->json([
 
@@ -843,20 +851,19 @@ class CsvUploadController extends Controller
                     'message' =>
                     'Rejection reason is required.'
 
-                ]);
+                ], 422);
             }
 
 
             try {
 
 
-                DB::table(
+
+                $updated = DB::table(
                     'lead_transfer_requests'
                 )
-                    ->where(
-                        'id',
-                        $id
-                    )
+                    ->where('id', $id)
+                    ->where('status', 'Pending')
                     ->update([
 
                         'status' =>
@@ -865,10 +872,36 @@ class CsvUploadController extends Controller
                         'rejection_reason' =>
                         $reason,
 
+                        'approved_by_id' =>
+                        $managerId,
+
+                        'approved_by_name' =>
+                        $managerName,
+
+                        'approved_at' =>
+                        now(),
+
                         'updated_at' =>
                         now()
 
                     ]);
+
+
+
+
+                if ($updated <= 0) {
+
+                    return response()->json([
+
+                        'status' =>
+                        'error',
+
+                        'message' =>
+                        'This transfer request has already been processed.'
+
+                    ], 422);
+                }
+
 
 
                 return response()->json([
@@ -884,8 +917,14 @@ class CsvUploadController extends Controller
 
 
                 Log::error(
-                    'Lead Transfer Reject Error: ' .
+                    'Lead Transfer Reject Error',
+                    [
+                        'transfer_request_id' =>
+                        $id,
+
+                        'error' =>
                         $e->getMessage()
+                    ]
                 );
 
 
@@ -902,11 +941,6 @@ class CsvUploadController extends Controller
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Invalid Action
-        |--------------------------------------------------------------------------
-        */
 
         return response()->json([
 
@@ -914,8 +948,230 @@ class CsvUploadController extends Controller
             'error',
 
             'message' =>
-            'Invalid transfer action.'
+            'Invalid action.'
 
         ], 400);
+    }
+
+    public function requestLeadTransfer(Request $request)
+    {
+
+        if (!session()->has('login')) {
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Session expired. Please login again.'
+            ], 401);
+        }
+
+
+
+        if (session('role') !== 'counselor') {
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Only counselors can request lead transfer.'
+            ], 403);
+        }
+
+
+
+
+        $request->validate([
+            'lead_id' => [
+                'required',
+                'integer'
+            ]
+        ]);
+
+
+
+        $requesterId = (int) session('login');
+
+
+
+        $requester = DB::table('crm_login')
+            ->where('id', $requesterId)
+            ->first();
+
+
+        if (!$requester) {
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Counselor not found.'
+            ], 404);
+        }
+
+
+
+        $requesterName = trim(
+            $requester->name ?? ''
+        );
+
+        $requesterBranch = trim(
+            $requester->branch ?? ''
+        );
+
+
+
+        $leadId = (int) $request->lead_id;
+
+
+
+        $lead = DB::table('seminarpre')
+            ->select([
+                'sno',
+                'sname',
+                'smobile',
+                'assign_id',
+                'assign_name'
+            ])
+            ->where('sno', $leadId)
+            ->first();
+
+
+
+
+        if (!$lead) {
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Lead not found.'
+            ], 404);
+        }
+
+
+
+        $currentAssignId = (int) (
+            $lead->assign_id ?? 0
+        );
+
+        $currentAssignName = trim(
+            $lead->assign_name ?? ''
+        );
+
+
+
+
+        $leadName = trim(
+            $lead->sname ?? ''
+        );
+
+        $leadMobile = trim(
+            $lead->smobile ?? ''
+        );
+
+
+
+        if ($currentAssignId === $requesterId) {
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'You already own this lead.'
+            ], 422);
+        }
+
+
+
+        $existingRequest = DB::table(
+            'lead_transfer_requests'
+        )
+            ->where('lead_id', $leadId)
+            ->where('requested_by_id', $requesterId)
+            ->where('status', 'Pending')
+            ->first();
+
+
+        if ($existingRequest) {
+
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Transfer request is already pending.'
+            ], 422);
+        }
+
+
+
+
+        try {
+
+            DB::table(
+                'lead_transfer_requests'
+            )->insert([
+
+                'lead_id' =>
+                $leadId,
+
+                'lead_name' =>
+                $leadName,
+
+                'lead_mobile' =>
+                $leadMobile,
+
+                'current_counselor_id' =>
+                $currentAssignId,
+
+                'current_counselor_name' =>
+                $currentAssignName,
+
+                'requested_by_id' =>
+                $requesterId,
+
+                'requested_by_name' =>
+                $requesterName,
+
+                'requested_branch' =>
+                $requesterBranch,
+
+                'status' =>
+                'Pending',
+
+                'created_at' =>
+                now(),
+
+                'updated_at' =>
+                now()
+
+            ]);
+
+
+
+            return response()->json([
+
+                'status' =>
+                'success',
+
+                'message' =>
+                'Transfer request sent successfully.'
+
+            ]);
+        } catch (\Throwable $e) {
+
+            Log::error(
+                'Lead Transfer Request Error',
+                [
+                    'lead_id' =>
+                    $leadId,
+
+                    'requester_id' =>
+                    $requesterId,
+
+                    'error' =>
+                    $e->getMessage()
+                ]
+            );
+
+
+            return response()->json([
+
+                'status' =>
+                'error',
+
+                'message' =>
+                'Unable to create transfer request.'
+
+            ], 500);
+        }
     }
 }

@@ -225,6 +225,18 @@
                                 Action
                             </th>
 
+                            <th>
+                                Processed By
+                            </th>
+
+                            <th>
+                                Processed Date
+                            </th>
+
+                            <th>
+                                Rejection Reason
+                            </th>
+
                         </tr>
 
                     </thead>
@@ -235,6 +247,8 @@
                         @forelse ($transfers as $index => $transfer)
                             <tr id="transfer-row-{{ $transfer->id }}">
 
+                                {{-- SR NO --}}
+
                                 <td>
 
                                     {{ $transfers->firstItem() + $index }}
@@ -242,12 +256,16 @@
                                 </td>
 
 
+                                {{-- REQUEST DATE --}}
+
                                 <td>
 
                                     {{ $transfer->created_at ? \Carbon\Carbon::parse($transfer->created_at)->format('d-m-Y h:i A') : '-' }}
 
                                 </td>
 
+
+                                {{-- LEAD NAME --}}
 
                                 <td>
 
@@ -260,12 +278,16 @@
                                 </td>
 
 
+                                {{-- MOBILE --}}
+
                                 <td>
 
                                     {{ $transfer->lead_mobile }}
 
                                 </td>
 
+
+                                {{-- CURRENT COUNSELOR --}}
 
                                 <td>
 
@@ -274,12 +296,16 @@
                                 </td>
 
 
+                                {{-- REQUEST FROM --}}
+
                                 <td>
 
                                     {{ $transfer->requested_by_name }}
 
                                 </td>
 
+
+                                {{-- REQUEST BRANCH --}}
 
                                 <td>
 
@@ -288,28 +314,40 @@
                                 </td>
 
 
+                                {{-- STATUS --}}
+
                                 <td>
 
                                     @if ($transfer->status === 'Pending')
                                         <span class="badge bg-warning text-dark">
+
                                             Pending
+
                                         </span>
                                     @elseif ($transfer->status === 'Accepted')
                                         <span class="badge bg-success">
+
                                             Accepted
+
                                         </span>
                                     @elseif ($transfer->status === 'Rejected')
                                         <span class="badge bg-danger">
+
                                             Rejected
+
                                         </span>
                                     @else
                                         <span class="badge bg-secondary">
+
                                             {{ $transfer->status }}
+
                                         </span>
                                     @endif
 
                                 </td>
 
+
+                                {{-- ACTION --}}
 
                                 <td>
 
@@ -334,8 +372,53 @@
                                         </button>
                                     @else
                                         <span class="text-muted">
+
                                             No Action
+
                                         </span>
+                                    @endif
+
+                                </td>
+
+
+                                {{-- PROCESSED BY --}}
+
+                                <td>
+
+                                    @if ($transfer->status === 'Accepted' || $transfer->status === 'Rejected')
+                                        {{ $transfer->approved_by_name ?? '-' }}
+                                    @else
+                                        -
+                                    @endif
+
+                                </td>
+
+
+                                {{-- PROCESSED DATE --}}
+
+                                <td>
+
+                                    @if ($transfer->approved_at)
+                                        {{ \Carbon\Carbon::parse($transfer->approved_at)->format('d-m-Y h:i A') }}
+                                    @else
+                                        -
+                                    @endif
+
+                                </td>
+
+
+                                {{-- REJECTION REASON --}}
+
+                                <td>
+
+                                    @if ($transfer->status === 'Rejected')
+                                        <span class="text-danger">
+
+                                            {{ $transfer->rejection_reason ?? '-' }}
+
+                                        </span>
+                                    @else
+                                        -
                                     @endif
 
                                 </td>
@@ -346,7 +429,7 @@
 
                             <tr>
 
-                                <td colspan="9" class="text-center">
+                                <td colspan="12" class="text-center">
 
                                     No transfer requests found.
 
@@ -382,7 +465,9 @@
                         </p>
                     @else
                         <p class="mb-0">
+
                             Showing 0 entries
+
                         </p>
                     @endif
 

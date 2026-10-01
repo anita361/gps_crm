@@ -1509,4 +1509,711 @@ class CounselorDashboardController extends Controller
             compact('client')
         );
     }
+
+    // public function requestLeadTransfer(Request $request)
+    // {
+
+    //     if (!session()->has('login')) {
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Session expired. Please login again.'
+    //         ], 401);
+    //     }
+
+
+
+    //     if (session('role') !== 'counselor') {
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Only counselors can request lead transfer.'
+    //         ], 403);
+    //     }
+
+
+
+
+    //     $request->validate([
+    //         'lead_id' => [
+    //             'required',
+    //             'integer'
+    //         ]
+    //     ]);
+
+
+
+    //     $requesterId = (int) session('login');
+
+
+
+    //     $requester = DB::table('crm_login')
+    //         ->where('id', $requesterId)
+    //         ->first();
+
+
+    //     if (!$requester) {
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Counselor not found.'
+    //         ], 404);
+    //     }
+
+
+
+    //     $requesterName = trim(
+    //         $requester->name ?? ''
+    //     );
+
+    //     $requesterBranch = trim(
+    //         $requester->branch ?? ''
+    //     );
+
+
+
+    //     $leadId = (int) $request->lead_id;
+
+
+
+    //     $lead = DB::table('seminarpre')
+    //         ->select([
+    //             'sno',
+    //             'sname',
+    //             'smobile',
+    //             'assign_id',
+    //             'assign_name'
+    //         ])
+    //         ->where('sno', $leadId)
+    //         ->first();
+
+
+
+
+    //     if (!$lead) {
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Lead not found.'
+    //         ], 404);
+    //     }
+
+
+
+    //     $currentAssignId = (int) (
+    //         $lead->assign_id ?? 0
+    //     );
+
+    //     $currentAssignName = trim(
+    //         $lead->assign_name ?? ''
+    //     );
+
+
+
+
+    //     $leadName = trim(
+    //         $lead->sname ?? ''
+    //     );
+
+    //     $leadMobile = trim(
+    //         $lead->smobile ?? ''
+    //     );
+
+
+
+    //     if ($currentAssignId === $requesterId) {
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'You already own this lead.'
+    //         ], 422);
+    //     }
+
+
+
+    //     $existingRequest = DB::table(
+    //         'lead_transfer_requests'
+    //     )
+    //         ->where('lead_id', $leadId)
+    //         ->where('requested_by_id', $requesterId)
+    //         ->where('status', 'Pending')
+    //         ->first();
+
+
+    //     if ($existingRequest) {
+
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Transfer request is already pending.'
+    //         ], 422);
+    //     }
+
+
+
+
+    //     try {
+
+    //         DB::table(
+    //             'lead_transfer_requests'
+    //         )->insert([
+
+    //             'lead_id' =>
+    //             $leadId,
+
+    //             'lead_name' =>
+    //             $leadName,
+
+    //             'lead_mobile' =>
+    //             $leadMobile,
+
+    //             'current_counselor_id' =>
+    //             $currentAssignId,
+
+    //             'current_counselor_name' =>
+    //             $currentAssignName,
+
+    //             'requested_by_id' =>
+    //             $requesterId,
+
+    //             'requested_by_name' =>
+    //             $requesterName,
+
+    //             'requested_branch' =>
+    //             $requesterBranch,
+
+    //             'status' =>
+    //             'Pending',
+
+    //             'created_at' =>
+    //             now(),
+
+    //             'updated_at' =>
+    //             now()
+
+    //         ]);
+
+
+
+    //         return response()->json([
+
+    //             'status' =>
+    //             'success',
+
+    //             'message' =>
+    //             'Transfer request sent successfully.'
+
+    //         ]);
+    //     } catch (\Throwable $e) {
+
+    //         Log::error(
+    //             'Lead Transfer Request Error',
+    //             [
+    //                 'lead_id' =>
+    //                 $leadId,
+
+    //                 'requester_id' =>
+    //                 $requesterId,
+
+    //                 'error' =>
+    //                 $e->getMessage()
+    //             ]
+    //         );
+
+
+    //         return response()->json([
+
+    //             'status' =>
+    //             'error',
+
+    //             'message' =>
+    //             'Unable to create transfer request.'
+
+    //         ], 500);
+    //     }
+    // }
+
+    // public function manageFiles(Request $request)
+    // {
+    //     if (!session()->has('login')) {
+    //         return redirect()->route('login');
+    //     }
+
+    //     $sessionId = session('login');
+    //     $sessRole = session('role');
+
+    //     if (!in_array($sessRole, ['branch_manager', 'counselor'])) {
+    //         return redirect()->route('logout');
+    //     }
+
+    //     $query = DB::table('seminarpre');
+
+
+    //     if ($request->filled('mobile_no')) {
+    //         $query->where(
+    //             'smobile',
+    //             'LIKE',
+    //             '%' . $request->input('mobile_no') . '%'
+    //         );
+    //     }
+
+
+    //     if ($request->filled('smobile')) {
+    //         $query->where(
+    //             'smobile',
+    //             'LIKE',
+    //             '%' . $request->input('smobile') . '%'
+    //         );
+    //     }
+
+
+    //     if ($request->filled('email')) {
+    //         $query->where(
+    //             'semail',
+    //             'LIKE',
+    //             '%' . $request->input('email') . '%'
+    //         );
+    //     }
+
+
+    //     if ($request->filled('student_name')) {
+    //         $query->where(
+    //             'sname',
+    //             'LIKE',
+    //             '%' . $request->input('student_name') . '%'
+    //         );
+    //     }
+
+
+    //     if ($request->filled('searchfile')) {
+    //         $query->where(
+    //             'file_no',
+    //             'LIKE',
+    //             '%' . $request->input('searchfile') . '%'
+    //         );
+    //     }
+
+    //     $masterFiles = $query
+    //         ->orderByDesc('sno')
+    //         ->get();
+
+    //     return view(
+    //         'leads.manage_listing',
+    //         compact(
+    //             'masterFiles',
+    //             'sessRole',
+    //             'sessionId'
+    //         )
+    //     );
+    // }
+
+    public function manageFiles(Request $request)
+    {
+        /*
+    |--------------------------------------------------------------------------
+    | Check Login
+    |--------------------------------------------------------------------------
+    */
+
+        if (!session()->has('login')) {
+            return redirect()->route('login');
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Session
+    |--------------------------------------------------------------------------
+    */
+
+        $sessionId = session('login');
+        $sessRole = session('role');
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Role Check
+    |--------------------------------------------------------------------------
+    */
+
+        if (!in_array($sessRole, ['branch_manager', 'counselor'])) {
+            return redirect()->route('logout');
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Search
+    |--------------------------------------------------------------------------
+    */
+
+        $searchType = $request->get('search_type');
+        $searchValue = trim($request->get('search_value', ''));
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Default
+    |--------------------------------------------------------------------------
+    |
+    | When Manage Files is opened without a search, keep it empty.
+    |
+    */
+
+        $masterFiles = collect();
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Allowed Search Types
+    |--------------------------------------------------------------------------
+    */
+
+        $allowedSearchTypes = [
+            'mobile',
+            'email',
+            'student_name',
+            'file_no',
+        ];
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Search Only When Value Exists
+    |--------------------------------------------------------------------------
+    */
+
+        if (
+            $searchValue !== '' &&
+            in_array($searchType, $allowedSearchTypes)
+        ) {
+
+            /*
+        |--------------------------------------------------------------------------
+        | Main Query
+        |--------------------------------------------------------------------------
+        |
+        | lead_appointed.callerno = seminarpre.smobile
+        |
+        */
+
+            $query = DB::table('lead_appointed as l')
+                ->leftJoin(
+                    'seminarpre as s',
+                    'l.callerno',
+                    '=',
+                    's.smobile'
+                );
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | Select Fields
+        |--------------------------------------------------------------------------
+        */
+
+            $query->select([
+                /*
+            | Seminar / Student fields
+            */
+                's.sno as semi_id',
+                's.sname',
+                's.smobile',
+                's.semail',
+                's.assign_id',
+                's.assign_name',
+                's.student_status',
+                's.category',
+                's.scountry',
+                's.fathers_name',
+                's.husband_name',
+                's.wife_name',
+                's.file_no',
+
+                /*
+            | Lead Appointed fields
+            */
+                'l.id as lead_id',
+                'l.applicant_name',
+                'l.callerno',
+                'l.email as lead_email',
+                'l.assign_id as lead_assign_id',
+                'l.assign_name as lead_assign_name',
+                'l.walkin_status',
+                'l.assign_date',
+            ]);
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | Counselor Access
+        |--------------------------------------------------------------------------
+        |
+        | Counselor can only search records assigned to himself/herself.
+        |
+        */
+
+            if ($sessRole === 'counselor') {
+
+                $query->where(
+                    'l.assign_id',
+                    $sessionId
+                );
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | Search Conditions
+        |--------------------------------------------------------------------------
+        */
+
+            switch ($searchType) {
+
+                /*
+            |--------------------------------------------------------------------------
+            | MOBILE / NUMBER
+            |--------------------------------------------------------------------------
+            */
+
+                case 'mobile':
+
+                    $query->where(function ($q) use ($searchValue) {
+
+                        $q->where(
+                            'l.callerno',
+                            'LIKE',
+                            '%' . $searchValue . '%'
+                        )
+                            ->orWhere(
+                                's.smobile',
+                                'LIKE',
+                                '%' . $searchValue . '%'
+                            );
+                    });
+
+                    break;
+
+
+                /*
+            |--------------------------------------------------------------------------
+            | EMAIL
+            |--------------------------------------------------------------------------
+            */
+
+                case 'email':
+
+                    $query->where(function ($q) use ($searchValue) {
+
+                        $q->where(
+                            'l.email',
+                            'LIKE',
+                            '%' . $searchValue . '%'
+                        )
+                            ->orWhere(
+                                's.semail',
+                                'LIKE',
+                                '%' . $searchValue . '%'
+                            );
+                    });
+
+                    break;
+
+
+                /*
+            |--------------------------------------------------------------------------
+            | STUDENT NAME
+            |--------------------------------------------------------------------------
+            */
+
+                case 'student_name':
+
+                    $query->where(function ($q) use ($searchValue) {
+
+                        $q->where(
+                            'l.applicant_name',
+                            'LIKE',
+                            '%' . $searchValue . '%'
+                        )
+                            ->orWhere(
+                                's.sname',
+                                'LIKE',
+                                '%' . $searchValue . '%'
+                            );
+                    });
+
+                    break;
+
+
+                /*
+            |--------------------------------------------------------------------------
+            | FILE NUMBER
+            |--------------------------------------------------------------------------
+            |
+            | IMPORTANT:
+            | file_no exists in seminarpre (s.file_no),
+            | NOT in lead_appointed.
+            |
+            */
+
+                case 'file_no':
+
+                    $query->where(
+                        's.file_no',
+                        'LIKE',
+                        '%' . $searchValue . '%'
+                    );
+
+                    break;
+            }
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | Latest First
+        |--------------------------------------------------------------------------
+        */
+
+            $query->orderByDesc('l.id');
+
+
+            /*
+        |--------------------------------------------------------------------------
+        | Get Results
+        |--------------------------------------------------------------------------
+        */
+
+            $masterFiles = $query->get();
+        }
+
+
+        /*
+    |--------------------------------------------------------------------------
+    | Return View
+    |--------------------------------------------------------------------------
+    */
+
+        return view(
+            'leads.manage_listing',
+            compact(
+                'masterFiles',
+                'sessRole',
+                'sessionId'
+            )
+        );
+    }
+
+    public function manageFileLogs(Request $request)
+    {
+        if (!session()->has('login')) {
+            return response()->json([
+                'error' => 'Session expired.'
+            ], 401);
+        }
+
+        $sessRole = session('role');
+
+        if (!in_array($sessRole, ['branch_manager', 'counselor'])) {
+            return response()->json([
+                'error' => 'Unauthorized.'
+            ], 403);
+        }
+
+        $request->validate([
+            'semi_id' => [
+                'required',
+                'integer'
+            ],
+        ]);
+
+        $semiId = (int) $request->input('semi_id');
+
+
+
+        $logs = DB::table('opr_sts_logs')
+            ->where('main_id', $semiId)
+            ->orderByDesc('id')
+            ->get()
+            ->map(function ($row) {
+                return [
+                    'main_id'       => $row->main_id,
+                    'oprStsSend'    => $row->oprStsSend,
+                    'stage'         => $row->stage,
+                    'stage_date'    => $row->stage_date,
+                    'stage_remarks' => $row->stage_remarks,
+                    'updated_by'    => $row->created_name,
+                    'created_date'  => $row->created_date,
+                ];
+            })
+            ->values();
+
+
+
+        $notes = DB::table('notes_logs')
+            ->select([
+                'main_id',
+                'notes_remarks as remarks',
+                'created_name as updated_by',
+                'created_datetime as datetime',
+            ])
+            ->where('main_id', $semiId)
+            ->orderByDesc('created_datetime')
+            ->get()
+            ->values();
+
+
+
+        $transferLogs = DB::table('lead_transfer_requests')
+            ->select([
+                'id',
+                'lead_id',
+                'lead_name',
+                'lead_mobile',
+                'current_counselor_id',
+                'current_counselor_name',
+                'requested_by_id',
+                'requested_by_name',
+                'requested_branch',
+                'status',
+                'approved_by_id',
+                'approved_by_name',
+                'approved_at',
+                'rejection_reason',
+                'created_at',
+            ])
+            ->where('lead_id', $semiId)
+            ->orderByDesc('id')
+            ->get()
+            ->map(function ($transfer) {
+                return [
+                    'id' => $transfer->id,
+                    'lead_id' => $transfer->lead_id,
+                    'lead_name' => $transfer->lead_name,
+                    'lead_mobile' => $transfer->lead_mobile,
+                    'current_counselor_name'
+                    => $transfer->current_counselor_name,
+                    'requested_by_name'
+                    => $transfer->requested_by_name,
+                    'requested_branch'
+                    => $transfer->requested_branch,
+                    'status'
+                    => $transfer->status,
+                    'approved_by_name'
+                    => $transfer->approved_by_name
+                        ?: 'Branch Manager',
+                    'approved_at'
+                    => $transfer->approved_at,
+                    'rejection_reason'
+                    => $transfer->rejection_reason,
+                    'created_at'
+                    => $transfer->created_at,
+                ];
+            })
+            ->values();
+
+        return response()->json([
+            'logs' => $logs,
+            'notes' => $notes,
+            'transfer_logs' => $transferLogs,
+        ]);
+    }
 }

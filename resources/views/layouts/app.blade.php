@@ -249,8 +249,8 @@
 
                         <li class="nav-item">
 
-                            <a class="nav-link {{ request()->routeIs('branch.dashboard') ? 'active' : '' }}"
-                                href="{{ route('branch.dashboard') }}">
+                            <a class="nav-link {{ request()->routeIs('branch.manager.dashboard') ? 'active' : '' }}"
+                                href="{{ route('branch.manager.dashboard') }}">
 
                                 <i class="fa fa-desktop"></i>
 

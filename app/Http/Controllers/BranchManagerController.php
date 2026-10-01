@@ -75,27 +75,54 @@ class BranchManagerController extends Controller
 
 
 
-    public function getLogs(Request $request)
-    {
-        $idno = $request->id;
+    // public function getLogs(Request $request)
+    // {
+    //     // dd($request->all());
+    //     $idno = $request->id;
 
-        if (empty($idno)) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Seminar ID is required.'
-            ], 400);
-        }
+    //     if (empty($idno)) {
+    //         return response()->json([
+    //             'status' => 'error',
+    //             'message' => 'Seminar ID is required.'
+    //         ], 400);
+    //     }
 
-        $logs = DB::table('counslor_status')
-            ->where('seminar_id', $idno)
-            ->orderByDesc('id')
-            ->get();
+    //     $logs = DB::table('counslor_status')
+    //         ->where('seminar_id', $idno)
+    //         ->orderByDesc('id')
+    //         ->get();
 
+    //     return response()->json([
+    //         'status' => 'success',
+    //         'logs' => $logs
+    //     ]);
+    // }
+
+
+public function getLogs(Request $request)
+{
+    $idno = $request->input('semi_id');
+
+    if (empty($idno)) {
         return response()->json([
-            'status' => 'success',
-            'logs' => $logs
-        ]);
+            'status' => 'error',
+            'message' => 'Seminar ID is required.'
+        ], 400);
     }
+
+    $logs = DB::table('counslor_status')
+        ->where('seminar_id', $idno)
+        ->orderByDesc('id')
+        ->get();
+
+    return response()->json([
+        'status' => 'success',
+        'logs' => $logs,
+        'notes' => []
+    ]);
+}
+
+
 
 
     public function branchDashboard(Request $request)
