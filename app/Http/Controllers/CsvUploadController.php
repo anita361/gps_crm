@@ -577,14 +577,14 @@ class CsvUploadController extends Controller
                 return response()->json(['status' => 'error', 'message' => 'This lead has already been reassigned. ' . 'The transfer request can no longer be accepted.'], 422);
             }
             DB::beginTransaction();
-            try { /* |-------------------------------------------------------------------------- | UPDATE LEAD OWNER |-------------------------------------------------------------------------- */
+            try {
                 $leadUpdated = DB::table('lead_appointed')->where('id', $leadId)->where('assign_id', $currentCounselorId)->update(['assign_id' => $newCounselorId, 'assign_name' => $newCounselorName,]);
                 if ($leadUpdated <= 0) {
                     throw new \Exception('Unable to update lead assignment.');
-                } /* |-------------------------------------------------------------------------- | ALSO UPDATE seminarpre IF IT EXISTS |-------------------------------------------------------------------------- | | seminarpre is connected by mobile for this CRM. | We update it when a matching record exists. | */
+                }
                 if (!empty($lead->callerno)) {
                     DB::table('seminarpre')->where('smobile', $lead->callerno)->update(['assign_id' => $newCounselorId, 'assign_name' => $newCounselorName, 'assign_date' => now(), 'update_date' => now()->toDateString(), 'update_time' => now()->format('H:i:s'),]);
-                } /* |-------------------------------------------------------------------------- | UPDATE TRANSFER REQUEST |-------------------------------------------------------------------------- | | IMPORTANT: | Use processed_* columns. | NOT approved_* columns. | */
+                }
                 $requestUpdated = DB::table('lead_transfer_requests')->where('id', $id)->where('status', 'Pending')->update(['status' => 'Accepted', 'processed_by_id' => $managerId, 'processed_by_name' => $managerName, 'processed_at' => now(), 'updated_at' => now()]);
                 if ($requestUpdated <= 0) {
                     throw new \Exception('Transfer request was not updated. ' . 'It may already have been processed.');
@@ -596,7 +596,7 @@ class CsvUploadController extends Controller
                 Log::error('Lead Transfer Accept Error', ['transfer_request_id' => $id, 'lead_id' => $leadId, 'error' => $e->getMessage()]);
                 return response()->json(['status' => 'error', 'message' => 'Unable to accept transfer request.'], 500);
             }
-        } /* |-------------------------------------------------------------------------- | REJECT TRANSFER |-------------------------------------------------------------------------- */
+        }
         if ($request->action === 'reject') {
             $reason = trim($request->reason ?? '');
             if ($reason === '') {
@@ -626,30 +626,30 @@ class CsvUploadController extends Controller
         }
         $request->validate(['lead_id' => ['required', 'integer', 'min:1']]);
         $requesterId = (int) session('login');
-        $leadId = (int) $request->input('lead_id'); /* |-------------------------------------------------------------------------- | Requester |-------------------------------------------------------------------------- */
+        $leadId = (int) $request->input('lead_id');
         $requester = DB::table('crm_login')->where('id', $requesterId)->first();
         if (!$requester) {
             return response()->json(['status' => 'error', 'message' => 'Counselor not found.'], 404);
         }
         $requesterName = trim($requester->name ?? '');
-        $requesterBranch = trim($requester->branch ?? ''); /* |-------------------------------------------------------------------------- | Get Lead |-------------------------------------------------------------------------- */
+        $requesterBranch = trim($requester->branch ?? '');
         $lead = DB::table('lead_appointed as l')->leftJoin('seminarpre as s', 'l.callerno', '=', 's.smobile')->select(['l.id as lead_id', 'l.applicant_name', 'l.callerno', 'l.email', /* | Current owner MUST come from lead_appointed. */ 'l.assign_id as lead_assign_id', 'l.assign_name as lead_assign_name', 's.sno as semi_id', 's.sname', 's.smobile',])->where('l.id', $leadId)->first(); /* |-------------------------------------------------------------------------- | Lead not found |-------------------------------------------------------------------------- */
         if (!$lead) {
             return response()->json(['status' => 'error', 'message' => 'Lead not found.'], 404);
-        } /* |-------------------------------------------------------------------------- | Current Owner |-------------------------------------------------------------------------- */
+        }
         $currentAssignId = (int) ($lead->lead_assign_id ?? 0);
-        $currentAssignName = trim($lead->lead_assign_name ?? ''); /* |-------------------------------------------------------------------------- | Lead Name |-------------------------------------------------------------------------- */
-        $leadName = trim($lead->sname ?? $lead->applicant_name ?? ''); /* |-------------------------------------------------------------------------- | Lead Mobile |-------------------------------------------------------------------------- */
-        $leadMobile = trim($lead->smobile ?? $lead->callerno ?? ''); /* |-------------------------------------------------------------------------- | Prevent current owner from requesting transfer |-------------------------------------------------------------------------- */
+        $currentAssignName = trim($lead->lead_assign_name ?? '');
+        $leadName = trim($lead->sname ?? $lead->applicant_name ?? '');
+        $leadMobile = trim($lead->smobile ?? $lead->callerno ?? '');
         if ($currentAssignId === $requesterId) {
             return response()->json(['status' => 'error', 'message' => 'You already own this lead.'], 422);
-        } /* |-------------------------------------------------------------------------- | Check Existing Pending Request |-------------------------------------------------------------------------- */
+        }
         $existingRequest = DB::table('lead_transfer_requests')->where('lead_id', $leadId)->where('requested_by_id', $requesterId)->where('status', 'Pending')->first();
         if ($existingRequest) {
             return response()->json(['status' => 'error', 'message' => 'Transfer request is already pending.'], 422);
-        } /* |-------------------------------------------------------------------------- | Create Transfer Request |-------------------------------------------------------------------------- */
+        }
         try {
-            DB::table('lead_transfer_requests')->insert(['lead_id' => $leadId, 'lead_name' => $leadName, 'lead_mobile' => $leadMobile, /* | IMPORTANT: | current_counselor_id DOES NOT EXIST | in your table, so do not insert it. */ 'current_counselor_name' => $currentAssignName, 'requested_by_id' => $requesterId, 'requested_by_name' => $requesterName, 'requested_branch' => $requesterBranch, 'status' => 'Pending', 'created_at' => now(), 'updated_at' => now(),]);
+            DB::table('lead_transfer_requests')->insert(['lead_id' => $leadId, 'lead_name' => $leadName, 'lead_mobile' => $leadMobile,  'current_counselor_name' => $currentAssignName, 'requested_by_id' => $requesterId, 'requested_by_name' => $requesterName, 'requested_branch' => $requesterBranch, 'status' => 'Pending', 'created_at' => now(), 'updated_at' => now(),]);
             return response()->json(['status' => 'success', 'message' => 'Transfer request sent successfully.']);
         } catch (\Throwable $e) {
             Log::error('Lead Transfer Request Error', ['lead_id' => $leadId, 'requester_id' => $requesterId, 'error' => $e->getMessage()]);

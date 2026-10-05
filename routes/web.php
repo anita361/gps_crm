@@ -16,12 +16,23 @@ use App\Http\Controllers\FinanceDashboardController;
 use App\Http\Controllers\FinanceExportController;
 use App\Http\Controllers\CsvUploadController;
 use App\Http\Controllers\CounselorDashboardController;
+use App\Http\Controllers\Auth\OtpController;
 
 
 Route::get('/', [LoginController::class, 'index']);
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
+
+
+Route::get('/login-otp', [LoginController::class, 'otpLoginPage'])->name('login.otp');
+
+Route::post('/login-otp', [LoginController::class, 'otpLogin'])->name('login.otp.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+Route::get('/verify-otp', [OtpController::class, 'show'])->name('verify.otp');
+
+Route::post('/verify-otp', [OtpController::class, 'verify'])->name('verify.otp.submit');
+
+Route::post('/resend-otp', [OtpController::class, 'resend'])->name('resend.otp');
 
 
 Route::middleware('login')->group(function () {
