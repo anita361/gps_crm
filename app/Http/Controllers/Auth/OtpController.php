@@ -37,135 +37,6 @@ class OtpController extends Controller
 
 
 
-    // public function verify(Request $request)
-    // {
-
-
-    //     $request->validate([
-    //         'otp' => [
-    //             'required',
-    //             'digits:6',
-    //         ],
-    //     ]);
-
-
-
-    //     if (
-    //         !Session::has('otp_user_id') ||
-    //         !Session::has('otp_code') ||
-    //         !Session::has('otp_created_at')
-    //     ) {
-
-    //         $this->clearOtpSession();
-
-    //         return redirect()
-    //             ->route('login.otp')
-    //             ->with(
-    //                 'error',
-    //                 'OTP session expired. Please login again.'
-    //             );
-    //     }
-
-
-
-
-    //     $expiresAt = (int) Session::get('otp_expires_at');
-
-    //     if (!$expiresAt || time() > $expiresAt) {
-
-    //         $this->clearOtpSession();
-
-    //         return redirect()
-    //             ->route('login.otp')
-    //             ->with(
-    //                 'error',
-    //                 'OTP has expired. Please request a new OTP.'
-    //             );
-    //     }
-
-
-
-
-    //     $enteredOtp = (string) $request->input('otp');
-
-    //     $sessionOtp = (string) Session::get('otp_code');
-
-
-    //     if (!hash_equals($sessionOtp, $enteredOtp)) {
-
-    //         return back()
-    //             ->withInput()
-    //             ->with(
-    //                 'error',
-    //                 'Invalid OTP. Please enter the correct OTP.'
-    //             );
-    //     }
-
-
-
-    //     $userId = Session::get('otp_user_id');
-
-    //     $user = CrmLogin::find($userId);
-
-
-    //     if (!$user) {
-
-    //         $this->clearOtpSession();
-
-    //         return redirect()
-    //             ->route('login.otp')
-    //             ->with(
-    //                 'error',
-    //                 'User account not found.'
-    //             );
-    //     }
-
-
-
-
-    //     $request->session()->regenerate();
-
-
-
-
-    //     Session::put('login', $user->id);
-
-    //     Session::put('role', $user->role);
-
-    //     Session::put('username', $user->username);
-
-    //     Session::put('name', $user->name);
-
-
-
-
-    //     if (isset($user->Ontario)) {
-
-    //         Session::put(
-    //             'ontario_access',
-    //             $user->Ontario
-    //         );
-    //     }
-
-
-
-
-    //     $role = $user->role;
-
-
-
-
-    //     $this->clearOtpSession();
-
-
-
-
-    //     $loginController = app(
-    //         \App\Http\Controllers\Auth\LoginController::class
-    //     );
-
-    //     return $loginController->redirectByRole($role);
-    // }
 
     public function verify(Request $request)
     {
@@ -353,40 +224,6 @@ class OtpController extends Controller
 
 
         $ccEmails = [];
-
-
-        if (
-            strtolower(trim($user->username))
-            === 's.a.s.financial@outlook.com'
-        ) {
-
-            $ccEmails[] =
-                'Arshpreet@gpseducation.ca';
-        } elseif (
-            strtolower(trim($user->username))
-            === 'navreet'
-        ) {
-
-            $ccEmails[] =
-                'Nhinfo50@gmail.com';
-        } elseif (
-            strtolower(trim($user->username))
-            === 'accounts'
-        ) {
-
-            $ccEmails[] =
-                'gpseducation7015@gmail.com';
-        } elseif (
-            strtolower(trim($user->username))
-            === 'ajagency'
-        ) {
-
-            $ccEmails[] =
-                'payal@gpseducation.ca';
-        }
-
-
-
 
         Mail::send([], [], function ($message) use (
             $user,
@@ -664,12 +501,6 @@ class OtpController extends Controller
         ';
     }
 
-
-    /*
-    |--------------------------------------------------------------------------
-    | Clear Temporary OTP Session
-    |--------------------------------------------------------------------------
-    */
 
     private function clearOtpSession()
     {
