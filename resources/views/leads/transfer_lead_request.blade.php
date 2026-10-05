@@ -7,28 +7,19 @@
     <div class="card">
 
         <div class="card-header bg-primary text-white">
-
             <i class="fa fa-exchange-alt"></i>
-
             Lead Transfer Requests
-
         </div>
-
 
         <div class="card-body">
 
-
             {{-- FILTERS --}}
-
             <form method="GET" action="{{ route('lead.transfer') }}">
 
                 <div class="row mb-4 align-items-end">
 
-
                     {{-- TRANSFER LIST --}}
-
                     <div class="col-md-2">
-
                         <label class="form-label">
                             Transfer List
                         </label>
@@ -44,54 +35,42 @@
                             </option>
 
                         </select>
-
                     </div>
 
 
                     {{-- LEAD NAME --}}
-
                     <div class="col-md-3">
-
                         <label class="form-label">
                             Lead Name
                         </label>
 
                         <input type="text" name="lead_name" class="form-control" placeholder="Search Lead Name"
                             value="{{ $leadName }}">
-
                     </div>
 
 
                     {{-- FROM DATE --}}
-
                     <div class="col-md-2">
-
                         <label class="form-label">
                             From Date
                         </label>
 
                         <input type="date" name="from_date" class="form-control" value="{{ $fromDate }}">
-
                     </div>
 
 
                     {{-- TO DATE --}}
-
                     <div class="col-md-2">
-
                         <label class="form-label">
                             To Date
                         </label>
 
                         <input type="date" name="to_date" class="form-control" value="{{ $toDate }}">
-
                     </div>
 
 
                     {{-- STATUS --}}
-
                     <div class="col-md-2">
-
                         <label class="form-label">
                             Status
                         </label>
@@ -115,20 +94,14 @@
                             </option>
 
                         </select>
-
                     </div>
 
 
                     {{-- SEARCH --}}
-
                     <div class="col-md-1">
-
                         <button type="submit" class="btn btn-primary">
-
                             <i class="fa fa-search"></i>
-
                         </button>
-
                     </div>
 
                 </div>
@@ -137,7 +110,6 @@
 
 
             {{-- RECORD LIMIT --}}
-
             <div class="mb-3">
 
                 <form method="GET" action="{{ route('lead.transfer') }}" id="limitForm">
@@ -180,7 +152,6 @@
 
 
             {{-- TABLE --}}
-
             <div class="table-responsive">
 
                 <table class="table table-striped table-bordered">
@@ -189,53 +160,29 @@
 
                         <tr>
 
-                            <th>
-                                Sr No.
-                            </th>
+                            <th>Sr No.</th>
 
-                            <th>
-                                Request Date
-                            </th>
+                            <th>Request Date</th>
 
-                            <th>
-                                Lead Name
-                            </th>
+                            <th>Lead Name</th>
 
-                            <th>
-                                Mobile No
-                            </th>
+                            <th>Mobile No</th>
 
-                            <th>
-                                Current Counselor
-                            </th>
+                            <th>Current Counselor</th>
 
-                            <th>
-                                Request From
-                            </th>
+                            <th>Request From</th>
 
-                            <th>
-                                Request Branch
-                            </th>
+                            <th>Request Branch</th>
 
-                            <th>
-                                Status
-                            </th>
+                            <th>Status</th>
 
-                            <th>
-                                Action
-                            </th>
+                            <th>Action</th>
 
-                            <th>
-                                Processed By
-                            </th>
+                            <th>Processed By</th>
 
-                            <th>
-                                Processed Date
-                            </th>
+                            <th>Processed Date</th>
 
-                            <th>
-                                Rejection Reason
-                            </th>
+                            <th>Rejection Reason</th>
 
                         </tr>
 
@@ -248,99 +195,67 @@
                             <tr id="transfer-row-{{ $transfer->id }}">
 
                                 {{-- SR NO --}}
-
                                 <td>
-
                                     {{ $transfers->firstItem() + $index }}
-
                                 </td>
 
 
                                 {{-- REQUEST DATE --}}
-
                                 <td>
-
-                                    {{ $transfer->created_at ? \Carbon\Carbon::parse($transfer->created_at)->format('d-m-Y h:i A') : '-' }}
-
+                                    {{ !empty($transfer->created_at) ? \Carbon\Carbon::parse($transfer->created_at)->format('d-m-Y h:i A') : '-' }}
                                 </td>
 
 
                                 {{-- LEAD NAME --}}
-
                                 <td>
-
                                     <strong>
-
-                                        {{ $transfer->lead_name }}
-
+                                        {{ $transfer->lead_name ?? '-' }}
                                     </strong>
-
                                 </td>
 
 
                                 {{-- MOBILE --}}
-
                                 <td>
-
-                                    {{ $transfer->lead_mobile }}
-
+                                    {{ $transfer->lead_mobile ?? '-' }}
                                 </td>
 
 
                                 {{-- CURRENT COUNSELOR --}}
-
                                 <td>
-
-                                    {{ $transfer->current_counselor_name }}
-
+                                    {{ $transfer->current_counselor_name ?? '-' }}
                                 </td>
 
 
                                 {{-- REQUEST FROM --}}
-
                                 <td>
-
-                                    {{ $transfer->requested_by_name }}
-
+                                    {{ $transfer->requested_by_name ?? '-' }}
                                 </td>
 
 
                                 {{-- REQUEST BRANCH --}}
-
                                 <td>
-
-                                    {{ $transfer->requested_branch }}
-
+                                    {{ $transfer->requested_branch ?? '-' }}
                                 </td>
 
 
                                 {{-- STATUS --}}
-
                                 <td>
 
                                     @if ($transfer->status === 'Pending')
                                         <span class="badge bg-warning text-dark">
-
                                             Pending
-
                                         </span>
                                     @elseif ($transfer->status === 'Accepted')
                                         <span class="badge bg-success">
-
                                             Accepted
-
                                         </span>
                                     @elseif ($transfer->status === 'Rejected')
                                         <span class="badge bg-danger">
-
                                             Rejected
-
                                         </span>
                                     @else
                                         <span class="badge bg-secondary">
-
-                                            {{ $transfer->status }}
-
+                                            {{ $transfer->status ?? '-' }}
                                         </span>
                                     @endif
 
@@ -348,7 +263,6 @@
 
 
                                 {{-- ACTION --}}
-
                                 <td>
 
                                     @if ($transfer->status === 'Pending')
@@ -356,7 +270,6 @@
                                             data-id="{{ $transfer->id }}" data-name="{{ $transfer->lead_name }}">
 
                                             <i class="fa fa-check"></i>
-
                                             Accept
 
                                         </button>
@@ -366,27 +279,23 @@
                                             data-id="{{ $transfer->id }}" data-name="{{ $transfer->lead_name }}">
 
                                             <i class="fa fa-times"></i>
-
                                             Reject
 
                                         </button>
                                     @else
                                         <span class="text-muted">
-
                                             No Action
-
                                         </span>
                                     @endif
 
                                 </td>
 
 
-                                {{-- PROCESSED BY --}}
 
                                 <td>
 
                                     @if ($transfer->status === 'Accepted' || $transfer->status === 'Rejected')
-                                        {{ $transfer->approved_by_name ?? '-' }}
+                                        {{ $transfer->processed_by_name ?? '-' }}
                                     @else
                                         -
                                     @endif
@@ -394,12 +303,11 @@
                                 </td>
 
 
-                                {{-- PROCESSED DATE --}}
 
                                 <td>
 
-                                    @if ($transfer->approved_at)
-                                        {{ \Carbon\Carbon::parse($transfer->approved_at)->format('d-m-Y h:i A') }}
+                                    @if (($transfer->status === 'Accepted' || $transfer->status === 'Rejected') && !empty($transfer->processed_at))
+                                        {{ \Carbon\Carbon::parse($transfer->processed_at)->format('d-m-Y h:i A') }}
                                     @else
                                         -
                                     @endif
@@ -408,14 +316,11 @@
 
 
                                 {{-- REJECTION REASON --}}
-
                                 <td>
 
                                     @if ($transfer->status === 'Rejected')
                                         <span class="text-danger">
-
                                             {{ $transfer->rejection_reason ?? '-' }}
-
                                         </span>
                                     @else
                                         -
@@ -425,14 +330,13 @@
 
                             </tr>
 
+
                         @empty
 
                             <tr>
 
                                 <td colspan="12" class="text-center">
-
                                     No transfer requests found.
-
                                 </td>
 
                             </tr>
@@ -446,7 +350,6 @@
 
 
             {{-- PAGINATION --}}
-
             <div class="row mt-3 align-items-center">
 
                 <div class="col-md-6">
@@ -465,9 +368,7 @@
                         </p>
                     @else
                         <p class="mb-0">
-
                             Showing 0 entries
-
                         </p>
                     @endif
 
@@ -490,7 +391,6 @@
 
     </div>
 
-
 @endsection
 
 
@@ -498,12 +398,6 @@
     <script>
         $(document).ready(function() {
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | ACCEPT TRANSFER
-            |--------------------------------------------------------------------------
-            */
 
             $(document).on(
                 'click',
@@ -539,16 +433,11 @@
 
 
                         if (!result.isConfirmed) {
-
                             return;
-
                         }
 
 
-                        button.prop(
-                            'disabled',
-                            true
-                        );
+                        button.prop('disabled', true);
 
 
                         $.ajax({
@@ -572,12 +461,10 @@
 
                             success: function(response) {
 
-
                                 if (
                                     response.status ===
                                     'success'
                                 ) {
-
 
                                     Swal.fire({
 
@@ -594,19 +481,13 @@
                                     });
 
 
-                                    $(
-                                            '#transfer-row-' +
-                                            requestId
-                                        )
+                                    $('#transfer-row-' + requestId)
                                         .fadeOut(
                                             400,
                                             function() {
-
                                                 $(this).remove();
-
                                             }
                                         );
-
 
                                 } else {
 
@@ -674,12 +555,6 @@
             );
 
 
-            /*
-            |--------------------------------------------------------------------------
-            | REJECT TRANSFER
-            |--------------------------------------------------------------------------
-            */
-
             $(document).on(
                 'click',
                 '.reject-transfer',
@@ -716,6 +591,7 @@
 
                         confirmButtonText: 'Reject Transfer',
 
+
                         inputValidator: function(value) {
 
                             if (
@@ -733,9 +609,7 @@
 
 
                         if (!result.isConfirmed) {
-
                             return;
-
                         }
 
 
@@ -772,12 +646,10 @@
 
                             success: function(response) {
 
-
                                 if (
                                     response.status ===
                                     'success'
                                 ) {
-
 
                                     Swal.fire({
 
@@ -794,19 +666,13 @@
                                     });
 
 
-                                    $(
-                                            '#transfer-row-' +
-                                            requestId
-                                        )
+                                    $('#transfer-row-' + requestId)
                                         .fadeOut(
                                             400,
                                             function() {
-
                                                 $(this).remove();
-
                                             }
                                         );
-
 
                                 } else {
 
