@@ -91,10 +91,10 @@ class OtpController extends Controller
                 ->with('error', 'User account not found.');
         }
 
-        // Remove OTP data before establishing authenticated session
+
         $this->clearOtpSession();
 
-        // Prevent session fixation
+
         $request->session()->regenerate();
 
         Session::put('login', $user->id);
