@@ -1,5 +1,3 @@
-{{-- resources/views/admin/counsellor-dashboard.blade.php --}}
-
 @extends('layouts.app')
 
 @section('title', 'Counsellor Dashboard')
@@ -7,10 +5,6 @@
 @section('content')
 
     <style>
-        /* =========================================================
-                   PAGE
-                ========================================================= */
-
         .counsellor-page {
             background: #f1f3f6;
             min-height: calc(100vh - 70px);
@@ -24,9 +18,7 @@
             margin: 0 auto;
         }
 
-        /* =========================================================
-                   MAIN WHITE BOX
-                ========================================================= */
+
 
         .crm-box {
             background: #fff;
@@ -36,9 +28,7 @@
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
 
-        /* =========================================================
-                   BLUE TITLE BAR - SAME AS FIRST IMAGE
-                ========================================================= */
+
 
         .crm-title-bar {
             height: 35px;
@@ -58,9 +48,7 @@
             font-size: 15px;
         }
 
-        /* =========================================================
-                   SEARCH AREA
-                ========================================================= */
+
 
         .search-area {
             padding: 0 12px 10px;
@@ -93,9 +81,7 @@
             box-shadow: none;
         }
 
-        /* =========================================================
-                   TABLE WRAPPER
-                ========================================================= */
+
 
         .dashboard-table-wrapper {
             width: 100%;
@@ -103,9 +89,6 @@
             margin-top: 18px;
         }
 
-        /* =========================================================
-                   COUNSELLOR SUMMARY TABLE
-                ========================================================= */
 
         #counsellor_summary_table {
             width: 100% !important;
@@ -160,9 +143,7 @@
             background: #e9e9e9;
         }
 
-        /* =========================================================
-                   BLUE HOVER / SELECTED ROW
-                   ========================================================= */
+
 
         #counsellor_summary_table tbody tr:hover td {
             background: #0869e8 !important;
@@ -174,9 +155,7 @@
             color: #fff !important;
         }
 
-        /* =========================================================
-                   TOTAL ROW
-                ========================================================= */
+
 
         #counsellor_summary_table tfoot td {
             background: #dedede !important;
@@ -198,9 +177,7 @@
             text-align: center;
         }
 
-        /* =========================================================
-                   TOTAL WALK-IN
-                ========================================================= */
+
 
         .totale_data_summery {
             display: inline;
@@ -217,9 +194,7 @@
             text-decoration: underline;
         }
 
-        /* =========================================================
-                   USER DETAILS TITLE
-                ========================================================= */
+
 
         .user-details-title {
             background: #0869e8;
@@ -241,9 +216,6 @@
             margin-right: 6px;
         }
 
-        /* =========================================================
-                   EXPORT BUTTON
-                ========================================================= */
 
         .export-wrapper {
             text-align: center;
@@ -270,9 +242,7 @@
             color: #fff !important;
         }
 
-        /* =========================================================
-                   USER DETAILS TABLE
-                ========================================================= */
+
 
         .user-table-wrapper {
             width: 100%;
@@ -332,9 +302,7 @@
             background: #e5efff !important;
         }
 
-        /* =========================================================
-                   CALL LOG BUTTON
-                ========================================================= */
+
 
         .calllogsdata {
             background: #f8f8f8 !important;
@@ -366,9 +334,7 @@
             vertical-align: middle;
         }
 
-        /* =========================================================
-                   VIEW BUTTON
-                ========================================================= */
+
 
         .view-tbl-btn {
             white-space: nowrap;
@@ -397,9 +363,7 @@
             background: #0755bb;
         }
 
-        /* =========================================================
-                   DATATABLE CONTROLS
-                ========================================================= */
+
 
         #appointment_data_wrapper {
             width: 100%;
@@ -464,9 +428,7 @@
             padding: 3px 8px !important;
         }
 
-        /* =========================================================
-                   LOADING
-                ========================================================= */
+
 
         .report-loader {
             text-align: center !important;
@@ -489,9 +451,7 @@
             background: #fff !important;
         }
 
-        /* =========================================================
-                   MODAL
-                ========================================================= */
+
 
         .Call-Details-modal .modal-content {
             border-radius: 2px;
@@ -557,9 +517,7 @@
             color: #fff;
         }
 
-        /* =========================================================
-                   MODAL TABLE
-                ========================================================= */
+
 
         .Call-Details-modal .dashboard-tbl {
             width: 100%;
@@ -585,9 +543,6 @@
             padding: 6px !important;
         }
 
-        /* =========================================================
-                   MOBILE
-                ========================================================= */
 
         @media (max-width: 767px) {
 
@@ -631,9 +586,7 @@
         <div class="counsellor-container">
 
 
-            {{-- =====================================================
-             COUNSELLOR DASHBOARD
-        ====================================================== --}}
+
 
             <div class="crm-box">
 
@@ -647,7 +600,7 @@
                 </div>
 
 
-                {{-- SEARCH --}}
+
                 <div class="search-area">
 
                     <label for="branch" class="search-label">
@@ -704,7 +657,7 @@
                 </div>
 
 
-                {{-- COUNSELLOR TABLE --}}
+
                 <div class="dashboard-table-wrapper">
 
                     <table id="counsellor_summary_table" class="table">
@@ -757,9 +710,6 @@
 
 
 
-            {{-- =====================================================
-             USER DETAILS
-        ====================================================== --}}
 
             <div class="crm-box">
 
@@ -797,7 +747,7 @@
                 </form>
 
 
-                {{-- USER TABLE --}}
+
 
                 <div class="user-table-wrapper">
 
@@ -872,9 +822,7 @@
 
 
 
-    {{-- =========================================================
-     CALL LOGS MODAL
-========================================================= --}}
+
 
     <div class="modal fade Call-Details-modal" id="Calllogs" tabindex="-1" aria-labelledby="CalllogsLabel"
         aria-hidden="true">
@@ -979,9 +927,7 @@
         <script>
             $(document).ready(function() {
 
-                /* =========================================================
-                   DATATABLE
-                ========================================================= */
+
 
                 let appointmentTable = $('#appointment_data').DataTable({
 
@@ -1004,9 +950,7 @@
                 });
 
 
-                /* =========================================================
-                   BRANCH CHANGE
-                ========================================================= */
+
 
                 $('#branch').on('change', function() {
 
@@ -1048,11 +992,6 @@
                     loadUserDetails(branch);
 
                 });
-
-
-                /* =========================================================
-                   COUNSELLOR REPORT
-                ========================================================= */
 
                 function loadCounsellorReport(branch) {
 
@@ -1273,9 +1212,6 @@
                 }
 
 
-                /* =========================================================
-                   USER DETAILS
-                ========================================================= */
 
                 function loadUserDetails(branch) {
 
@@ -1374,7 +1310,7 @@
                                 }
 
 
-                                /* CALL LOG BUTTON */
+
 
                                 let callButton = `
 

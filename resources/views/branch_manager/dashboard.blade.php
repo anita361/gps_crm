@@ -113,7 +113,7 @@
 
                         </div>
 
-                        <!-- File Number -->
+
                         <div class="col-lg-5 col-md-7" id="file_div" style="display:none;">
 
                             <label class="fw-bold mb-2">
@@ -141,7 +141,7 @@
 
         </div>
 
-        <!-- Today's Appointments -->
+
         <div class="card shadow border-0">
 
             <div class="card-header bg-primary text-white text-center">

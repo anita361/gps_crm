@@ -6,13 +6,12 @@
 
     <div class="container-fluid">
 
-        <!-- Search Panel -->
         <div class="card shadow mb-4 border-0">
 
             <div class="card-header bg-primary text-white text-center">
                 <h5 class="mb-0">
                     <i class="fa fa-search"></i>
-                  Branch Dashboard
+                    Branch Dashboard
                 </h5>
             </div>
 
@@ -115,7 +114,6 @@
 
                         </div>
 
-                        <!-- File Number -->
                         <div class="col-lg-5 col-md-7" id="file_div"
                             style="{{ request()->filled('file_number') ? 'display:block;' : 'display:none;' }}">
 
@@ -157,7 +155,7 @@
         </div>
 
 
-        <!-- Today's Appointments -->
+
         <div class="card shadow border-0">
 
             <div class="card-header bg-primary text-white text-center">
@@ -250,8 +248,6 @@
                             @forelse($appointments as $row)
                                 <tr>
 
-                                    <!-- Notes -->
-
                                     <td>
 
                                         <button type="button" class="btn btn-success btn-sm open-notes-modal"
@@ -263,10 +259,6 @@
                                         </button>
 
                                     </td>
-
-
-                                    <!-- Client Name -->
-
                                     <td>
 
                                         {{ $row->applicant_name }}
@@ -274,7 +266,7 @@
                                     </td>
 
 
-                                    <!-- Client Email -->
+
 
                                     <td>
 
@@ -283,7 +275,7 @@
                                     </td>
 
 
-                                    <!-- Client Number -->
+
 
                                     <td>
 
@@ -301,7 +293,7 @@
                                     </td>
 
 
-                                    <!-- No Accompanying -->
+
 
                                     <td>
 
@@ -319,7 +311,7 @@
                                     </td>
 
 
-                                    <!-- Walk-in Status -->
+
 
                                     <td>
 
@@ -357,8 +349,6 @@
                                     </td>
 
 
-                                    <!-- Assign Counsellor -->
-
                                     <td>
 
                                         @if (empty($row->assign_id))
@@ -380,7 +370,7 @@
                                     </td>
 
 
-                                    <!-- View -->
+
 
                                     <td>
 
@@ -394,7 +384,7 @@
                                     </td>
 
 
-                                    <!-- File Number -->
+
 
                                     <td>
 
@@ -409,13 +399,7 @@
 
                                     <td>
 
-                                        {{-- <button class="btn btn-info btn-sm view-logs-btn"
-                                            data-file-no="{{ $row->id }}"
-                                            data-name="{{ $row->applicant_name }}">
 
-                                            View Logs
-
-                                        </button> --}}
 
                                         <button class="btn btn-info btn-sm view-logs-btn"
                                             data-file-no="{{ $row->semi_id ?? $row->id }}"
@@ -447,9 +431,7 @@
                     </table>
 
 
-                    <!-- ========================================================= -->
-                    <!-- ASSIGN COUNSELOR MODAL -->
-                    <!-- ========================================================= -->
+
 
                     @foreach ($appointments as $row)
                         <div class="modal fade" id="assignModal{{ $row->id }}" tabindex="-1"
@@ -582,8 +564,6 @@
                                             </div>
 
 
-                                            <!-- CURRENT ASSIGNMENT -->
-
                                             @if (!empty($row->assign_id))
                                                 <div class="alert alert-info">
 
@@ -601,7 +581,7 @@
                                             @endif
 
 
-                                            <!-- SUBMIT -->
+
 
                                             <button type="submit" class="btn btn-primary w-100 assign_submit">
 
@@ -640,9 +620,7 @@
                     @endforeach
 
 
-                    <!-- ========================================================= -->
-                    <!-- LOGS MODAL -->
-                    <!-- ========================================================= -->
+
 
                     <div class="modal fade" id="logsModal" tabindex="-1">
 
@@ -856,8 +834,6 @@
 
 
 @push('scripts')
-
-
     <script>
         function showSearchField() {
 
@@ -933,9 +909,6 @@
 
         }
     </script>
-    <!-- ========================================================= -->
-    <!-- LOGS / NOTES SCRIPT -->
-    <!-- ========================================================= -->
 
     <script>
         function showSearchField() {
@@ -1066,9 +1039,7 @@
                         );
 
 
-                        /*
-                        STATUS LOGS
-                        */
+
 
                         let logsHtml =
                             '';
@@ -1138,9 +1109,7 @@
                             .html(logsHtml);
 
 
-                        /*
-                        NOTES
-                        */
+
 
                         let notesHtml =
                             '';
@@ -1210,9 +1179,7 @@
                             .html(notesHtml);
 
 
-                        /*
-                        OPEN BOOTSTRAP 5 MODAL
-                        */
+
 
                         let logsModalElement =
                             document.getElementById(
@@ -1282,9 +1249,7 @@
             });
 
 
-            /*
-            OPEN NOTES MODAL
-            */
+
 
             $(document).on(
                 'click',
@@ -1317,10 +1282,6 @@
                 }
             );
 
-
-            /*
-            LOAD NOTES
-            */
 
             function loadNotes(noteId) {
 
@@ -1448,9 +1409,7 @@
             }
 
 
-            /*
-            ADD NOTES
-            */
+
 
             $('#addNotesForm').submit(
                 function(e) {
@@ -1508,9 +1467,6 @@
     </script>
 
 
-    <!-- ========================================================= -->
-    <!-- ASSIGN COUNSELOR SCRIPT -->
-    <!-- ========================================================= -->
 
     <script>
         $(document).on(

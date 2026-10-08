@@ -22,55 +22,6 @@
 
                     <div class="row">
 
-                        {{-- <div class="col-md-3">
-
-                            <label><strong>From Date</strong></label>
-
-                            <input type="date" class="form-control" name="from_date" value="{{ request('from_date') }}">
-
-                        </div> --}}
-
-                        {{-- <div class="col-md-3">
-
-                            <label><strong>To Date</strong></label>
-
-                            <input type="date" class="form-control" name="to_date" value="{{ request('to_date') }}">
-
-                        </div> --}}
-
-                        {{-- <div class="col-md-3">
-
-                            <label><strong>Branch</strong></label>
-
-                            <select class="form-control" name="branch">
-
-                                <option value="">
-                                    All Branches
-                                </option>
-
-                                @foreach ($branches as $branch)
-                                    <option value="{{ $branch }}"
-                                        {{ request('branch') == $branch ? 'selected' : '' }}>
-
-                                        {{ $branch }}
-
-                                    </option>
-                                @endforeach
-
-                            </select>
-
-                        </div> --}}
-
-                        {{-- <div class="col-md-3 d-flex align-items-end">
-
-                            <button type="submit" class="btn btn-primary w-100">
-
-                                Search
-
-                            </button>
-
-                        </div> --}}
-
                     </div>
 
                 </form>
@@ -837,11 +788,6 @@
             }
 
 
-
-
-
-            // Add Note
-
             $('#addNoteBtn').click(function() {
 
 
@@ -901,8 +847,6 @@
 
 
             });
-
-            // Drop Details
 
             $(document).on('click', '.notthree', function() {
 

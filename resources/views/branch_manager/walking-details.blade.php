@@ -127,8 +127,6 @@
 
         <div class="row">
 
-            {{-- LEFT SIDEBAR --}}
-
             <div class="col-md-3">
                 <div class="nav flex-column nav-pills sidebar" id="sidebar-tab" role="tablist">
 
@@ -177,9 +175,6 @@
 
                 <div class="tab-content">
 
-                    {{-- ===========================
-                     PERSONAL INFORMATION
-                ============================ --}}
 
                  <div class="tab-pane fade show active" id="personal_info">
 
@@ -199,21 +194,21 @@
 
                                     <div class="row">
 
-                                        <!-- Interested Country -->
+
                                         <div class="col-md-3 mb-3">
                                             <label>Interested in Immigrate To</label>
                                             <input type="text" name="country_interested" class="form-control"
                                                 value="{{ old('country_interested', $student->country_interested ?? 'Canada') }}">
                                         </div>
 
-                                        <!-- Source -->
+
                                         <div class="col-md-3 mb-3">
                                             <label>Source</label>
                                             <input type="text" name="source" class="form-control"
                                                 value="{{ old('source', $student->ssource ?? 'Company Lead') }}" readonly>
                                         </div>
 
-                                        <!-- First Name -->
+
                                         <div class="col-md-3 mb-3">
                                             <label>
                                                 First Name

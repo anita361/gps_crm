@@ -15,7 +15,7 @@
         </h2>
 
 
-        <!-- Search -->
+
 
         <form method="GET" action="{{ route('reports.source') }}">
 
@@ -78,7 +78,7 @@
 
 
 
-    <!-- Table -->
+
 
 
     <div class="manage_file">

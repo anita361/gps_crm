@@ -4,12 +4,6 @@
 
 <div class="container-fluid mt-3">
 
-    {{-- @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-    @endif --}}
-
     <div class="card shadow">
 
         <div class="card-header bg-primary text-white text-center">

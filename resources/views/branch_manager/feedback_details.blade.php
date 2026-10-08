@@ -106,12 +106,6 @@
 
 </div>
 
-
-
-<!-- ======================== -->
-<!-- Feedback Modal -->
-<!-- ======================== -->
-
 <div class="modal fade"
      id="feedbackModal"
      tabindex="-1">
