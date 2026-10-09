@@ -5,10 +5,6 @@
 @section('content')
 
     <style>
-        /* =========================================================
-                   DAILY ACTIVITY REPORT
-                   ========================================================= */
-
         .daily-report-wrapper {
             width: 100%;
             margin-top: 5px;
@@ -24,10 +20,6 @@
             overflow: hidden;
         }
 
-        /* =========================================================
-                   BLUE PAGE TITLE
-                   ========================================================= */
-
         .daily-report-header {
             background: #2f64e7;
             color: #fff;
@@ -41,10 +33,6 @@
         .daily-report-header i {
             margin-right: 5px;
         }
-
-        /* =========================================================
-                   FILTER SECTION
-                   ========================================================= */
 
         .filter-section {
             background: #fff;
@@ -81,10 +69,6 @@
         .filter-button-wrapper {
             padding-top: 15px;
         }
-
-        /* =========================================================
-                   TABLE
-                   ========================================================= */
 
         .report-table-wrapper {
             width: 100%;
@@ -137,10 +121,6 @@
             padding-left: 5px !important;
         }
 
-        /* =========================================================
-                   COUNT LINKS
-                   ========================================================= */
-
         .count-link {
             color: #337ab7 !important;
             text-decoration: underline !important;
@@ -152,10 +132,6 @@
             color: #0d6efd !important;
         }
 
-        /* =========================================================
-                   TOTAL ROW
-                   ========================================================= */
-
         .total-row td {
             background: #eeeeee !important;
             font-weight: bold !important;
@@ -165,19 +141,11 @@
             font-weight: bold;
         }
 
-        /* =========================================================
-                   EMPTY
-                   ========================================================= */
-
         .no-records {
             text-align: center !important;
             padding: 10px !important;
             font-size: 11px !important;
         }
-
-        /* =========================================================
-                   REPORT INFO
-                   ========================================================= */
 
         .report-info {
             padding: 4px 8px;
@@ -185,10 +153,6 @@
             color: #555;
             border-bottom: 1px solid #ddd;
         }
-
-        /* =========================================================
-                   MOBILE
-                   ========================================================= */
 
         @media (max-width: 768px) {
 
@@ -214,19 +178,10 @@
 
 
         <div class="daily-report-card">
-
-            {{-- =====================================================
-     PAGE HEADER
-     ====================================================== --}}
             <div class="daily-report-header">
                 <i class="fa fa-calendar-day"></i>
                 Daily Activity Reports
             </div>
-
-
-            {{-- =====================================================
-     FILTERS
-     ====================================================== --}}
             <div class="filter-section">
 
                 <form method="GET" action="{{ route('daily.activity.reports') }}">
@@ -267,13 +222,6 @@
                             </label>
 
                             @php
-                                /*
-                                 * Laravel conversion of:
-                                 *
-                                 * $con->query("SELECT DISTINCT province_name
- * FROM seminarpre
- * WHERE province_name != ''");
-                                 */
                                 $provinceList = \Illuminate\Support\Facades\DB::table('seminarpre')
                                     ->whereNotNull('province_name')
                                     ->where('province_name', '!=', '')
@@ -300,123 +248,102 @@
                         </div>
 
 
+                        <div class="col-sm-6 col-md-4">
 
-                       {{-- REP NAME --}}
-<div class="col-sm-6 col-md-4">
+                            <label for="rep_name">
+                                Rep Name:
+                            </label>
 
-    <label for="rep_name">
-        Rep Name:
-    </label>
+                            @php
+                                $representativeList = \Illuminate\Support\Facades\DB::table('seminarpre')
+                                    ->whereNotNull('assign_name')
+                                    ->where('assign_name', '!=', '')
+                                    ->distinct()
+                                    ->orderBy('assign_name')
+                                    ->pluck('assign_name');
 
-    @php
-        $representativeList = \Illuminate\Support\Facades\DB::table('seminarpre')
-            ->whereNotNull('assign_name')
-            ->where('assign_name', '!=', '')
-            ->distinct()
-            ->orderBy('assign_name')
-            ->pluck('assign_name');
+                                $selectedReps = request('rep_name', []);
 
-        $selectedReps = request('rep_name', []);
+                                if (!is_array($selectedReps)) {
+                                    $selectedReps = [$selectedReps];
+                                }
+                            @endphp
 
-        if (!is_array($selectedReps)) {
-            $selectedReps = [$selectedReps];
-        }
-    @endphp
+                            <div class="dropdown">
 
-    <div class="dropdown">
 
-        {{-- Dropdown Button --}}
-        <button type="button"
-                class="form-control text-start"
-                id="repDropdown"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-                style="height:23px; padding:1px 5px; font-size:10px;">
+                                <button type="button" class="form-control text-start" id="repDropdown"
+                                    data-bs-toggle="dropdown" aria-expanded="false"
+                                    style="height:23px; padding:1px 5px; font-size:10px;">
 
-            <span id="repDropdownText">
-                @if(count($selectedReps) > 0)
-                    {{ implode(', ', $selectedReps) }}
-                @else
-                    Select Rep Name(s)
-                @endif
-            </span>
+                                    <span id="repDropdownText">
+                                        @if (count($selectedReps) > 0)
+                                            {{ implode(', ', $selectedReps) }}
+                                        @else
+                                            Select Rep Name(s)
+                                        @endif
+                                    </span>
 
-        </button>
+                                </button>
 
-        {{-- Dropdown Menu --}}
-        <div class="dropdown-menu w-100 p-2"
-             aria-labelledby="repDropdown"
-             style="max-height:250px; overflow-y:auto; font-size:10px;">
 
-            {{-- SEARCH --}}
-            <div class="mb-2">
-                <input type="text"
-                       id="repSearch"
-                       class="form-control"
-                       placeholder="Search Rep Name..."
-                       autocomplete="off"
-                       style="height:25px; font-size:10px;">
-            </div>
+                                <div class="dropdown-menu w-100 p-2" aria-labelledby="repDropdown"
+                                    style="max-height:250px; overflow-y:auto; font-size:10px;">
 
-            {{-- SELECT ALL --}}
-            <div class="form-check mb-1">
-                <input class="form-check-input"
-                       type="checkbox"
-                       id="selectAllReps">
+                                    {{-- SEARCH --}}
+                                    <div class="mb-2">
+                                        <input type="text" id="repSearch" class="form-control"
+                                            placeholder="Search Rep Name..." autocomplete="off"
+                                            style="height:25px; font-size:10px;">
+                                    </div>
 
-                <label class="form-check-label" for="selectAllReps">
-                    <strong>Select All</strong>
-                </label>
-            </div>
+                                    {{-- SELECT ALL --}}
+                                    <div class="form-check mb-1">
+                                        <input class="form-check-input" type="checkbox" id="selectAllReps">
 
-            <hr class="my-1">
+                                        <label class="form-check-label" for="selectAllReps">
+                                            <strong>Select All</strong>
+                                        </label>
+                                    </div>
 
-            {{-- Branch Manager --}}
-            <div class="form-check rep-item">
+                                    <hr class="my-1">
 
-                <input class="form-check-input rep-checkbox"
-                       type="checkbox"
-                       name="rep_name[]"
-                       value="Branch Manager"
-                       id="rep_branch_manager"
-                       {{ in_array('Branch Manager', $selectedReps) ? 'checked' : '' }}>
+                                    {{-- Branch Manager --}}
+                                    <div class="form-check rep-item">
 
-                <label class="form-check-label" for="rep_branch_manager">
-                    Branch Manager
-                </label>
+                                        <input class="form-check-input rep-checkbox" type="checkbox" name="rep_name[]"
+                                            value="Branch Manager" id="rep_branch_manager"
+                                            {{ in_array('Branch Manager', $selectedReps) ? 'checked' : '' }}>
 
-            </div>
+                                        <label class="form-check-label" for="rep_branch_manager">
+                                            Branch Manager
+                                        </label>
 
-            {{-- Other Representatives --}}
-            @foreach ($representativeList as $rep)
+                                    </div>
 
-                @if ($rep != 'Branch Manager')
 
-                    <div class="form-check rep-item">
+                                    @foreach ($representativeList as $rep)
+                                        @if ($rep != 'Branch Manager')
+                                            <div class="form-check rep-item">
 
-                        <input class="form-check-input rep-checkbox"
-                               type="checkbox"
-                               name="rep_name[]"
-                               value="{{ $rep }}"
-                               id="rep_{{ md5($rep) }}"
-                               {{ in_array($rep, $selectedReps) ? 'checked' : '' }}>
+                                                <input class="form-check-input rep-checkbox" type="checkbox"
+                                                    name="rep_name[]" value="{{ $rep }}"
+                                                    id="rep_{{ md5($rep) }}"
+                                                    {{ in_array($rep, $selectedReps) ? 'checked' : '' }}>
 
-                        <label class="form-check-label"
-                               for="rep_{{ md5($rep) }}">
-                            {{ $rep }}
-                        </label>
+                                                <label class="form-check-label" for="rep_{{ md5($rep) }}">
+                                                    {{ $rep }}
+                                                </label>
 
-                    </div>
+                                            </div>
+                                        @endif
+                                    @endforeach
 
-                @endif
+                                </div>
 
-            @endforeach
+                            </div>
 
-        </div>
-
-    </div>
-
-</div>
+                        </div>
 
                         {{-- SEARCH --}}
                         <div class="col-lg-1 col-md-2 col-sm-6">
@@ -567,11 +494,6 @@
 
                                 $province = request('provinceFilter', '');
 
-                                /*
-                                 * IMPORTANT:
-                                 * Your filter uses rep_name[]
-                                 * NOT repFilter
-                                 */
                                 $selectedReps = request('rep_name', []);
 
                                 if (!is_array($selectedReps)) {
@@ -800,180 +722,180 @@
 
     </div>
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function() {
 
-        const checkboxes = document.querySelectorAll('.rep-checkbox');
-        const dropdownText = document.getElementById('repDropdownText');
-        const searchInput = document.getElementById('repSearch');
-        const selectAll = document.getElementById('selectAllReps');
-
-
-        // ==============================
-        // UPDATE SELECTED REP TEXT
-        // ==============================
-        function updateRepText() {
-
-            let selected = [];
-
-            checkboxes.forEach(function(checkbox) {
-
-                if (checkbox.checked) {
-                    selected.push(checkbox.value);
-                }
-
-            });
-
-            if (selected.length === 0) {
-
-                dropdownText.textContent = 'Select Rep Name(s)';
-
-            } else if (selected.length <= 2) {
-
-                dropdownText.textContent = selected.join(', ');
-
-            } else {
-
-                dropdownText.textContent =
-                    selected.length + ' Rep(s) Selected';
-
-            }
-
-            updateSelectAll();
-        }
+            const checkboxes = document.querySelectorAll('.rep-checkbox');
+            const dropdownText = document.getElementById('repDropdownText');
+            const searchInput = document.getElementById('repSearch');
+            const selectAll = document.getElementById('selectAllReps');
 
 
-        // ==============================
-        // CHECKBOX CHANGE
-        // ==============================
-        checkboxes.forEach(function(checkbox) {
+            // ==============================
+            // UPDATE SELECTED REP TEXT
+            // ==============================
+            function updateRepText() {
 
-            checkbox.addEventListener('change', function() {
+                let selected = [];
 
-                updateRepText();
+                checkboxes.forEach(function(checkbox) {
 
-            });
-
-        });
-
-
-        // ==============================
-        // SEARCH REP NAME
-        // ==============================
-        if (searchInput) {
-
-            searchInput.addEventListener('keyup', function() {
-
-                let searchValue = this.value.toLowerCase().trim();
-
-                document.querySelectorAll('.rep-item').forEach(function(item) {
-
-                    let label = item.querySelector('label');
-
-                    if (!label) {
-                        return;
-                    }
-
-                    let repName = label.textContent
-                        .toLowerCase()
-                        .trim();
-
-                    if (repName.includes(searchValue)) {
-
-                        item.style.display = '';
-
-                    } else {
-
-                        item.style.display = 'none';
-
+                    if (checkbox.checked) {
+                        selected.push(checkbox.value);
                     }
 
                 });
 
+                if (selected.length === 0) {
+
+                    dropdownText.textContent = 'Select Rep Name(s)';
+
+                } else if (selected.length <= 2) {
+
+                    dropdownText.textContent = selected.join(', ');
+
+                } else {
+
+                    dropdownText.textContent =
+                        selected.length + ' Rep(s) Selected';
+
+                }
+
                 updateSelectAll();
+            }
+
+
+            // ==============================
+            // CHECKBOX CHANGE
+            // ==============================
+            checkboxes.forEach(function(checkbox) {
+
+                checkbox.addEventListener('change', function() {
+
+                    updateRepText();
+
+                });
 
             });
 
-        }
+
+            // ==============================
+            // SEARCH REP NAME
+            // ==============================
+            if (searchInput) {
+
+                searchInput.addEventListener('keyup', function() {
+
+                    let searchValue = this.value.toLowerCase().trim();
+
+                    document.querySelectorAll('.rep-item').forEach(function(item) {
+
+                        let label = item.querySelector('label');
+
+                        if (!label) {
+                            return;
+                        }
+
+                        let repName = label.textContent
+                            .toLowerCase()
+                            .trim();
+
+                        if (repName.includes(searchValue)) {
+
+                            item.style.display = '';
+
+                        } else {
+
+                            item.style.display = 'none';
+
+                        }
+
+                    });
+
+                    updateSelectAll();
+
+                });
+
+            }
 
 
-        // ==============================
-        // SELECT ALL
-        // ==============================
-        if (selectAll) {
+            // ==============================
+            // SELECT ALL
+            // ==============================
+            if (selectAll) {
 
-            selectAll.addEventListener('change', function() {
+                selectAll.addEventListener('change', function() {
 
-                let checked = this.checked;
+                    let checked = this.checked;
+
+                    document.querySelectorAll('.rep-item').forEach(function(item) {
+
+                        // Only select filtered/visible representatives
+                        if (item.style.display !== 'none') {
+
+                            let checkbox =
+                                item.querySelector('.rep-checkbox');
+
+                            if (checkbox) {
+                                checkbox.checked = checked;
+                            }
+
+                        }
+
+                    });
+
+                    updateRepText();
+
+                });
+
+            }
+
+
+            // ==============================
+            // UPDATE SELECT ALL STATUS
+            // ==============================
+            function updateSelectAll() {
+
+                if (!selectAll) {
+                    return;
+                }
+
+                let visibleCheckboxes = [];
 
                 document.querySelectorAll('.rep-item').forEach(function(item) {
 
-                    // Only select filtered/visible representatives
                     if (item.style.display !== 'none') {
 
                         let checkbox =
                             item.querySelector('.rep-checkbox');
 
                         if (checkbox) {
-                            checkbox.checked = checked;
+                            visibleCheckboxes.push(checkbox);
                         }
 
                     }
 
                 });
 
-                updateRepText();
 
-            });
+                if (visibleCheckboxes.length === 0) {
 
-        }
+                    selectAll.checked = false;
 
-
-        // ==============================
-        // UPDATE SELECT ALL STATUS
-        // ==============================
-        function updateSelectAll() {
-
-            if (!selectAll) {
-                return;
-            }
-
-            let visibleCheckboxes = [];
-
-            document.querySelectorAll('.rep-item').forEach(function(item) {
-
-                if (item.style.display !== 'none') {
-
-                    let checkbox =
-                        item.querySelector('.rep-checkbox');
-
-                    if (checkbox) {
-                        visibleCheckboxes.push(checkbox);
-                    }
-
+                    return;
                 }
 
-            });
 
+                selectAll.checked = visibleCheckboxes.every(function(checkbox) {
 
-            if (visibleCheckboxes.length === 0) {
+                    return checkbox.checked;
 
-                selectAll.checked = false;
+                });
 
-                return;
             }
 
 
-            selectAll.checked = visibleCheckboxes.every(function(checkbox) {
+            updateRepText();
 
-                return checkbox.checked;
-
-            });
-
-        }
-
-
-        updateRepText();
-
-    });
-</script>
+        });
+    </script>
 @endsection

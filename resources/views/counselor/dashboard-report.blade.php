@@ -185,10 +185,6 @@
     }
 </style>
 
-{{-- =========================================
-FLATPICKR CSS
-========================================== --}}
-
 <link rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 
@@ -197,9 +193,6 @@ FLATPICKR CSS
 
 <div class="crm-report-wrapper">
 
-    {{-- =========================================
-         TITLE
-    ========================================== --}}
     <div class="crm-report-title">
 
         <i class="fa fa-user"></i>
@@ -209,9 +202,6 @@ FLATPICKR CSS
     </div>
 
 
-    {{-- =========================================
-         DATE FILTER
-    ========================================== --}}
     <div class="crm-filter">
 
         <form method="GET"
@@ -219,7 +209,7 @@ FLATPICKR CSS
 
             <div class="row">
 
-                {{-- Start Date --}}
+
                 <div class="col-sm-2">
 
                     <div class="form-group">
@@ -242,7 +232,7 @@ FLATPICKR CSS
                 </div>
 
 
-                {{-- End Date --}}
+
                 <div class="col-sm-2">
 
                     <div class="form-group">
@@ -286,10 +276,6 @@ FLATPICKR CSS
 
     </div>
 
-
-    {{-- =========================================
-         TABLE
-    ========================================== --}}
     <div id="alldata"
          class="col-12 col-sm-12 test_wrapper mt-2">
 
@@ -634,10 +620,6 @@ FLATPICKR CSS
 
 
 </section>
-
-{{-- =========================================
-FLATPICKR JS
-========================================== --}}
 
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 

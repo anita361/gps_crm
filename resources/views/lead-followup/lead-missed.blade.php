@@ -5,9 +5,6 @@
 @section('content')
 
     <style>
-        /* =========================================================
-           PAGE
-        ========================================================= */
         .missed-followup-page {
             background: #f1f3f8;
             min-height: calc(100vh - 70px);
@@ -15,10 +12,6 @@
             font-family: Arial, Helvetica, sans-serif;
             font-size: 11px;
         }
-
-        /* =========================================================
-           BLUE TITLE BAR
-        ========================================================= */
         .page-title-bar {
             background: #2867e8;
             color: #fff;
@@ -35,9 +28,6 @@
             margin-right: 5px;
         }
 
-        /* =========================================================
-           SEARCH AREA
-        ========================================================= */
         .search-area {
             background: #fff;
             border: 1px solid #ddd;
@@ -93,10 +83,6 @@
             display: inline-flex;
             align-items: center;
         }
-
-        /* =========================================================
-           MAIN TWO COLUMN AREA
-        ========================================================= */
         .followup-main-row {
             display: grid;
             grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
@@ -111,10 +97,6 @@
         .right-panel {
             min-width: 0;
         }
-
-        /* =========================================================
-           SECTION HEADERS
-        ========================================================= */
         .section-header {
             background: #2867e8;
             color: #fff;
@@ -125,10 +107,6 @@
             font-weight: 600;
             margin-bottom: 8px;
         }
-
-        /* =========================================================
-           MAIN TABLE
-        ========================================================= */
         .followup-table-wrapper {
             width: 100%;
             overflow-x: auto;
@@ -205,10 +183,6 @@
             color: #2867e8;
             text-decoration: underline;
         }
-
-        /* =========================================================
-           SMALL BUTTONS
-        ========================================================= */
         .btn-notes,
         .btn-logs,
         .btn-view {
@@ -255,10 +229,6 @@
         .btn-view:hover {
             color: #174cae;
         }
-
-        /* =========================================================
-           EMPTY STATE
-        ========================================================= */
         .empty-row {
             text-align: center !important;
             padding: 20px !important;
@@ -266,9 +236,6 @@
             color: #777 !important;
         }
 
-        /* =========================================================
-           PAGINATION
-        ========================================================= */
         .table-footer {
             display: flex;
             justify-content: space-between;
@@ -314,10 +281,6 @@
             border-color: #ccc;
             background: #f5f5f5;
         }
-
-        /* =========================================================
-           RIGHT SIDE TOTAL
-        ========================================================= */
         .total-followup-box {
             background: #e8e5d5;
             border: 1px solid #ddd8c2;
@@ -334,9 +297,6 @@
             font-weight: 500;
         }
 
-        /* =========================================================
-           COUNSELOR SUMMARY
-        ========================================================= */
         .counselor-section {
             border: 1px solid #d5d5d5;
         }
@@ -411,10 +371,6 @@
         .counselor-total-link:hover {
             color: #2867e8;
         }
-
-        /* =========================================================
-           SCROLLBAR
-        ========================================================= */
         .counselor-table-wrapper::-webkit-scrollbar {
             width: 10px;
         }
@@ -427,10 +383,6 @@
             background: #888;
             border-radius: 4px;
         }
-
-        /* =========================================================
-           MODALS
-        ========================================================= */
         .modal-title {
             font-size: 16px;
         }
@@ -444,10 +396,6 @@
             font-size: 11px;
             vertical-align: middle;
         }
-
-        /* =========================================================
-           RESPONSIVE
-        ========================================================= */
         @media (max-width: 1100px) {
             .followup-main-row {
                 grid-template-columns: 1fr;
@@ -497,14 +445,14 @@
 
     <div class="missed-followup-page">
 
-       
+
         <div class="page-title-bar">
             <i class="fa fa-phone"></i>
             Missed Followup
         </div>
 
 
-      
+
         <div class="search-area">
 
             <form method="GET" action="{{ route('lead.followup.missed') }}">
@@ -543,10 +491,10 @@
         </div>
 
 
-     
+
         <div class="followup-main-row">
 
-           
+
             <div class="left-panel">
 
                 <div class="section-header">
@@ -649,7 +597,7 @@
 
                                 <tr>
 
-                                    
+
                                     <td class="text-center">
 
                                         <button type="button" class="btn-notes open-notes-modal"
@@ -661,7 +609,7 @@
                                     </td>
 
 
-                                    
+
                                     <td>
 
                                         <span class="follow-date">
@@ -677,7 +625,7 @@
                                     </td>
 
 
-                                 
+
                                     <td>
 
                                         <span class="student-name">
@@ -687,7 +635,7 @@
                                     </td>
 
 
-                                   
+
                                     <td>
 
                                         @if ($callMobile !== '')
@@ -701,13 +649,13 @@
                                     </td>
 
 
-                                    
+
                                     <td>
                                         {{ $source }}
                                     </td>
 
 
-                                    
+
                                     @if (($role ?? '') === 'super_admin')
                                         <td>
                                             {{ $branch }}
@@ -715,13 +663,13 @@
                                     @endif
 
 
-                                    
+
                                     <td>
                                         {{ $assignName }}
                                     </td>
 
 
-                                   
+
                                     @if (($role ?? '') !== 'super_admin')
                                         <td>
 
@@ -740,7 +688,7 @@
                                     @endif
 
 
-                                    
+
                                     <td class="text-center">
 
                                         <button type="button" class="btn-logs calllogsdata" data-id="{{ $studentId }}"
@@ -771,7 +719,7 @@
                 </div>
 
 
-               
+
                 @if (isset($students) && $students instanceof \Illuminate\Pagination\LengthAwarePaginator)
 
                     <div class="table-footer">
@@ -806,10 +754,10 @@
             </div>
 
 
-            
+
             <div class="right-panel">
 
-              
+
                 <div class="section-header">
                     Total Followups
                 </div>
@@ -824,7 +772,7 @@
                 </div>
 
 
-            
+
                 <div class="counselor-section">
 
                     <div class="counselor-header">
@@ -903,7 +851,7 @@
     </div>
 
 
-   
+
     <div class="modal fade" id="callLogsModal" tabindex="-1" aria-labelledby="callLogsModalLabel" aria-hidden="true">
 
         <div class="modal-dialog modal-xl">
@@ -924,7 +872,7 @@
 
                 <div class="modal-body">
 
-                    
+
                     <div class="table-responsive">
 
                         <table class="table table-bordered table-striped">
@@ -975,7 +923,7 @@
                     </div>
 
 
-                   
+
                     <h5 class="mb-3 mt-4">
                         Notes
                     </h5>
@@ -1044,7 +992,7 @@
     </div>
 
 
-  
+
     <div class="modal fade" id="NotesModal" tabindex="-1" aria-labelledby="NotesModalLabel" aria-hidden="true">
 
         <div class="modal-dialog modal-lg">
@@ -1068,7 +1016,7 @@
                     <input type="hidden" id="note_id" value="">
 
 
-                    
+
                     <div class="mb-4">
 
                         <label for="newNote" class="form-label fw-bold">
@@ -1090,7 +1038,7 @@
                     </div>
 
 
-                   
+
                     <div class="table-responsive">
 
                         <table class="table table-bordered table-striped">
@@ -1199,7 +1147,7 @@
 
                     success: function(data) {
 
-                     
+
 
                         if (
                             data &&
@@ -1227,7 +1175,7 @@
                         }
 
 
-                       
+
 
                         if (
                             data &&

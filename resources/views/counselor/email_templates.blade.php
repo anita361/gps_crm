@@ -182,10 +182,6 @@
             </div>
 
 
-
-
-            <!-- Pagination -->
-
             @if($templates->hasPages())
 
                 <div class="pagination-box">

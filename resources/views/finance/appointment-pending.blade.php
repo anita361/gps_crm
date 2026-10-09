@@ -92,8 +92,6 @@
 
 
 <div class="container-fluid">
-
-    {{-- PAGE HEADER --}}
     <div class="page-header d-flex justify-content-between align-items-center">
 
         <div>
@@ -112,7 +110,6 @@
     </div>
 
 
-    {{-- FILTER --}}
     <div class="filter-card">
 
         <form method="GET"
@@ -223,7 +220,6 @@
                 </div>
 
 
-                {{-- SOURCE --}}
                 <div class="col-md-3">
 
                     <div class="form-group">
@@ -253,9 +249,6 @@
                     </div>
 
                 </div>
-
-
-                {{-- PROVINCE --}}
                 <div class="col-md-3">
 
                     <div class="form-group">
@@ -949,22 +942,9 @@
 <script>
     $(document).ready(function() {
 
-        /*
-        |--------------------------------------------------------------------------
-        | SAVED FILTER VALUES
-        |--------------------------------------------------------------------------
-        */
-
         let selectedCollege = @json($collage_names ?? '');
         let selectedCampus = @json($campus_names ?? '');
         let selectedProgram = @json($program_names ?? '');
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | COLLEGE -> CAMPUS
-        |--------------------------------------------------------------------------
-        */
 
         $('#collage_name').on('change', function() {
 
@@ -1017,12 +997,6 @@
                     });
 
 
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SELECT SAVED CAMPUS
-                    |--------------------------------------------------------------------------
-                    */
-
                     if (selectedCampus !== '') {
 
                         campusDropdown.val(selectedCampus);
@@ -1031,13 +1005,6 @@
                             'Selected Campus:',
                             campusDropdown.val()
                         );
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | LOAD PROGRAMS AFTER CAMPUS IS SELECTED
-                        |--------------------------------------------------------------------------
-                        */
 
                         if (campusDropdown.val() !== '') {
 
@@ -1062,14 +1029,6 @@
             });
 
         });
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | CAMPUS -> PROGRAM
-        |--------------------------------------------------------------------------
-        */
-
         $('#campus_name').on('change', function() {
 
             let campus = $(this).val();
@@ -1116,14 +1075,6 @@
                         }
 
                     });
-
-
-                    /*
-                    |--------------------------------------------------------------------------
-                    | SELECT SAVED PROGRAM
-                    |--------------------------------------------------------------------------
-                    */
-
                     if (selectedProgram !== '') {
 
                         programDropdown.val(selectedProgram);
@@ -1151,26 +1102,6 @@
 
         });
 
-
-        /*
-        |--------------------------------------------------------------------------
-        | INITIAL PAGE LOAD
-        |--------------------------------------------------------------------------
-        |
-        | Same behavior as your old PHP:
-        |
-        | College selected
-        |      ↓
-        | Load Campus
-        |      ↓
-        | Select Campus
-        |      ↓
-        | Load Program
-        |      ↓
-        | Select Program
-        |
-        |--------------------------------------------------------------------------
-        */
 
         if ($('#collage_name').val() !== '') {
 
@@ -1210,7 +1141,7 @@
             $('#action_datetime').val('');
         } /* * Load status logs */
         loadActionStatusLogs(id);
-    }); /* * ========================================== * LOAD ACTION STATUS LOGS * ========================================== */
+    });
     function loadActionStatusLogs(id) {
         $('#actionStatusLogs').html(` <div class="text-center p-3"> Loading logs... </div> `);
         $.ajax({
@@ -1237,7 +1168,7 @@
                 $('#actionStatusLogs').html(` <div class="text-center text-danger p-3"> Failed to load logs. </div> `);
             }
         });
-    } /* * ========================================== * ACTION STATUS UPDATE * ========================================== */
+    }
     $(document).on('click', '#submitActionStatus', function() {
         let button = $(this);
         let logId = $('#actionLogId').val();
@@ -1408,17 +1339,14 @@
         }
 
 
-        // When Status changes
+
         $('#osap_status_flt').on('change', function() {
 
             const status = $(this).val();
 
-            // Clear previous sub-status when user manually changes status
             loadSubStatuses(status, '');
         });
 
-
-        // Load Sub Status automatically when page loads
         if (selectedStatus !== '') {
 
             $('#osap_status_flt').val(selectedStatus);

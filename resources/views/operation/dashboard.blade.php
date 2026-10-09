@@ -809,7 +809,7 @@
 
 
 
-        $(document).on('click','.noteBtn',function(){
+        $(document).on('click', '.noteBtn', function() {
 
             let id = $(this).data('id');
 

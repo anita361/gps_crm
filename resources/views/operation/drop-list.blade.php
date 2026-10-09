@@ -8,12 +8,7 @@
         $userRole = auth()->user()->role ?? '';
         $username = auth()->user()->username ?? '';
 
-        $allowedExcelUsers = [
-            'branch_manager',
-            'sahil_arora',
-            'navjot',
-            'prabjot'
-        ];
+        $allowedExcelUsers = ['branch_manager', 'sahil_arora', 'navjot', 'prabjot'];
 
         $operationStatuses = [
             'Not Process',
@@ -25,13 +20,7 @@
             'Drop',
         ];
 
-        $mainStatuses = [
-            'Start',
-            'FR1',
-            'FR2',
-            'Cancel',
-            'Withdrawal'
-        ];
+        $mainStatuses = ['Start', 'FR1', 'FR2', 'Cancel', 'Withdrawal'];
 
         $provinceList = $provinces ?? [
             'Alberta',
@@ -52,7 +41,6 @@
 
 
     <style>
-
         .card-header {
             background: #3164d9;
             color: #fff;
@@ -139,8 +127,8 @@
 
 
         /* =========================================================
-           LOG MODALS
-        ========================================================= */
+                   LOG MODALS
+                ========================================================= */
 
         .logs-modal-content {
             border: 0;
@@ -237,7 +225,6 @@
             }
 
         }
-
     </style>
 
     <div class="card">
@@ -263,13 +250,8 @@
                             From Start Date:
                         </label>
 
-                        <input
-                            type="date"
-                            class="form-control"
-                            id="FromFltDate"
-                            name="FromFltDate"
-                            value="{{ request('FromFltDate') }}"
-                        >
+                        <input type="date" class="form-control" id="FromFltDate" name="FromFltDate"
+                            value="{{ request('FromFltDate') }}">
 
                     </div>
 
@@ -281,13 +263,8 @@
                             To Start Date:
                         </label>
 
-                        <input
-                            type="date"
-                            class="form-control"
-                            id="ToFltDate"
-                            name="ToFltDate"
-                            value="{{ request('ToFltDate') }}"
-                        >
+                        <input type="date" class="form-control" id="ToFltDate" name="ToFltDate"
+                            value="{{ request('ToFltDate') }}">
 
                     </div>
 
@@ -299,25 +276,17 @@
                             Operation Status:
                         </label>
 
-                        <select
-                            class="form-control"
-                            id="operation_status"
-                            name="operation_status"
-                        >
+                        <select class="form-control" id="operation_status" name="operation_status">
 
                             <option value="">
                                 Select
                             </option>
 
                             @foreach ($operationStatuses as $status)
-
-                                <option
-                                    value="{{ $status }}"
-                                    {{ request('operation_status') == $status ? 'selected' : '' }}
-                                >
+                                <option value="{{ $status }}"
+                                    {{ request('operation_status') == $status ? 'selected' : '' }}>
                                     {{ $status }}
                                 </option>
-
                             @endforeach
 
                         </select>
@@ -332,27 +301,17 @@
                             Student Status:
                         </label>
 
-                        <select
-                            class="form-control"
-                            id="student_status"
-                            name="student_status"
-                        >
+                        <select class="form-control" id="student_status" name="student_status">
 
                             <option value="">
                                 Select
                             </option>
 
-                            <option
-                                value="enrolled"
-                                {{ request('student_status') == 'enrolled' ? 'selected' : '' }}
-                            >
+                            <option value="enrolled" {{ request('student_status') == 'enrolled' ? 'selected' : '' }}>
                                 Enrolled
                             </option>
 
-                            <option
-                                value="Re-enrolled"
-                                {{ request('student_status') == 'Re-enrolled' ? 'selected' : '' }}
-                            >
+                            <option value="Re-enrolled" {{ request('student_status') == 'Re-enrolled' ? 'selected' : '' }}>
                                 Re-enrolled
                             </option>
 
@@ -368,25 +327,17 @@
                             Main Status:
                         </label>
 
-                        <select
-                            class="form-control"
-                            id="fund_aol_status"
-                            name="fund_aol_status"
-                        >
+                        <select class="form-control" id="fund_aol_status" name="fund_aol_status">
 
                             <option value="">
                                 Select Status
                             </option>
 
                             @foreach ($mainStatuses as $status)
-
-                                <option
-                                    value="{{ $status }}"
-                                    {{ request('fund_aol_status') == $status ? 'selected' : '' }}
-                                >
+                                <option value="{{ $status }}"
+                                    {{ request('fund_aol_status') == $status ? 'selected' : '' }}>
                                     {{ $status }}
                                 </option>
-
                             @endforeach
 
                         </select>
@@ -401,25 +352,17 @@
                             Province:
                         </label>
 
-                        <select
-                            name="province"
-                            id="province_name"
-                            class="form-control"
-                        >
+                        <select name="province" id="province_name" class="form-control">
 
                             <option value="">
                                 --Select Province--
                             </option>
 
                             @foreach ($provinceList as $province)
-
-                                <option
-                                    value="{{ $province }}"
-                                    {{ request('province') == $province ? 'selected' : '' }}
-                                >
+                                <option value="{{ $province }}"
+                                    {{ request('province') == $province ? 'selected' : '' }}>
                                     {{ $province }}
                                 </option>
-
                             @endforeach
 
                         </select>
@@ -434,25 +377,17 @@
                             College:
                         </label>
 
-                        <select
-                            name="college"
-                            id="collage_name"
-                            class="form-control"
-                        >
+                        <select name="college" id="collage_name" class="form-control">
 
                             <option value="">
                                 --Select College--
                             </option>
 
                             @foreach ($colleges ?? [] as $college)
-
-                                <option
-                                    value="{{ $college->clg_name }}"
-                                    {{ request('college') == $college->clg_name ? 'selected' : '' }}
-                                >
+                                <option value="{{ $college->clg_name }}"
+                                    {{ request('college') == $college->clg_name ? 'selected' : '' }}>
                                     {{ $college->clg_name }}
                                 </option>
-
                             @endforeach
 
                         </select>
@@ -467,11 +402,7 @@
                             Campus:
                         </label>
 
-                        <select
-                            name="campus"
-                            id="campus"
-                            class="form-control"
-                        >
+                        <select name="campus" id="campus" class="form-control">
 
                             <option value="">
                                 --Select Campus--
@@ -489,11 +420,7 @@
                             Program:
                         </label>
 
-                        <select
-                            name="program"
-                            id="program_name"
-                            class="form-control"
-                        >
+                        <select name="program" id="program_name" class="form-control">
 
                             <option value="">
                                 --Select Program--
@@ -511,25 +438,17 @@
                             Counselor Wise:
                         </label>
 
-                        <select
-                            name="counselor_id"
-                            id="assign"
-                            class="form-control"
-                        >
+                        <select name="counselor_id" id="assign" class="form-control">
 
                             <option value="">
                                 Select a Counselor
                             </option>
 
                             @foreach ($counselors ?? [] as $counselor)
-
-                                <option
-                                    value="{{ $counselor->id }}"
-                                    {{ request('counselor_id') == $counselor->id ? 'selected' : '' }}
-                                >
+                                <option value="{{ $counselor->id }}"
+                                    {{ request('counselor_id') == $counselor->id ? 'selected' : '' }}>
                                     {{ $counselor->name }}
                                 </option>
-
                             @endforeach
 
                         </select>
@@ -544,13 +463,8 @@
                             Opr Last Status Date:
                         </label>
 
-                        <input
-                            type="date"
-                            class="form-control"
-                            name="GetFltDate"
-                            id="GetFltDate"
-                            value="{{ request('GetFltDate') }}"
-                        >
+                        <input type="date" class="form-control" name="GetFltDate" id="GetFltDate"
+                            value="{{ request('GetFltDate') }}">
 
                     </div>
 
@@ -562,14 +476,8 @@
                             Name / Phone / Country / File No:
                         </label>
 
-                        <input
-                            type="text"
-                            class="form-control"
-                            name="Getsearch"
-                            id="Getsearch"
-                            value="{{ request('Getsearch') }}"
-                            placeholder="Search..."
-                        >
+                        <input type="text" class="form-control" name="Getsearch" id="Getsearch"
+                            value="{{ request('Getsearch') }}" placeholder="Search...">
 
                     </div>
 
@@ -577,17 +485,11 @@
                     {{-- Buttons --}}
                     <div class="filter-col filter-buttons">
 
-                        <button
-                            type="submit"
-                            class="btn btn-success btn-sm"
-                        >
+                        <button type="submit" class="btn btn-success btn-sm">
                             Search
                         </button>
 
-                        <a
-                            href="{{ route('drop.list') }}"
-                            class="btn btn-secondary btn-sm"
-                        >
+                        <a href="{{ route('drop.list') }}" class="btn btn-secondary btn-sm">
                             Reset
                         </a>
 
@@ -598,41 +500,21 @@
             </form>
 
 
-            {{-- =========================================================
-                EXCEL
-            ========================================================== --}}
-
             @if (in_array($username, $allowedExcelUsers))
-
-                <form
-                    action="{{ route('drop.excel') }}"
-                    method="POST"
-                    class="mt-3"
-                >
+                <form action="{{ route('drop.excel') }}" method="POST" class="mt-3">
 
                     @csrf
 
-                    <input
-                        type="hidden"
-                        name="where_condition"
-                        value="{{ $where_condition ?? '' }}"
-                    >
+                    <input type="hidden" name="where_condition" value="{{ $where_condition ?? '' }}">
 
-                    <button
-                        type="submit"
-                        class="btn btn-primary btn-sm"
-                    >
+                    <button type="submit" class="btn btn-primary btn-sm">
                         Download In Excel
                     </button>
 
                 </form>
-
             @endif
 
 
-            {{-- =========================================================
-                DATA
-            ========================================================== --}}
 
             <div id="alldata" class="mt-4">
 
@@ -640,21 +522,13 @@
                 {{-- Entries --}}
                 <div class="mb-2">
 
-                    <select
-                        id="limitSelect"
-                        class="form-select form-select-sm"
-                        style="width:auto;display:inline-block;"
-                    >
+                    <select id="limitSelect" class="form-select form-select-sm" style="width:auto;display:inline-block;">
 
                         @foreach ([10, 25, 50, 100] as $limitOption)
-
-                            <option
-                                value="{{ $limitOption }}"
-                                {{ (int) request('limit', $limit ?? 10) === $limitOption ? 'selected' : '' }}
-                            >
+                            <option value="{{ $limitOption }}"
+                                {{ (int) request('limit', $limit ?? 10) === $limitOption ? 'selected' : '' }}>
                                 {{ $limitOption }}
                             </option>
-
                         @endforeach
 
                     </select>
@@ -665,18 +539,9 @@
 
                 </div>
 
-
-                {{-- =====================================================
-                    TABLE
-                ====================================================== --}}
-
                 <div class="table-responsive">
 
-                    <table
-                        id="opr_table"
-                        class="table table-striped table-bordered table-hover"
-                        width="100%"
-                    >
+                    <table id="opr_table" class="table table-striped table-bordered table-hover" width="100%">
 
                         <thead>
 
@@ -725,12 +590,8 @@
                                     {{-- Notes --}}
                                     <td>
 
-                                        <button
-                                            type="button"
-                                            class="btn btn-success btn-sm open-notes-modal"
-                                            data-file-no="{{ $row->sno }}"
-                                            data-name="{{ $row->sname }}"
-                                        >
+                                        <button type="button" class="btn btn-success btn-sm open-notes-modal"
+                                            data-file-no="{{ $row->sno }}" data-name="{{ $row->sname }}">
                                             Notes
                                         </button>
 
@@ -831,7 +692,6 @@
                                     <td>
 
                                         @if ($userRole === 'counselor')
-
                                             <select class="form-control" disabled>
 
                                                 <option value="{{ $row->opr_stage ?? '' }}">
@@ -839,35 +699,25 @@
                                                 </option>
 
                                             </select>
-
                                         @else
-
-                                            <select
-                                                class="form-control status-select"
-                                                data-file-no="{{ $row->sno }}"
+                                            <select class="form-control status-select" data-file-no="{{ $row->sno }}"
                                                 data-file-name="{{ $row->sname ?? '' }}"
                                                 data-file-email="{{ $row->semail ?? '' }}"
                                                 data-mobile="{{ $row->smobile ?? '' }}"
-                                                data-assign-name="{{ $row->assign_name ?? '' }}"
-                                            >
+                                                data-assign-name="{{ $row->assign_name ?? '' }}">
 
                                                 <option value="">
                                                     Select
                                                 </option>
 
                                                 @foreach ($operationStatuses as $status)
-
-                                                    <option
-                                                        value="{{ $status }}"
-                                                        {{ ($row->opr_stage ?? '') == $status ? 'selected' : '' }}
-                                                    >
+                                                    <option value="{{ $status }}"
+                                                        {{ ($row->opr_stage ?? '') == $status ? 'selected' : '' }}>
                                                         {{ $status }}
                                                     </option>
-
                                                 @endforeach
 
                                             </select>
-
                                         @endif
 
                                     </td>
@@ -876,97 +726,70 @@
                                     {{-- CL --}}
                                     <td class="text-success">
 
-                                        @if (
-                                            ($row->opr_stage ?? '') === 'Campus Login'
-                                            || isset($row->campus_login_done)
-                                        )
-
+                                        @if (($row->opr_stage ?? '') === 'Campus Login' || isset($row->campus_login_done))
                                             <strong>
                                                 Done
                                             </strong>
-
                                         @endif
 
                                     </td>
 
                                     <td>
 
-                                        <button
-                                            type="button"
-                                            class="btn btn-info btn-sm view-operation-logs-btn"
-                                            data-file-no="{{ $row->sno }}"
-                                            data-name="{{ $row->sname ?? '' }}"
-                                        >
+                                        <button type="button" class="btn btn-info btn-sm view-operation-logs-btn"
+                                            data-file-no="{{ $row->sno }}" data-name="{{ $row->sname ?? '' }}">
                                             Status Update Logs
                                         </button>
 
                                     </td>
 
                                     @if ($userRole !== 'counselor')
-
                                         <td>
 
-                                            <a
-                                                href="{{ route('walking-details', [
-                                                    'smobile' => $row->smobile,
-                                                    'semi_id' => $row->sno,
-                                                ]) }}"
-                                                class="btn btn-primary btn-sm"
-                                            >
+                                            <a href="{{ route('walking-details', [
+                                                'smobile' => $row->smobile,
+                                                'semi_id' => $row->sno,
+                                            ]) }}"
+                                                class="btn btn-primary btn-sm">
                                                 View
                                             </a>
 
                                         </td>
-
                                     @endif
 
 
                                     <td>
 
                                         @if (in_array($username, ['prabjot', 'navjot']))
-
                                             <span>
                                                 {{ $row->fund_aol_status ?? '' }}
                                             </span>
-
                                         @else
-
-                                            <select
-                                                class="form-control fund_aol_status"
+                                            <select class="form-control fund_aol_status"
                                                 data-file-no="{{ $row->sno }}"
                                                 data-file-name="{{ $row->sname ?? '' }}"
-                                                data-file-email="{{ $row->semail ?? '' }}"
-                                            >
+                                                data-file-email="{{ $row->semail ?? '' }}">
 
                                                 <option value="">
                                                     Select Status
                                                 </option>
 
                                                 @foreach ($mainStatuses as $status)
-
-                                                    <option
-                                                        value="{{ $status }}"
-                                                        {{ ($row->fund_aol_status ?? '') == $status ? 'selected' : '' }}
-                                                    >
+                                                    <option value="{{ $status }}"
+                                                        {{ ($row->fund_aol_status ?? '') == $status ? 'selected' : '' }}>
                                                         {{ $status }}
                                                     </option>
-
                                                 @endforeach
 
                                             </select>
-
                                         @endif
 
                                     </td>
 
                                     <td>
 
-                                        <button
-                                            type="button"
-                                            class="btn btn-info btn-sm view-main-status-logs-btn"
-                                            data-semi-id="{{ $row->sno }}"
-                                            data-name="{{ $row->sname ?? '' }}"
-                                        >
+                                        <button type="button" class="btn btn-info btn-sm view-main-status-logs-btn"
+                                            data-semi-id="{{ $row->sno }}" data-name="{{ $row->sname ?? '' }}">
                                             Main Status Logs
                                         </button>
 
@@ -984,10 +807,8 @@
 
                                 <tr>
 
-                                    <td
-                                        colspan="{{ $userRole !== 'counselor' ? 23 : 22 }}"
-                                        class="text-center text-danger"
-                                    >
+                                    <td colspan="{{ $userRole !== 'counselor' ? 23 : 22 }}"
+                                        class="text-center text-danger">
                                         No records found.
                                     </td>
 
@@ -1001,26 +822,16 @@
 
                 </div>
 
-
-                {{-- =====================================================
-                    PAGINATION
-                ====================================================== --}}
-
                 @if ($students instanceof \Illuminate\Pagination\LengthAwarePaginator)
-
                     @php
 
                         $currentPage = $students->currentPage();
                         $perPage = $students->perPage();
                         $totalRecords = $students->total();
 
-                        $from = $totalRecords > 0
-                            ? ($currentPage - 1) * $perPage + 1
-                            : 0;
+                        $from = $totalRecords > 0 ? ($currentPage - 1) * $perPage + 1 : 0;
 
-                        $to = $totalRecords > 0
-                            ? min($currentPage * $perPage, $totalRecords)
-                            : 0;
+                        $to = $totalRecords > 0 ? min($currentPage * $perPage, $totalRecords) : 0;
 
                     @endphp
 
@@ -1042,16 +853,11 @@
 
                         <div>
 
-                            {!! $students
-                                ->onEachSide(2)
-                                ->withQueryString()
-                                ->links('pagination::bootstrap-5')
-                            !!}
+                            {!! $students->onEachSide(2)->withQueryString()->links('pagination::bootstrap-5') !!}
 
                         </div>
 
                     </div>
-
                 @endif
 
             </div>
@@ -1060,17 +866,7 @@
 
     </div>
 
-
-    {{-- =========================================================
-        STATUS UPDATE / OPERATION STATUS MODAL
-    ========================================================== --}}
-
-    <div
-        class="modal fade"
-        id="statusModal"
-        tabindex="-1"
-        aria-hidden="true"
-    >
+    <div class="modal fade" id="statusModal" tabindex="-1" aria-hidden="true">
 
         <div class="modal-dialog">
 
@@ -1082,11 +878,7 @@
                         Update Operation Status
                     </h5>
 
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                    ></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
                 </div>
 
@@ -1097,110 +889,52 @@
 
                         @csrf
 
-                        <input
-                            type="hidden"
-                            id="file_no"
-                            name="semi_id"
-                        >
+                        <input type="hidden" id="file_no" name="semi_id">
 
-                        <input
-                            type="hidden"
-                            id="file_name"
-                            name="file_name"
-                        >
+                        <input type="hidden" id="file_name" name="file_name">
 
-                        <input
-                            type="hidden"
-                            id="file_email"
-                            name="file_email"
-                        >
+                        <input type="hidden" id="file_email" name="file_email">
 
-                        <input
-                            type="hidden"
-                            id="status"
-                            name="status"
-                        >
+                        <input type="hidden" id="status" name="status">
 
-                        <input
-                            type="hidden"
-                            id="smobile_number"
-                            name="smobile_number"
-                        >
+                        <input type="hidden" id="smobile_number" name="smobile_number">
 
-                        <input
-                            type="hidden"
-                            id="assign_name"
-                            name="assign_name"
-                        >
+                        <input type="hidden" id="assign_name" name="assign_name">
 
 
-                        <div
-                            class="mb-3"
-                            id="oprStsSendDiv"
-                            style="display:none;"
-                        >
+                        <div class="mb-3" id="oprStsSendDiv" style="display:none;">
 
-                            <label
-                                for="oprStsSend"
-                                class="form-label"
-                                id="SendLabel"
-                            ></label>
+                            <label for="oprStsSend" class="form-label" id="SendLabel"></label>
 
-                            <select
-                                class="form-control"
-                                id="oprStsSend"
-                                name="oprStsSend"
-                            ></select>
+                            <select class="form-control" id="oprStsSend" name="oprStsSend"></select>
 
                         </div>
 
 
                         <div class="mb-3">
 
-                            <label
-                                for="date"
-                                class="form-label"
-                            >
+                            <label for="date" class="form-label">
                                 Date
                             </label>
 
-                            <input
-                                type="date"
-                                class="form-control"
-                                id="date"
-                                name="date"
-                                value="{{ date('Y-m-d') }}"
-                                required
-                            >
+                            <input type="date" class="form-control" id="date" name="date"
+                                value="{{ date('Y-m-d') }}" required>
 
                         </div>
 
 
                         <div class="mb-3">
 
-                            <label
-                                for="remarks"
-                                class="form-label"
-                            >
+                            <label for="remarks" class="form-label">
                                 Remarks
                             </label>
 
-                            <textarea
-                                class="form-control"
-                                id="remarks"
-                                name="remarks"
-                                rows="3"
-                                required
-                            ></textarea>
+                            <textarea class="form-control" id="remarks" name="remarks" rows="3" required></textarea>
 
                         </div>
 
 
-                        <button
-                            type="submit"
-                            class="btn btn-primary"
-                            id="statusSubmitBtn"
-                        >
+                        <button type="submit" class="btn btn-primary" id="statusSubmitBtn">
                             Submit
                         </button>
 
@@ -1214,19 +948,8 @@
 
     </div>
 
-
-    {{-- =========================================================
-        STATUS UPDATE LOGS MODAL
-        IMPORTANT: UNIQUE ID
-    ========================================================== --}}
-
-    <div
-        class="modal fade"
-        id="operationLogsModal"
-        tabindex="-1"
-        aria-labelledby="operationLogsModalLabel"
-        aria-hidden="true"
-    >
+    <div class="modal fade" id="operationLogsModal" tabindex="-1" aria-labelledby="operationLogsModalLabel"
+        aria-hidden="true">
 
         <div class="modal-dialog modal-xl modal-dialog-centered">
 
@@ -1235,19 +958,11 @@
 
                 <div class="modal-header">
 
-                    <h5
-                        class="modal-title"
-                        id="operationLogsModalLabel"
-                    >
+                    <h5 class="modal-title" id="operationLogsModalLabel">
                         Status Update Logs
                     </h5>
 
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                    ></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
                 </div>
 
@@ -1286,10 +1001,7 @@
 
                                     <tr>
 
-                                        <td
-                                            colspan="5"
-                                            class="text-center"
-                                        >
+                                        <td colspan="5" class="text-center">
                                             No logs found.
                                         </td>
 
@@ -1334,10 +1046,7 @@
 
                                     <tr>
 
-                                        <td
-                                            colspan="4"
-                                            class="text-center"
-                                        >
+                                        <td colspan="4" class="text-center">
                                             No notes found.
                                         </td>
 
@@ -1359,18 +1068,7 @@
 
     </div>
 
-
-    {{-- =========================================================
-        MAIN / AOL FUND STATUS UPDATE MODAL
-    ========================================================== --}}
-
-    <div
-        class="modal fade"
-        id="aolFundModal"
-        tabindex="-1"
-        aria-labelledby="aolFundModalLabel"
-        aria-hidden="true"
-    >
+    <div class="modal fade" id="aolFundModal" tabindex="-1" aria-labelledby="aolFundModalLabel" aria-hidden="true">
 
         <div class="modal-dialog">
 
@@ -1383,35 +1081,20 @@
 
                     <div class="modal-header">
 
-                        <h5
-                            class="modal-title"
-                            id="aolFundModalLabel"
-                        >
+                        <h5 class="modal-title" id="aolFundModalLabel">
                             Update Main Status
                         </h5>
 
-                        <button
-                            type="button"
-                            class="btn-close"
-                            data-bs-dismiss="modal"
-                        ></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
                     </div>
 
 
                     <div class="modal-body">
 
-                        <input
-                            type="hidden"
-                            name="semi_id"
-                            id="modal_semi_id"
-                        >
+                        <input type="hidden" name="semi_id" id="modal_semi_id">
 
-                        <input
-                            type="hidden"
-                            name="fund_status"
-                            id="modal_fund_status"
-                        >
+                        <input type="hidden" name="fund_status" id="modal_fund_status">
 
 
                         <div class="form-group mb-3">
@@ -1420,13 +1103,7 @@
                                 Date
                             </label>
 
-                            <input
-                                type="date"
-                                class="form-control"
-                                name="fund_date"
-                                id="fund_date"
-                                required
-                            >
+                            <input type="date" class="form-control" name="fund_date" id="fund_date" required>
 
                         </div>
 
@@ -1437,13 +1114,7 @@
                                 Remarks
                             </label>
 
-                            <textarea
-                                class="form-control"
-                                name="remarks"
-                                id="fund_remarks"
-                                rows="3"
-                                required
-                            ></textarea>
+                            <textarea class="form-control" name="remarks" id="fund_remarks" rows="3" required></textarea>
 
                         </div>
 
@@ -1452,19 +1123,11 @@
 
                     <div class="modal-footer">
 
-                        <button
-                            type="button"
-                            class="btn btn-secondary"
-                            data-bs-dismiss="modal"
-                        >
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                             Cancel
                         </button>
 
-                        <button
-                            type="submit"
-                            class="btn btn-primary"
-                            id="aolFundSubmitBtn"
-                        >
+                        <button type="submit" class="btn btn-primary" id="aolFundSubmitBtn">
                             Update
                         </button>
 
@@ -1478,19 +1141,7 @@
 
     </div>
 
-
-    {{-- =========================================================
-        MAIN STATUS LOGS MODAL
-        IMPORTANT: UNIQUE ID
-    ========================================================== --}}
-
-    <div
-        class="modal fade"
-        id="aolLogsModal"
-        tabindex="-1"
-        aria-labelledby="aolLogsModalLabel"
-        aria-hidden="true"
-    >
+    <div class="modal fade" id="aolLogsModal" tabindex="-1" aria-labelledby="aolLogsModalLabel" aria-hidden="true">
 
         <div class="modal-dialog modal-xl modal-dialog-centered">
 
@@ -1499,19 +1150,11 @@
 
                 <div class="modal-header">
 
-                    <h5
-                        class="modal-title"
-                        id="aolLogsModalLabel"
-                    >
+                    <h5 class="modal-title" id="aolLogsModalLabel">
                         Main Status Logs
                     </h5>
 
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                    ></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
                 </div>
 
@@ -1548,10 +1191,7 @@
 
                                     <tr>
 
-                                        <td
-                                            colspan="5"
-                                            class="text-center"
-                                        >
+                                        <td colspan="5" class="text-center">
                                             No logs found.
                                         </td>
 
@@ -1573,17 +1213,7 @@
 
     </div>
 
-
-    {{-- =========================================================
-        NOTES MODAL
-    ========================================================== --}}
-
-    <div
-        class="modal fade"
-        id="notesModal"
-        tabindex="-1"
-        aria-hidden="true"
-    >
+    <div class="modal fade" id="notesModal" tabindex="-1" aria-hidden="true">
 
         <div class="modal-dialog modal-lg">
 
@@ -1596,11 +1226,7 @@
                         Notes
                     </h5>
 
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                    ></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 
                 </div>
 
@@ -1611,11 +1237,7 @@
 
                         @csrf
 
-                        <input
-                            type="hidden"
-                            name="note_id"
-                            id="note_id"
-                        >
+                        <input type="hidden" name="note_id" id="note_id">
 
 
                         <div class="mb-3">
@@ -1624,21 +1246,12 @@
                                 Remarks
                             </label>
 
-                            <textarea
-                                class="form-control"
-                                name="newNote"
-                                id="newNote"
-                                rows="3"
-                                required
-                            ></textarea>
+                            <textarea class="form-control" name="newNote" id="newNote" rows="3" required></textarea>
 
                         </div>
 
 
-                        <button
-                            type="submit"
-                            class="btn btn-primary"
-                        >
+                        <button type="submit" class="btn btn-primary">
                             Save Note
                         </button>
 
@@ -1670,10 +1283,7 @@
 
                                 <tr>
 
-                                    <td
-                                        colspan="4"
-                                        class="text-center"
-                                    >
+                                    <td colspan="4" class="text-center">
                                         No notes found.
                                     </td>
 
@@ -1697,79 +1307,24 @@
 
 
 @push('scripts')
+    <script>
+        $(document).ready(function() {
 
-<script>
+            let csrfToken = $('meta[name="csrf-token"]').attr('content');
 
-$(document).ready(function () {
+            if (!csrfToken) {
+                csrfToken = "{{ csrf_token() }}";
+            }
 
-
-    /* ============================================================
-       CSRF
-    ============================================================ */
-
-    let csrfToken = $('meta[name="csrf-token"]').attr('content');
-
-    if (!csrfToken) {
-        csrfToken = "{{ csrf_token() }}";
-    }
-
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': csrfToken
-        }
-    });
-
-
-    /* ============================================================
-       COLLEGE -> CAMPUS
-    ============================================================ */
-
-    $('#collage_name').on('change', function () {
-
-        let college = $(this).val();
-
-        $('#campus').html(
-            '<option value="">--Select Campus--</option>'
-        );
-
-        $('#program_name').html(
-            '<option value="">--Select Program--</option>'
-        );
-
-        if (!college) {
-            return;
-        }
-
-        $.ajax({
-
-            url: "{{ route('osap.campuses') }}",
-
-            type: "POST",
-
-            data: {
-                college_id: college,
-                _token: csrfToken
-            },
-
-            success: function (response) {
-
-                $('#campus').html(response);
-
-                let selectedCampus = @json(request('campus'));
-
-                if (selectedCampus) {
-
-                    $('#campus')
-                        .val(selectedCampus)
-                        .trigger('change');
-
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': csrfToken
                 }
+            });
 
-            },
+            $('#collage_name').on('change', function() {
 
-            error: function (xhr) {
-
-                console.log(xhr.responseText);
+                let college = $(this).val();
 
                 $('#campus').html(
                     '<option value="">--Select Campus--</option>'
@@ -1779,438 +1334,443 @@ $(document).ready(function () {
                     '<option value="">--Select Program--</option>'
                 );
 
-            }
-
-        });
-
-    });
-
-
-    /* ============================================================
-       CAMPUS -> PROGRAM
-    ============================================================ */
-
-    $('#campus').on('change', function () {
-
-        let campus = $(this).val();
-        let college = $('#collage_name').val();
-
-        $('#program_name').html(
-            '<option value="">--Select Program--</option>'
-        );
-
-        if (!college || !campus) {
-            return;
-        }
-
-        $.ajax({
-
-            url: "{{ route('osap.programs') }}",
-
-            type: "POST",
-
-            data: {
-                college_id: college,
-                campus_id: campus,
-                _token: csrfToken
-            },
-
-            success: function (response) {
-
-                $('#program_name').html(response);
-
-                let selectedProgram = @json(request('program'));
-
-                if (selectedProgram) {
-                    $('#program_name').val(selectedProgram);
+                if (!college) {
+                    return;
                 }
 
-            },
+                $.ajax({
 
-            error: function (xhr) {
+                    url: "{{ route('osap.campuses') }}",
 
-                console.log(xhr.responseText);
+                    type: "POST",
+
+                    data: {
+                        college_id: college,
+                        _token: csrfToken
+                    },
+
+                    success: function(response) {
+
+                        $('#campus').html(response);
+
+                        let selectedCampus = @json(request('campus'));
+
+                        if (selectedCampus) {
+
+                            $('#campus')
+                                .val(selectedCampus)
+                                .trigger('change');
+
+                        }
+
+                    },
+
+                    error: function(xhr) {
+
+                        console.log(xhr.responseText);
+
+                        $('#campus').html(
+                            '<option value="">--Select Campus--</option>'
+                        );
+
+                        $('#program_name').html(
+                            '<option value="">--Select Program--</option>'
+                        );
+
+                    }
+
+                });
+
+            });
+
+            $('#campus').on('change', function() {
+
+                let campus = $(this).val();
+                let college = $('#collage_name').val();
 
                 $('#program_name').html(
                     '<option value="">--Select Program--</option>'
                 );
 
-            }
-
-        });
-
-    });
-
-
-    /* ============================================================
-       LOAD CAMPUS + PROGRAM AFTER SEARCH
-    ============================================================ */
-
-    let selectedCollege = $('#collage_name').val();
-
-    let selectedCampus = @json(request('campus'));
-
-    let selectedProgram = @json(request('program'));
-
-
-    if (selectedCollege) {
-
-        $.ajax({
-
-            url: "{{ route('osap.campuses') }}",
-
-            type: "POST",
-
-            data: {
-                college_id: selectedCollege,
-                _token: csrfToken
-            },
-
-            success: function (response) {
-
-                $('#campus').html(response);
-
-                if (selectedCampus) {
-                    $('#campus').val(selectedCampus);
+                if (!college || !campus) {
+                    return;
                 }
 
-                if (selectedCampus) {
+                $.ajax({
 
-                    $.ajax({
+                    url: "{{ route('osap.programs') }}",
 
-                        url: "{{ route('osap.programs') }}",
+                    type: "POST",
 
-                        type: "POST",
+                    data: {
+                        college_id: college,
+                        campus_id: campus,
+                        _token: csrfToken
+                    },
 
-                        data: {
-                            college_id: selectedCollege,
-                            campus_id: selectedCampus,
-                            _token: csrfToken
-                        },
+                    success: function(response) {
 
-                        success: function (response) {
+                        $('#program_name').html(response);
 
-                            $('#program_name').html(response);
+                        let selectedProgram = @json(request('program'));
 
-                            if (selectedProgram) {
-                                $('#program_name').val(selectedProgram);
-                            }
+                        if (selectedProgram) {
+                            $('#program_name').val(selectedProgram);
+                        }
+
+                    },
+
+                    error: function(xhr) {
+
+                        console.log(xhr.responseText);
+
+                        $('#program_name').html(
+                            '<option value="">--Select Program--</option>'
+                        );
+
+                    }
+
+                });
+
+            });
+
+            let selectedCollege = $('#collage_name').val();
+
+            let selectedCampus = @json(request('campus'));
+
+            let selectedProgram = @json(request('program'));
+
+
+            if (selectedCollege) {
+
+                $.ajax({
+
+                    url: "{{ route('osap.campuses') }}",
+
+                    type: "POST",
+
+                    data: {
+                        college_id: selectedCollege,
+                        _token: csrfToken
+                    },
+
+                    success: function(response) {
+
+                        $('#campus').html(response);
+
+                        if (selectedCampus) {
+                            $('#campus').val(selectedCampus);
+                        }
+
+                        if (selectedCampus) {
+
+                            $.ajax({
+
+                                url: "{{ route('osap.programs') }}",
+
+                                type: "POST",
+
+                                data: {
+                                    college_id: selectedCollege,
+                                    campus_id: selectedCampus,
+                                    _token: csrfToken
+                                },
+
+                                success: function(response) {
+
+                                    $('#program_name').html(response);
+
+                                    if (selectedProgram) {
+                                        $('#program_name').val(selectedProgram);
+                                    }
+
+                                }
+
+                            });
 
                         }
 
-                    });
+                    }
 
-                }
+                });
 
             }
 
-        });
 
-    }
+            $('#limitSelect').on('change', function() {
 
+                const limit = $(this).val();
 
-    /* ============================================================
-       LIMIT
-    ============================================================ */
+                const url = new URL(window.location.href);
 
-    $('#limitSelect').on('change', function () {
+                url.searchParams.set('limit', limit);
 
-        const limit = $(this).val();
+                url.searchParams.delete('page');
 
-        const url = new URL(window.location.href);
+                window.location.href = url.toString();
 
-        url.searchParams.set('limit', limit);
+            });
 
-        url.searchParams.delete('page');
+            $(document).on('change', '.status-select', function() {
 
-        window.location.href = url.toString();
+                const select = $(this);
 
-    });
+                const status = select.val();
 
-
-    /* ============================================================
-       OPERATION STATUS CHANGE
-    ============================================================ */
-
-    $(document).on('change', '.status-select', function () {
-
-        const select = $(this);
-
-        const status = select.val();
-
-        if (!status) {
-            return;
-        }
-
-        const semiId = select.attr('data-file-no');
-
-        const fileName = select.attr('data-file-name');
-
-        const fileEmail = select.attr('data-file-email');
-
-        const mobile = select.attr('data-mobile');
-
-        const assignName = select.attr('data-assign-name');
-
-
-        $('#file_no').val(semiId);
-
-        $('#file_name').val(fileName);
-
-        $('#file_email').val(fileEmail);
-
-        $('#status').val(status);
-
-        $('#smobile_number').val(mobile);
-
-        $('#assign_name').val(assignName);
-
-
-        $('#remarks').val('');
-
-        $('#date').val('{{ date('Y-m-d') }}');
-
-
-        $('#oprStsSendDiv').hide();
-
-        $('#oprStsSend').empty();
-
-
-        const modalElement =
-            document.getElementById('statusModal');
-
-        const modal =
-            bootstrap.Modal.getOrCreateInstance(modalElement);
-
-        modal.show();
-
-    });
-
-
-    /* ============================================================
-       OPERATION STATUS SUBMIT
-    ============================================================ */
-
-    $('#statusForm').on('submit', function (e) {
-
-        e.preventDefault();
-
-        const form = $(this);
-
-        const button = $('#statusSubmitBtn');
-
-        button
-            .prop('disabled', true)
-            .text('Submitting...');
-
-
-        $.ajax({
-
-            type: "POST",
-
-            url: "{{ route('drop.update-status') }}",
-
-            data: form.serialize(),
-
-            success: function (response) {
-
-                if (response.success) {
-
-                    alert(
-                        response.message ||
-                        'Operation status updated successfully.'
-                    );
-
-
-                    const modalElement =
-                        document.getElementById('statusModal');
-
-                    bootstrap.Modal
-                        .getOrCreateInstance(modalElement)
-                        .hide();
-
-
-                    location.reload();
-
-                } else {
-
-                    alert(
-                        response.message ||
-                        'Something went wrong.'
-                    );
-
+                if (!status) {
+                    return;
                 }
 
-            },
+                const semiId = select.attr('data-file-no');
 
-            error: function (xhr) {
+                const fileName = select.attr('data-file-name');
 
-                if (xhr.status === 422) {
+                const fileEmail = select.attr('data-file-email');
 
-                    let errors =
-                        xhr.responseJSON?.errors || {};
+                const mobile = select.attr('data-mobile');
 
-                    let message = '';
+                const assignName = select.attr('data-assign-name');
 
-                    $.each(errors, function (field, error) {
 
-                        message += error[0] + "\n";
+                $('#file_no').val(semiId);
 
-                    });
+                $('#file_name').val(fileName);
 
-                    alert(message);
+                $('#file_email').val(fileEmail);
 
-                } else {
+                $('#status').val(status);
 
-                    alert(
-                        xhr.responseJSON?.message ||
-                        'Error updating operation status.'
-                    );
+                $('#smobile_number').val(mobile);
 
-                }
+                $('#assign_name').val(assignName);
 
-            },
 
-            complete: function () {
+                $('#remarks').val('');
+
+                $('#date').val('{{ date('Y-m-d') }}');
+
+
+                $('#oprStsSendDiv').hide();
+
+                $('#oprStsSend').empty();
+
+
+                const modalElement =
+                    document.getElementById('statusModal');
+
+                const modal =
+                    bootstrap.Modal.getOrCreateInstance(modalElement);
+
+                modal.show();
+
+            });
+
+            $('#statusForm').on('submit', function(e) {
+
+                e.preventDefault();
+
+                const form = $(this);
+
+                const button = $('#statusSubmitBtn');
 
                 button
-                    .prop('disabled', false)
-                    .text('Submit');
-
-            }
-
-        });
-
-    });
+                    .prop('disabled', true)
+                    .text('Submitting...');
 
 
-    /* ============================================================
-       STATUS UPDATE LOGS
-       THIS IS OPERATION STATUS LOGS
-    ============================================================ */
+                $.ajax({
 
-    $(document).on(
-        'click',
-        '.view-operation-logs-btn',
-        function () {
+                    type: "POST",
 
-            const fileNo =
-                $(this).attr('data-file-no');
+                    url: "{{ route('drop.update-status') }}",
 
-            const name =
-                $(this).attr('data-name') || '';
+                    data: form.serialize(),
 
+                    success: function(response) {
 
-            console.log(
-                'STATUS UPDATE LOG REQUEST:',
-                {
-                    semi_id: fileNo,
-                    name: name
-                }
-            );
+                        if (response.success) {
+
+                            alert(
+                                response.message ||
+                                'Operation status updated successfully.'
+                            );
 
 
-            /* Reset tables */
+                            const modalElement =
+                                document.getElementById('statusModal');
 
-            $('#operationLogsTableBody').html(
-                '<tr>' +
-                '<td colspan="5" class="text-center">' +
-                'Loading...' +
-                '</td>' +
-                '</tr>'
-            );
+                            bootstrap.Modal
+                                .getOrCreateInstance(modalElement)
+                                .hide();
 
 
-            $('#operationLogsNotesBody').html(
-                '<tr>' +
-                '<td colspan="4" class="text-center">' +
-                'Loading...' +
-                '</td>' +
-                '</tr>'
-            );
+                            location.reload();
 
+                        } else {
 
-            /* Modal title */
+                            alert(
+                                response.message ||
+                                'Something went wrong.'
+                            );
 
-            $('#operationLogsModalLabel').text(
-                'Status Update Logs' +
-                (name ? ' - ' + name : '')
-            );
+                        }
 
+                    },
 
-            /* Open correct modal */
+                    error: function(xhr) {
 
-            const modalElement =
-                document.getElementById(
-                    'operationLogsModal'
-                );
+                        if (xhr.status === 422) {
 
-            const modal =
-                bootstrap.Modal.getOrCreateInstance(
-                    modalElement
-                );
+                            let errors =
+                                xhr.responseJSON?.errors || {};
 
-            modal.show();
+                            let message = '';
 
+                            $.each(errors, function(field, error) {
 
-            /* AJAX */
+                                message += error[0] + "\n";
 
-            $.ajax({
+                            });
 
-                url: "{{ route('drop.logs') }}",
+                            alert(message);
 
-                type: "POST",
+                        } else {
 
-                dataType: "json",
+                            alert(
+                                xhr.responseJSON?.message ||
+                                'Error updating operation status.'
+                            );
 
-                data: {
+                        }
 
-                    _token: csrfToken,
+                    },
 
-                    semi_id: fileNo
+                    complete: function() {
 
-                },
+                        button
+                            .prop('disabled', false)
+                            .text('Submit');
 
+                    }
 
-                success: function (response) {
+                });
+
+            });
+
+            $(document).on(
+                'click',
+                '.view-operation-logs-btn',
+                function() {
+
+                    const fileNo =
+                        $(this).attr('data-file-no');
+
+                    const name =
+                        $(this).attr('data-name') || '';
+
 
                     console.log(
-                        'STATUS UPDATE LOG RESPONSE:',
-                        response
+                        'STATUS UPDATE LOG REQUEST:', {
+                            semi_id: fileNo,
+                            name: name
+                        }
                     );
 
 
-                    const logs =
-                        Array.isArray(response.logs)
-                            ? response.logs
-                            : (
-                                Array.isArray(response.data)
-                                    ? response.data
-                                    : []
+                    /* Reset tables */
+
+                    $('#operationLogsTableBody').html(
+                        '<tr>' +
+                        '<td colspan="5" class="text-center">' +
+                        'Loading...' +
+                        '</td>' +
+                        '</tr>'
+                    );
+
+
+                    $('#operationLogsNotesBody').html(
+                        '<tr>' +
+                        '<td colspan="4" class="text-center">' +
+                        'Loading...' +
+                        '</td>' +
+                        '</tr>'
+                    );
+
+
+                    /* Modal title */
+
+                    $('#operationLogsModalLabel').text(
+                        'Status Update Logs' +
+                        (name ? ' - ' + name : '')
+                    );
+
+
+                    /* Open correct modal */
+
+                    const modalElement =
+                        document.getElementById(
+                            'operationLogsModal'
+                        );
+
+                    const modal =
+                        bootstrap.Modal.getOrCreateInstance(
+                            modalElement
+                        );
+
+                    modal.show();
+
+
+                    /* AJAX */
+
+                    $.ajax({
+
+                        url: "{{ route('drop.logs') }}",
+
+                        type: "POST",
+
+                        dataType: "json",
+
+                        data: {
+
+                            _token: csrfToken,
+
+                            semi_id: fileNo
+
+                        },
+
+
+                        success: function(response) {
+
+                            console.log(
+                                'STATUS UPDATE LOG RESPONSE:',
+                                response
                             );
 
 
-                    const notes =
-                        Array.isArray(response.notes)
-                            ? response.notes
-                            : (
-                                Array.isArray(response.note_logs)
-                                    ? response.note_logs
-                                    : []
-                            );
+                            const logs =
+                                Array.isArray(response.logs) ?
+                                response.logs :
+                                (
+                                    Array.isArray(response.data) ?
+                                    response.data : []
+                                );
 
 
-                    /* =================================================
-                       OPERATION STATUS LOGS
-                    ================================================= */
+                            const notes =
+                                Array.isArray(response.notes) ?
+                                response.notes :
+                                (
+                                    Array.isArray(response.note_logs) ?
+                                    response.note_logs : []
+                                );
 
-                 let logsHtml = '';
+                            let logsHtml = '';
 
-if (logs.length > 0) {
+                            if (logs.length > 0) {
 
-    $.each(logs, function (index, log) {
+                                $.each(logs, function(index, log) {
 
-        logsHtml += `
+                                    logsHtml += `
             <tr>
 
                 <td>
@@ -2236,11 +1796,11 @@ if (logs.length > 0) {
             </tr>
         `;
 
-    });
+                                });
 
-} else {
+                            } else {
 
-    logsHtml = `
+                                logsHtml = `
         <tr>
             <td
                 colspan="5"
@@ -2251,22 +1811,18 @@ if (logs.length > 0) {
         </tr>
     `;
 
-}
+                            }
 
-$('#operationLogsTableBody').html(logsHtml);
+                            $('#operationLogsTableBody').html(logsHtml);
 
-                    /* =================================================
-                       NOTES
-                    ================================================= */
-
-                    let notesHtml = '';
+                            let notesHtml = '';
 
 
-                    if (notes.length > 0) {
+                            if (notes.length > 0) {
 
-                        $.each(notes, function (index, note) {
+                                $.each(notes, function(index, note) {
 
-                            notesHtml += `
+                                    notesHtml += `
 
                                 <tr>
 
@@ -2309,11 +1865,11 @@ $('#operationLogsTableBody').html(logsHtml);
 
                             `;
 
-                        });
+                                });
 
-                    } else {
+                            } else {
 
-                        notesHtml = `
+                                notesHtml = `
 
                             <tr>
 
@@ -2328,25 +1884,25 @@ $('#operationLogsTableBody').html(logsHtml);
 
                         `;
 
-                    }
+                            }
 
 
-                    $('#operationLogsNotesBody')
-                        .html(notesHtml);
+                            $('#operationLogsNotesBody')
+                                .html(notesHtml);
 
-                },
-
-
-                error: function (xhr) {
-
-                    console.error(
-                        'STATUS UPDATE LOG ERROR:',
-                        xhr.status,
-                        xhr.responseText
-                    );
+                        },
 
 
-                    $('#operationLogsTableBody').html(`
+                        error: function(xhr) {
+
+                            console.error(
+                                'STATUS UPDATE LOG ERROR:',
+                                xhr.status,
+                                xhr.responseText
+                            );
+
+
+                            $('#operationLogsTableBody').html(`
 
                         <tr>
 
@@ -2362,7 +1918,7 @@ $('#operationLogsTableBody').html(logsHtml);
                     `);
 
 
-                    $('#operationLogsNotesBody').html(`
+                            $('#operationLogsNotesBody').html(`
 
                         <tr>
 
@@ -2377,174 +1933,57 @@ $('#operationLogsTableBody').html(logsHtml);
 
                     `);
 
-                }
-
-            });
-
-        }
-
-
-
-        
-    );
-
-
-
-
-
-    let currentSelect = null;
-
-
-    $(document).on(
-        'change',
-        '.fund_aol_status',
-        function () {
-
-            const $select = $(this);
-
-            const semiId =
-                $select.attr('data-file-no');
-
-            const fundStatus =
-                $select.val();
-
-
-            currentSelect = $select;
-
-
-            if (!fundStatus) {
-                return;
-            }
-
-
-            $('#modal_semi_id')
-                .val(semiId);
-
-            $('#modal_fund_status')
-                .val(fundStatus);
-
-            $('#fund_date')
-                .val('{{ date('Y-m-d') }}');
-
-            $('#fund_remarks')
-                .val('');
-
-
-            const modalElement =
-                document.getElementById(
-                    'aolFundModal'
-                );
-
-            const modal =
-                bootstrap.Modal.getOrCreateInstance(
-                    modalElement
-                );
-
-            modal.show();
-
-
-            $('#aolFundModal')
-                .off('hidden.bs.modal.mainstatus')
-                .on(
-                    'hidden.bs.modal.mainstatus',
-                    function () {
-
-                        if (currentSelect) {
-
-                            /*
-                             * Restore previous value when
-                             * modal is cancelled.
-                             *
-                             * The page will reload after
-                             * successful update.
-                             */
-
                         }
 
-                    }
-                );
+                    });
 
-        }
-    );
-
-
-    /* ============================================================
-       MAIN STATUS SUBMIT
-    ============================================================ */
-
-    $('#aolFundForm').on('submit', function (e) {
-
-        e.preventDefault();
-
-
-        const button =
-            $('#aolFundSubmitBtn');
-
-
-        button
-            .prop('disabled', true)
-            .text('Updating...');
-
-
-        const data = {
-
-            _token:
-                $('input[name="_token"]', this).val(),
-
-            semi_id:
-                $('#modal_semi_id').val(),
-
-            fund_status:
-                $('#modal_fund_status').val(),
-
-            fund_date:
-                $('#fund_date').val(),
-
-            remarks:
-                $('#fund_remarks').val()
-
-        };
-
-
-        console.log(
-            'MAIN STATUS DATA:',
-            data
-        );
-
-
-        $.ajax({
-
-            url: "{{ route('drop.update-status') }}",
-
-            method: "POST",
-
-            data: data,
-
-
-            success: function (response) {
-
-                console.log(
-                    'MAIN STATUS RESPONSE:',
-                    response
-                );
-
-
-                let result = response;
-
-                if (typeof result === 'string') {
-                    result = $.trim(result);
                 }
 
 
-                if (
-                    result === 'success' ||
-                    result?.success === true
-                ) {
 
-                    alert(
-                        result?.message ||
-                        'Main Status Updated Successfully!'
-                    );
+
+            );
+
+
+
+
+
+            let currentSelect = null;
+
+
+            $(document).on(
+                'change',
+                '.fund_aol_status',
+                function() {
+
+                    const $select = $(this);
+
+                    const semiId =
+                        $select.attr('data-file-no');
+
+                    const fundStatus =
+                        $select.val();
+
+
+                    currentSelect = $select;
+
+
+                    if (!fundStatus) {
+                        return;
+                    }
+
+
+                    $('#modal_semi_id')
+                        .val(semiId);
+
+                    $('#modal_fund_status')
+                        .val(fundStatus);
+
+                    $('#fund_date')
+                        .val('{{ date('Y-m-d') }}');
+
+                    $('#fund_remarks')
+                        .val('');
 
 
                     const modalElement =
@@ -2552,114 +1991,220 @@ $('#operationLogsTableBody').html(logsHtml);
                             'aolFundModal'
                         );
 
-                    bootstrap.Modal
-                        .getOrCreateInstance(
+                    const modal =
+                        bootstrap.Modal.getOrCreateInstance(
                             modalElement
-                        )
-                        .hide();
+                        );
+
+                    modal.show();
 
 
-                    currentSelect = null;
+                    $('#aolFundModal')
+                        .off('hidden.bs.modal.mainstatus')
+                        .on(
+                            'hidden.bs.modal.mainstatus',
+                            function() {
 
+                                if (currentSelect) {
 
-                    location.reload();
+                                    /*
+                                     * Restore previous value when
+                                     * modal is cancelled.
+                                     *
+                                     * The page will reload after
+                                     * successful update.
+                                     */
 
-                } else if (
-                    result === 'no_change' ||
-                    result?.status === 'no_change'
-                ) {
+                                }
 
-                    alert(
-                        'No changes detected.'
-                    );
+                            }
+                        );
 
-                } else {
-
-                    alert(
-                        result?.message ||
-                        'Failed to update Main Status.'
-                    );
-
-                }
-
-            },
-
-
-            error: function (xhr) {
-
-                console.error(
-                    'MAIN STATUS ERROR:',
-                    xhr.status,
-                    xhr.responseText
-                );
-
-
-                if (xhr.status === 422) {
-
-                    let errors =
-                        xhr.responseJSON?.errors || {};
-
-                    let message = '';
-
-                    $.each(
-                        errors,
-                        function (field, error) {
-
-                            message +=
-                                error[0] + "\n";
-
-                        }
-                    );
-
-                    alert(message);
-
-                } else {
-
-                    alert(
-                        xhr.responseJSON?.message ||
-                        'Failed to update Main Status.'
-                    );
-
-                }
-
-            },
-
-
-            complete: function () {
-
-                button
-                    .prop('disabled', false)
-                    .text('Update');
-
-            }
-
-        });
-
-    });
-
-
-    $(document).on(
-        'click',
-        '.view-main-status-logs-btn',
-        function () {
-
-            const semiId =
-                $(this).attr('data-semi-id');
-
-            const name =
-                $(this).attr('data-name') || '';
-
-
-            console.log(
-                'MAIN STATUS LOG REQUEST:',
-                {
-                    semi_id: semiId,
-                    name: name
                 }
             );
 
+            $('#aolFundForm').on('submit', function(e) {
 
-            $('#aolLogsTableBody').html(`
+                e.preventDefault();
+
+
+                const button =
+                    $('#aolFundSubmitBtn');
+
+
+                button
+                    .prop('disabled', true)
+                    .text('Updating...');
+
+
+                const data = {
+
+                    _token: $('input[name="_token"]', this).val(),
+
+                    semi_id: $('#modal_semi_id').val(),
+
+                    fund_status: $('#modal_fund_status').val(),
+
+                    fund_date: $('#fund_date').val(),
+
+                    remarks: $('#fund_remarks').val()
+
+                };
+
+
+                console.log(
+                    'MAIN STATUS DATA:',
+                    data
+                );
+
+
+                $.ajax({
+
+                    url: "{{ route('drop.update-status') }}",
+
+                    method: "POST",
+
+                    data: data,
+
+
+                    success: function(response) {
+
+                        console.log(
+                            'MAIN STATUS RESPONSE:',
+                            response
+                        );
+
+
+                        let result = response;
+
+                        if (typeof result === 'string') {
+                            result = $.trim(result);
+                        }
+
+
+                        if (
+                            result === 'success' ||
+                            result?.success === true
+                        ) {
+
+                            alert(
+                                result?.message ||
+                                'Main Status Updated Successfully!'
+                            );
+
+
+                            const modalElement =
+                                document.getElementById(
+                                    'aolFundModal'
+                                );
+
+                            bootstrap.Modal
+                                .getOrCreateInstance(
+                                    modalElement
+                                )
+                                .hide();
+
+
+                            currentSelect = null;
+
+
+                            location.reload();
+
+                        } else if (
+                            result === 'no_change' ||
+                            result?.status === 'no_change'
+                        ) {
+
+                            alert(
+                                'No changes detected.'
+                            );
+
+                        } else {
+
+                            alert(
+                                result?.message ||
+                                'Failed to update Main Status.'
+                            );
+
+                        }
+
+                    },
+
+
+                    error: function(xhr) {
+
+                        console.error(
+                            'MAIN STATUS ERROR:',
+                            xhr.status,
+                            xhr.responseText
+                        );
+
+
+                        if (xhr.status === 422) {
+
+                            let errors =
+                                xhr.responseJSON?.errors || {};
+
+                            let message = '';
+
+                            $.each(
+                                errors,
+                                function(field, error) {
+
+                                    message +=
+                                        error[0] + "\n";
+
+                                }
+                            );
+
+                            alert(message);
+
+                        } else {
+
+                            alert(
+                                xhr.responseJSON?.message ||
+                                'Failed to update Main Status.'
+                            );
+
+                        }
+
+                    },
+
+
+                    complete: function() {
+
+                        button
+                            .prop('disabled', false)
+                            .text('Update');
+
+                    }
+
+                });
+
+            });
+
+
+            $(document).on(
+                'click',
+                '.view-main-status-logs-btn',
+                function() {
+
+                    const semiId =
+                        $(this).attr('data-semi-id');
+
+                    const name =
+                        $(this).attr('data-name') || '';
+
+
+                    console.log(
+                        'MAIN STATUS LOG REQUEST:', {
+                            semi_id: semiId,
+                            name: name
+                        }
+                    );
+
+
+                    $('#aolLogsTableBody').html(`
 
                 <tr>
 
@@ -2675,65 +2220,64 @@ $('#operationLogsTableBody').html(logsHtml);
             `);
 
 
-            $('#aolLogsModalLabel').text(
-                'Main Status Logs' +
-                (name ? ' - ' + name : '')
-            );
-
-            const modalElement =
-                document.getElementById(
-                    'aolLogsModal'
-                );
-
-            const modal =
-                bootstrap.Modal.getOrCreateInstance(
-                    modalElement
-                );
-
-            modal.show();
-
-
-            $.ajax({
-
-                url: "{{ route('fund.status.logs') }}",
-
-                type: "POST",
-
-                dataType: "json",
-
-                data: {
-
-                    _token: csrfToken,
-
-                    semi_id: semiId
-
-                },
-
-
-                success: function (response) {
-
-                    console.log(
-                        'MAIN STATUS LOG RESPONSE:',
-                        response
+                    $('#aolLogsModalLabel').text(
+                        'Main Status Logs' +
+                        (name ? ' - ' + name : '')
                     );
 
+                    const modalElement =
+                        document.getElementById(
+                            'aolLogsModal'
+                        );
 
-                    const logs =
-                        Array.isArray(response.logs)
-                            ? response.logs
-                            : [];
+                    const modal =
+                        bootstrap.Modal.getOrCreateInstance(
+                            modalElement
+                        );
+
+                    modal.show();
 
 
-                    let html = '';
+                    $.ajax({
+
+                        url: "{{ route('fund.status.logs') }}",
+
+                        type: "POST",
+
+                        dataType: "json",
+
+                        data: {
+
+                            _token: csrfToken,
+
+                            semi_id: semiId
+
+                        },
 
 
-                    if (logs.length > 0) {
+                        success: function(response) {
 
-                        $.each(
-                            logs,
-                            function (index, log) {
+                            console.log(
+                                'MAIN STATUS LOG RESPONSE:',
+                                response
+                            );
 
-                                html += `
+
+                            const logs =
+                                Array.isArray(response.logs) ?
+                                response.logs : [];
+
+
+                            let html = '';
+
+
+                            if (logs.length > 0) {
+
+                                $.each(
+                                    logs,
+                                    function(index, log) {
+
+                                        html += `
 
                                     <tr>
 
@@ -2787,12 +2331,12 @@ $('#operationLogsTableBody').html(logsHtml);
 
                                 `;
 
-                            }
-                        );
+                                    }
+                                );
 
-                    } else {
+                            } else {
 
-                        html = `
+                                html = `
 
                             <tr>
 
@@ -2807,40 +2351,40 @@ $('#operationLogsTableBody').html(logsHtml);
 
                         `;
 
-                    }
+                            }
 
 
-                    $('#aolLogsTableBody')
-                        .html(html);
+                            $('#aolLogsTableBody')
+                                .html(html);
 
-                },
-
-
-                error: function (xhr) {
-
-                    console.error(
-                        'MAIN STATUS LOG ERROR:',
-                        xhr.status,
-                        xhr.responseText
-                    );
+                        },
 
 
-                    let message =
-                        'Failed to load Main Status Logs.';
+                        error: function(xhr) {
+
+                            console.error(
+                                'MAIN STATUS LOG ERROR:',
+                                xhr.status,
+                                xhr.responseText
+                            );
 
 
-                    if (
-                        xhr.responseJSON &&
-                        xhr.responseJSON.message
-                    ) {
-
-                        message =
-                            xhr.responseJSON.message;
-
-                    }
+                            let message =
+                                'Failed to load Main Status Logs.';
 
 
-                    $('#aolLogsTableBody').html(`
+                            if (
+                                xhr.responseJSON &&
+                                xhr.responseJSON.message
+                            ) {
+
+                                message =
+                                    xhr.responseJSON.message;
+
+                            }
+
+
+                            $('#aolLogsTableBody').html(`
 
                         <tr>
 
@@ -2855,59 +2399,49 @@ $('#operationLogsTableBody').html(logsHtml);
 
                     `);
 
+                        }
+
+                    });
+
                 }
+            );
 
-            });
+            $(document).on(
+                'click',
+                '.open-notes-modal',
+                function() {
 
-        }
-    );
-
-
-    /* ============================================================
-       NOTES MODAL
-    ============================================================ */
-
-    $(document).on(
-        'click',
-        '.open-notes-modal',
-        function () {
-
-            const fileNo =
-                $(this).data('file-no');
+                    const fileNo =
+                        $(this).data('file-no');
 
 
-            $('#note_id').val(fileNo);
+                    $('#note_id').val(fileNo);
 
-            $('#newNote').val('');
-
-
-            const modal =
-                bootstrap.Modal.getOrCreateInstance(
-                    document.getElementById(
-                        'notesModal'
-                    )
-                );
-
-            modal.show();
+                    $('#newNote').val('');
 
 
-            loadDropNotes(fileNo);
+                    const modal =
+                        bootstrap.Modal.getOrCreateInstance(
+                            document.getElementById(
+                                'notesModal'
+                            )
+                        );
 
-        }
-    );
-
-
-    /* ============================================================
-       LOAD DROP NOTES
-    ============================================================ */
-
-    function loadDropNotes(mainId) {
-
-        const tbody =
-            $('#notesTableBody');
+                    modal.show();
 
 
-        tbody.html(`
+                    loadDropNotes(fileNo);
+
+                }
+            );
+
+            function loadDropNotes(mainId) {
+
+                const tbody =
+                    $('#notesTableBody');
+
+
+                tbody.html(`
 
             <tr>
 
@@ -2923,41 +2457,41 @@ $('#operationLogsTableBody').html(logsHtml);
         `);
 
 
-        $.ajax({
+                $.ajax({
 
-            url: "{{ route('drop.notes') }}",
+                    url: "{{ route('drop.notes') }}",
 
-            type: "POST",
+                    type: "POST",
 
-            dataType: "json",
+                    dataType: "json",
 
-            data: {
+                    data: {
 
-                _token: csrfToken,
+                        _token: csrfToken,
 
-                main_id: mainId
+                        main_id: mainId
 
-            },
-
-
-            success: function (response) {
-
-                console.log(
-                    'NOTES RESPONSE:',
-                    response
-                );
+                    },
 
 
-                tbody.empty();
+                    success: function(response) {
+
+                        console.log(
+                            'NOTES RESPONSE:',
+                            response
+                        );
 
 
-                if (
-                    !response.success ||
-                    !Array.isArray(response.notes) ||
-                    response.notes.length === 0
-                ) {
+                        tbody.empty();
 
-                    tbody.html(`
+
+                        if (
+                            !response.success ||
+                            !Array.isArray(response.notes) ||
+                            response.notes.length === 0
+                        ) {
+
+                            tbody.html(`
 
                         <tr>
 
@@ -2972,16 +2506,16 @@ $('#operationLogsTableBody').html(logsHtml);
 
                     `);
 
-                    return;
+                            return;
 
-                }
+                        }
 
 
-                $.each(
-                    response.notes,
-                    function (index, note) {
+                        $.each(
+                            response.notes,
+                            function(index, note) {
 
-                        tbody.append(`
+                                tbody.append(`
 
                             <tr>
 
@@ -3021,37 +2555,37 @@ $('#operationLogsTableBody').html(logsHtml);
 
                         `);
 
-                    }
-                );
+                            }
+                        );
 
-            },
-
-
-            error: function (xhr) {
-
-                console.error(
-                    'Notes error:',
-                    xhr.status,
-                    xhr.responseText
-                );
+                    },
 
 
-                let message =
-                    'Error loading notes.';
+                    error: function(xhr) {
+
+                        console.error(
+                            'Notes error:',
+                            xhr.status,
+                            xhr.responseText
+                        );
 
 
-                if (
-                    xhr.responseJSON &&
-                    xhr.responseJSON.message
-                ) {
-
-                    message =
-                        xhr.responseJSON.message;
-
-                }
+                        let message =
+                            'Error loading notes.';
 
 
-                tbody.html(`
+                        if (
+                            xhr.responseJSON &&
+                            xhr.responseJSON.message
+                        ) {
+
+                            message =
+                                xhr.responseJSON.message;
+
+                        }
+
+
+                        tbody.html(`
 
                     <tr>
 
@@ -3066,189 +2600,182 @@ $('#operationLogsTableBody').html(logsHtml);
 
                 `);
 
-            }
-
-        });
-
-    }
-
-
-    /* ============================================================
-       ADD NOTE
-    ============================================================ */
-
-    $(document).on(
-        'submit',
-        '#addNotesForm',
-        function (e) {
-
-            e.preventDefault();
-
-
-            const form =
-                $(this);
-
-
-            const button =
-                form.find(
-                    'button[type="submit"]'
-                );
-
-
-            const noteId =
-                $('#note_id').val();
-
-
-            const newNote =
-                $('#newNote')
-                    .val()
-                    .trim();
-
-
-            if (!noteId) {
-
-                alert(
-                    'Invalid student ID.'
-                );
-
-                return;
-
-            }
-
-
-            if (!newNote) {
-
-                alert(
-                    'Please enter remarks.'
-                );
-
-                $('#newNote').focus();
-
-                return;
-
-            }
-
-
-            button
-                .prop('disabled', true)
-                .text('Saving...');
-
-
-            $.ajax({
-
-                url: "{{ route('drop.add-note') }}",
-
-                type: "POST",
-
-                dataType: "json",
-
-                data: {
-
-                    _token: csrfToken,
-
-                    note_id: noteId,
-
-                    newNote: newNote
-
-                },
-
-
-                success: function (response) {
-
-                    console.log(
-                        'ADD NOTE RESPONSE:',
-                        response
-                    );
-
-
-                    if (response.success) {
-
-                        alert(
-                            response.message ||
-                            'Note added successfully.'
-                        );
-
-
-                        $('#newNote').val('');
-
-
-                        loadDropNotes(noteId);
-
-                    } else {
-
-                        alert(
-                            response.message ||
-                            'Unable to save note.'
-                        );
-
                     }
 
-                },
+                });
+
+            }
+
+            $(document).on(
+                'submit',
+                '#addNotesForm',
+                function(e) {
+
+                    e.preventDefault();
 
 
-                error: function (xhr) {
-
-                    console.error(
-                        'ADD NOTE ERROR:',
-                        xhr.status,
-                        xhr.responseText
-                    );
+                    const form =
+                        $(this);
 
 
-                    let message =
-                        'Error saving note.';
+                    const button =
+                        form.find(
+                            'button[type="submit"]'
+                        );
 
 
-                    if (
-                        xhr.responseJSON &&
-                        xhr.responseJSON.message
-                    ) {
+                    const noteId =
+                        $('#note_id').val();
 
-                        message =
-                            xhr.responseJSON.message;
+
+                    const newNote =
+                        $('#newNote')
+                        .val()
+                        .trim();
+
+
+                    if (!noteId) {
+
+                        alert(
+                            'Invalid student ID.'
+                        );
+
+                        return;
 
                     }
 
 
-                    alert(message);
+                    if (!newNote) {
 
-                },
+                        alert(
+                            'Please enter remarks.'
+                        );
 
+                        $('#newNote').focus();
 
-                complete: function () {
+                        return;
+
+                    }
+
 
                     button
-                        .prop('disabled', false)
-                        .text('Save Note');
+                        .prop('disabled', true)
+                        .text('Saving...');
+
+
+                    $.ajax({
+
+                        url: "{{ route('drop.add-note') }}",
+
+                        type: "POST",
+
+                        dataType: "json",
+
+                        data: {
+
+                            _token: csrfToken,
+
+                            note_id: noteId,
+
+                            newNote: newNote
+
+                        },
+
+
+                        success: function(response) {
+
+                            console.log(
+                                'ADD NOTE RESPONSE:',
+                                response
+                            );
+
+
+                            if (response.success) {
+
+                                alert(
+                                    response.message ||
+                                    'Note added successfully.'
+                                );
+
+
+                                $('#newNote').val('');
+
+
+                                loadDropNotes(noteId);
+
+                            } else {
+
+                                alert(
+                                    response.message ||
+                                    'Unable to save note.'
+                                );
+
+                            }
+
+                        },
+
+
+                        error: function(xhr) {
+
+                            console.error(
+                                'ADD NOTE ERROR:',
+                                xhr.status,
+                                xhr.responseText
+                            );
+
+
+                            let message =
+                                'Error saving note.';
+
+
+                            if (
+                                xhr.responseJSON &&
+                                xhr.responseJSON.message
+                            ) {
+
+                                message =
+                                    xhr.responseJSON.message;
+
+                            }
+
+
+                            alert(message);
+
+                        },
+
+
+                        complete: function() {
+
+                            button
+                                .prop('disabled', false)
+                                .text('Save Note');
+
+                        }
+
+                    });
+
+                }
+            );
+
+
+            function escapeHtml(value) {
+
+                if (
+                    value === null ||
+                    value === undefined
+                ) {
+
+                    return '';
 
                 }
 
-            });
 
-        }
-    );
+                return $('<div>')
+                    .text(value)
+                    .html();
 
+            }
 
-    function escapeHtml(value) {
-
-        if (
-            value === null ||
-            value === undefined
-        ) {
-
-            return '';
-
-        }
-
-
-        return $('<div>')
-            .text(value)
-            .html();
-
-    }
-
-});
-
-</script>
-
+        });
+    </script>
 @endpush

@@ -176,15 +176,15 @@
                 <div class="tab-content">
 
 
-                 <div class="tab-pane fade show active" id="personal_info">
+                    <div class="tab-pane fade show active" id="personal_info">
 
-    <div class="card shadow">
+                        <div class="card shadow">
 
-        <div class="card-header bg-primary text-white">
-            Personal Information
-        </div>
+                            <div class="card-header bg-primary text-white">
+                                Personal Information
+                            </div>
 
-        <div class="card-body">
+                            <div class="card-body">
 
                                 <form method="POST" action="{{ route('walkin.personal') }}">
 
@@ -1142,9 +1142,7 @@
 
                     </div>
 
-                    {{-- ==========================================================
-    PART 6 : SEND MESSAGE
-========================================================== --}}
+
 
                     <div class="tab-pane fade" id="message_info">
 
@@ -1330,9 +1328,6 @@
 
                     </div>
 
-                    {{-- ==========================================================
-    PART 7 : STATUS DETAILS / STATUS HISTORY
-========================================================== --}}
 
                     <div class="tab-pane fade" id="status_details">
 
@@ -1429,25 +1424,11 @@
                     </div>
 
 
-
-
-
-                    {{-- ===========================================================
-    PART 2D
-    SPOUSE FORM JAVASCRIPT
-=========================================================== --}}
-
                     @push('scripts')
-                        {{-- ==========================================================
-    PART 2D : SPOUSE FORM JAVASCRIPT
-========================================================== --}}
-
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
 
-                                //--------------------------------------------------
-                                // Show / Hide OSAP
-                                //--------------------------------------------------
+
 
                                 const status = document.getElementById('spo_curr_sts');
                                 const osapDiv = document.getElementById('osap_div');
@@ -1479,9 +1460,6 @@
 
 
 
-                                //--------------------------------------------------
-                                // Date Validation
-                                //--------------------------------------------------
 
                                 let start1 = document.querySelector('[name="self_start_date1"]');
                                 let end1 = document.querySelector('[name="self_end_date1"]');
@@ -1523,9 +1501,6 @@
 
 
 
-                                //--------------------------------------------------
-                                // Number Only
-                                //--------------------------------------------------
 
                                 document.querySelectorAll('input[name*="marks"],input[name*="salary"],input[name*="asses"]').forEach(
                                     function(el) {
@@ -1539,10 +1514,6 @@
                                     });
 
 
-
-                                //--------------------------------------------------
-                                // Mobile Validation
-                                //--------------------------------------------------
 
                                 let mobile = document.querySelector('[name="spouse_mobile"]');
 
@@ -1558,9 +1529,6 @@
 
 
 
-                                //--------------------------------------------------
-                                // Email Lowercase
-                                //--------------------------------------------------
 
                                 let email = document.querySelector('[name="spouse_email"]');
 
@@ -1576,9 +1544,6 @@
 
 
 
-                                //--------------------------------------------------
-                                // Form Validation
-                                //--------------------------------------------------
 
                                 const form = document.getElementById('spouse_info_form');
 
@@ -1617,16 +1582,10 @@
                             });
                         </script>
 
-                        {{-- ==========================================================
-    PART 8 : COMMON JAVASCRIPT FOR ALL TABS
-========================================================== --}}
 
                         <script>
                             document.addEventListener('DOMContentLoaded', function() {
 
-                                //--------------------------------------------------
-                                // Sidebar Active Menu
-                                //--------------------------------------------------
 
                                 document.querySelectorAll('.menu-item').forEach(function(item) {
 
@@ -1646,9 +1605,7 @@
 
 
 
-                                //--------------------------------------------------
-                                // Bootstrap Tooltips
-                                //--------------------------------------------------
+
 
                                 const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
 
@@ -1659,10 +1616,6 @@
                                 });
 
 
-
-                                //--------------------------------------------------
-                                // Image Preview
-                                //--------------------------------------------------
 
                                 document.querySelectorAll('.image-upload').forEach(function(input) {
 
@@ -1695,10 +1648,6 @@
 
 
 
-                                //--------------------------------------------------
-                                // Number Only Class
-                                //--------------------------------------------------
-
                                 document.querySelectorAll('.number-only').forEach(function(input) {
 
                                     input.addEventListener('input', function() {
@@ -1711,9 +1660,6 @@
 
 
 
-                                //--------------------------------------------------
-                                // Decimal Only Class
-                                //--------------------------------------------------
 
                                 document.querySelectorAll('.decimal-only').forEach(function(input) {
 
@@ -1727,10 +1673,6 @@
 
 
 
-                                //--------------------------------------------------
-                                // Uppercase
-                                //--------------------------------------------------
-
                                 document.querySelectorAll('.uppercase').forEach(function(input) {
 
                                     input.addEventListener('keyup', function() {
@@ -1743,9 +1685,6 @@
 
 
 
-                                //--------------------------------------------------
-                                // Lowercase Email
-                                //--------------------------------------------------
 
                                 document.querySelectorAll('input[type="email"]').forEach(function(input) {
 
@@ -1758,10 +1697,6 @@
                                 });
 
 
-
-                                //--------------------------------------------------
-                                // Delete Confirmation
-                                //--------------------------------------------------
 
                                 document.querySelectorAll('.delete-btn').forEach(function(btn) {
 

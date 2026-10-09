@@ -344,7 +344,7 @@
                                             </td>
 
 
-                                            {{-- View --}}
+
                                             <td>
 
                                                 @if ($row->cons_seen == '0')
@@ -462,10 +462,6 @@
                                             <td>
 
                                                 @if ($followup->mobileno)
-                                                    {{-- <a
-                                                        href="{{ route('walking-details', ['smobile' => $followup->mobileno]) }}">
-                                        {{ $followup->sname }}
-                                        </a> --}}
                                                     <a
                                                         href="{{ route('walking-details', ['smobile' => $followup->smobile]) }}">
                                                         {{ $followup->sname }}

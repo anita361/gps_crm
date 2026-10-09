@@ -236,11 +236,6 @@
             }
         }
 
-
-        /* ==========================================
-                           FINANCE STATUS UPDATE MODAL
-                           ========================================== */
-
         #financeStatusModal .modal-dialog {
             max-width: 450px;
         }
@@ -1081,7 +1076,7 @@
                                             !empty($row->osap_signature_submit) &&
                                                 $osapSignatureDate < '2025-11-25' &&
                                                 ($row->province_name ?? '') === 'Ontario')
-                                            
+
                                             <a href="{{ route('student.consent.pdf', ['uid' => $row->sno]) }}"
                                                 target="_blank" class="download-icon" title="Download Student Consent">
                                                 <i class="fa fa-download"></i>
@@ -1304,7 +1299,7 @@
                         </div>
                     </div>
                 </div>
-                
+
 
                 {{-- PAGINATION --}}
                 <div class="bottom-area">
@@ -1345,12 +1340,6 @@
 @push('scripts')
     <script>
         $(document).ready(function() {
-
-            /*
-             * ==========================================
-             * FOA STATUS UPDATE
-             * ==========================================
-             */
 
             $(document).on('change', '.foastatus', function() {
 
@@ -1432,13 +1421,6 @@
 
             });
 
-
-            /*
-             * ==========================================
-             * COLLEGE CHANGE
-             * ==========================================
-             */
-
             $('#collage_name').on('change', function() {
 
                 let college = $(this).val();
@@ -1465,13 +1447,6 @@
 
             });
 
-
-            /*
-             * ==========================================
-             * CAMPUS CHANGE
-             * ==========================================
-             */
-
             $('#campus_name').on('change', function() {
 
                 let campus = $(this).val();
@@ -1495,14 +1470,6 @@
                 window.location.href = url.toString();
 
             });
-
-
-            /*
-             * ==========================================
-             * PROGRAM CHANGE
-             * ==========================================
-             */
-
             $('#program_name').on('change', function() {
 
                 let program = $(this).val();
@@ -1524,12 +1491,6 @@
                 window.location.href = url.toString();
 
             });
-
-            /*
-             * ==========================================
-             * FINANCE STATUS MODAL OPEN
-             * ==========================================
-             */
             $(document).on('click', '.statuslogsdata', function() {
 
                 let id = $(this).data('id');
@@ -1548,9 +1509,6 @@
                 $('#finance_college').val(college);
                 $('#finance_remarks').val(remarks);
 
-                /*
-                 * Convert existing date to datetime-local format
-                 */
                 if (followup) {
 
                     let date = new Date(followup);
@@ -1584,13 +1542,6 @@
                  */
                 loadFinanceStatusLogs(id);
             });
-
-
-            /*
-             * ==========================================
-             * LOAD FINANCE STATUS LOGS
-             * ==========================================
-             */
             function loadFinanceStatusLogs(id) {
 
                 $('#financeStatusLogs').html(`
@@ -1675,15 +1626,8 @@
                     }
                 });
             }
-
-
-            /*
-             * ==========================================
-             * FINANCE STATUS UPDATE
-             * ==========================================
-             */
             $(document).on('click', '#submitFinanceStatus', function() {
-                
+
 
                 let button = $(this);
 
@@ -1765,9 +1709,6 @@
 
                             }
 
-                            /*
-                             * Reload logs immediately
-                             */
                             loadFinanceStatusLogs(logId);
 
                             /*

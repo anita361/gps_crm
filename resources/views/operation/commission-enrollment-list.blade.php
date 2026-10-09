@@ -523,10 +523,6 @@
                     </table>
 
                 </div>
-                {{-- ===========================================================
-COMMISSION STATUS MODAL
-=========================================================== --}}
-
                 <div class="modal fade" id="commisionstatus" tabindex="-1">
 
                     <div class="modal-dialog">
@@ -626,10 +622,6 @@ COMMISSION STATUS MODAL
 
                 </div>
 
-                {{-- ===========================================================
-ASSIGN OPERATION MODAL
-=========================================================== --}}
-
                 <div class="modal fade" id="myassignModal" tabindex="-1">
 
                     <div class="modal-dialog">
@@ -721,10 +713,6 @@ ASSIGN OPERATION MODAL
                     </div>
 
                 </div>
-
-                {{-- ===========================================================
-NOTES MODAL
-=========================================================== --}}
 
                 <div class="modal fade" id="notesModal" tabindex="-1">
 
@@ -832,10 +820,6 @@ NOTES MODAL
 
                 </div>
 
-                {{-- ===========================================================
-LOGS MODAL
-=========================================================== --}}
-
                 <div class="modal fade" id="logsModal" tabindex="-1">
                     <div class="modal-dialog modal-xl">
                         <div class="modal-content">
@@ -927,12 +911,6 @@ LOGS MODAL
                     $(document).ready(function() {
 
 
-                        /*
-                        ==========================================
-                        CSRF TOKEN
-                        ==========================================
-                        */
-
                         $.ajaxSetup({
 
                             headers: {
@@ -943,102 +921,12 @@ LOGS MODAL
 
                         });
 
-
-
-                        // ==========================================
-                        // PROVINCE -> COLLEGE
-                        // ==========================================
-
                         $('#collage_name').on(
-                'change',
-                function() {
+                            'change',
+                            function() {
 
-                    let college =
-                        $(this).val();
-
-
-                    $('#campus').html(
-
-                        '<option value="">--Select Campus--</option>'
-
-                    );
-
-
-                    $('#program_name').html(
-
-                        '<option value="">--Select Program--</option>'
-
-                    );
-
-
-                    if (!college) {
-
-                        return;
-
-                    }
-
-
-                    $.ajax({
-
-                        url:
-                            "{{ route('osap.campuses') }}",
-
-                        type:
-                            "POST",
-
-                        data: {
-
-                            college_id:
-                                college,
-
-                            _token:
-                                "{{ csrf_token() }}"
-
-                        },
-
-
-                        success:
-                            function(response) {
-
-                                $('#campus')
-                                    .html(response);
-
-
-                                $('#program_name')
-                                    .html(
-
-                                        '<option value="">--Select Program--</option>'
-
-                                    );
-
-
-                                // Keep selected campus
-
-                                let selectedCampus =
-                                    @json(request('campus'));
-
-
-                                if (
-                                    selectedCampus
-                                ) {
-
-                                    $('#campus')
-                                        .val(
-                                            selectedCampus
-                                        )
-                                        .trigger('change');
-
-                                }
-
-                            },
-
-
-                        error:
-                            function(xhr) {
-
-                                console.log(
-                                    xhr.responseText
-                                );
+                                let college =
+                                    $(this).val();
 
 
                                 $('#campus').html(
@@ -1054,98 +942,100 @@ LOGS MODAL
 
                                 );
 
-                            }
 
-                    });
+                                if (!college) {
 
-                }
-            );
-
-
-            // ==========================================
-            // CAMPUS -> PROGRAM
-            // ==========================================
-
-            $('#campus').on(
-                'change',
-                function() {
-
-                    let campus =
-                        $(this).val();
-
-                    let college =
-                        $('#collage_name').val();
-
-
-                    $('#program_name').html(
-
-                        '<option value="">--Select Program--</option>'
-
-                    );
-
-
-                    if (!college || !campus) {
-
-                        return;
-
-                    }
-
-
-                    $.ajax({
-
-                        url:
-                            "{{ route('osap.programs') }}",
-
-                        type:
-                            "POST",
-
-                        data: {
-
-                            college_id:
-                                college,
-
-                            campus_id:
-                                campus,
-
-                            _token:
-                                "{{ csrf_token() }}"
-
-                        },
-
-
-                        success:
-                            function(response) {
-
-                                $('#program_name')
-                                    .html(response);
-
-
-                                // Keep selected program
-
-                                let selectedProgram =
-                                    @json(request('program'));
-
-
-                                if (
-                                    selectedProgram
-                                ) {
-
-                                    $('#program_name')
-                                        .val(
-                                            selectedProgram
-                                        );
+                                    return;
 
                                 }
 
-                            },
+
+                                $.ajax({
+
+                                    url: "{{ route('osap.campuses') }}",
+
+                                    type: "POST",
+
+                                    data: {
+
+                                        college_id: college,
+
+                                        _token: "{{ csrf_token() }}"
+
+                                    },
 
 
-                        error:
-                            function(xhr) {
+                                    success: function(response) {
 
-                                console.log(
-                                    xhr.responseText
-                                );
+                                        $('#campus')
+                                            .html(response);
+
+
+                                        $('#program_name')
+                                            .html(
+
+                                                '<option value="">--Select Program--</option>'
+
+                                            );
+
+
+                                        // Keep selected campus
+
+                                        let selectedCampus =
+                                            @json(request('campus'));
+
+
+                                        if (
+                                            selectedCampus
+                                        ) {
+
+                                            $('#campus')
+                                                .val(
+                                                    selectedCampus
+                                                )
+                                                .trigger('change');
+
+                                        }
+
+                                    },
+
+
+                                    error: function(xhr) {
+
+                                        console.log(
+                                            xhr.responseText
+                                        );
+
+
+                                        $('#campus').html(
+
+                                            '<option value="">--Select Campus--</option>'
+
+                                        );
+
+
+                                        $('#program_name').html(
+
+                                            '<option value="">--Select Program--</option>'
+
+                                        );
+
+                                    }
+
+                                });
+
+                            }
+                        );
+
+                        $('#campus').on(
+                            'change',
+                            function() {
+
+                                let campus =
+                                    $(this).val();
+
+                                let college =
+                                    $('#collage_name').val();
 
 
                                 $('#program_name').html(
@@ -1154,135 +1044,170 @@ LOGS MODAL
 
                                 );
 
-                            }
 
-                    });
+                                if (!college || !campus) {
 
-                }
-            );
+                                    return;
 
+                                }
 
-            // ==========================================
-            // LOAD CAMPUS / PROGRAM ON PAGE LOAD
-            // ==========================================
-
-            let selectedCollege =
-                $('#collage_name').val();
-
-
-            let selectedCampus =
-                @json(request('campus'));
-
-            let selectedProgram =
-                @json(request('program'));
-
-
-            if (selectedCollege) {
-
-                $.ajax({
-
-                    url:
-                        "{{ route('osap.campuses') }}",
-
-                    type:
-                        "POST",
-
-                    data: {
-
-                        college_id:
-                            selectedCollege,
-
-                        _token:
-                            "{{ csrf_token() }}"
-
-                    },
-
-
-                    success:
-                        function(response) {
-
-                            $('#campus')
-                                .html(response);
-
-
-                            if (selectedCampus) {
-
-                                $('#campus')
-                                    .val(
-                                        selectedCampus
-                                    );
-
-                            }
-
-
-                            if (
-                                selectedCampus
-                            ) {
 
                                 $.ajax({
 
-                                    url:
-                                        "{{ route('osap.programs') }}",
+                                    url: "{{ route('osap.programs') }}",
 
-                                    type:
-                                        "POST",
+                                    type: "POST",
 
                                     data: {
 
-                                        college_id:
-                                            selectedCollege,
+                                        college_id: college,
 
-                                        campus_id:
-                                            selectedCampus,
+                                        campus_id: campus,
 
-                                        _token:
-                                            "{{ csrf_token() }}"
+                                        _token: "{{ csrf_token() }}"
 
                                     },
 
 
-                                    success:
-                                        function(response) {
+                                    success: function(response) {
+
+                                        $('#program_name')
+                                            .html(response);
+
+
+                                        // Keep selected program
+
+                                        let selectedProgram =
+                                            @json(request('program'));
+
+
+                                        if (
+                                            selectedProgram
+                                        ) {
 
                                             $('#program_name')
-                                                .html(response);
-
-
-                                            if (
-                                                selectedProgram
-                                            ) {
-
-                                                $('#program_name')
-                                                    .val(
-                                                        selectedProgram
-                                                    );
-
-                                            }
+                                                .val(
+                                                    selectedProgram
+                                                );
 
                                         }
+
+                                    },
+
+
+                                    error: function(xhr) {
+
+                                        console.log(
+                                            xhr.responseText
+                                        );
+
+
+                                        $('#program_name').html(
+
+                                            '<option value="">--Select Program--</option>'
+
+                                        );
+
+                                    }
 
                                 });
 
                             }
+                        );
+
+                        let selectedCollege =
+                            $('#collage_name').val();
+
+
+                        let selectedCampus =
+                            @json(request('campus'));
+
+                        let selectedProgram =
+                            @json(request('program'));
+
+
+                        if (selectedCollege) {
+
+                            $.ajax({
+
+                                url: "{{ route('osap.campuses') }}",
+
+                                type: "POST",
+
+                                data: {
+
+                                    college_id: selectedCollege,
+
+                                    _token: "{{ csrf_token() }}"
+
+                                },
+
+
+                                success: function(response) {
+
+                                    $('#campus')
+                                        .html(response);
+
+
+                                    if (selectedCampus) {
+
+                                        $('#campus')
+                                            .val(
+                                                selectedCampus
+                                            );
+
+                                    }
+
+
+                                    if (
+                                        selectedCampus
+                                    ) {
+
+                                        $.ajax({
+
+                                            url: "{{ route('osap.programs') }}",
+
+                                            type: "POST",
+
+                                            data: {
+
+                                                college_id: selectedCollege,
+
+                                                campus_id: selectedCampus,
+
+                                                _token: "{{ csrf_token() }}"
+
+                                            },
+
+
+                                            success: function(response) {
+
+                                                $('#program_name')
+                                                    .html(response);
+
+
+                                                if (
+                                                    selectedProgram
+                                                ) {
+
+                                                    $('#program_name')
+                                                        .val(
+                                                            selectedProgram
+                                                        );
+
+                                                }
+
+                                            }
+
+                                        });
+
+                                    }
+
+                                }
+
+                            });
 
                         }
-
-                });
-
-            }
-
-
-
-
-
-
-
-                        /*
-                        ==========================================
-                        NOTES MODAL
-                        ==========================================
-                        */
-
 
                         $(document).on('click', '.open-notes-modal', function() {
 
@@ -1430,7 +1355,7 @@ LOGS MODAL
 
 
 
-                       
+
                         $(document).on('click', '.view-logs-btn', function() {
 
                             let id = $(this).data('file-no');
@@ -1469,7 +1394,7 @@ LOGS MODAL
 
                                 success: function(res) {
 
-                                 
+
 
                                     let logsHtml = '';
 
@@ -1504,7 +1429,7 @@ LOGS MODAL
                                     $('#logsTableBody').html(logsHtml);
 
 
-                                  
+
 
                                     let notesHtml = '';
 
@@ -1566,7 +1491,7 @@ LOGS MODAL
 
 
 
-                     
+
 
                         $('#myassignModal').on('show.bs.modal', function(e) {
 
@@ -1627,7 +1552,7 @@ LOGS MODAL
 
 
 
-                       
+
 
                         $('#commisionstatus').on('show.bs.modal', function(e) {
 
